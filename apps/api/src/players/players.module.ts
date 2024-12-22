@@ -9,4 +9,4 @@ import { PlayersService } from './players.service';
   controllers: [PlayersController],
   providers: [PlayersService, ...playersProviders],
 })
-export class CatsModule {}
+export class PlayersModule {}
