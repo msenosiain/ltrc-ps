@@ -1,9 +1,11 @@
 import * as mongoose from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 
 export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION',
-    useFactory: async (): Promise<typeof mongoose> =>
-      await mongoose.connect('mongodb://localhost/test'),
+    inject: [ConfigService],
+    useFactory: async (configService: ConfigService): Promise<typeof mongoose> =>
+      await mongoose.connect(configService.get<string>('API_MONGODB_URL')),
   },
 ];
