@@ -1,0 +1,58 @@
+import { PlayerPositionEnum } from '../../players/interfaces/player-position.enum';
+
+export const createPlayerDtoPlain = {
+  lastName: 'Lastname 3',
+  firstName: 'Firstname 3',
+  idNumber: '3',
+  birthDate: '05-12-2005',
+  email: 'player3@lostordos.com.ar',
+  phoneNumber: '123456789',
+  position: PlayerPositionEnum.FULLBACK
+};
+export const playersArray = [
+  {
+    lastName: 'Lastname 1',
+    firstName: 'Firstname 1',
+    idNumber: '1',
+    birthDate: '05-12-2005',
+    email: 'player1@lostordos.com.ar',
+    phoneNumber: '123456789',
+    address: 'Some Address 1',
+    city: 'City',
+    province: 'Province',
+    position: PlayerPositionEnum.RIGHT_SECOND_ROW,
+    alternatePosition: PlayerPositionEnum.LEFT_SECOND_ROW,
+    size: 200,
+    weight: 119,
+  },
+  {
+    lastName: 'Lastname 2',
+    firstName: 'Firstname 2',
+    idNumber: '2',
+    birthDate: '05-12-2005',
+    email: 'player2@lostordos.com.ar',
+    phoneNumber: '123456789',
+    address: 'Some Address 2',
+    city: 'City',
+    province: 'Province',
+    position: PlayerPositionEnum.TIGHT_HEAD_PROP,
+    alternatePosition: PlayerPositionEnum.LOOSE_HEAD_PROP,
+    size: 180,
+    weight: 100,
+  },
+  {
+    lastName: 'Lastname 3',
+    firstName: 'Firstname 3',
+    idNumber: '3',
+    birthDate: '05-12-2005',
+    email: 'player3@lostordos.com.ar',
+    phoneNumber: '123456789',
+    address: 'Some Address 3',
+    city: 'City 3',
+    province: 'Province',
+    position: PlayerPositionEnum.LEFT_WING,
+    alternatePosition: PlayerPositionEnum.FULLBACK,
+    size: 200,
+    weight: 119,
+  },
+];

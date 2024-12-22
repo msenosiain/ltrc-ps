@@ -1,0 +1,17 @@
+export enum PlayerPositionEnum {
+  LOOSE_HEAD_PROP = 'Loose-head prop',
+  HOOKER = 'Hooker',
+  TIGHT_HEAD_PROP = 'Tight-head prop',
+  LEFT_SECOND_ROW = 'Left Second-row',
+  RIGHT_SECOND_ROW = 'Right Second-row',
+  BLINDSIDE_FLANKER = 'Blindside flanker',
+  OPEN_SIDE_FLANKER = 'Open side flanker',
+  NUMBER_8 = 'Number 8	Lock',
+  SCRUM_HALF = 'Scrum-half',
+  FLY_HALF = 'Fly-half',
+  LEFT_WING = 'Left wing',
+  INSIDE_CENTRE = 'Inside centre',
+  OUTSIDE_CENTRE = 'Outside centre',
+  RIGHT_WING = 'Right wing',
+  FULLBACK = 'Full-back',
+}
