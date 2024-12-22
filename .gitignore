@@ -43,3 +43,4 @@ Thumbs.db
 
 .angular
 /apps/api/.env
+/docker/mongodb/mongodb_data/
