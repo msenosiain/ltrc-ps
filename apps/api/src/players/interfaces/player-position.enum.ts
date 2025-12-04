@@ -6,7 +6,7 @@ export enum PlayerPositionEnum {
   RIGHT_SECOND_ROW = 'Right Second-row',
   BLINDSIDE_FLANKER = 'Blindside flanker',
   OPEN_SIDE_FLANKER = 'Open side flanker',
-  NUMBER_8 = 'Number 8	Lock',
+  NUMBER_8 = 'Number 8',
   SCRUM_HALF = 'Scrum-half',
   FLY_HALF = 'Fly-half',
   LEFT_WING = 'Left wing',
