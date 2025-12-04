@@ -1,11 +1,69 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { PlayerPositionEnum } from '../interfaces/player-position.enum';
 import { Transform, Type } from 'class-transformer';
 import { parse } from 'date-fns';
+import { DATE_FORMAT } from '../../shared/constants';
+import { ClothingSizesEnum } from '../interfaces/clothing-sizes.enum';
+
+export class AddressDto {
+  @IsOptional()
+  @IsString()
+  street?: string;
+
+  @IsOptional()
+  @IsString()
+  number?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  province?: string;
+
+  @IsOptional()
+  @IsString()
+  postalCode?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @IsNumberString()
+  phoneNumber: string;
+}
+
+export class ClothingSizesDto {
+  @IsOptional()
+  @IsEnum(ClothingSizesEnum)
+  jersey?: ClothingSizesEnum;
+
+  @IsOptional()
+  @IsEnum(ClothingSizesEnum)
+  shorts?: ClothingSizesEnum;
+
+  @IsOptional()
+  @IsEnum(ClothingSizesEnum)
+  sweater?: ClothingSizesEnum;
+
+  @IsOptional()
+  @IsEnum(ClothingSizesEnum)
+  pants?: ClothingSizesEnum;
+}
+
 
 export class CreatePlayerDto {
-
-
   @IsNotEmpty()
   @IsString()
   readonly lastName: string;
@@ -19,34 +77,24 @@ export class CreatePlayerDto {
   readonly idNumber: string;
 
   @IsNotEmpty()
-  @IsString()
-  @Type(() => Date)
-  @Transform(({ value }) => parse(String(value), 'dd-MM-yyyy', new Date()), { toClassOnly: true })
+  @Transform(({ value }) => {
+    const parsedDate = parse(value, DATE_FORMAT, new Date());
+    return parsedDate instanceof Date && !isNaN(parsedDate.getTime())
+      ? parsedDate
+      : null;
+  })
+  @IsDate({
+    message: `$property must be a Date instance with format ${DATE_FORMAT}`,
+  })
   readonly birthDate: Date;
 
   @IsNotEmpty()
   @IsEmail()
   readonly email: string;
 
-  @IsOptional()
-  @IsString()
-  readonly phoneNumber: string;
-
   @IsNotEmpty()
   @IsEnum(PlayerPositionEnum)
-  readonly position: string;
-
-  @IsOptional()
-  @IsString()
-  readonly address?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly city?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly province?: string;
+  readonly position: PlayerPositionEnum;
 
   @IsOptional()
   @IsEnum(PlayerPositionEnum)
@@ -59,4 +107,14 @@ export class CreatePlayerDto {
   @IsOptional()
   @IsNumber()
   readonly weight?: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => AddressDto)
+  readonly address?: AddressDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ClothingSizesDto)
+  readonly clothingSizes?: ClothingSizesDto;
 }
