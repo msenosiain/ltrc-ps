@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Player } from './interfaces/player.interface';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { PlayersService } from './players.service';
+import { FindByIdParams } from '../shared/find-by-id.params';
 
 @Controller('players')
 export class PlayersController {
@@ -15,5 +16,10 @@ export class PlayersController {
   @Get()
   async findAll(): Promise<Player[]> {
     return await this.playersService.findAll();
+  }
+
+  @Get(':id')
+  async getById(@Param() params: FindByIdParams): Promise<Player> {
+    return await this.playersService.getById(params.id);
   }
 }
