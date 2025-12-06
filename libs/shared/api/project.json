@@ -1,0 +1,24 @@
+{
+  "name": "shared-api-model",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/shared/api/src",
+  "prefix": "ltrc-ps",
+  "tags": [],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/api"],
+      "options": {
+        "jestConfig": "libs/shared/api/jest.config.js"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["libs/shared/api/src/**/*.ts", "libs/shared/api/src/**/*.html"]
+      },
+      "outputs": ["{options.outputFile}"]
+    }
+  }
+}
