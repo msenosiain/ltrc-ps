@@ -1,35 +1,54 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, Observable, finalize } from 'rxjs';
+import {
+  PaginationQuery,
+  Player,
+  PlayerFilters,
+} from '@ltrc-ps/shared-api-model';
 import { PlayersService } from './players.service';
-import { Player } from '@ltrc-ps/shared-api-model';
 
 export class PlayersDataSource implements DataSource<Player> {
   private playersSubject = new BehaviorSubject<Player[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  public loading$ = this.loadingSubject.asObservable();
-  public total = 0;
+  loading$ = this.loadingSubject.asObservable();
+  total = 0;
 
   constructor(private playersService: PlayersService) {}
 
   load(
     pageIndex: number,
     pageSize: number,
-    sort?: string,
-    order?: 'asc' | 'desc'
+    filters: PlayerFilters = {},
+    sortBy?: string,
+    sortOrder?: 'asc' | 'desc'
   ) {
     this.loadingSubject.next(true);
 
+    const query: PaginationQuery = {
+      page: pageIndex + 1,
+      size: pageSize,
+      filters,
+      sortBy,
+      sortOrder,
+    };
+
     this.playersService
-      .getPlayers(pageIndex + 1, pageSize, sort, order)
+      .getPlayers(query)
       .pipe(finalize(() => this.loadingSubject.next(false)))
-      .subscribe((res) => {
-        this.total = res.total;
-        this.playersSubject.next(res.items);
+      .subscribe({
+        next: (res) => {
+          this.total = res.total;
+          this.playersSubject.next(res.items);
+        },
+        error: (err) => {
+          console.error('Error loading players:', err);
+          this.playersSubject.next([]);
+        },
       });
   }
 
-  connect(collectionViewer: CollectionViewer): Observable<Player[]> {
+  connect(_: CollectionViewer): Observable<Player[]> {
     return this.playersSubject.asObservable();
   }
 
