@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
   "sourceRoot": "libs/shared/api/src",
+  "root": "libs/shared/api",
   "prefix": "ltrc-ps",
   "tags": [],
   "targets": {
@@ -16,7 +17,10 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["libs/shared/api/src/**/*.ts", "libs/shared/api/src/**/*.html"]
+        "lintFilePatterns": [
+          "libs/shared/api/src/**/*.ts",
+          "libs/shared/api/src/**/*.html"
+        ]
       },
       "outputs": ["{options.outputFile}"]
     }

@@ -9,11 +9,14 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PlayerPositionEnum } from '../interfaces/player-position.enum';
+
 import { Transform, Type } from 'class-transformer';
 import { parse } from 'date-fns';
 import { DATE_FORMAT } from '../../shared/constants';
-import { ClothingSizesEnum } from '../interfaces/clothing-sizes.enum';
+import {
+  ClothingSizesEnum,
+  PlayerPositionEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export class AddressDto {
   @IsOptional()
@@ -62,7 +65,6 @@ export class ClothingSizesDto {
   pants?: ClothingSizesEnum;
 }
 
-
 export class CreatePlayerDto {
   @IsNotEmpty()
   @IsString()
@@ -71,6 +73,10 @@ export class CreatePlayerDto {
   @IsNotEmpty()
   @IsString()
   readonly firstName: string;
+
+  @IsOptional()
+  @IsString()
+  readonly nickName: string;
 
   @IsNotEmpty()
   @IsString()
@@ -102,10 +108,12 @@ export class CreatePlayerDto {
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   readonly size?: number;
 
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   readonly weight?: number;
 
   @IsOptional()

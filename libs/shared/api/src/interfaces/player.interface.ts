@@ -1,6 +1,5 @@
 import { Document } from 'mongoose';
-import { PlayerPositionEnum } from './player-position.enum';
-import { ClothingSizesEnum } from './clothing-sizes.enum';
+import { ClothingSizesEnum, PlayerPositionEnum } from '../enums';
 
 export interface Address {
   street?: string;
@@ -17,13 +16,22 @@ export interface ClothingSizes {
   shorts?: ClothingSizesEnum;
   sweater?: ClothingSizesEnum;
   pants?: ClothingSizesEnum;
-  [key: string]: ClothingSizesEnum;
+  [key: string]: ClothingSizesEnum | undefined;
+}
+
+export interface PlayerFilters {
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  position?: PlayerPositionEnum;
+  idNumber?: string;
 }
 
 export interface Player extends Document {
   readonly idNumber: string;
   readonly lastName: string;
   readonly firstName: string;
+  readonly nickName?: string;
   readonly birthDate: Date;
   readonly email: string;
   readonly address?: Address;
@@ -32,4 +40,7 @@ export interface Player extends Document {
   readonly size?: number;
   readonly weight?: number;
   readonly clothingSizes?: ClothingSizes;
+  readonly photoId?: string;
+  readonly createdAt?: Date;  // agregados por timestamps: true
+  readonly updatedAt?: Date;
 }

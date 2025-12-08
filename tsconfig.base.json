@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ltrc-ps/shared-api-model": ["shared-api-model/src/index.ts"]
+      "@ltrc-ps/shared-api-model": ["libs/shared/api/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

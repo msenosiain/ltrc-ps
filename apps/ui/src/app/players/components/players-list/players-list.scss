@@ -1,0 +1,10 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+
+  table {
+    width: 100%;
+  }
+}
