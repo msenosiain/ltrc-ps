@@ -3,5 +3,5 @@ import { PlayersListComponent } from './components/players-list/players-list.com
 
 
 export const PLAYERS_ROUTES: Routes = [
-  { path: '', component: PlayersListComponent },
+  { path: '', component: PlayersListComponent, data: { title: 'Plantel - Los Tordos' }, },
 ];
