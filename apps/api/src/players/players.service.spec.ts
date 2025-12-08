@@ -1,14 +1,11 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { Model } from 'mongoose';
-import { Player } from './interfaces/player.interface';
 import { PlayersService } from './players.service';
 import { PLAYER_MODEL } from '../shared/constants';
 import { createPlayerDtoPlain, playersArray } from '../shared/mocks/playerMocks';
 import { plainToClass } from 'class-transformer';
 import { CreatePlayerDto } from './dto/create-player.dto';
-
-
+import { Player } from '@ltrc-ps/shared-api-model';
 
 describe('PlayersService', () => {
   let service: PlayersService;
@@ -49,9 +46,11 @@ describe('PlayersService', () => {
   });
 
   it('should insert a new player', async () => {
-    jest.spyOn(model, 'create').mockImplementationOnce(() =>
-      Promise.resolve({ _id: '1', ...createPlayerDtoPlain } as any),
-    );
+    jest
+      .spyOn(model, 'create')
+      .mockImplementationOnce(() =>
+        Promise.resolve({ _id: '1', ...createPlayerDtoPlain } as any)
+      );
 
     const payload = plainToClass(CreatePlayerDto, createPlayerDtoPlain);
     const newPlayer = await service.create(payload);

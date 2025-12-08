@@ -1,25 +1,71 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { Player } from './interfaces/player.interface';
-import { CreatePlayerDto } from './dto/create-player.dto';
+import {
+  Controller,
+  Post,
+  Patch,
+  Get,
+  Delete,
+  Body,
+  Param,
+  UploadedFile,
+  UseInterceptors,
+  Res,
+  NotFoundException,
+  Query,
+} from '@nestjs/common';
+
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { File as MulterFile } from 'multer';
+import { Response } from 'express';
+
 import { PlayersService } from './players.service';
-import { FindByIdParams } from '../shared/find-by-id.params';
+import { CreatePlayerDto } from './dto/create-player.dto';
+import { PaginationDto } from '../shared/pagination.dto';
 
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
-  @Post()
-  async create(@Body() createPlayerDto: CreatePlayerDto): Promise<Player> {
-    return await this.playersService.create(createPlayerDto);
+  @Get()
+  async findPaginated(@Query() pagination: PaginationDto) {
+    return this.playersService.findPaginated(pagination);
   }
 
-  @Get()
-  async findAll(): Promise<Player[]> {
-    return await this.playersService.findAll();
+  @Post()
+  @UseInterceptors(FileInterceptor('photo'))
+  async create(
+    @Body() dto: CreatePlayerDto,
+    @UploadedFile() photo?: MulterFile,
+  ) {
+    return this.playersService.create(dto, photo);
+  }
+
+  @Patch(':id')
+  @UseInterceptors(FileInterceptor('photo'))
+  async update(
+    @Param('id') id: string,
+    @Body() dto: Partial<CreatePlayerDto>,
+    @UploadedFile() photo?: MulterFile,
+  ) {
+    return this.playersService.update(id, dto, photo);
   }
 
   @Get(':id')
-  async getById(@Param() params: FindByIdParams): Promise<Player> {
-    return await this.playersService.getById(params.id);
+  async getOne(@Param('id') id: string) {
+    return this.playersService.findOne(id);
+  }
+
+  @Get(':id/photo')
+  async getPhoto(@Param('id') id: string, @Res() res: Response) {
+    const player = await this.playersService.findOne(id);
+    if (!player.photoId) throw new NotFoundException('Player has no photo');
+
+    const stream = await this.playersService.getPhotoStream(player.photoId);
+    res.setHeader('Content-Type', 'image/jpeg');
+    stream.pipe(res);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return this.playersService.delete(id);
   }
 }

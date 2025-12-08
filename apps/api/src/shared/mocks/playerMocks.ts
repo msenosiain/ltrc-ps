@@ -1,4 +1,4 @@
-import { PlayerPositionEnum } from '../../players/interfaces/player-position.enum';
+import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
 
 export const createPlayerDtoPlain = {
   lastName: 'Lastname 3',
