@@ -1,0 +1,11 @@
+<mat-toolbar color="primary" class="navbar">
+  <div class="logo-container">
+    <img src="logo.png" alt="Los Tordos Rugby Club" class="club-logo" />
+    <span class="logo-text">Los Tordos Rugby Club</span>
+  </div>
+  <nav>
+    @for (item of menuItems; track item.id) {
+      <a mat-button [routerLink]="item.path" routerLinkActive="active-link">{{ item.label }}</a>
+    }
+  </nav>
+</mat-toolbar>
