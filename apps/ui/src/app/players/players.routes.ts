@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { PlayersListComponent } from './components/players-list/players-list';
+import { PlayersListComponent } from './components/players-list/players-list.component';
 
 
 export const PLAYERS_ROUTES: Routes = [

@@ -4,3 +4,11 @@ export interface PaginatedResponse<T> {
   page: number;
   size: number;
 }
+
+export interface PaginationQuery {
+  page?: number;
+  size?: number;
+  filters?: Record<string, any>;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
