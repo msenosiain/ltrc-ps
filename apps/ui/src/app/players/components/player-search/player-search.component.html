@@ -1,0 +1,29 @@
+<form [formGroup]="searchForm" class="search-form">
+  <div class="filters-container">
+
+    <!-- Search term -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Apellido o Apodo</mat-label>
+      <input matInput placeholder="Ej: Pérez o Pepe" formControlName="searchTerm">
+      @if (searchForm.get('searchTerm')?.value){
+      <button mat-icon-button matSuffix (click)="clearField('searchTerm')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
+    <!-- Position select -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Posición</mat-label>
+      <mat-select formControlName="position" placeholder="Seleccionar posición">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (option of positionOptions; track option.id) {
+          <mat-option [value]="option.id">
+            {{ option.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+  </div>
+</form>

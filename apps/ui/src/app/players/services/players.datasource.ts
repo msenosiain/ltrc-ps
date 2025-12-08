@@ -1,10 +1,6 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { BehaviorSubject, Observable, finalize } from 'rxjs';
-import {
-  PaginationQuery,
-  Player,
-  PlayerFilters,
-} from '@ltrc-ps/shared-api-model';
+import { BehaviorSubject, finalize, Observable } from 'rxjs';
+import { PaginationQuery, Player, PlayerFilters } from '@ltrc-ps/shared-api-model';
 import { PlayersService } from './players.service';
 
 export class PlayersDataSource implements DataSource<Player> {
@@ -14,9 +10,42 @@ export class PlayersDataSource implements DataSource<Player> {
   loading$ = this.loadingSubject.asObservable();
   total = 0;
 
+  private filters: PlayerFilters = {};
+  private pageIndex = 0;
+  private pageSize = 10;
+  private sortBy?: string;
+  private sortOrder?: 'asc' | 'desc';
+
   constructor(private playersService: PlayersService) {}
 
-  load(
+  connect(_: CollectionViewer): Observable<Player[]> {
+    return this.playersSubject.asObservable();
+  }
+
+  disconnect(): void {
+    this.playersSubject.complete();
+    this.loadingSubject.complete();
+  }
+
+  setFilters(filters: PlayerFilters): void {
+    this.filters = filters;
+    this.pageIndex = 0;
+    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+  }
+
+  setSorting(sortBy: string, sortOrder: 'asc' | 'desc'): void {
+    this.sortBy = sortBy;
+    this.sortOrder = sortOrder;
+    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+  }
+
+  setPage(pageIndex: number, pageSize: number): void {
+    this.pageIndex = pageIndex;
+    this.pageSize = pageSize;
+    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+  }
+
+  private load(
     pageIndex: number,
     pageSize: number,
     filters: PlayerFilters = {},
@@ -41,19 +70,7 @@ export class PlayersDataSource implements DataSource<Player> {
           this.total = res.total;
           this.playersSubject.next(res.items);
         },
-        error: (err) => {
-          console.error('Error loading players:', err);
-          this.playersSubject.next([]);
-        },
+        error: () => this.playersSubject.next([]),
       });
-  }
-
-  connect(_: CollectionViewer): Observable<Player[]> {
-    return this.playersSubject.asObservable();
-  }
-
-  disconnect(): void {
-    this.playersSubject.complete();
-    this.loadingSubject.complete();
   }
 }

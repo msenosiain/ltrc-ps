@@ -1,71 +1,68 @@
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
-import { PlayerFilters } from '@ltrc-ps/shared-api-model';
+import { PlayerFilters, PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
 import { CommonModule } from '@angular/common';
+import { PlayerSearchComponent } from '../player-search/player-search.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'ltrc-players-list',
+  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,
-    MatPaginator,
-    MatSort,
     MatProgressBarModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    PlayerSearchComponent,
   ],
   templateUrl: './players-list.component.html',
-  styleUrl: './players-list.component.scss',
+  styleUrls: ['./players-list.component.scss'],
 })
 export class PlayersListComponent implements AfterViewInit {
   private playersService = inject(PlayersService);
 
-  displayedColumns = [
-    'photoId',
-    'firstName',
-    'lastName',
-    'nickName',
-    'position',
-  ];
-
+  displayedColumns = ['photoId', 'firstName', 'lastName', 'nickName', 'position'];
   dataSource = new PlayersDataSource(this.playersService);
-
-  // Filtros actuales
-  filters: PlayerFilters = {};
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
-    this.loadPage();
+    // Cargar primera página
+    this.dataSource.setPage(0, 10);
 
-    // Evento de sort
+    // Suscripción al sort
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.loadPage();
+      this.dataSource.setSorting(this.sort.active, this.sort.direction as 'asc' | 'desc');
     });
 
-    // Evento de paginación
-    this.paginator.page.subscribe(() => this.loadPage());
+    // Suscripción a la paginación
+    this.paginator.page.subscribe(() => {
+      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+    });
   }
 
-  loadPage() {
-    this.dataSource.load(
-      this.paginator.pageIndex ?? 0,
-      this.paginator.pageSize ?? 10,
-      this.filters,
-      this.sort.active,
-      this.sort.direction as 'asc' | 'desc'
-    );
-  }
+  applyFilters(filters: { searchTerm?: string; position?: PlayerPositionEnum }) {
+    const playerFilters: PlayerFilters = {};
 
-  applyFilters(f: PlayerFilters) {
-    this.filters = f;
     this.paginator.pageIndex = 0;
-    this.loadPage();
+    this.dataSource.setFilters(filters);
   }
 
   getPlayerPhotoUrl(playerId: string): string {

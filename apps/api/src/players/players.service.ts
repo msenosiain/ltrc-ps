@@ -7,6 +7,7 @@ import { GridFsService } from '../shared/gridfs/gridfs.service';
 import type { File as MulterFile } from 'multer';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PaginatedResponse, Player } from '@ltrc-ps/shared-api-model';
+import { PlayerFiltersDto } from './player-filter.dto';
 
 @Injectable()
 export class PlayersService {
@@ -57,24 +58,34 @@ export class PlayersService {
   }
 
   async findPaginated(
-    pagination: PaginationDto
+    pagination: PaginationDto<PlayerFiltersDto>
   ): Promise<PaginatedResponse<Player>> {
     const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
-
     const skip = (page - 1) * size;
 
-    // Construcción de filtros dinámicos
     const queryFilters = {};
 
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') return;
+    // searchTerm → firstName, lastName o nickName
+    if (filters.searchTerm) {
+      queryFilters['$or'] = [
+        { firstName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+        { lastName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+        { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+      ];
+    }
 
-      if (typeof value === 'string') {
-        queryFilters[key] = { $regex: new RegExp(value, 'i') };
-      } else {
-        queryFilters[key] = value;
-      }
-    });
+    // position → position o alternatePosition
+    if (filters.position) {
+      queryFilters['$and'] = [
+        queryFilters['$and'] || {},
+        {
+          $or: [
+            { position: filters.position },
+            { alternatePosition: filters.position },
+          ],
+        },
+      ];
+    }
 
     // Sorting
     const sort = {};
@@ -84,17 +95,18 @@ export class PlayersService {
       sort['lastName'] = -1;
     }
 
+    // Query a MongoDB
     const [items, total] = await Promise.all([
-      this.playerModel.find(queryFilters).skip(skip).limit(size).sort(sort),
-      this.playerModel.countDocuments(),
+      this.playerModel
+        .find(queryFilters)
+        .skip(skip)
+        .limit(size)
+        .sort(sort)
+        .exec(),
+      this.playerModel.countDocuments(queryFilters).exec(),
     ]);
 
-    return {
-      items,
-      total,
-      page,
-      size,
-    };
+    return { items, total, page, size };
   }
 
   async findOne(id: string) {

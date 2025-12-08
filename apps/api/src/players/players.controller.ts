@@ -20,13 +20,14 @@ import { Response } from 'express';
 import { PlayersService } from './players.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { PaginationDto } from '../shared/pagination.dto';
+import { PlayerFiltersDto } from './player-filter.dto';
 
 @Controller('players')
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Get()
-  async findPaginated(@Query() pagination: PaginationDto) {
+  async findPaginated(@Query() pagination: PaginationDto<PlayerFiltersDto>) {
     return this.playersService.findPaginated(pagination);
   }
 
