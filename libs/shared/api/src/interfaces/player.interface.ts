@@ -22,8 +22,9 @@ export interface ClothingSizes {
 export interface PlayerFilters {
   firstName?: string;
   lastName?: string;
-  nickname?: string;
+  nickName?: string;
   position?: PlayerPositionEnum;
+  alternatePosition?: PlayerPositionEnum;
   idNumber?: string;
 }
 

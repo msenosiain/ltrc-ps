@@ -1,14 +1,14 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsNumber,
   IsOptional,
   Min,
-  IsObject,
   IsString,
   IsIn,
+  ValidateNested,
 } from 'class-validator';
 
-export class PaginationDto {
+export class PaginationDto<TFilter = any> {
   @IsOptional()
   @Type(() => Number)
   @IsNumber()
@@ -22,8 +22,19 @@ export class PaginationDto {
   size = 10;
 
   @IsOptional()
-  @IsObject()
-  filters: any = {};
+  @ValidateNested()
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value) as TFilter;
+      } catch (err) {
+        return undefined; // o lanzar un error
+      }
+    }
+    return value as TFilter;
+  })
+  filters?: TFilter;
 
   @IsOptional()
   @IsString()
