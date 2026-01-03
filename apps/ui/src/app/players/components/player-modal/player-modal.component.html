@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>
+  {{ player ? `Modificar Jugador: ${player.firstName} ${player.lastName}` : 'Agregar Jugador' }}
+</h2>
+<mat-dialog-content>
+  <ltrc-player-form
+    [player]="player"
+    (formSubmit)="onSubmit($event)"
+    [submitting]="submitting"
+  ></ltrc-player-form>
+</mat-dialog-content>

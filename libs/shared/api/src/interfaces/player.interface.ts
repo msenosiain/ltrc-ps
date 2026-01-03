@@ -38,7 +38,7 @@ export interface Player extends Document {
   readonly address?: Address;
   readonly position: PlayerPositionEnum;
   readonly alternatePosition?: PlayerPositionEnum;
-  readonly size?: number;
+  readonly height?: number;
   readonly weight?: number;
   readonly clothingSizes?: ClothingSizes;
   readonly photoId?: string;
