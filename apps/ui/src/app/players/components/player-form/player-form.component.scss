@@ -1,0 +1,24 @@
+.player-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Filas del formulario */
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    flex: 1;
+    min-width: 220px;
+  }
+}
+
+/* Acciones (botón) */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

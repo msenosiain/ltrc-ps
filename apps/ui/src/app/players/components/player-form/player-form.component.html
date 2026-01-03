@@ -1,0 +1,86 @@
+<form [formGroup]="playerForm" (ngSubmit)="onSubmit()" class="player-form-container">
+
+  <!-- First / Last name -->
+  <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>First Name</mat-label>
+      <input matInput formControlName="firstName" />
+      @if (playerForm.get('firstName')?.invalid) {
+        <mat-error>First Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" />
+      @if (playerForm.get('lastName')?.invalid) {
+        <mat-error>Last Name is required</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- DNI -- fecha de nacimiento -->
+  <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>DNI</mat-label>
+      <input matInput formControlName="idNumber" />
+      @if (playerForm.get('idNumber')?.invalid) {
+        <mat-error>First Name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Last Name</mat-label>
+      <input matInput formControlName="lastName" />
+      @if (playerForm.get('lastName')?.invalid) {
+        <mat-error>Last Name is required</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- Nickname -->
+  <mat-form-field appearance="fill">
+    <mat-label>Nickname</mat-label>
+    <input matInput formControlName="nickName" />
+  </mat-form-field>
+
+  <!-- Position / Alternate -->
+  <div class="form-row">
+    <mat-form-field appearance="fill">
+      <mat-label>Position</mat-label>
+      <mat-select formControlName="position">
+        @for (position of positions; track position.id) {
+          <mat-option [value]="position.id">{{ position.name }}</mat-option>
+        }
+      </mat-select>
+      @if (playerForm.get('position')?.invalid) {
+        <mat-error>Position is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Alternate Position</mat-label>
+      <mat-select formControlName="alternatePosition">
+        @for (position of positions; track position.id) {
+          <mat-option [value]="position.id">{{ position.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Actions -->
+  <div class="form-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="submitting || playerForm.invalid"
+    >
+      {{ player ? 'Actualizar' : 'Crear' }}
+    </button>
+  </div>
+
+  @if (submitting) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+</form>
