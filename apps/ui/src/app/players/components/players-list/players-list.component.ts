@@ -4,7 +4,6 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
 import {
-  getPlayerPhotoUrl,
   Player,
   PlayerPositionEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -43,8 +42,6 @@ export class PlayersListComponent implements AfterViewInit {
   private router = inject(Router);
   private playersService = inject(PlayersService);
   private dialog = inject(MatDialog);
-
-  protected readonly getPlayerPhotoUrl = getPlayerPhotoUrl;
 
   displayedColumns = [
     'photoId',
@@ -102,5 +99,9 @@ export class PlayersListComponent implements AfterViewInit {
 
   getPositionLabel(position: PlayerPositionEnum): string {
     return this.playersService.getPositionLabel(position);
+  }
+
+  getPlayerPhotoUrl(playerId: string) {
+    return this.playersService.getPlayerPhotoUrl(playerId);
   }
 }

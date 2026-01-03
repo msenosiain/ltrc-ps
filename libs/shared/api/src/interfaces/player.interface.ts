@@ -4,6 +4,8 @@ import { ClothingSizesEnum, PlayerPositionEnum } from '../enums';
 export interface Address {
   street?: string;
   number?: string;
+  floor?: string;
+  apartment?: string;
   city?: string;
   province?: string;
   postalCode?: string;
@@ -35,7 +37,7 @@ export interface Player extends Document {
   readonly nickName?: string;
   readonly birthDate: Date;
   readonly email: string;
-  readonly address?: Address;
+  readonly address?: Address | undefined;
   readonly position: PlayerPositionEnum;
   readonly alternatePosition?: PlayerPositionEnum;
   readonly height?: number;

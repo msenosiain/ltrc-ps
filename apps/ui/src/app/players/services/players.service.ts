@@ -9,6 +9,7 @@ import {
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { positionOptions } from '../position-options';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -55,5 +56,27 @@ export class PlayersService {
   getPositionLabel(position: PlayerPositionEnum): string {
     const option = positionOptions.find((o) => o.id === position);
     return option ? option.name : position;
+  }
+
+  getPlayerPhotoUrl(playerId: string): string {
+    return `${environment.apiBaseUrl}/players/${playerId}/photo`;
+  }
+
+  calculatePlayerAge(birthDate: Date | string): number {
+    const birth = new Date(birthDate);
+    const today = new Date();
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+    const dayDifference = today.getDate() - birth.getDate();
+
+    // If the current month is before the birth month,
+    // or it is the same month but the current day is before the birth day,
+    // subtract one year.
+    if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+      age--;
+    }
+
+    return age;
   }
 }

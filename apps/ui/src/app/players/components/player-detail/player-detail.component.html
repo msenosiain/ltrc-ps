@@ -1,11 +1,6 @@
 <div class="player-detail">
   <div class="detail-container">
     @if (player) {
-      <div class="actions-bar">
-        <button mat-raised-button color="tertiary">
-          Editar
-        </button>
-      </div>
       <!-- Header -->
       <mat-card class="player-header">
         <div class="header-content">
@@ -24,35 +19,90 @@
           </div>
 
           <div class="main-info">
-            <h2>
-              {{ player.lastName }}, {{ player.firstName }}
-            </h2>
-
+            <h2> {{ player.lastName }}, {{ player.firstName }}</h2>
             @if (player.nickName) {
               <span class="nickname">"{{ player.nickName }}"</span>
             }
 
+            <div class="info-grid">
+              <div class="col">
+                <p>DNI: <strong>{{ player.idNumber }}</strong></p>
+                <p>Nacimiento: <strong>{{ player.birthDate | date: 'dd/MM/yyyy' }}</strong></p>
+                <p>Edad: <strong>{{ getPlayerAge(player.birthDate) }}</strong></p>
+              </div>
+
+              <div class="col">
+                <p>Altura: <strong>{{ player.height }}cm</strong></p>
+                <p>Peso: <strong>{{ player.weight }}kg</strong></p>
+              </div>
+
+            </div>
+
             <div class="positions">
               <mat-chip color="primary" selected>
-                {{ getPositionLabel(player.position)  }}
+                {{ getPositionLabel(player.position) }}
               </mat-chip>
 
               @if (player.alternatePosition) {
                 <mat-chip color="accent" selected>
-                  {{ getPositionLabel(player.alternatePosition)  }}
+                  {{ getPositionLabel(player.alternatePosition) }}
                 </mat-chip>
               }
             </div>
           </div>
 
+
+
+          <div class="actions-bar">
+            <button mat-raised-button color="tertiary" (click)="backToList()">
+              Volver
+            </button>
+            <button mat-raised-button color="tertiary">
+              Editar
+            </button>
+          </div>
         </div>
       </mat-card>
 
       <mat-card>
         <mat-tab-group>
-          <mat-tab label="First"> Content 1</mat-tab>
-          <mat-tab label="Second"> Content 2</mat-tab>
-          <mat-tab label="Third"> Content 3</mat-tab>
+          <mat-tab label="Datos Personales">
+            <div class="tab-content">
+              <h2>Domicilio</h2>
+              @if (player.address) {
+                <div class="info-grid">
+                  <div class="col">
+                    <p>Calle: <strong>{{ player.address.street }} {{ player.address.number }}</strong></p>
+                    <p>Ciudad: <strong>{{ player.address.city }}, {{ player.address.postalCode }}</strong></p>
+                    <p>País: <strong>{{ player.address.country }}</strong></p>
+                  </div>
+
+                  <div class="col">
+                    <p>Email: <strong>{{ player.email }}</strong></p>
+                    <p>Teléfono: <strong>{{ player.address.phoneNumber }}</strong></p>
+                  </div>
+
+                </div>
+              }
+            </div>
+
+          </mat-tab>
+          <mat-tab label="Indumentaria">
+            <div class="tab-content">
+              <h2>Indumentaria</h2>
+              @if (player.clothingSizes) {
+                <div class="info-grid">
+                  <div class="col">
+                    <p>Camiseta: <strong>{{ player.clothingSizes.jersey }}</strong></p>
+                    <p>Buzo: <strong>{{ player.clothingSizes.sweater }}</strong></p>
+                    <p>Short: <strong>{{ player.clothingSizes.shorts }}</strong></p>
+                    <p>Pantalón: <strong>{{ player.clothingSizes.pants }}</strong></p>
+                  </div>
+
+                </div>
+              }
+            </div>
+          </mat-tab>
         </mat-tab-group>
       </mat-card>
     }

@@ -28,7 +28,7 @@
     "help": "nx help",
     "start:api": "nx serve api",
     "start:api-e2e": "nx system-test api-e2e",
-    "start:ui": "nx serve ui",
+    "start:ui": "nx serve ui --configuration=development",
     "e2e": "nx e2e ui-e2e",
     "e2e:headed": "nx e2e ui-e2e --headed"
   },
@@ -66,6 +66,7 @@
     "@angular/cli": "~20.3.13",
     "@angular/compiler-cli": "~20.3.15",
     "@angular/language-service": "~20.3.15",
+    "@angular/localize": "~20.3.15",
     "@eslint/js": "^9.8.0",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.9",
