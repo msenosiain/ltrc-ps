@@ -5,25 +5,35 @@
   "prefix": "ltrc",
   "sourceRoot": "apps/ui/src",
   "tags": [],
+  "i18n": {
+    "sourceLocale": "es-AR"
+  },
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/ui",
-        "index": "apps/ui/src/index.html",
-        "main": "apps/ui/src/main.ts",
-        "polyfills": ["zone.js"],
-        "tsConfig": "apps/ui/tsconfig.app.json",
-        "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
             "input": "apps/ui/public"
           }
         ],
-        "styles": ["apps/ui/src/styles.scss"],
-        "scripts": []
+        "index": "apps/ui/src/index.html",
+        "inlineStyleLanguage": "scss",
+        "localize": [
+          "es-AR"
+        ],
+        "main": "apps/ui/src/main.ts",
+        "outputPath": "dist/apps/ui",
+        "polyfills": [
+          "zone.js"
+        ],
+        "scripts": [],
+        "styles": [
+          "apps/ui/src/styles.scss"
+        ],
+        "tsConfig": "apps/ui/tsconfig.app.json"
       },
       "configurations": {
         "production": {
@@ -37,6 +47,12 @@
               "type": "anyComponentStyle",
               "maximumWarning": "4kb",
               "maximumError": "8kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/ui/src/environments/environment.ts",
+              "with": "apps/ui/src/environments/environment.prod.ts"
             }
           ],
           "outputHashing": "all"
