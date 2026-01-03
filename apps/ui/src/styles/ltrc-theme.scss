@@ -1,0 +1,61 @@
+@use '@angular/material' as mat;
+
+/* =====================================================
+   LOS TORDOS RUGBY CLUB – OFFICIAL THEME
+   Angular Material 20.2.14 (Material 3)
+   ===================================================== */
+
+/* 🔴 PRIMARY – ROJO LOS TORDOS */
+$primary: mat.define-palette((
+  0:  #ffe6e6,
+  10: #ffcccc,
+  20: #ff9999,
+  30: #ff6666,
+  40: #ff4d4d,
+  50: #fb1e1e, // MAIN
+  60: #e51b1b,
+  70: #cc1818,
+  80: #b21515,
+  90: #991212,
+  100:#660c0c,
+));
+
+/* 🔵 SECONDARY – AZUL MARINO */
+$secondary: mat.define-palette((
+  0:  #e6e8f0,
+  10: #ccd1e1,
+  20: #99a3c3,
+  30: #6675a5,
+  40: #334786,
+  50: #132142, // MAIN
+  60: #111e3b,
+  70: #0f1a34,
+  80: #0c162d,
+  90: #0a1326,
+  100:#060c18,
+));
+
+/* Error palette */
+$error: mat.define-palette(mat.$red-palette);
+
+/* =====================================================
+   THEME DEFINITION (Material 3)
+   ===================================================== */
+$los-tordos-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: $primary,
+    secondary: $secondary,
+    error: $error,
+  ),
+  typography: (
+    brand-family: 'Roboto, Arial, sans-serif',
+    plain-family: 'Roboto, Arial, sans-serif',
+  ),
+  density: 0,
+));
+
+/* =====================================================
+   APPLY THE THEME
+   ===================================================== */
+@include mat.all-component-themes($los-tordos-theme);
