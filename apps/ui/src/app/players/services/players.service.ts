@@ -5,8 +5,10 @@ import {
   PaginatedResponse,
   PaginationQuery,
   Player,
+  PlayerPositionEnum,
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
+import { positionOptions } from '../position-options';
 
 @Injectable({
   providedIn: 'root',
@@ -48,5 +50,10 @@ export class PlayersService {
 
   deletePlayer(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.playersApiUrl}/${id}`);
+  }
+
+  getPositionLabel(position: PlayerPositionEnum): string {
+    const option = positionOptions.find((o) => o.id === position);
+    return option ? option.name : position;
   }
 }

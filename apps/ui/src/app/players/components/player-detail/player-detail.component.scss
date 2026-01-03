@@ -1,0 +1,57 @@
+.detail-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+
+  .actions-bar {
+    display: flex;
+    justify-content: end; // espacio entre filtro y botón
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+
+    button {
+      white-space: nowrap; // evita que el texto se rompa
+    }
+  }
+
+  .player-header {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+
+    .header-content {
+      display: flex;
+      gap: 1rem;
+
+      .avatar {
+        img {
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
+
+      .main-info {
+        h2 {
+          margin: 0;
+        }
+
+        .nickname {
+          font-style: italic;
+          color: gray;
+        }
+
+        .positions {
+          margin-top: 8px;
+          display: flex;
+          gap: 8px;
+        }
+      }
+    }
+  }
+
+
+}
