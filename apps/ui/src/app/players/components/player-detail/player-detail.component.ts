@@ -20,7 +20,6 @@ export class PlayerDetailComponent implements OnInit {
   private playersService = inject(PlayersService);
 
   player?: Player;
-  loading = true;
 
   ngOnInit() {
     const playerId = this.route.snapshot.paramMap.get('id');
@@ -33,7 +32,6 @@ export class PlayerDetailComponent implements OnInit {
     this.playersService.getPlayerById(playerId).subscribe({
       next: (player) => {
         this.player = player;
-        this.loading = false;
       },
       error: () => {
         // manejar 404 u otros errores
@@ -42,9 +40,9 @@ export class PlayerDetailComponent implements OnInit {
     });
   }
 
-  edit() {
-    this.router.navigate(['edit'], { relativeTo: this.route });
-  }
+  // edit() {
+  //   this.router.navigate(['edit'], { relativeTo: this.route });
+  // }
 
   delete() {
     if (!this.player) return;

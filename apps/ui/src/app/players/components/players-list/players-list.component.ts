@@ -3,10 +3,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
-import {
-  Player,
-  PlayerPositionEnum,
-} from '@ltrc-ps/shared-api-model';
+import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
 import { CommonModule } from '@angular/common';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { MatTableModule } from '@angular/material/table';
@@ -15,10 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PlayerModalComponent } from '../player-modal/player-modal.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { positionOptions } from '../../position-options';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'ltrc-players-list',
@@ -40,8 +35,8 @@ import { positionOptions } from '../../position-options';
 })
 export class PlayersListComponent implements AfterViewInit {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private playersService = inject(PlayersService);
-  private dialog = inject(MatDialog);
 
   displayedColumns = [
     'photoId',
@@ -86,11 +81,8 @@ export class PlayersListComponent implements AfterViewInit {
     this.dataSource.setFilters(filters);
   }
 
-  openPlayerModal(player?: Player) {
-    const dialogRef = this.dialog.open(PlayerModalComponent, {
-      width: '800px',
-      data: { player },
-    });
+  goToCreate() {
+    this.router.navigate(['create'], { relativeTo: this.route });
   }
 
   viewPlayerDetails(playerId: string) {

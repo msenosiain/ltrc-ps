@@ -1,39 +1,38 @@
-import { Component, inject, OnInit } from '@angular/core';
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterModule,
-} from '@angular/router';
-import { NavbarComponent } from './common/components/navbar/navbar.component';
-import { Title } from '@angular/platform-browser';
-import { filter, map, mergeMap } from 'rxjs';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { AuthService } from './auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { Observable } from 'rxjs';
+import { User } from './users/User.interface';
 
 @Component({
-  imports: [RouterModule, NavbarComponent],
   selector: 'ltrc-root',
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    MatButtonModule,
+    MatToolbarModule,
+    RouterLink,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
-  private router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
-  private titleService = inject(Title);
+export class AppComponent {
+  title = 'Los Tordos Rugby Club';
+  user$: Observable<User | null>;
 
-  ngOnInit() {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => this.activatedRoute),
-        map((route) => {
-          while (route.firstChild) route = route.firstChild;
-          return route;
-        }),
-        mergeMap((route) => route.data)
-      )
-      .subscribe((data) => {
-        const pageTitle = data['title'] || 'Los Tordos';
-        this.titleService.setTitle(pageTitle);
-      });
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private cd: ChangeDetectorRef
+  ) {
+    this.user$ = this.authService.user$;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }

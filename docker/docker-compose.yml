@@ -1,10 +1,12 @@
-version: '3.9'
 name: ltrc-ps
 services:
   mongodb:
-    image: mongo:latest  # Use the latest MongoDB image
-    container_name: mongodb
+    image: mongo:7
+    container_name: ltrc-ps-mongodb
     ports:
-      - "27017:27017"  # Expose MongoDB port on localhost
+      - "27017:27017"
     volumes:
-      - ./mongodb/mongodb_data:/data/db  # Persist MongoDB data
+      - mongodb_data:/data/db
+    restart: unless-stopped
+volumes:
+  mongodb_data:
