@@ -3,11 +3,9 @@ import { AuthCallbackComponent } from './auth-callback.component';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
-
 describe('AuthCallbackComponent', () => {
   let component: AuthCallbackComponent;
   let fixture: ComponentFixture<AuthCallbackComponent>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AuthCallbackComponent],
@@ -22,12 +20,10 @@ describe('AuthCallbackComponent', () => {
         },
       ],
     }).compileComponents();
-
     fixture = TestBed.createComponent(AuthCallbackComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
