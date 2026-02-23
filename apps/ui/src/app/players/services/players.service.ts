@@ -9,7 +9,8 @@ import {
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { positionOptions } from '../position-options';
-import { environment } from '../../../environments/environment';
+import { PlayerFormValue } from '../forms/player-form.types';
+import { mapFormToCreatePlayerDto } from '../forms/player-form.mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -41,8 +42,10 @@ export class PlayersService {
     return this.httpClient.get<Player>(`${this.playersApiUrl}/${id}`);
   }
 
-  createPlayer(player: Partial<Player>): Observable<Player> {
-    return this.httpClient.post<Player>(this.playersApiUrl, player);
+  createPlayer(playerFormValue: PlayerFormValue): Observable<Player> {
+    const dto = mapFormToCreatePlayerDto(playerFormValue);
+
+    return this.httpClient.post<Player>(this.playersApiUrl, dto);
   }
 
   updatePlayer(id: string, player: Partial<Player>): Observable<Player> {
@@ -59,7 +62,7 @@ export class PlayersService {
   }
 
   getPlayerPhotoUrl(playerId: string): string {
-    return `${environment.apiBaseUrl}/players/${playerId}/photo`;
+    return `${this.playersApiUrl}/${playerId}/photo`;
   }
 
   calculatePlayerAge(birthDate: Date | string): number {
