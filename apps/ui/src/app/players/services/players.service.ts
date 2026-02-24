@@ -48,8 +48,30 @@ export class PlayersService {
     return this.httpClient.post<Player>(this.playersApiUrl, dto);
   }
 
+  createPlayerWithPhoto(playerFormValue: PlayerFormValue, file?: File) {
+    const dto = mapFormToCreatePlayerDto(playerFormValue);
+    if (!file) return this.createPlayer(playerFormValue);
+
+    const form = new FormData();
+    form.append('file', file);
+    form.append('dto', JSON.stringify(dto));
+
+    return this.httpClient.post<Player>(this.playersApiUrl, form);
+  }
+
   updatePlayer(id: string, player: Partial<Player>): Observable<Player> {
     return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, player);
+  }
+
+  updatePlayerWithPhoto(id: string, playerFormValue: PlayerFormValue, file?: File) {
+    const dto = mapFormToCreatePlayerDto(playerFormValue);
+    if (!file) return this.updatePlayer(id, dto as any);
+
+    const form = new FormData();
+    form.append('file', file);
+    form.append('dto', JSON.stringify(dto));
+
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, form);
   }
 
   deletePlayer(id: string): Observable<void> {
@@ -63,6 +85,12 @@ export class PlayersService {
 
   getPlayerPhotoUrl(playerId: string): string {
     return `${this.playersApiUrl}/${playerId}/photo`;
+  }
+
+  uploadPlayerPhoto(playerId: string, file: File) {
+    const form = new FormData();
+    form.append('file', file);
+    return this.httpClient.post(`${this.playersApiUrl}/${playerId}/photo`, form);
   }
 
   calculatePlayerAge(birthDate: Date | string): number {

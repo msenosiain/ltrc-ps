@@ -1,5 +1,17 @@
-<mat-card>
-  <mat-card-title>{{ editing ? 'Editar jugador' : 'Crear jugador' }}</mat-card-title>
-  <ltrc-player-form [player]="player" [submitting]="submitting" (formSubmit)="onFormSubmit($event)"></ltrc-player-form>
-</mat-card>
+<div class="player-editor">
 
+  <div class="editor-header">
+    <h2 class="editor-title">{{ editing ? 'Editar jugador' : 'Nuevo jugador' }}</h2>
+    @if (submitting) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </div>
+
+  <ltrc-player-form
+    [player]="player"
+    [submitting]="submitting"
+    (formSubmitWithPhoto)="onFormSubmitWithPhoto($event)"
+    (cancel)="onCancel()"
+  />
+
+</div>

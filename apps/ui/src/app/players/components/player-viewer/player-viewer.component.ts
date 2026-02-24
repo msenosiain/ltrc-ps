@@ -2,29 +2,36 @@ import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import { Player, PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
-import { MatCard } from '@angular/material/card';
-import { MatChip } from '@angular/material/chips';
-import { MatButton } from '@angular/material/button';
-import { MatTab, MatTabGroup } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ltrc-player-viewer',
   standalone: true,
-  imports: [MatCard, MatChip, MatButton, MatTabGroup, MatTab, DatePipe],
+  imports: [
+    MatCardModule,
+    MatChipsModule,
+    MatButtonModule,
+    MatIconModule,
+    DatePipe,
+  ],
   templateUrl: './player-viewer.component.html',
   styleUrl: './player-viewer.component.scss',
 })
 export class PlayerViewerComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private playersService = inject(PlayersService);
-  private destroyRef = inject(DestroyRef);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly playersService = inject(PlayersService);
+  private readonly destroyRef = inject(DestroyRef);
 
   player?: Player;
 
-  ngOnInit() {
+  ngOnInit(): void {
     const playerId = this.route.snapshot.paramMap.get('id');
 
     if (!playerId) {
@@ -32,40 +39,34 @@ export class PlayerViewerComponent implements OnInit {
       return;
     }
 
-    this.playersService.getPlayerById(playerId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (player) => {
-        this.player = player;
-      },
-      error: () => {
-        // manejar 404 u otros errores
-        this.router.navigate(['/players']);
-      },
-    });
+    this.playersService
+      .getPlayerById(playerId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (player) => (this.player = player),
+        error: () => this.router.navigate(['/players']),
+      });
   }
 
-  edit() {
-    this.router.navigate(['edit'], { relativeTo: this.route });
+  edit(): void {
+    this.router.navigate(['/players', this.player!.id, 'edit']);
   }
 
-  // Eliminar: la acción de borrado se implementará en una tarea separada si es necesaria.
+  backToList(): void {
+    this.router.navigate(['..'], { relativeTo: this.route });
+  }
 
-  getPlayerPhotoUrl(playerId?: string) {
-    if (!playerId) {
-      return '/placeholder.jpg';
-    }
-    return this.playersService.getPlayerPhotoUrl(playerId);
+  getPlayerPhotoUrl(playerId?: string): string {
+    return playerId
+      ? this.playersService.getPlayerPhotoUrl(playerId)
+      : '/placeholder.jpg';
   }
 
   getPositionLabel(position: PlayerPositionEnum): string {
     return this.playersService.getPositionLabel(position);
   }
 
-  getPlayerAge(birthDate: Date) {
+  getPlayerAge(birthDate: Date): number {
     return this.playersService.calculatePlayerAge(birthDate);
-  }
-
-  backToList(){
-    // Navegar relativo al padre para volver a la lista (dashboard -> players)
-    this.router.navigate(['..'], { relativeTo: this.route });
   }
 }
