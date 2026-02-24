@@ -16,7 +16,14 @@ describe('PlayersController', () => {
         {
           provide: PlayersService,
           useValue: {
-            findAll: jest.fn().mockResolvedValue(playersArray),
+            findPaginated: jest
+              .fn()
+              .mockResolvedValue({
+                items: playersArray,
+                total: playersArray.length,
+                page: 1,
+                size: 10,
+              }),
             create: jest
               .fn()
               .mockImplementation((createPlayerDto: CreatePlayerDto) =>
@@ -43,9 +50,14 @@ describe('PlayersController', () => {
       });
     });
   });
-  describe('findAll()', () => {
-    it('should get an array of players', () => {
-      expect(controller.findAll()).resolves.toEqual(playersArray);
+  describe('findPaginated()', () => {
+    it('should get a paginated response of players', () => {
+      expect(controller.findPaginated({ page: 1, size: 10 })).resolves.toEqual({
+        items: playersArray,
+        total: playersArray.length,
+        page: 1,
+        size: 10,
+      });
     });
   });
 });

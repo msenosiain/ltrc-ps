@@ -1,0 +1,25 @@
+info:
+  name: Players - PATCH /players/:id (multipart/form-data)
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/players/:id"
+  body:
+    type: multipart-form
+    data:
+      - name: nickName
+        type: text
+        value: Leo
+      - name: photo
+        type: file
+        value:
+          - ""
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,40 @@
+info:
+  name: Players - POST /players (multipart/form-data)
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/players"
+  body:
+    type: multipart-form
+    data:
+      - name: lastName
+        type: text
+        value: Arroyo
+      - name: firstName
+        type: text
+        value: Manuel
+      - name: idNumber
+        type: text
+        value: "12345678"
+      - name: birthDate
+        type: text
+        value: 09/06/1987
+      - name: email
+        type: text
+        value: leo@example.com
+      - name: position
+        type: text
+        value: Hooker
+      - name: photo
+        type: file
+        value:
+          - /Users/miguel/Projects/LTRC/hq720.jpg
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
