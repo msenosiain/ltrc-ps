@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@ltrc-ps/shared-api-model": ["libs/shared/api/src/index.ts"]
-    }
+    },
+    "types": ["jest", "node"]
   },
   "exclude": ["node_modules", "tmp"]
 }

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { PlayersListComponent } from './components/players-list/players-list.component';
-import { PlayerDetailComponent } from './components/player-detail/player-detail.component';
-import { PlayerCreateComponent } from './components/player-create/player-create.component';
+import { PlayerViewerComponent } from './components/player-viewer/player-viewer.component';
+import { PlayerEditorComponent } from './components/player-editor/player-editor.component';
 
 export const PLAYERS_ROUTES: Routes = [
   {
@@ -11,13 +11,19 @@ export const PLAYERS_ROUTES: Routes = [
   },
   {
     path: 'create',
-    component: PlayerCreateComponent,
+    component: PlayerEditorComponent,
     data: { title: 'Crear jugador' },
   },
   {
     path: ':id',
-    component: PlayerDetailComponent,
+    component: PlayerViewerComponent,
     data: { title: 'Detalle del jugador' },
+    children: [
+      {
+        path: 'edit',
+        component: PlayerEditorComponent,
+        data: { title: 'Editar jugador' },
+      },
+    ],
   },
-
 ];

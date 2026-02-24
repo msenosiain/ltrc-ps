@@ -1,0 +1,21 @@
+info:
+  name: Players - GET /players/:id/photo
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/players/:id/photo"
+  params:
+    - name: id
+      value: 699d23d42fe26f9478378a8f
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Devuelve la foto del jugador (image/jpeg)

@@ -2,15 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
+
   const configService = app.get(ConfigService);
 
   Logger.log('Enabling CORS');
   const corsAllowedOrigins = String(
-    configService.get<string | undefined>('API_CORS_ALLOWED_ORIGINS') || '',
+    configService.get<string | undefined>('API_CORS_ALLOWED_ORIGINS') || ''
   );
 
   // Parse CSV, trim and remove empty entries
@@ -40,8 +40,14 @@ async function bootstrap() {
         }
 
         // Also allow passing just the host without protocol if configured that way
-        const originHost = origin.replace(/^https?:\/\//, '').replace(/:\d+$/, '');
-        if (corsAllowedOriginsArray.some((o) => o.replace(/^https?:\/\//, '') === originHost)) {
+        const originHost = origin
+          .replace(/^https?:\/\//, '')
+          .replace(/:\d+$/, '');
+        if (
+          corsAllowedOriginsArray.some(
+            (o) => o.replace(/^https?:\/\//, '') === originHost
+          )
+        ) {
           return callback(null, true);
         }
 
@@ -53,7 +59,7 @@ async function bootstrap() {
   }
 
   // Fallback middleware to ensure Access-Control headers are present for browsers
-  app.use((req: Request, res: Response, next: NextFunction) => {
+  app.use((req: any, res: any, next: any) => {
     const origin = req.headers?.origin;
     if (!origin) return next();
 
@@ -62,19 +68,24 @@ async function bootstrap() {
       allowsAll ||
       corsAllowedOriginsArray.includes(origin) ||
       corsAllowedOriginsArray.includes(originHost) ||
-      corsAllowedOriginsArray.some((o) => o.replace(/^https?:\/\//, '') === originHost);
+      corsAllowedOriginsArray.some(
+        (o) => o.replace(/^https?:\/\//, '') === originHost
+      );
 
     if (allowed) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       res.setHeader(
         'Access-Control-Allow-Headers',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
       );
       res.setHeader('Vary', 'Origin');
 
       if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+        res.setHeader(
+          'Access-Control-Allow-Methods',
+          'GET,POST,PUT,DELETE,OPTIONS'
+        );
         res.statusCode = 204;
         return res.end();
       }
@@ -84,20 +95,28 @@ async function bootstrap() {
   });
 
   Logger.log('Adding global prefix');
-  const globalPrefix = configService.get<string>('API_GLOBAL_PREFIX', '/api/v1');
-  app.setGlobalPrefix(globalPrefix);
+  const rawGlobalPrefix = String(
+    configService.get<string>('API_GLOBAL_PREFIX', '/api/v1')
+  );
+  // Normalize to avoid repeated slashes and ensure we pass a prefix without leading slash to Nest
+  const normalizedPrefix = rawGlobalPrefix.replace(/^\/+|\/+$/g, '');
+  // If nothing left (root), leave it empty so setGlobalPrefix won't add an extra slash
+  const prefixForNest = normalizedPrefix || '';
+  app.setGlobalPrefix(prefixForNest);
 
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
       whitelist: true,
-    }),
+    })
   );
 
   const port = configService.get<number>('API_PORT') || 3000;
   await app.listen(port);
 
-  Logger.log(`Listening at http://localhost:${port}${globalPrefix}`);
+  // Show a friendly URL with leading slash (even if we passed the prefix without it to Nest)
+  const displayPrefix = prefixForNest ? `/${prefixForNest}` : '';
+  Logger.log(`Listening at http://localhost:${port}${displayPrefix}`);
 }
 
 bootstrap();

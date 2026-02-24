@@ -1,0 +1,27 @@
+info:
+  name: Auth - POST /auth/register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/register"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "email": "new.user@example.com",
+        "firstName": "New",
+        "lastName": "User",
+        "password": "changeme"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

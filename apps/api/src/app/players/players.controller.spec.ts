@@ -7,10 +7,8 @@ import {
   createPlayerDtoPlain,
   playersArray,
 } from '../shared/mocks/playerMocks';
-
 describe('PlayersController', () => {
   let controller: PlayersController;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PlayersController],
@@ -18,7 +16,14 @@ describe('PlayersController', () => {
         {
           provide: PlayersService,
           useValue: {
-            findAll: jest.fn().mockResolvedValue(playersArray),
+            findPaginated: jest
+              .fn()
+              .mockResolvedValue({
+                items: playersArray,
+                total: playersArray.length,
+                page: 1,
+                size: 10,
+              }),
             create: jest
               .fn()
               .mockImplementation((createPlayerDto: CreatePlayerDto) =>
@@ -28,31 +33,31 @@ describe('PlayersController', () => {
         },
       ],
     }).compile();
-
     controller = module.get(PlayersController);
   });
-
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
   describe('create()', () => {
     it('should create a new player', () => {
       const createPlayerDto = plainToClass(
         CreatePlayerDto,
         createPlayerDtoPlain
       );
-
       expect(controller.create(createPlayerDto)).resolves.toEqual({
         _id: '1',
         ...createPlayerDto,
       });
     });
   });
-
-  describe('findAll()', () => {
-    it('should get an array of players', () => {
-      expect(controller.findAll()).resolves.toEqual(playersArray);
+  describe('findPaginated()', () => {
+    it('should get a paginated response of players', () => {
+      expect(controller.findPaginated({ page: 1, size: 10 })).resolves.toEqual({
+        items: playersArray,
+        total: playersArray.length,
+        page: 1,
+        size: 10,
+      });
     });
   });
 });

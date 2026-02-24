@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "Bruno - LTRC API",
+    "_postman_id": "bruno-ltrc-api",
+    "description": "Colección para probar endpoints de la API LTRC (compatible Postman/Bruno). Usa la variable {{baseUrl}} para la URL base.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "access_token", "value": "" },
+    { "key": "refresh_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health - GET /health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Auth - POST /auth/login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"pass\": \"secret\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/login"
+      }
+    },
+    {
+      "name": "Auth - POST /auth/register",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"new.user@example.com\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"password\": \"changeme\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/register"
+      }
+    },
+    {
+      "name": "Players - GET /players (paginated)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/players?page=1&size=10"
+      }
+    },
+    {
+      "name": "Players - POST /players (multipart/form-data)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "lastName", "value": "Messi", "type": "text" },
+            { "key": "firstName", "value": "Lionel", "type": "text" },
+            { "key": "idNumber", "value": "12345678", "type": "text" },
+            { "key": "birthDate", "value": "09/06/1987", "type": "text" },
+            { "key": "email", "value": "leo@example.com", "type": "text" },
+            { "key": "position", "value": "FORWARD", "type": "text" },
+            { "key": "photo", "type": "file", "src": "" }
+          ]
+        },
+        "url": "{{baseUrl}}/players"
+      }
+    },
+    {
+      "name": "Players - GET /players/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/players/:id",
+        "description": "Reemplazar :id por el _id del jugador devuelto al crear"
+      }
+    },
+    {
+      "name": "Players - GET /players/:id/photo",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/players/:id/photo",
+        "description": "Devuelve la foto del jugador (image/jpeg)"
+      }
+    },
+    {
+      "name": "Players - PATCH /players/:id (multipart/form-data)",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "nickName", "value": "Leo", "type": "text" },
+            { "key": "photo", "type": "file", "src": "" }
+          ]
+        },
+        "url": "{{baseUrl}}/players/:id"
+      }
+    },
+    {
+      "name": "Players - DELETE /players/:id",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/players/:id"
+      }
+    },
+    {
+      "name": "Users - POST /users (requires ADMIN)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{access_token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin.user@example.com\",\n  \"firstName\": \"Admin\",\n  \"lastName\": \"User\",\n  \"password\": \"changeme\"\n}"
+        },
+        "url": "{{baseUrl}}/users"
+      }
+    }
+  ]
+}
+
