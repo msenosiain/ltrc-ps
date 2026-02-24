@@ -1,3 +1,25 @@
-/* estilos heredados del componente anterior (player-create) */
-.player-form { }
+.player-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
 
+.editor-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--mat-app-background-color, #fafafa);
+  padding: 16px 24px 0;
+  margin-bottom: 12px;
+
+  mat-progress-bar {
+    margin-top: 8px;
+  }
+}
+
+.editor-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--mat-app-on-background, rgba(0, 0, 0, 0.87));
+}

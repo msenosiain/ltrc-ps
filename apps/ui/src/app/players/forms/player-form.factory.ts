@@ -3,10 +3,11 @@ import {
   ClothingSizesEnum,
   PlayerPositionEnum,
 } from '@ltrc-ps/shared-api-model';
+import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
 
 export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
-    photo: [null],
+    photo: fb.control<PhotoValue | null>(null, Validators.required),
     firstName: fb.nonNullable.control('', Validators.required),
     lastName: fb.nonNullable.control('', Validators.required),
     nickName: fb.nonNullable.control(''),
@@ -26,10 +27,10 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
     address: fb.group({
       street: fb.nonNullable.control(''),
       number: fb.nonNullable.control(''),
+      floorApartment: fb.nonNullable.control(''),
       city: fb.nonNullable.control(''),
-      province: fb.nonNullable.control(''),
       postalCode: fb.nonNullable.control(''),
-      country: fb.nonNullable.control(''),
+      neighborhood: fb.nonNullable.control(''),
       phoneNumber: fb.nonNullable.control('', Validators.required),
     }),
 

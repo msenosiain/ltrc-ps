@@ -2,8 +2,11 @@ import {
   ClothingSizesEnum,
   PlayerPositionEnum,
 } from '@ltrc-ps/shared-api-model';
+import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
 
 export type PlayerFormValue = {
+  photo: PhotoValue | null;
+
   firstName: string;
   lastName: string;
   nickName: string;
@@ -20,10 +23,10 @@ export type PlayerFormValue = {
   address: {
     street: string;
     number: string;
+    floorApartment: string;
     city: string;
-    province: string;
     postalCode: string;
-    country: string;
+    neighborhood: string;
     phoneNumber: string;
   };
 

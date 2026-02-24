@@ -18,12 +18,10 @@ export const PLAYERS_ROUTES: Routes = [
     path: ':id',
     component: PlayerViewerComponent,
     data: { title: 'Detalle del jugador' },
-    children: [
-      {
-        path: 'edit',
-        component: PlayerEditorComponent,
-        data: { title: 'Editar jugador' },
-      },
-    ],
+  },
+  {
+    path: ':id/edit',
+    component: PlayerEditorComponent,
+    data: { title: 'Editar jugador' },
   },
 ];

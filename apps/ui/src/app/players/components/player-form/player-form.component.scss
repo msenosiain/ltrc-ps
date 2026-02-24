@@ -1,24 +1,208 @@
+// player-form.component.scss
+
+$col:      240px;
+$gap:      12px;
+$row-gap:  12px;  // mismo en todas las cards
+$photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas grillas
+
+// -- form container
 .player-form-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: block;
+  padding: 0;
 }
 
-/* Filas del formulario */
-.form-row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+.player-form-container mat-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
 
-  mat-form-field {
-    flex: 1;
-    min-width: 220px;
+.form-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
 }
 
-/* Acciones (botón) */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
+// == CARD 1 - DATOS PERSONALES
+// cols: [foto 160px] [240px] [240px] [240px]
+// foto: col 1 / rows 1-2
+// fila 1: Nombre, Apellido, Apodo
+// fila 2: DNI, Fecha nac, Email
+
+.personal-grid {
+  display: grid;
+  grid-template-columns: $photo repeat(3, $col);
+  grid-template-rows: auto auto;
+  column-gap: $gap;
+  row-gap: $row-gap;
+  align-items: start;
+
+  .photo-column {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    gap: 8px;
+  }
+
+  .photo-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 160px;  // foto cuadrada, no mas alta que los 2 campos juntos
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-placeholder {
+      font-size: 0.75rem;
+      color: #9e9e9e;
+      text-align: center;
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  mat-form-field:nth-of-type(1) { grid-column: 2; grid-row: 1; }
+  mat-form-field:nth-of-type(2) { grid-column: 3; grid-row: 1; }
+  mat-form-field:nth-of-type(3) { grid-column: 4; grid-row: 1; }
+  mat-form-field:nth-of-type(4) { grid-column: 2; grid-row: 2; }
+  mat-form-field:nth-of-type(5) { grid-column: 3; grid-row: 2; }
+  mat-form-field:nth-of-type(6) { grid-column: 4; grid-row: 2; }
+}
+
+// == CARD 2 - DIRECCION
+// 4 cols x 2 filas
+// fila 1: Calle (span 2), Numero, Piso/Depto
+// fila 2: Ciudad, CP, Telefono, Barrio
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(4, $col);
+  grid-template-rows: auto auto;
+  column-gap: $gap;
+  row-gap: $row-gap;
+  align-items: start;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .street-field       { grid-column: 1 / span 2; grid-row: 1; }
+  .number-field       { grid-column: 3;           grid-row: 1; }
+  .floor-apt-field    { grid-column: 4;           grid-row: 1; }
+  .city-field         { grid-column: 1;           grid-row: 2; }
+  .postal-field       { grid-column: 2;           grid-row: 2; }
+  .phone-field        { grid-column: 3;           grid-row: 2; }
+  .neighborhood-field { grid-column: 4;           grid-row: 2; }
+  .grid-spacer        { display: none; }
+}
+
+// == CARD 3 - DATOS DEPORTIVOS / CARD 4 - INDUMENTARIA
+// 4 cols iguales, 1 fila
+
+.section-grid,
+.clothing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, $col);
+  gap: $gap;
+  align-items: start;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// == RESPONSIVE
+
+@media (max-width: 900px) {
+  .personal-grid {
+    grid-template-columns: $photo 1fr 1fr;
+
+    .photo-column { grid-row: 1 / span 3; }
+
+    mat-form-field:nth-of-type(1) { grid-column: 2; grid-row: 1; }
+    mat-form-field:nth-of-type(2) { grid-column: 3; grid-row: 1; }
+    mat-form-field:nth-of-type(3) { grid-column: 2; grid-row: 2; }
+    mat-form-field:nth-of-type(4) { grid-column: 3; grid-row: 2; }
+    mat-form-field:nth-of-type(5) { grid-column: 2; grid-row: 3; }
+    mat-form-field:nth-of-type(6) { grid-column: 3; grid-row: 3; }
+  }
+
+  .address-grid {
+    grid-template-columns: 1fr 1fr;
+
+    .street-field       { grid-column: 1 / -1; grid-row: 1; }
+    .number-field       { grid-column: 1;       grid-row: 2; }
+    .floor-apt-field    { grid-column: 2;       grid-row: 2; }
+    .city-field         { grid-column: 1;       grid-row: 3; }
+    .postal-field       { grid-column: 2;       grid-row: 3; }
+    .phone-field        { grid-column: 1;       grid-row: 4; }
+    .neighborhood-field { grid-column: 2;       grid-row: 4; }
+  }
+
+  .section-grid,
+  .clothing-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .personal-grid {
+    grid-template-columns: 1fr;
+
+    .photo-column {
+      grid-column: 1;
+      grid-row: 1;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    mat-form-field:nth-of-type(1) { grid-column: 1; grid-row: 2; }
+    mat-form-field:nth-of-type(2) { grid-column: 1; grid-row: 3; }
+    mat-form-field:nth-of-type(3) { grid-column: 1; grid-row: 4; }
+    mat-form-field:nth-of-type(4) { grid-column: 1; grid-row: 5; }
+    mat-form-field:nth-of-type(5) { grid-column: 1; grid-row: 6; }
+    mat-form-field:nth-of-type(6) { grid-column: 1; grid-row: 7; }
+  }
+
+  .address-grid {
+    grid-template-columns: 1fr;
+
+    .street-field,
+    .number-field,
+    .floor-apt-field,
+    .city-field,
+    .postal-field,
+    .phone-field,
+    .neighborhood-field { grid-column: 1; grid-row: unset; }
+  }
+
+  .section-grid,
+  .clothing-grid {
+    grid-template-columns: 1fr;
+  }
 }

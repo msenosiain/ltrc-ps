@@ -4,12 +4,10 @@ import { ClothingSizesEnum, PlayerPositionEnum } from '../enums';
 export interface Address {
   street?: string;
   number?: string;
-  floor?: string;
-  apartment?: string;
+  floorApartment?: string;
+  neighborhood?: string;
   city?: string;
-  province?: string;
   postalCode?: string;
-  country?: string;
   phoneNumber: string;
 }
 
@@ -45,6 +43,6 @@ export interface Player extends Document {
   readonly weight?: number;
   readonly clothingSizes?: ClothingSizes;
   readonly photoId?: string;
-  readonly createdAt?: Date;  // agregados por timestamps: true
+  readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }

@@ -7,67 +7,85 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Player, PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { Player, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 import { positionOptions } from '../../position-options';
+import { buildCreatePlayerForm } from '../../forms/player-form.factory';
+import { PlayerFormValue } from '../../forms/player-form.types';
+import { PlayersService } from '../../services/players.service';
+import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
+
+export interface PlayerFormSubmitEvent {
+  payload: PlayerFormValue;
+  file?: File;
+}
 
 @Component({
+  standalone: true,
+  selector: 'ltrc-player-form',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
     MatProgressBarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    PlayerPhotoFieldComponent,
   ],
-  selector: 'ltrc-player-form',
   styleUrls: ['./player-form.component.scss'],
   templateUrl: './player-form.component.html',
 })
 export class PlayerFormComponent implements OnChanges {
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
+  private readonly playersService = inject(PlayersService);
 
-  @Input() player?: Player; // Si viene, es edición
+  @Input() player?: Player;
   @Input() submitting = false;
 
-  @Output() formSubmit = new EventEmitter<Partial<Player>>();
+  @Output() readonly formSubmitWithPhoto =
+    new EventEmitter<PlayerFormSubmitEvent>();
+  @Output() readonly cancel = new EventEmitter<void>();
 
-  positions = positionOptions;
+  readonly positions = positionOptions;
+  readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
-  playerForm: FormGroup = this.fb.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    nickName: [''],
-    idNumber: ['', Validators.required, Validators.maxLength(8)],
-    birthDate: ['', Validators.required],
-    email: ['', Validators.required, Validators.email],
-    position: [null, Validators.required],
-    alternatePosition: [null],
-  });
+  playerForm: FormGroup = buildCreatePlayerForm(this.fb);
 
-  ngOnChanges(changes: SimpleChanges) {
+  get existingPhotoUrl(): string | undefined {
+    return this.player?.photoId && this.player.id
+      ? this.playersService.getPlayerPhotoUrl(this.player.id)
+      : undefined;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {
       this.playerForm.patchValue(this.player);
     }
   }
 
-  onSubmit() {
-    if (this.playerForm.invalid) return;
-    this.formSubmit.emit(this.playerForm.value);
+  onCancel(): void {
+    this.cancel.emit();
   }
 
-  getPositionLabel(position: PlayerPositionEnum): string {
-    const option = this.positions.find((o) => o.id === position);
-    return option ? option.name : position;
+  onSubmit(): void {
+    if (this.playerForm.invalid) return;
+    const photoValue = this.playerForm.get('photo')?.value;
+    this.formSubmitWithPhoto.emit({
+      payload: this.playerForm.getRawValue() as PlayerFormValue,
+      file: photoValue?.file,
+    });
   }
 }

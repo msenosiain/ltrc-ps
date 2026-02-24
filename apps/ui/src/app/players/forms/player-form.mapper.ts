@@ -1,9 +1,7 @@
-import { PlayerFormValue } from './player-form.types';
 import { Player } from '@ltrc-ps/shared-api-model';
+import { PlayerFormValue } from './player-form.types';
 
-/**
- * FORM → CREATE DTO (NestJS)
- */
+// FORM -> CREATE DTO (NestJS)
 export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
   return {
     firstName: value.firstName,
@@ -14,18 +12,18 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     email: value.email,
     position: value.position!,
     alternatePosition: value.alternatePosition ?? undefined,
-    size: value.height ?? undefined,
+    height: value.height ?? undefined,
     weight: value.weight ?? undefined,
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
   };
 }
 
-/**
- * PLAYER → FORM (EDIT)
- */
+// PLAYER -> FORM (EDIT)
 export function mapPlayerToForm(player: Player): PlayerFormValue {
   return {
+    photo: null, // la foto existente se maneja via existingPhotoUrl, no como PhotoValue
+
     firstName: player.firstName,
     lastName: player.lastName,
     nickName: player.nickName ?? '',
@@ -42,10 +40,10 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
     address: {
       street: player.address?.street ?? '',
       number: player.address?.number ?? '',
+      floorApartment: player.address?.floorApartment ?? '',
       city: player.address?.city ?? '',
-      province: player.address?.province ?? '',
       postalCode: player.address?.postalCode ?? '',
-      country: player.address?.country ?? '',
+      neighborhood: player.address?.neighborhood ?? '',
       phoneNumber: player.address?.phoneNumber ?? '',
     },
 
@@ -58,33 +56,29 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
   };
 }
 
-/* ----------------- helpers ----------------- */
+// helpers
 
 function mapAddress(value: PlayerFormValue) {
-  const address = value.address;
-
-  if (!address.phoneNumber) return undefined;
+  const a = value.address;
+  if (!a.phoneNumber) return undefined;
 
   return {
-    street: address.street || undefined,
-    number: address.number || undefined,
-    city: address.city || undefined,
-    province: address.province || undefined,
-    postalCode: address.postalCode || undefined,
-    country: address.country || undefined,
-    phoneNumber: address.phoneNumber,
+    street: a.street || undefined,
+    number: a.number || undefined,
+    floorApartment: a.floorApartment || undefined,
+    city: a.city || undefined,
+    postalCode: a.postalCode || undefined,
+    neighborhood: a.neighborhood || undefined,
+    phoneNumber: a.phoneNumber,
   };
 }
 
 function mapClothingSizes(value: PlayerFormValue) {
-  const clothing = {
+  const c = {
     jersey: value.clothingSizes.jersey ?? undefined,
     shorts: value.clothingSizes.shorts ?? undefined,
     sweater: value.clothingSizes.sweater ?? undefined,
     pants: value.clothingSizes.pants ?? undefined,
   };
-
-  return Object.values(clothing).some((v) => v !== undefined)
-    ? clothing
-    : undefined;
+  return Object.values(c).some((v) => v !== undefined) ? c : undefined;
 }

@@ -1,86 +1,217 @@
 <form [formGroup]="playerForm" (ngSubmit)="onSubmit()" class="player-form-container">
 
-  <!-- First / Last name -->
-  <div class="form-row">
-    <mat-form-field appearance="fill">
-      <mat-label>First Name</mat-label>
-      <input matInput formControlName="firstName" />
-      @if (playerForm.get('firstName')?.invalid) {
-        <mat-error>First Name is required</mat-error>
-      }
-    </mat-form-field>
+  <!-- DATOS PERSONALES -->
+  <mat-card class="personal-card">
+    <div class="card-grid personal-grid">
 
-    <mat-form-field appearance="fill">
-      <mat-label>Last Name</mat-label>
-      <input matInput formControlName="lastName" />
-      @if (playerForm.get('lastName')?.invalid) {
-        <mat-error>Last Name is required</mat-error>
-      }
-    </mat-form-field>
-  </div>
+      <div class="photo-column">
+        <ltrc-player-photo-field
+          formControlName="photo"
+          [required]="true"
+          [existingPhotoUrl]="existingPhotoUrl"
+        />
+      </div>
 
-  <!-- DNI -- fecha de nacimiento -->
-  <div class="form-row">
-    <mat-form-field appearance="fill">
-      <mat-label>DNI</mat-label>
-      <input matInput formControlName="idNumber" />
-      @if (playerForm.get('idNumber')?.invalid) {
-        <mat-error>First Name is required</mat-error>
-      }
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Last Name</mat-label>
-      <input matInput formControlName="lastName" />
-      @if (playerForm.get('lastName')?.invalid) {
-        <mat-error>Last Name is required</mat-error>
-      }
-    </mat-form-field>
-  </div>
-
-  <!-- Nickname -->
-  <mat-form-field appearance="fill">
-    <mat-label>Nickname</mat-label>
-    <input matInput formControlName="nickName" />
-  </mat-form-field>
-
-  <!-- Position / Alternate -->
-  <div class="form-row">
-    <mat-form-field appearance="fill">
-      <mat-label>Position</mat-label>
-      <mat-select formControlName="position">
-        @for (position of positions; track position.id) {
-          <mat-option [value]="position.id">{{ position.name }}</mat-option>
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="firstName" />
+        @if (playerForm.get('firstName')?.invalid) {
+          <mat-error>Nombre es obligatorio</mat-error>
         }
-      </mat-select>
-      @if (playerForm.get('position')?.invalid) {
-        <mat-error>Position is required</mat-error>
-      }
-    </mat-form-field>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Alternate Position</mat-label>
-      <mat-select formControlName="alternatePosition">
-        @for (position of positions; track position.id) {
-          <mat-option [value]="position.id">{{ position.name }}</mat-option>
+      <mat-form-field appearance="outline">
+        <mat-label>Apellido</mat-label>
+        <input matInput formControlName="lastName" />
+        @if (playerForm.get('lastName')?.invalid) {
+          <mat-error>Apellido es obligatorio</mat-error>
         }
-      </mat-select>
-    </mat-form-field>
-  </div>
+      </mat-form-field>
 
-  <!-- Actions -->
+      <mat-form-field appearance="outline">
+        <mat-label>Apodo</mat-label>
+        <input matInput formControlName="nickName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>DNI</mat-label>
+        <input matInput formControlName="idNumber" />
+        @if (playerForm.get('idNumber')?.invalid) {
+          <mat-error>DNI es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de nacimiento</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="birthDate" />
+        <mat-datepicker-toggle matSuffix [for]="picker" />
+        <mat-datepicker #picker />
+        @if (playerForm.get('birthDate')?.invalid) {
+          <mat-error>Fecha invalida</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+        @if (playerForm.get('email')?.invalid) {
+          <mat-error>Correo electronico invalido</mat-error>
+        }
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- DOMICILIO -->
+  <mat-card class="address-card">
+    <mat-card-title>Domicilio</mat-card-title>
+    <div class="card-grid address-grid" formGroupName="address">
+
+      <mat-form-field appearance="outline" class="street-field">
+        <mat-label>Calle</mat-label>
+        <input matInput formControlName="street" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="number-field">
+        <mat-label>Numero</mat-label>
+        <input matInput formControlName="number" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="floor-apt-field">
+        <mat-label>Piso / Depto</mat-label>
+        <input matInput formControlName="floorApartment" placeholder="ej: 2B, PB" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="city-field">
+        <mat-label>Ciudad</mat-label>
+        <input matInput formControlName="city" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="postal-field">
+        <mat-label>Codigo postal</mat-label>
+        <input matInput formControlName="postalCode" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="phone-field">
+        <mat-label>Telefono</mat-label>
+        <input matInput formControlName="phoneNumber" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="neighborhood-field">
+        <mat-label>Barrio</mat-label>
+        <input matInput formControlName="neighborhood" />
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- DATOS DEPORTIVOS -->
+  <mat-card>
+    <mat-card-title>Datos deportivos</mat-card-title>
+    <div class="card-grid section-grid">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Posicion</mat-label>
+        <mat-select formControlName="position">
+          @for (pos of positions; track pos.id) {
+            <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+          }
+        </mat-select>
+        @if (playerForm.get('position')?.invalid) {
+          <mat-error>Posicion es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Posicion alternativa</mat-label>
+        <mat-select formControlName="alternatePosition">
+          @for (pos of positions; track pos.id) {
+            <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Altura (cm)</mat-label>
+        <input matInput type="number" formControlName="height" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Peso (kg)</mat-label>
+        <input matInput type="number" formControlName="weight" />
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- INDUMENTARIA -->
+  <mat-card>
+    <mat-card-title>Indumentaria</mat-card-title>
+    <div formGroupName="clothingSizes" class="card-grid clothing-grid">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Camiseta</mat-label>
+        <mat-select formControlName="jersey">
+          @for (size of clothingSizesOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Short</mat-label>
+        <mat-select formControlName="shorts">
+          @for (size of clothingSizesOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Buzo</mat-label>
+        <mat-select formControlName="sweater">
+          @for (size of clothingSizesOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Pantalon</mat-label>
+        <mat-select formControlName="pants">
+          @for (size of clothingSizesOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- ACCIONES -->
   <div class="form-actions">
     <button
-      mat-raised-button
+      mat-stroked-button
+      type="button"
+      (click)="onCancel()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Cancelar
+    </button>
+
+    <button
+      mat-flat-button
       color="primary"
       type="submit"
       [disabled]="submitting || playerForm.invalid"
     >
-      {{ player ? 'Actualizar' : 'Crear' }}
+      <mat-icon>{{ player ? "save" : "person_add" }}</mat-icon>
+      {{ player ? "Actualizar jugador" : "Crear jugador" }}
     </button>
   </div>
 
   @if (submitting) {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" />
   }
+
 </form>
