@@ -1,0 +1,29 @@
+info:
+  name: Users - POST /users (requires ADMIN)
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/users"
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: Bearer {{access_token}}
+  body:
+    type: json
+    data: |-
+      {
+        "email": "admin.user@example.com",
+        "firstName": "Admin",
+        "lastName": "User",
+        "password": "changeme"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

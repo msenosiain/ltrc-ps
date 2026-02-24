@@ -1,0 +1,5 @@
+<mat-card>
+  <mat-card-title>{{ editing ? 'Editar jugador' : 'Crear jugador' }}</mat-card-title>
+  <ltrc-player-form [player]="player" [submitting]="submitting" (formSubmit)="onFormSubmit($event)"></ltrc-player-form>
+</mat-card>
+

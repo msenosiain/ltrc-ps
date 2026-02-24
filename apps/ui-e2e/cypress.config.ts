@@ -1,5 +1,6 @@
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
+// Use the JS entry export that migrations expect; keep file ESM but import the preset by explicit path
+import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset.js';
 
 export default defineConfig({
   e2e: {

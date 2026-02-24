@@ -8,7 +8,17 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private authApiUrl = `${environment.apiBaseUrl}/auth`;
+  // Normalize apiBaseUrl to avoid double prefixes if env contains trailing slashes
+  private normalizedApiBaseUrl = ((): string => {
+    try {
+      // Remove trailing slashes
+      return environment.apiBaseUrl.replace(/\/+$/g, '');
+    } catch {
+      return environment.apiBaseUrl;
+    }
+  })();
+
+  private authApiUrl = `${this.normalizedApiBaseUrl}/auth`;
 
   // Use keys from the environment so they can be configured per-deployment.
   // Provide sensible defaults to keep backwards compatibility.
@@ -53,8 +63,27 @@ export class AuthService {
       );
   }
 
+  private collapseApiPrefix(url: string) {
+    // If the API prefix appears repeated (e.g. '/api/v1/api/v1'), collapse it to single occurrence
+    try {
+      // Extract the prefix from environment.apiBaseUrl (path part)
+      const m = this.normalizedApiBaseUrl.match(/https?:\/\/[\w.:-]+(\/.*)$/i);
+      const path = m
+        ? m[1]
+        : this.normalizedApiBaseUrl.replace(/^https?:\/\/[\w.:-]+/i, '');
+      const cleanedPath = path.replace(/^\/+/, '').replace(/\/+$/g, '');
+      if (!cleanedPath) return url;
+      const re = new RegExp(`(/${cleanedPath})+`, 'g');
+      return url.replace(re, `/${cleanedPath}`);
+    } catch {
+      return url;
+    }
+  }
+
   loginWithGoogle() {
-    window.location.href = `${this.authApiUrl}/google`;
+    // Build redirect URL and normalize repeated prefixes
+    const raw = `${this.authApiUrl}/google`;
+    window.location.href = this.collapseApiPrefix(raw);
   }
 
   /**

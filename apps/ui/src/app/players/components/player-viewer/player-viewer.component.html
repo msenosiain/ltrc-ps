@@ -1,5 +1,6 @@
 <div class="player-detail">
   <div class="detail-container">
+    <!-- Mostrar detalles solo si existe player -->
     @if (player) {
       <!-- Header -->
       <mat-card class="player-header">
@@ -39,12 +40,12 @@
             </div>
 
             <div class="positions">
-              <mat-chip color="primary" selected>
+              <mat-chip color="primary">
                 {{ getPositionLabel(player.position) }}
               </mat-chip>
 
               @if (player.alternatePosition) {
-                <mat-chip color="accent" selected>
+                <mat-chip color="accent">
                   {{ getPositionLabel(player.alternatePosition) }}
                 </mat-chip>
               }
@@ -56,7 +57,7 @@
             <button mat-raised-button color="tertiary" (click)="backToList()">
               Volver
             </button>
-            <button mat-raised-button color="tertiary">
+            <button mat-raised-button color="tertiary" (click)="edit()">
               Editar
             </button>
           </div>
@@ -107,3 +108,4 @@
     }
   </div>
 </div>
+
