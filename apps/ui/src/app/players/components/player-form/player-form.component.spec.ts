@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlayerForm } from './player-form';
-describe('PlayerForm', () => {
-  let component: PlayerForm;
-  let fixture: ComponentFixture<PlayerForm>;
+import { PlayerFormComponent } from './player-form.component';
+describe('PlayerFormComponent', () => {
+  let component: PlayerFormComponent;
+  let fixture: ComponentFixture<PlayerFormComponent>;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayerForm],
+      imports: [PlayerFormComponent],
     }).compileComponents();
-    fixture = TestBed.createComponent(PlayerForm);
+    fixture = TestBed.createComponent(PlayerFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

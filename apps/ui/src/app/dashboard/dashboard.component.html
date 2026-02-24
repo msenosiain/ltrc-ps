@@ -2,12 +2,13 @@
   <mat-sidenav mode="side" opened>
     <mat-nav-list>
       <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members">Socios</a>
+      <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="players">Jugadores</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="content">
       <router-outlet></router-outlet>
-      
+
       <!-- Welcome screen when no child route is active -->
       @if (router.url === '/dashboard') {
         <div class="dashboard-home">

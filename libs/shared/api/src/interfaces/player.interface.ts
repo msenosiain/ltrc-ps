@@ -31,6 +31,7 @@ export interface PlayerFilters {
 }
 
 export interface Player extends Document {
+  readonly id?: string;
   readonly idNumber: string;
   readonly lastName: string;
   readonly firstName: string;

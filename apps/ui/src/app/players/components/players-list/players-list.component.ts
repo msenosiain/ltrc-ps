@@ -86,7 +86,8 @@ export class PlayersListComponent implements AfterViewInit {
   }
 
   viewPlayerDetails(playerId: string) {
-    this.router.navigate(['/players', playerId]);
+    // Navegar de forma relativa a la ruta actual (dashboard -> players -> :id)
+    this.router.navigate([playerId], { relativeTo: this.route });
   }
 
   getPositionLabel(position: PlayerPositionEnum): string {
