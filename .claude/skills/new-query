@@ -1,0 +1,90 @@
+Crear un nuevo React Query hook con su service correspondiente para un endpoint de la API.
+
+## Cuándo usar este skill
+
+Cuando necesitás consumir un endpoint nuevo o que aún no tiene hook en `src/queries/`.
+
+## Inputs necesarios
+
+Antes de generar, identificar:
+1. **¿Qué endpoint?** — método HTTP, ruta, query params, body
+2. **¿Qué API?** — `contentApi` (ltrc-content :3001) o `psApi` (ltrc-ps :3000)
+3. **¿Qué retorna?** — tipo/interface de la respuesta
+4. **¿Es lectura (query) o escritura (mutation)?**
+
+## Archivos a crear/editar
+
+1. Tipo en `src/domain/` (si no existe)
+2. Método en `src/services/Xxx.service.ts` (crear o editar existente)
+3. Hook en `src/queries/useXxx.ts` (crear o editar existente)
+
+## Template: Query (GET)
+
+```ts
+// src/queries/useEjerciciosCategorias.ts
+import { useQuery } from '@tanstack/react-query'
+import { EjerciciosService } from '../services/Ejercicios.service'
+
+export function useEjerciciosCategorias() {
+  return useQuery({
+    queryKey: ['ejercicios', 'categorias'],
+    queryFn: EjerciciosService.getCategorias,
+  })
+}
+
+// Con parámetros
+export function useEjercicios(categoriaId: string) {
+  return useQuery({
+    queryKey: ['ejercicios', categoriaId],
+    queryFn: () => EjerciciosService.getByCategoryId(categoriaId),
+    enabled: !!categoriaId,  // solo ejecuta si hay valor
+  })
+}
+```
+
+## Template: Mutation (POST/PATCH/DELETE)
+
+```ts
+// src/queries/useEjercicioMutations.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { EjerciciosService } from '../services/Ejercicios.service'
+import type { CreateEjercicioDto } from '../domain/ejercicios'
+
+export function useCreateEjercicio() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: CreateEjercicioDto) => EjerciciosService.create(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['ejercicios'] }),
+  })
+}
+```
+
+## Template: Service
+
+```ts
+// src/services/Ejercicios.service.ts
+import { contentApi } from '../lib/axios'
+import type { IEjercicio, IEjercicioCategoria } from '../domain/ejercicios'
+
+export const EjerciciosService = {
+  getCategorias: () =>
+    contentApi.get<IEjercicioCategoria[]>('/ejercicios/categorias').then(r => r.data),
+
+  getByCategoryId: (categoriaId: string) =>
+    contentApi.get<IEjercicio[]>('/ejercicios', { params: { categoriaId } }).then(r => r.data),
+
+  getById: (id: string) =>
+    contentApi.get<IEjercicio>(`/ejercicios/${id}`).then(r => r.data),
+
+  create: (data: CreateEjercicioDto) =>
+    contentApi.post<IEjercicio>('/ejercicios', data).then(r => r.data),
+}
+```
+
+## Convenciones
+
+- Query key siempre como array: `['entidad', filtros]`
+- `enabled: !!param` cuando el query depende de un param opcional
+- Invalidar queries relacionadas en `onSuccess` de mutations
+- El servicio siempre retorna `r.data` (no el objeto Axios completo)
+- Un archivo de service por entidad de API

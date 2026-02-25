@@ -1,0 +1,197 @@
+Patrones de componentes React para ltrc-ps/apps/ui-react.
+Usar como referencia al crear o modificar cualquier componente, página, hook o provider.
+
+## Stack
+
+React 19 + TypeScript + Vite + React Router v7 + **Redux Toolkit** + TanStack Query v5 + Axios + MUI + Tailwind CSS 4
+
+> ⚠️ Estado global: Redux Toolkit (NO Zustand). Slices en `src/store/`.
+
+---
+
+## Estructura de carpetas
+
+```
+src/
+├── pages/          # Vistas completas (una por ruta)
+├── components/
+│   ├── layout/     # AppLayout, Header, Sidebar
+│   ├── auth/       # ProtectedRoute
+│   └── ui/         # Componentes reutilizables sin lógica de dominio
+├── queries/        # Hooks de TanStack Query (useXxx.ts)
+├── services/       # Llamadas HTTP puras (Xxx.service.ts)
+├── store/          # Redux slices + store config
+├── domain/         # Tipos e interfaces del dominio
+├── lib/            # Instancias de axios (contentApi, psApi)
+└── hooks/          # Custom hooks genéricos
+```
+
+---
+
+## Patrón: Página con datos
+
+```tsx
+// pages/players/PlayersPage.tsx
+import { usePlayers } from '../../queries/usePlayers'
+import { useAppSelector } from '../../store/hooks'
+
+export function PlayersPage() {
+  const filters = useAppSelector(state => state.filter)
+  const { data, isLoading, isError } = usePlayers(filters)
+
+  if (isLoading) return <LoadingSpinner />
+  if (isError) return <ErrorMessage />
+
+  return <PlayerTable players={data?.items ?? []} />
+}
+```
+
+---
+
+## Patrón: Query hook (TanStack Query)
+
+```ts
+// queries/usePlayers.ts
+import { useQuery } from '@tanstack/react-query'
+import { PlayersService } from '../services/Players.service'
+import type { PlayersFilters } from '../domain/player'
+
+export function usePlayers(filters: PlayersFilters) {
+  return useQuery({
+    queryKey: ['players', filters],
+    queryFn: () => PlayersService.getAll(filters),
+  })
+}
+```
+
+---
+
+## Patrón: Servicio HTTP
+
+```ts
+// services/Players.service.ts
+import { psApi } from '../lib/axios'
+import type { Player, PlayersResponse, PlayersFilters } from '../domain/player'
+
+export const PlayersService = {
+  getAll: (filters: PlayersFilters) =>
+    psApi.get<PlayersResponse>('/players', { params: filters }).then(r => r.data),
+
+  getById: (id: string) =>
+    psApi.get<Player>(`/players/${id}`).then(r => r.data),
+
+  create: (data: FormData) =>
+    psApi.post<Player>('/players', data).then(r => r.data),
+
+  update: (id: string, data: FormData) =>
+    psApi.patch<Player>(`/players/${id}`, data).then(r => r.data),
+
+  remove: (id: string) =>
+    psApi.delete(`/players/${id}`).then(r => r.data),
+}
+```
+
+---
+
+## Patrón: Mutation con invalidación de caché
+
+```ts
+// queries/usePlayerMutations.ts
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { PlayersService } from '../services/Players.service'
+
+export function useCreatePlayer() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: FormData) => PlayersService.create(data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['players'] }),
+  })
+}
+```
+
+---
+
+## Patrón: Redux — leer estado
+
+```ts
+import { useAppSelector, useAppDispatch } from '../../store/hooks'
+import { setDivision } from '../../store/filterSlice'
+
+// Leer
+const division = useAppSelector(state => state.filter.division)
+
+// Escribir
+const dispatch = useAppDispatch()
+dispatch(setDivision('ps'))
+```
+
+---
+
+## Patrón: Formulario con React Hook Form + Zod
+
+```tsx
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+const schema = z.object({
+  firstName: z.string().min(1, 'Requerido'),
+  position: z.nativeEnum(PlayerPositionEnum),
+})
+type FormData = z.infer<typeof schema>
+
+export function PlayerForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  })
+  const onSubmit = (data: FormData) => { /* ... */ }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('firstName')} />
+      {errors.firstName && <span>{errors.firstName.message}</span>}
+    </form>
+  )
+}
+```
+
+---
+
+## Estilos: Tailwind + MUI
+
+```tsx
+// Tailwind para layout, colores semánticos del proyecto
+<div className="bg-surface rounded-lg p-4 shadow-card">
+  <h2 className="text-ink font-semibold">Título</h2>
+  <p className="text-muted text-sm">Descripción</p>
+  <button className="bg-primary text-white px-4 py-2 rounded hover:opacity-90">
+    Acción
+  </button>
+</div>
+
+// MUI para componentes complejos
+import { Dialog, Table, Autocomplete, Chip } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
+```
+
+### Variables de color disponibles
+
+| Clase | Uso |
+|-------|-----|
+| `bg-primary` / `text-primary` | Rojo LTRC `#fb1e1e` |
+| `bg-navy` / `text-navy` | Azul marino `#132142` |
+| `bg-surface` | Fondo de cards |
+| `text-ink` | Texto principal |
+| `text-muted` | Texto secundario |
+| `shadow-card` | Sombra de tarjetas |
+
+---
+
+## Reglas de componentes
+
+1. Siempre componentes funcionales — sin class components
+2. Sin `useMemo`/`useCallback` salvo necesidad real (React Compiler activo)
+3. `.tsx` para componentes, `.ts` para lógica pura
+4. PascalCase para componentes, camelCase para hooks y variables
+5. Separar lógica de presentación: la lógica va en hooks, la presentación en JSX
+6. Un componente por archivo

@@ -27,7 +27,7 @@ export class PlayerModalComponent {
     this.submitting = true;
 
     const request$ = this.player
-      ? this.playersService.updatePlayer(this.player.id, formValue)
+      ? this.playersService.updatePlayer(this.player._id, formValue)
       : this.playersService.createPlayer(formValue);
 
     request$.subscribe({

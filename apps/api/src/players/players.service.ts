@@ -102,11 +102,12 @@ export class PlayersService {
         .skip(skip)
         .limit(size)
         .sort(sort)
+        .lean()
         .exec(),
       this.playerModel.countDocuments(queryFilters).exec(),
     ]);
 
-    return { items, total, page, size };
+    return { items: items as unknown as Player[], total, page, size };
   }
 
   async findOne(id: string) {

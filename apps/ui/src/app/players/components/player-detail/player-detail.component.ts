@@ -50,7 +50,7 @@ export class PlayerDetailComponent implements OnInit {
     if (!this.player) return;
 
     if (confirm('¿Eliminar jugador?')) {
-      this.playersService.deletePlayer(this.player.id).subscribe(() => {
+      this.playersService.deletePlayer(this.player._id).subscribe(() => {
         this.router.navigate(['/players']);
       });
     }

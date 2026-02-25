@@ -7,7 +7,7 @@
           <div class="avatar">
             @if (player.photoId) {
               <img
-                [src]="getPlayerPhotoUrl(player.id)"
+                [src]="getPlayerPhotoUrl(player._id)"
                 alt="{{ player.firstName }} {{ player.lastName }}"
               />
             } @else {

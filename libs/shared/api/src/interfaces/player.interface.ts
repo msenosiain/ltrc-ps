@@ -1,4 +1,3 @@
-import { Document } from 'mongoose';
 import { ClothingSizesEnum, PlayerPositionEnum } from '../enums';
 
 export interface Address {
@@ -30,7 +29,8 @@ export interface PlayerFilters {
   idNumber?: string;
 }
 
-export interface Player extends Document {
+export interface Player {
+  readonly _id: string;
   readonly idNumber: string;
   readonly lastName: string;
   readonly firstName: string;
@@ -44,6 +44,6 @@ export interface Player extends Document {
   readonly weight?: number;
   readonly clothingSizes?: ClothingSizes;
   readonly photoId?: string;
-  readonly createdAt?: Date;  // agregados por timestamps: true
+  readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }

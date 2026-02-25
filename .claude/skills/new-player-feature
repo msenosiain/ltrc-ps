@@ -1,0 +1,101 @@
+Scaffoldear una nueva feature completa del módulo de jugadores (players) en ltrc-ps/apps/ui-react.
+
+## Cuándo usar este skill
+
+Para agregar una nueva sección, página o funcionalidad al módulo de Players:
+estadísticas, equipo asignado, historial, documentos, etc.
+
+## Qué genera este skill
+
+1. **Tipos de dominio** en `src/domain/player.ts` o nuevo archivo en `src/domain/`
+2. **Servicio HTTP** en `src/services/Players.service.ts` (método nuevo)
+3. **Query hook** en `src/queries/` (`useXxx.ts`)
+4. **Componente/página** en `src/pages/players/`
+5. **Registro de ruta** en `src/routes/AppRoutes.tsx` (si es página nueva)
+
+## Inputs necesarios
+
+Antes de generar, preguntar:
+1. ¿Qué feature? (nombre, descripción breve)
+2. ¿Es una página nueva o un componente dentro de PlayerDetailPage?
+3. ¿Qué endpoint de la API usa? (método, ruta)
+4. ¿Solo lectura o también escritura (CRUD)?
+5. ¿Requiere permisos de admin/entrenador?
+
+## Estructura de PlayerDetailPage (tabs)
+
+Las features de detalle van como tab en `PlayerDetailPage.tsx`:
+
+```tsx
+// Tabs existentes: "Datos personales", "Indumentaria"
+// Nuevos tabs se agregan ahí siguiendo el mismo patrón
+```
+
+## Template: Nueva feature como tab en PlayerDetailPage
+
+```tsx
+// src/pages/players/tabs/PlayerStatsTab.tsx
+import { usePlayerStats } from '../../../queries/usePlayerStats'
+
+interface Props {
+  playerId: string
+}
+
+export function PlayerStatsTab({ playerId }: Props) {
+  const { data, isLoading } = usePlayerStats(playerId)
+
+  if (isLoading) return <LoadingSpinner />
+
+  return (
+    <div className="space-y-4">
+      {/* contenido */}
+    </div>
+  )
+}
+```
+
+## Template: Nueva página standalone
+
+```tsx
+// src/pages/players/PlayerXxxPage.tsx
+import { useParams } from 'react-router-dom'
+import { useXxx } from '../../queries/useXxx'
+
+export function PlayerXxxPage() {
+  const { id } = useParams<{ id: string }>()
+  const { data, isLoading, isError } = useXxx(id!)
+
+  if (isLoading) return <LoadingSpinner />
+  if (isError) return <ErrorMessage />
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-ink">Título</h1>
+      {/* contenido */}
+    </div>
+  )
+}
+```
+
+## Registro de ruta (AppRoutes.tsx)
+
+```tsx
+// Dentro del bloque <Route element={<AppLayout />}>
+<Route path="players/:id/xxx" element={<PlayerXxxPage />} />
+```
+
+## Convenciones del módulo players
+
+- Fotos: `GET /players/:id/photo` — usar como `src` de `<img>` con token en header (ver patrón existente)
+- Paginación server-side: params `page`, `limit`, `sortBy`, `sortOrder`
+- Búsqueda: param `searchTerm` con debounce de 300ms
+- Filtros: params adicionales según el endpoint
+- Enums de posición: `PlayerPositionEnum` de `@ltrc-ps/shared-api-model`
+- Formularios de edición: React Hook Form + Zod, envío con `FormData` (multipart)
+
+## Reglas
+
+- No duplicar tipos que ya existen en `src/domain/player.ts`
+- No agregar features a `apps/ui` (Angular) — solo a `apps/ui-react`
+- Siempre tipar los props de componentes con interfaces explícitas
+- Si el endpoint no existe aún en el API, crearlo primero en `ltrc-ps/apps/api/`

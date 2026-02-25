@@ -1,0 +1,54 @@
+Revisar el código del pull request o archivos indicados siguiendo los estándares de ltrc-ps.
+
+## Checklist de revisión
+
+### TypeScript
+- [ ] Sin `any` explícitos (usar tipos del dominio en `src/domain/`)
+- [ ] Props de componentes tipadas con interfaces
+- [ ] Tipos de retorno explícitos en servicios y hooks
+- [ ] Enums usados desde `@ltrc-content/shared-api-model` o `src/domain/`
+
+### React (apps/ui-react)
+- [ ] Componentes funcionales con hooks únicamente
+- [ ] Estado global: `useAppSelector` / `useAppDispatch` de `src/store/hooks.ts`
+- [ ] Fetching: `useQuery` / `useMutation` de TanStack Query (no fetch/axios directo en componentes)
+- [ ] Sin `useMemo`/`useCallback` innecesarios (React Compiler activo)
+- [ ] Formularios con React Hook Form + zodResolver únicamente
+- [ ] Sin lógica de negocio en componentes — moverla a hooks o servicios
+
+### Estilos
+- [ ] Clases Tailwind para layout y espaciado
+- [ ] MUI solo para componentes complejos (Dialog, Table, Autocomplete, etc.)
+- [ ] Variables semánticas usadas: `bg-primary`, `text-ink`, `bg-surface`, `text-muted`
+- [ ] Sin estilos inline salvo casos excepcionales
+
+### API calls
+- [ ] Solo a través de `contentApi` o `psApi` de `src/lib/axios.ts`
+- [ ] Servicios en `src/services/*.service.ts`
+- [ ] Hooks en `src/queries/use*.ts`
+- [ ] Sin llamadas directas a axios en páginas o componentes
+
+### NestJS (apps/api)
+- [ ] DTOs con class-validator decorators
+- [ ] Guards JWT en rutas protegidas
+- [ ] Servicios inyectados vía constructor (DI de Nest)
+- [ ] Sin lógica en controladores — delegar al servicio
+- [ ] Errores con excepciones de NestJS (`NotFoundException`, `UnauthorizedException`, etc.)
+
+### Seguridad
+- [ ] Sin credenciales hardcodeadas
+- [ ] Sin `console.log` con datos sensibles en producción
+- [ ] Inputs validados en el backend (class-validator)
+
+### General
+- [ ] Sin archivos de debug o temporales
+- [ ] Sin comentarios redundantes (el código debe ser autoexplicativo)
+- [ ] Naming: camelCase para vars/hooks, PascalCase para componentes y clases
+- [ ] Archivos: `.tsx` para componentes React, `.ts` para lógica pura
+
+## Formato de respuesta
+
+Organizá el feedback en:
+1. **Bloqueantes** — deben corregirse antes de mergear
+2. **Sugerencias** — mejoras opcionales
+3. **OK** — qué está bien hecho

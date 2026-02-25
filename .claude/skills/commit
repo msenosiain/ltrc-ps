@@ -1,0 +1,58 @@
+Crear un commit git siguiendo conventional commits para el monorepo ltrc-ps (Nx).
+
+## Formato del mensaje
+
+```
+<tipo>(<scope>): <descripción corta en inglés>
+
+[cuerpo opcional]
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+```
+
+## Tipos permitidos
+
+| Tipo | Cuándo usarlo |
+|------|--------------|
+| `feat` | Nueva funcionalidad visible para el usuario |
+| `fix` | Corrección de bug |
+| `refactor` | Cambio interno sin cambio de comportamiento |
+| `chore` | Configuración, dependencias, scripts |
+| `test` | Agregar o corregir tests |
+| `docs` | Documentación |
+| `style` | Formato, espacios (sin cambio de lógica) |
+| `perf` | Mejora de rendimiento |
+
+## Scopes disponibles (ltrc-ps)
+
+- `ui-react` — frontend React
+- `api` — backend NestJS jugadores
+- `players` — módulo de jugadores (puede aplicar a ambos)
+- `auth` — autenticación
+- `shared` — lib compartida
+- `config` — configuración del workspace Nx
+
+## Proceso
+
+1. Correr `git status` para ver cambios
+2. Correr `git diff` para entender qué cambió
+3. Armar el mensaje de commit
+4. Hacer `git add` de los archivos relevantes (nunca `-A` indiscriminado)
+5. Hacer `git commit` con el mensaje usando HEREDOC
+
+## Ejemplo
+
+```bash
+git commit -m "$(cat <<'EOF'
+feat(ui-react): add player statistics tab with position chart
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+EOF
+)"
+```
+
+## Reglas
+
+- Nunca commitear `.env`, `package-lock.json`, archivos de build
+- Si hay errores de pre-commit hook, corregirlos y hacer un commit NUEVO (nunca --amend)
+- No hacer push a menos que se pida explícitamente
