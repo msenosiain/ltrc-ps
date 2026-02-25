@@ -1,26 +1,22 @@
 <form [formGroup]="searchForm" class="search-form">
   <div class="filters-container">
 
-    <!-- Search term -->
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="search-field">
       <mat-label>Apellido o Apodo</mat-label>
-      <input matInput placeholder="Ej: Pérez o Pepe" formControlName="searchTerm">
-      @if (searchForm.get('searchTerm')?.value){
-      <button mat-icon-button matSuffix (click)="clearField('searchTerm')">
-        <mat-icon>close</mat-icon>
-      </button>
+      <input matInput placeholder="Ej: Perez o Pepe" formControlName="searchTerm" />
+      @if (searchForm.get('searchTerm')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
+          <mat-icon>close</mat-icon>
+        </button>
       }
     </mat-form-field>
 
-    <!-- Position select -->
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Posición</mat-label>
-      <mat-select formControlName="position" placeholder="Seleccionar posición">
+    <mat-form-field appearance="outline" class="position-field">
+      <mat-label>Posicion</mat-label>
+      <mat-select formControlName="position">
         <mat-option [value]="undefined">Todas</mat-option>
         @for (option of positionOptions; track option.id) {
-          <mat-option [value]="option.id">
-            {{ option.name }}
-          </mat-option>
+          <mat-option [value]="option.id">{{ option.name }}</mat-option>
         }
       </mat-select>
     </mat-form-field>

@@ -8,7 +8,6 @@ import {
   PlayerFormComponent,
   PlayerFormSubmitEvent,
 } from '../player-form/player-form.component';
-import { PlayerFormValue } from '../../forms/player-form.types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -29,10 +28,7 @@ export class PlayerEditorComponent implements OnInit {
   submitting = false;
 
   ngOnInit(): void {
-    const id =
-      this.route.snapshot.paramMap.get('id') ??
-      this.route.parent?.snapshot.paramMap.get('id');
-
+    const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
@@ -48,7 +44,7 @@ export class PlayerEditorComponent implements OnInit {
 
     const onSuccess = (p: Player) => {
       this.submitting = false;
-      this.router.navigate(['/players', p.id]);
+      this.router.navigate(['/dashboard/players', p.id]);
     };
 
     const onError = () => (this.submitting = false);
@@ -60,7 +56,7 @@ export class PlayerEditorComponent implements OnInit {
             payload,
             file
           )
-        : this.playersService.updatePlayerWithPhoto(this.player.id, payload);
+        : this.playersService.updatePlayer(this.player.id, payload);
       obs
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({ next: onSuccess, error: onError });
@@ -74,6 +70,7 @@ export class PlayerEditorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: onSuccess, error: onError });
   }
+
   onCancel(): void {
     this.router.navigate(['..'], { relativeTo: this.route });
   }

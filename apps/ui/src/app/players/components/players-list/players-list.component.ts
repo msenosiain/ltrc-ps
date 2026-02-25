@@ -1,44 +1,36 @@
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { PlayersService } from '../../services/players.service';
-import { PlayersDataSource } from '../../services/players.datasource';
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
-import { CommonModule } from '@angular/common';
-import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { PlayersService } from '../../services/players.service';
+import { PlayersDataSource } from '../../services/players.datasource';
+import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { PlayerSearchComponent } from '../player-search/player-search.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ltrc-players-list',
+  standalone: true,
   imports: [
-    CommonModule,
     MatTableModule,
     MatProgressBarModule,
     MatPaginatorModule,
     MatSortModule,
     MatIconModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDialogModule,
     PlayerSearchComponent,
   ],
   templateUrl: './players-list.component.html',
   styleUrls: ['./players-list.component.scss'],
 })
 export class PlayersListComponent implements AfterViewInit {
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private playersService = inject(PlayersService);
+  private readonly router = inject(Router);
+  private readonly playersService = inject(PlayersService);
 
-  displayedColumns = [
+  readonly displayedColumns = [
     'photoId',
     'firstName',
     'lastName',
@@ -46,16 +38,15 @@ export class PlayersListComponent implements AfterViewInit {
     'position',
     'alternatePosition',
   ];
-  dataSource = new PlayersDataSource(this.playersService);
+
+  readonly dataSource = new PlayersDataSource(this.playersService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
-    // Cargar primera página
     this.dataSource.setPage(0, 10);
 
-    // Suscripción al sort
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
       this.dataSource.setSorting(
@@ -64,7 +55,6 @@ export class PlayersListComponent implements AfterViewInit {
       );
     });
 
-    // Suscripción a la paginación
     this.paginator.page.subscribe(() => {
       this.dataSource.setPage(
         this.paginator.pageIndex,
@@ -76,25 +66,24 @@ export class PlayersListComponent implements AfterViewInit {
   applyFilters(filters: {
     searchTerm?: string;
     position?: PlayerPositionEnum;
-  }) {
+  }): void {
     this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
   }
 
-  goToCreate() {
-    this.router.navigate(['create'], { relativeTo: this.route });
+  goToCreate(): void {
+    this.router.navigate(['/dashboard/players/create']);
   }
 
-  viewPlayerDetails(playerId: string) {
-    // Navegar de forma relativa a la ruta actual (dashboard -> players -> :id)
-    this.router.navigate([playerId], { relativeTo: this.route });
+  viewPlayerDetails(playerId: string): void {
+    this.router.navigate(['/dashboard/players', playerId]);
   }
 
   getPositionLabel(position: PlayerPositionEnum): string {
     return this.playersService.getPositionLabel(position);
   }
 
-  getPlayerPhotoUrl(playerId: string) {
+  getPlayerPhotoUrl(playerId: string): string {
     return this.playersService.getPlayerPhotoUrl(playerId);
   }
 }

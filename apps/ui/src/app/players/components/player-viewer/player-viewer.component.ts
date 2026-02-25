@@ -49,11 +49,11 @@ export class PlayerViewerComponent implements OnInit {
   }
 
   edit(): void {
-    this.router.navigate(['/players', this.player!.id, 'edit']);
+    this.router.navigate(['/dashboard/players', this.player!.id, 'edit']);
   }
 
   backToList(): void {
-    this.router.navigate(['..'], { relativeTo: this.route });
+    this.router.navigate(['/dashboard/players']);
   }
 
   getPlayerPhotoUrl(playerId?: string): string {
