@@ -1,0 +1,22 @@
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TournamentsController } from './tournaments.controller';
+import { TournamentsService } from './tournaments.service';
+import { TournamentEntity } from './schemas/tournament.entity';
+import { TournamentSchema } from './schemas/tournament.schema';
+
+@Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: TournamentEntity.name,
+        schema: TournamentSchema,
+        collection: 'tournaments',
+      },
+    ]),
+  ],
+  controllers: [TournamentsController],
+  providers: [TournamentsService],
+  exports: [TournamentsService],
+})
+export class TournamentsModule {}
