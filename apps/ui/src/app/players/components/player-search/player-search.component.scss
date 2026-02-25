@@ -1,7 +1,19 @@
-.search-form { margin-bottom: 16px; }
+.search-form {
+  margin-bottom: 4px;
+}
+
 .filters-container {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
 }
-.full-width { flex: 1; min-width: 200px; }
+
+.search-field {
+  flex: 2;
+  min-width: 200px;
+}
+
+.position-field {
+  flex: 1;
+  min-width: 180px;
+}
