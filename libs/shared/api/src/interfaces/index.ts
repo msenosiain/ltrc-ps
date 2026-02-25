@@ -1,2 +1,4 @@
 export * from './player.interface';
 export * from './paginated-response.interface';
+export * from './match.interface';
+export * from './tournament.interface';

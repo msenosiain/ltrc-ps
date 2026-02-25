@@ -1,0 +1,34 @@
+import { Document } from 'mongoose';
+import { MatchStatusEnum, MatchTypeEnum } from '../enums';
+import { Player } from './player.interface';
+import { Tournament } from './tournament.interface';
+
+export interface MatchResult {
+  homeScore: number;
+  awayScore: number;
+}
+
+export interface VideoClip {
+  url: string;
+  name: string;
+  description?: string;
+  /** Si está vacío o ausente, el video es visible para todos los jugadores del partido */
+  targetPlayers?: Player[];
+}
+
+export interface Match extends Document {
+  readonly id?: string;
+  readonly date: Date;
+  readonly opponent: string;
+  readonly venue: string;
+  readonly isHome: boolean;
+  readonly status: MatchStatusEnum;
+  readonly type: MatchTypeEnum;
+  readonly tournament?: Tournament;
+  readonly selectedPlayers: Player[];
+  readonly videos?: VideoClip[];
+  readonly result?: MatchResult;
+  readonly notes?: string;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
+}

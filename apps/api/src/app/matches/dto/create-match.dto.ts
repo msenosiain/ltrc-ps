@@ -1,0 +1,109 @@
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+
+import { Transform, Type } from 'class-transformer';
+import { parse } from 'date-fns';
+import { DATE_FORMAT, MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+
+export class VideoClipDto {
+  @IsUrl()
+  url!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  targetPlayers?: string[];
+}
+
+export class MatchResultDto {
+  @IsNumber()
+  @Min(0)
+  homeScore!: number;
+
+  @IsNumber()
+  @Min(0)
+  awayScore!: number;
+}
+
+export class CreateMatchDto {
+  @IsNotEmpty()
+  @Transform(({ value }) => {
+    const parsedDate = parse(value, DATE_FORMAT, new Date());
+    return parsedDate instanceof Date && !isNaN(parsedDate.getTime())
+      ? parsedDate
+      : null;
+  })
+  @IsDate({
+    message: `$property must be a Date instance with format ${DATE_FORMAT}`,
+  })
+  readonly date!: Date;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly opponent!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly venue!: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  readonly isHome!: boolean;
+
+  @IsOptional()
+  @IsEnum(MatchStatusEnum)
+  readonly status?: MatchStatusEnum;
+
+  @IsNotEmpty()
+  @IsEnum(MatchTypeEnum)
+  readonly type!: MatchTypeEnum;
+
+  @IsOptional()
+  @IsMongoId()
+  readonly tournament?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  readonly selectedPlayers?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => VideoClipDto)
+  readonly videos?: VideoClipDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MatchResultDto)
+  readonly result?: MatchResultDto;
+
+  @IsOptional()
+  @IsString()
+  readonly notes?: string;
+}
