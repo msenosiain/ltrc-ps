@@ -9,10 +9,10 @@ const AddressSchema = new Schema(
   {
     street: String,
     number: String,
+    floorApartment: String,
+    neighborhood: String,
     city: String,
-    province: String,
     postalCode: String,
-    country: String,
     phoneNumber: { type: String, required: true },
   },
   { _id: false }
@@ -45,7 +45,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
       type: String,
       enum: Object.values(PlayerPositionEnum),
     },
-    size: Number,
+    height: Number,
     weight: Number,
     clothingSizes: ClothingSizesSchema,
     photoId: { type: String },
