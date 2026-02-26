@@ -1,5 +1,6 @@
-import { Player } from '@ltrc-ps/shared-api-model';
+import { Player, DATE_FORMAT } from '@ltrc-ps/shared-api-model';
 import { PlayerFormValue } from './player-form.types';
+import { format } from 'date-fns';
 
 // FORM -> CREATE DTO (NestJS)
 export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
@@ -8,7 +9,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     lastName: value.lastName,
     nickName: value.nickName || undefined,
     idNumber: value.idNumber,
-    birthDate: value.birthDate!,
+    birthDate: format(value.birthDate!, DATE_FORMAT),
     email: value.email,
     position: value.position!,
     alternatePosition: value.alternatePosition ?? undefined,

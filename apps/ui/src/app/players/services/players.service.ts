@@ -51,7 +51,7 @@ export class PlayersService {
   ): Observable<Player> {
     const dto = mapFormToCreatePlayerDto(formValue);
     const form = new FormData();
-    form.append('file', file);
+    form.append('photo', file);
     form.append('dto', JSON.stringify(dto));
     return this.httpClient.post<Player>(this.playersApiUrl, form);
   }
@@ -70,7 +70,7 @@ export class PlayersService {
   ): Observable<Player> {
     const dto = mapFormToCreatePlayerDto(formValue);
     const form = new FormData();
-    form.append('file', file);
+    form.append('photo', file);
     form.append('dto', JSON.stringify(dto));
     return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, form);
   }
@@ -93,7 +93,7 @@ export class PlayersService {
 
   uploadPlayerPhoto(playerId: string, file: File): Observable<unknown> {
     const form = new FormData();
-    form.append('file', file);
+    form.append('photo', file);
     return this.httpClient.post(
       `${this.playersApiUrl}/${playerId}/photo`,
       form
