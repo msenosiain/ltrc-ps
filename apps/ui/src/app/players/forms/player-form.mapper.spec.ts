@@ -8,7 +8,7 @@ const baseForm: PlayerFormValue = {
   lastName: 'Perez',
   nickName: 'Juancho',
   idNumber: '12345678',
-  birthDate: new Date('2000-01-15'),
+  birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
   position: PlayerPositionEnum.FULLBACK,
   alternatePosition: null,
@@ -38,7 +38,7 @@ const basePlayer: Player = {
   lastName: 'Perez',
   nickName: 'Juancho',
   idNumber: '12345678',
-  birthDate: new Date('2000-01-15'),
+  birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
   position: PlayerPositionEnum.FULLBACK,
   alternatePosition: PlayerPositionEnum.LEFT_WING,
@@ -67,7 +67,7 @@ describe('mapFormToCreatePlayerDto', () => {
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
     expect(result.position).toBe(PlayerPositionEnum.FULLBACK);
-    expect(result.birthDate).toEqual(baseForm.birthDate);
+    expect(result.birthDate).toBe('15/01/2000');
   });
 
   it('should map height and weight', () => {
