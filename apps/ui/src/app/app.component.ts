@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AuthService } from './auth/auth.service';
@@ -20,14 +20,9 @@ import { User } from './users/User.interface';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'Los Tordos Rugby Club';
   user$: Observable<User | null>;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private cd: ChangeDetectorRef
-  ) {
+  constructor(private authService: AuthService, private router: Router) {
     this.user$ = this.authService.user$;
   }
 

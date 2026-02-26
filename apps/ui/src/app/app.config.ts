@@ -10,7 +10,9 @@ import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
+import { es } from 'date-fns/locale';
 import { authInterceptor } from './auth/auth.interceptor';
 
 export interface ApiConfig {
@@ -39,6 +41,15 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     apiConfigProvider,
     { provide: LOCALE_ID, useValue: 'es-AR' },
-    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: es },
+    provideDateFnsAdapter({
+      parse: { dateInput: 'dd/MM/yyyy' },
+      display: {
+        dateInput: 'dd/MM/yyyy',
+        monthYearLabel: 'MMM yyyy',
+        dateA11yLabel: 'dd/MM/yyyy',
+        monthYearA11yLabel: 'MMMM yyyy',
+      },
+    }),
   ],
 };
