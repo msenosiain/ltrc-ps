@@ -1,0 +1,36 @@
+info:
+  name: Matches - POST /matches
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/matches"
+  body:
+    type: json
+    data: |-
+      {
+        "date": "25/02/2025",
+        "opponent": "Universitario RC",
+        "venue": "Cancha LTRC",
+        "isHome": true,
+        "type": "league",
+        "status": "upcoming",
+        "tournament": "<tournamentId>",
+        "selectedPlayers": [],
+        "notes": "Partido de liga, preparar line defensivo"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  - date: formato dd/MM/yyyy
+  - type: league | friendly | cup
+  - status: upcoming | completed | cancelled (default: upcoming)
+  - tournament: id del torneo (opcional)
+  - selectedPlayers: array de ids de jugadores (opcional)
