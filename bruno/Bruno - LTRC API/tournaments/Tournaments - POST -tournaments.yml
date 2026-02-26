@@ -10,9 +10,9 @@ http:
     type: json
     data: |-
       {
-        "name": "Torneo Regional del Litoral",
-        "season": "2025",
-        "description": "Torneo regional organizado por la UAR"
+        "name": "Torneo Regional Cuyano",
+        "season": "2026",
+        "description": "Torneo regional organizado por la URC"
       }
   auth: inherit
 

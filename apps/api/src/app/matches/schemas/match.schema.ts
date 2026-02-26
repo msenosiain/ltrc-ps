@@ -12,6 +12,24 @@ const MatchResultSchema = new Schema(
   { _id: false }
 );
 
+const MatchSquadEntrySchema = new Schema(
+  {
+    shirtNumber: { type: Number, required: true, min: 1, max: 26 },
+    player: { type: Types.ObjectId, ref: PlayerEntity.name, required: true },
+  },
+  { _id: false }
+);
+
+const MatchVideoSchema = new Schema(
+  {
+    url: { type: String, required: true },
+    name: { type: String, required: true },
+    description: { type: String },
+    targetPlayers: [{ type: Types.ObjectId, ref: PlayerEntity.name }],
+  },
+  { _id: false }
+);
+
 export const MatchSchema = new Schema<MatchEntity>(
   {
     date: { type: Date, required: true },
@@ -29,20 +47,8 @@ export const MatchSchema = new Schema<MatchEntity>(
       required: true,
     },
     tournament: { type: Types.ObjectId, ref: TournamentEntity.name },
-    selectedPlayers: [
-      { type: Types.ObjectId, ref: PlayerEntity.name },
-    ],
-    videos: [
-      new Schema(
-        {
-          url: { type: String, required: true },
-          name: { type: String, required: true },
-          description: { type: String },
-          targetPlayers: [{ type: Types.ObjectId, ref: PlayerEntity.name }],
-        },
-        { _id: false }
-      ),
-    ],
+    squad: [MatchSquadEntrySchema],
+    videos: [MatchVideoSchema],
     result: MatchResultSchema,
     notes: { type: String },
   },

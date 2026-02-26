@@ -6,11 +6,15 @@ info:
 http:
   method: PATCH
   url: "{{baseUrl}}/tournaments/:id"
+  params:
+    - name: id
+      value: 699fa5ec6b5405fb342ae673
+      type: path
   body:
     type: json
     data: |-
       {
-        "description": "Descripción actualizada"
+        "description": "Torneo provicial organizado por la URC, clasificatorio al Top 8 Regional Cuyano"
       }
   auth: inherit
 

@@ -16,6 +16,11 @@ export interface VideoClip {
   targetPlayers?: Player[];
 }
 
+export interface SquadEntry {
+  shirtNumber: number;
+  player: Player;
+}
+
 export interface Match extends Document {
   readonly id?: string;
   readonly date: Date;
@@ -25,7 +30,7 @@ export interface Match extends Document {
   readonly status: MatchStatusEnum;
   readonly type: MatchTypeEnum;
   readonly tournament?: Tournament;
-  readonly selectedPlayers: Player[];
+  readonly squad: SquadEntry[];
   readonly videos?: VideoClip[];
   readonly result?: MatchResult;
   readonly notes?: string;

@@ -10,15 +10,15 @@ http:
     type: json
     data: |-
       {
-        "date": "25/02/2025",
-        "opponent": "Universitario RC",
-        "venue": "Cancha LTRC",
+        "date": "07/03/2026",
+        "opponent": "Rivadavia RC",
+        "venue": "Cancha Marista RC",
         "isHome": true,
         "type": "league",
         "status": "upcoming",
-        "tournament": "<tournamentId>",
+        "tournament": "699fa5ec6b5405fb342ae673",
         "selectedPlayers": [],
-        "notes": "Partido de liga, preparar line defensivo"
+        "notes": "Primera Fecha "
       }
   auth: inherit
 

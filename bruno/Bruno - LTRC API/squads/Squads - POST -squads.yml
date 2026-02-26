@@ -1,0 +1,45 @@
+info:
+  name: Squads - POST /squads
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/squads"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Primera - Torneo Provincial",
+        "players": [
+          { "shirtNumber": 1,  "playerId": "<playerId>" },
+          { "shirtNumber": 2,  "playerId": "<playerId>" },
+          { "shirtNumber": 3,  "playerId": "<playerId>" },
+          { "shirtNumber": 4,  "playerId": "<playerId>" },
+          { "shirtNumber": 5,  "playerId": "<playerId>" },
+          { "shirtNumber": 6,  "playerId": "<playerId>" },
+          { "shirtNumber": 7,  "playerId": "<playerId>" },
+          { "shirtNumber": 8,  "playerId": "<playerId>" },
+          { "shirtNumber": 9,  "playerId": "<playerId>" },
+          { "shirtNumber": 10, "playerId": "<playerId>" },
+          { "shirtNumber": 11, "playerId": "<playerId>" },
+          { "shirtNumber": 12, "playerId": "<playerId>" },
+          { "shirtNumber": 13, "playerId": "<playerId>" },
+          { "shirtNumber": 14, "playerId": "<playerId>" },
+          { "shirtNumber": 15, "playerId": "<playerId>" },
+          { "shirtNumber": 16, "playerId": "<playerId>" }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Crea una plantilla de convocatoria reutilizable.
+  - name: nombre descriptivo (ej: "Primera", "Intermedia", "Primera - Torneo Provincial")
+  - entries: jugadores con número de camiseta (1-26)
+  - shirtNumber 1-15: titulares | 16-26: suplentes

@@ -12,7 +12,7 @@ export class MatchEntity extends Document {
   status: MatchStatusEnum;
   type: MatchTypeEnum;
   tournament?: PopulatedDoc<TournamentEntity & Document>;
-  selectedPlayers: PopulatedDoc<PlayerEntity & Document>[];
+  squad: { shirtNumber: number; player: PopulatedDoc<PlayerEntity & Document> }[];
   videos?: VideoClip[];
   result?: {
     homeScore: number;

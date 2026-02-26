@@ -6,10 +6,11 @@ import { PaginationDto } from '../shared/pagination.dto';
 import { PaginatedResponse } from '@ltrc-ps/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
+import { SquadsService } from '../squads/squads.service';
 
 const POPULATE_FIELDS = [
   'tournament',
-  'selectedPlayers',
+  { path: 'squad.player' },
   { path: 'videos.targetPlayers' },
 ];
 
@@ -17,7 +18,8 @@ const POPULATE_FIELDS = [
 export class MatchesService {
   constructor(
     @InjectModel(MatchEntity.name)
-    private readonly matchModel: Model<MatchEntity>
+    private readonly matchModel: Model<MatchEntity>,
+    private readonly squadsService: SquadsService
   ) {}
 
   async create(dto: CreateMatchDto) {
@@ -33,11 +35,11 @@ export class MatchesService {
     return match.save();
   }
 
-  async updatePlayers(id: string, playerIds: string[]) {
+  async updateSquad(id: string, squad: { shirtNumber: number; playerId: string }[]) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');
 
-    match.set('selectedPlayers', playerIds);
+    match.set('squad', squad.map(({ shirtNumber, playerId }) => ({ shirtNumber, player: playerId })));
     return (await match.save()).populate(POPULATE_FIELDS);
   }
 
@@ -95,6 +97,20 @@ export class MatchesService {
       .populate(POPULATE_FIELDS);
     if (!match) throw new NotFoundException('Match not found');
     return match;
+  }
+
+  async applySquadTemplate(id: string, squadId: string) {
+    const [match, squadEntries] = await Promise.all([
+      this.matchModel.findById(id),
+      this.squadsService.getPlayers(squadId),
+    ]);
+    if (!match) throw new NotFoundException('Match not found');
+
+    match.set(
+      'squad',
+      squadEntries.map((e) => ({ shirtNumber: e.shirtNumber, player: e.player }))
+    );
+    return (await match.save()).populate(POPULATE_FIELDS);
   }
 
   async delete(id: string) {
