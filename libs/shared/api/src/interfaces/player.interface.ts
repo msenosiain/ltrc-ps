@@ -20,12 +20,8 @@ export interface ClothingSizes {
 }
 
 export interface PlayerFilters {
-  firstName?: string;
-  lastName?: string;
-  nickName?: string;
+  searchTerm?: string;
   position?: PlayerPositionEnum;
-  alternatePosition?: PlayerPositionEnum;
-  idNumber?: string;
 }
 
 export interface Player extends Document {
