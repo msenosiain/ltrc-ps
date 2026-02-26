@@ -1,0 +1,27 @@
+// _list-layout.scss — shared list layout styles
+
+.list-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+@mixin clickable-row {
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--mat-table-row-item-hover-state-layer-color, rgba(0, 0, 0, 0.04));
+  }
+
+  .mat-mdc-cell {
+    border-bottom: 1px solid transparent;
+    border-top: 1px solid transparent;
+  }
+}
