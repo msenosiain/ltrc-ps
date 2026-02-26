@@ -1,0 +1,51 @@
+info:
+  name: Matches - PATCH /matches/:id/squad
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/matches/:id/squad"
+  body:
+    type: json
+    data: |-
+      {
+        "squad": [
+          { "shirtNumber": 1,  "playerId": "<playerId>" },
+          { "shirtNumber": 2,  "playerId": "<playerId>" },
+          { "shirtNumber": 3,  "playerId": "<playerId>" },
+          { "shirtNumber": 4,  "playerId": "<playerId>" },
+          { "shirtNumber": 5,  "playerId": "<playerId>" },
+          { "shirtNumber": 6,  "playerId": "<playerId>" },
+          { "shirtNumber": 7,  "playerId": "<playerId>" },
+          { "shirtNumber": 8,  "playerId": "<playerId>" },
+          { "shirtNumber": 9,  "playerId": "<playerId>" },
+          { "shirtNumber": 10, "playerId": "<playerId>" },
+          { "shirtNumber": 11, "playerId": "<playerId>" },
+          { "shirtNumber": 12, "playerId": "<playerId>" },
+          { "shirtNumber": 13, "playerId": "<playerId>" },
+          { "shirtNumber": 14, "playerId": "<playerId>" },
+          { "shirtNumber": 15, "playerId": "<playerId>" },
+          { "shirtNumber": 16, "playerId": "<playerId>" },
+          { "shirtNumber": 17, "playerId": "<playerId>" }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Reemplaza la convocatoria completa del partido.
+  - shirtNumber 1-15: titulares (posición fija según número)
+  - shirtNumber 16-26: suplentes
+  - Max 26 jugadores (shirtNumber entre 1 y 26)
+  - Retorna el partido con squad.player populado.
+
+  Posiciones por número de camiseta:
+  1=Pilar Izq  2=Hooker     3=Pilar Der  4=Lock Izq   5=Lock Der
+  6=Ala Ciega  7=Ala Abierta 8=Octavo    9=Scrum Half 10=Fly Half
+  11=Wing Izq  12=Centro    13=Centro    14=Wing Der  15=Full Back

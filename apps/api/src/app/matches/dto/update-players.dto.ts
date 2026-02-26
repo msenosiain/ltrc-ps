@@ -1,7 +1,10 @@
-import { IsArray, IsMongoId } from 'class-validator';
+import { IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { SquadEntryDto } from './create-match.dto';
 
-export class UpdateMatchPlayersDto {
+export class UpdateMatchSquadDto {
   @IsArray()
-  @IsMongoId({ each: true })
-  readonly playerIds!: string[];
+  @ValidateNested({ each: true })
+  @Type(() => SquadEntryDto)
+  readonly squad!: SquadEntryDto[];
 }

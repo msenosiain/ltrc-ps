@@ -14,10 +14,9 @@ import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
-import { UpdateMatchPlayersDto } from './dto/update-players.dto';
+import { UpdateMatchSquadDto } from './dto/update-players.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('matches')
 export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
@@ -33,19 +32,24 @@ export class MatchesController {
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: Partial<CreateMatchDto>
-  ) {
+  async update(@Param('id') id: string, @Body() dto: Partial<CreateMatchDto>) {
     return this.matchesService.update(id, dto);
   }
 
-  @Patch(':id/players')
-  async updatePlayers(
+  @Patch(':id/squad')
+  async updateSquad(
     @Param('id') id: string,
-    @Body() dto: UpdateMatchPlayersDto
+    @Body() dto: UpdateMatchSquadDto
   ) {
-    return this.matchesService.updatePlayers(id, dto.playerIds);
+    return this.matchesService.updateSquad(id, dto.squad);
+  }
+
+  @Post(':id/squad/from/:squadId')
+  async applySquadTemplate(
+    @Param('id') id: string,
+    @Param('squadId') squadId: string
+  ) {
+    return this.matchesService.applySquadTemplate(id, squadId);
   }
 
   @Get(':id')

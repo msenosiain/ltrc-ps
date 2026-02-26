@@ -1,0 +1,27 @@
+info:
+  name: Squads - PATCH /squads/:id
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/squads/:id"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Primera - Torneo Provincial (actualizado)",
+        "players": [
+          { "shirtNumber": 1,  "playerId": "<playerId>" },
+          { "shirtNumber": 9,  "playerId": "<playerId>" }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Todos los campos son opcionales. Si se envían entries, reemplaza la lista completa.

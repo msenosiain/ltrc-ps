@@ -1,0 +1,21 @@
+info:
+  name: Matches - POST /matches/:id/squad/from/:squadId
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/matches/:id/squad/from/:squadId"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Carga una plantilla de squad guardada como punto de partida para el partido.
+  La convocatoria del partido queda como copia independiente — modificarla
+  no afecta la plantilla original.
+  Después de aplicarla, usar PATCH /matches/:id/squad para ajustes.

@@ -3,12 +3,14 @@ import {
   IsBoolean,
   IsDate,
   IsEnum,
+  IsInt,
   IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUrl,
+  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -33,6 +35,16 @@ export class VideoClipDto {
   @IsArray()
   @IsMongoId({ each: true })
   targetPlayers?: string[];
+}
+
+export class SquadEntryDto {
+  @IsInt()
+  @Min(1)
+  @Max(26)
+  shirtNumber!: number;
+
+  @IsMongoId()
+  playerId!: string;
 }
 
 export class MatchResultDto {
@@ -89,8 +101,9 @@ export class CreateMatchDto {
 
   @IsOptional()
   @IsArray()
-  @IsMongoId({ each: true })
-  readonly selectedPlayers?: string[];
+  @ValidateNested({ each: true })
+  @Type(() => SquadEntryDto)
+  readonly squad?: SquadEntryDto[];
 
   @IsOptional()
   @IsArray()
