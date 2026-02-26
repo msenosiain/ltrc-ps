@@ -14,9 +14,9 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.title')?.textContent).toContain('Los Tordos Rugby Club');
   });
-  it(`should have as title 'Los Tordos Rugby Club'`, () => {
+  it('should create', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('Los Tordos Rugby Club');
+    expect(app).toBeTruthy();
   });
 });
