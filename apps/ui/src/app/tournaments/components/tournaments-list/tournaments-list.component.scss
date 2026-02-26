@@ -1,0 +1,20 @@
+@use '../../../common/styles/list-layout';
+
+.tournaments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+}
+
+// .list-header comes from shared list-layout
+
+.tournaments-table {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .tournament-row {
+    @include list-layout.clickable-row;
+  }
+}
