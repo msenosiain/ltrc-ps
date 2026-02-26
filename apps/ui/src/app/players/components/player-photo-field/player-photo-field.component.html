@@ -1,0 +1,31 @@
+<div
+  class="photo-field"
+  [class.photo-field--filled]="value"
+  [class.photo-field--error]="showError"
+  [class.photo-field--disabled]="disabled"
+  (click)="openDialog()"
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="value ? 'Cambiar foto del jugador' : 'Subir foto del jugador'"
+  (keydown.enter)="openDialog()"
+  (keydown.space)="openDialog()"
+>
+  @if (value?.previewUrl) {
+  <img
+    [src]="value!.previewUrl"
+    alt="Foto del jugador"
+    class="photo-field__img"
+  />
+  <div class="photo-field__badge" aria-hidden="true">
+    <mat-icon>edit</mat-icon>
+  </div>
+  } @else {
+  <div class="photo-field__placeholder">
+    <span>Sin foto</span>
+  </div>
+  }
+</div>
+
+@if (showError) {
+<span class="photo-field__error">La foto es obligatoria</span>
+}
