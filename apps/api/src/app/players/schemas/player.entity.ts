@@ -15,15 +15,15 @@ export class PlayerEntity extends Document {
   address: {
     street?: string;
     number?: string;
+    floorApartment?: string;
+    neighborhood?: string;
     city?: string;
-    province?: string;
     postalCode?: string;
-    country?: string;
     phoneNumber: string;
   };
   position: PlayerPositionEnum;
   alternatePosition?: PlayerPositionEnum;
-  size?: number;
+  height?: number;
   weight?: number;
   clothingSizes?: {
     jersey?: ClothingSizesEnum;

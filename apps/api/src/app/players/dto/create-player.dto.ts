@@ -29,19 +29,19 @@ export class AddressDto {
 
   @IsOptional()
   @IsString()
+  floorApartment?: string;
+
+  @IsOptional()
+  @IsString()
+  neighborhood?: string;
+
+  @IsOptional()
+  @IsString()
   city?: string;
 
   @IsOptional()
   @IsString()
-  province?: string;
-
-  @IsOptional()
-  @IsString()
   postalCode?: string;
-
-  @IsOptional()
-  @IsString()
-  country?: string;
 
   @IsNumberString()
   phoneNumber!: string;
@@ -109,7 +109,7 @@ export class CreatePlayerDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
-  readonly size?: number;
+  readonly height?: number;
 
   @IsOptional()
   @IsNumber()
