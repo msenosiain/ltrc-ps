@@ -1,0 +1,46 @@
+<div class="tournaments-list">
+
+  <div class="list-header">
+    <button mat-flat-button color="primary" type="button" (click)="goToCreate()">
+      <mat-icon>add</mat-icon>
+      Agregar torneo
+    </button>
+  </div>
+
+  <ltrc-tournament-search (filtersChange)="applyFilters($event)" />
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <table mat-table [dataSource]="tournaments" class="tournaments-table mat-elevation-z2">
+
+    <!-- Nombre -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+      <td mat-cell *matCellDef="let tournament">{{ tournament.name }}</td>
+    </ng-container>
+
+    <!-- Temporada -->
+    <ng-container matColumnDef="season">
+      <th mat-header-cell *matHeaderCellDef>Temporada</th>
+      <td mat-cell *matCellDef="let tournament">{{ tournament.season }}</td>
+    </ng-container>
+
+    <!-- Descripción -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Descripción</th>
+      <td mat-cell *matCellDef="let tournament">{{ tournament.description }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      (click)="viewTournamentDetails(row.id)"
+      class="tournament-row"
+    ></tr>
+
+  </table>
+
+</div>

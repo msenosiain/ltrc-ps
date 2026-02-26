@@ -1,0 +1,46 @@
+<div class="tournament-viewer">
+  @if (tournament) {
+
+    <mat-card>
+      <mat-card-content>
+        <div class="tournament-header">
+          <h2 class="tournament-name">{{ tournament.name }}</h2>
+          @if (tournament.season) {
+            <span class="tournament-season">Temporada {{ tournament.season }}</span>
+          }
+        </div>
+
+        @if (tournament.description) {
+          <p class="tournament-description">{{ tournament.description }}</p>
+        }
+
+        <div class="info-grid">
+          @if (tournament.createdAt) {
+            <div class="info-item">
+              <span class="info-label">Creado</span>
+              <span class="info-value">{{ tournament.createdAt | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          }
+          @if (tournament.updatedAt) {
+            <div class="info-item">
+              <span class="info-label">Actualizado</span>
+              <span class="info-value">{{ tournament.updatedAt | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="viewer-actions">
+      <button mat-stroked-button type="button" (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="edit()">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+
+  }
+</div>

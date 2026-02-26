@@ -1,0 +1,17 @@
+<div class="tournament-editor">
+
+  <div class="editor-header">
+    <h2 class="editor-title">{{ editing ? 'Editar torneo' : 'Nuevo torneo' }}</h2>
+    @if (submitting) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </div>
+
+  <ltrc-tournament-form
+    [tournament]="tournament"
+    [submitting]="submitting"
+    (formSubmit)="onFormSubmit($event)"
+    (cancel)="onCancel()"
+  />
+
+</div>
