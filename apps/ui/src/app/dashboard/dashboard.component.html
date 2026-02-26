@@ -1,11 +1,18 @@
 <mat-sidenav-container class="container">
-  <mat-sidenav mode="side" opened>
+  <mat-sidenav [mode]="isSmallScreen() ? 'over' : 'side'" [opened]="!isSmallScreen()" #sidenav>
     <mat-nav-list>
       <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members">Socios</a>
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="players">Jugadores</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
+    @if (isSmallScreen()) {
+      <div class="mobile-toolbar">
+        <button mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+    }
     <div class="content">
       <router-outlet></router-outlet>
 
