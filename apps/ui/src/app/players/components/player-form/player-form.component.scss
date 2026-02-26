@@ -1,4 +1,5 @@
 // player-form.component.scss
+@use '../../../common/styles/form-layout';
 
 $col:      240px;
 $gap:      12px;
@@ -14,20 +15,6 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
 .player-form-container mat-card {
   padding: 16px;
   margin-bottom: 12px;
-}
-
-.form-actions {
-  margin-top: 12px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
 }
 
 // == CARD 1 - DATOS PERSONALES

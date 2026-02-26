@@ -1,3 +1,5 @@
+@use '../../../common/styles/list-layout';
+
 .players-list {
   display: flex;
   flex-direction: column;
@@ -5,17 +7,7 @@
   padding: 0;
 }
 
-.list-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-}
+// .list-header comes from shared list-layout
 
 .players-table {
   width: 100%;
@@ -39,16 +31,6 @@
 
   // filas clickeables
   .player-row {
-    cursor: pointer;
-    transition: background 0.15s;
-
-    &:hover {
-      background: var(--mat-table-row-item-hover-state-layer-color, rgba(0,0,0,0.04));
-    }
-
-    .mat-mdc-cell {
-      border-bottom: 1px solid transparent;
-      border-top: 1px solid transparent;
-    }
+    @include list-layout.clickable-row;
   }
 }
