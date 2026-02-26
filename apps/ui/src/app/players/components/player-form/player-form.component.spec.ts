@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayerFormComponent } from './player-form.component';
 import { PlayersService } from '../../services/players.service';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 describe('PlayerFormComponent', () => {
   let component: PlayerFormComponent;
@@ -15,6 +16,7 @@ describe('PlayerFormComponent', () => {
       imports: [PlayerFormComponent],
       providers: [
         { provide: PlayersService, useValue: playersServiceMock },
+        provideNativeDateAdapter(),
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(PlayerFormComponent);

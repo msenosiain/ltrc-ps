@@ -7,7 +7,7 @@ import { PhotoValue } from '../components/player-photo-field/player-photo-field.
 
 export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
-    photo: fb.control<PhotoValue | null>(null, Validators.required),
+    photo: fb.control<PhotoValue | null>(null),
     firstName: fb.nonNullable.control('', Validators.required),
     lastName: fb.nonNullable.control('', Validators.required),
     nickName: fb.nonNullable.control(''),
