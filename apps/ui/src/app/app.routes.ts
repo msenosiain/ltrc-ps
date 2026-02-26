@@ -23,6 +23,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./players/players.routes').then((m) => m.PLAYERS_ROUTES),
       },
+      {
+        path: 'tournaments',
+        loadChildren: () =>
+          import('./tournaments/tournaments.routes').then((m) => m.TOURNAMENTS_ROUTES),
+      },
     ],
   },
   // Fallback to dashboard for any unknown route

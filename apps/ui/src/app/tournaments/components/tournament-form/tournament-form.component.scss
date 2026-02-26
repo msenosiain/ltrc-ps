@@ -1,0 +1,41 @@
+@use '../../../common/styles/form-layout';
+
+$col: 300px;
+$gap: 12px;
+
+.tournament-form-container {
+  display: block;
+  padding: 0;
+}
+
+.tournament-form-container mat-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.tournament-grid {
+  display: grid;
+  grid-template-columns: repeat(2, $col);
+  gap: $gap;
+  align-items: start;
+  margin-top: 12px;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .name-field     { grid-column: 1; }
+  .season-field   { grid-column: 2; }
+  .description-field { grid-column: 1 / -1; }
+}
+
+@media (max-width: 660px) {
+  .tournament-grid {
+    grid-template-columns: 1fr;
+
+    .name-field,
+    .season-field,
+    .description-field { grid-column: 1; }
+  }
+}

@@ -1,0 +1,53 @@
+<form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()" class="tournament-form-container">
+
+  <mat-card>
+    <mat-card-title>Datos del torneo</mat-card-title>
+    <div class="tournament-grid">
+
+      <mat-form-field appearance="outline" class="name-field">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        @if (tournamentForm.get('name')?.invalid) {
+          <mat-error>El nombre es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="season-field">
+        <mat-label>Temporada</mat-label>
+        <input matInput formControlName="season" placeholder="ej: 2024" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="description-field">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" rows="3"></textarea>
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <div class="form-actions">
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="onCancel()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Cancelar
+    </button>
+
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="submitting || tournamentForm.invalid"
+    >
+      <mat-icon>{{ tournament ? 'save' : 'add' }}</mat-icon>
+      {{ tournament ? 'Actualizar torneo' : 'Crear torneo' }}
+    </button>
+  </div>
+
+  @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+</form>

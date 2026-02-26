@@ -1,0 +1,11 @@
+<form [formGroup]="searchForm" class="search-form">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Nombre o temporada</mat-label>
+    <input matInput placeholder="Ej: Copa o 2024" formControlName="searchTerm" />
+    @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</form>
