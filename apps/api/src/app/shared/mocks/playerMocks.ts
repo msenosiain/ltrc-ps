@@ -6,9 +6,12 @@ export const createPlayerDtoPlain = {
   idNumber: '3',
   birthDate: '05-12-2005',
   email: 'player3@lostordos.com.ar',
-  phoneNumber: '123456789',
-  position: PlayerPositionEnum.FULLBACK
+  position: PlayerPositionEnum.FULLBACK,
+  address: {
+    phoneNumber: '123456789',
+  },
 };
+
 export const playersArray = [
   {
     lastName: 'Lastname 1',
@@ -16,13 +19,17 @@ export const playersArray = [
     idNumber: '1',
     birthDate: '05-12-2005',
     email: 'player1@lostordos.com.ar',
-    phoneNumber: '123456789',
-    address: 'Some Address 1',
-    city: 'City',
-    province: 'Province',
+    address: {
+      street: 'Some Street 1',
+      number: '100',
+      neighborhood: 'Barrio 1',
+      city: 'City',
+      postalCode: '1000',
+      phoneNumber: '123456789',
+    },
     position: PlayerPositionEnum.RIGHT_SECOND_ROW,
     alternatePosition: PlayerPositionEnum.LEFT_SECOND_ROW,
-    size: 200,
+    height: 200,
     weight: 119,
   },
   {
@@ -31,13 +38,17 @@ export const playersArray = [
     idNumber: '2',
     birthDate: '05-12-2005',
     email: 'player2@lostordos.com.ar',
-    phoneNumber: '123456789',
-    address: 'Some Address 2',
-    city: 'City',
-    province: 'Province',
+    address: {
+      street: 'Some Street 2',
+      number: '200',
+      neighborhood: 'Barrio 2',
+      city: 'City',
+      postalCode: '1000',
+      phoneNumber: '987654321',
+    },
     position: PlayerPositionEnum.TIGHT_HEAD_PROP,
     alternatePosition: PlayerPositionEnum.LOOSE_HEAD_PROP,
-    size: 180,
+    height: 180,
     weight: 100,
   },
   {
@@ -46,13 +57,17 @@ export const playersArray = [
     idNumber: '3',
     birthDate: '05-12-2005',
     email: 'player3@lostordos.com.ar',
-    phoneNumber: '123456789',
-    address: 'Some Address 3',
-    city: 'City 3',
-    province: 'Province',
+    address: {
+      street: 'Some Street 3',
+      number: '300',
+      neighborhood: 'Barrio 3',
+      city: 'City 3',
+      postalCode: '3000',
+      phoneNumber: '111222333',
+    },
     position: PlayerPositionEnum.LEFT_WING,
     alternatePosition: PlayerPositionEnum.FULLBACK,
-    size: 200,
+    height: 200,
     weight: 119,
   },
 ];
