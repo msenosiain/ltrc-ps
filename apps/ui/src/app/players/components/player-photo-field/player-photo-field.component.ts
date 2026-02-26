@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PlayerPhotoDialogComponent } from '../player-photo-dialog/player-photo-dialog.component';
 
 export interface PhotoValue {
-  file: File;
+  file?: File;
   previewUrl: string;
 }
 
@@ -35,23 +35,19 @@ export interface PhotoValue {
   template: `
     <div
       class="photo-field"
-      [class.photo-field--filled]="value || existingPhotoUrl"
+      [class.photo-field--filled]="value"
       [class.photo-field--error]="showError"
       [class.photo-field--disabled]="disabled"
       (click)="openDialog()"
       role="button"
       tabindex="0"
-      [attr.aria-label]="
-        value || existingPhotoUrl
-          ? 'Cambiar foto del jugador'
-          : 'Subir foto del jugador'
-      "
+      [attr.aria-label]="value ? 'Cambiar foto del jugador' : 'Subir foto del jugador'"
       (keydown.enter)="openDialog()"
       (keydown.space)="openDialog()"
     >
-      @if (value?.previewUrl || existingPhotoUrl) {
+      @if (value?.previewUrl) {
       <img
-        [src]="value?.previewUrl ?? existingPhotoUrl"
+        [src]="value!.previewUrl"
         alt="Foto del jugador"
         class="photo-field__img"
       />
@@ -168,7 +164,6 @@ export class PlayerPhotoFieldComponent
 {
   private dialog = inject(MatDialog);
 
-  @Input() existingPhotoUrl?: string;
   @Input() required = false;
 
   value: PhotoValue | null = null;
@@ -179,9 +174,7 @@ export class PlayerPhotoFieldComponent
   private onTouched: () => void = () => {};
 
   get showError(): boolean {
-    return (
-      this.touched && this.required && !this.value && !this.existingPhotoUrl
-    );
+    return this.touched && this.required && !this.value;
   }
 
   openDialog(): void {
@@ -192,7 +185,7 @@ export class PlayerPhotoFieldComponent
     });
 
     const instance = ref.componentInstance;
-    instance.hasCurrentPhoto = !!(this.value || this.existingPhotoUrl);
+    instance.hasCurrentPhoto = !!this.value;
     if (this.value?.previewUrl) {
       instance.previewUrl = this.value.previewUrl;
     }
@@ -228,7 +221,7 @@ export class PlayerPhotoFieldComponent
   }
 
   validate(): ValidationErrors | null {
-    if (this.required && !this.value && !this.existingPhotoUrl) {
+    if (this.required && !this.value) {
       return { required: true };
     }
     return null;

@@ -16,7 +16,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { Player, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 import { positionOptions } from '../../position-options';
 import { buildCreatePlayerForm } from '../../forms/player-form.factory';
@@ -42,7 +41,6 @@ export interface PlayerFormSubmitEvent {
     MatCardModule,
     MatFormFieldModule,
     MatDatepickerModule,
-    MatNativeDateModule,
     PlayerPhotoFieldComponent,
   ],
   styleUrls: ['./player-form.component.scss'],
@@ -64,15 +62,14 @@ export class PlayerFormComponent implements OnChanges {
 
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
 
-  get existingPhotoUrl(): string | undefined {
-    return this.player?.photoId && this.player.id
-      ? this.playersService.getPlayerPhotoUrl(this.player.id)
-      : undefined;
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {
       this.playerForm.patchValue(this.player);
+      if (this.player.photoId && this.player.id) {
+        this.playerForm.get('photo')?.setValue({
+          previewUrl: this.playersService.getPlayerPhotoUrl(this.player.id),
+        });
+      }
     }
   }
 
