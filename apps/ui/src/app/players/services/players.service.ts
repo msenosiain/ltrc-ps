@@ -50,9 +50,7 @@ export class PlayersService {
     file: File
   ): Observable<Player> {
     const dto = mapFormToCreatePlayerDto(formValue);
-    const form = new FormData();
-    form.append('photo', file);
-    form.append('dto', JSON.stringify(dto));
+    const form = this.buildFormData(dto, file);
     return this.httpClient.post<Player>(this.playersApiUrl, form);
   }
 
@@ -69,10 +67,33 @@ export class PlayersService {
     file: File
   ): Observable<Player> {
     const dto = mapFormToCreatePlayerDto(formValue);
-    const form = new FormData();
-    form.append('photo', file);
-    form.append('dto', JSON.stringify(dto));
+    const form = this.buildFormData(dto, file);
     return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, form);
+  }
+
+  // UTILS - FORM DATA ──────────────────────────────────────
+
+  private buildFormData(
+    dto: ReturnType<typeof mapFormToCreatePlayerDto>,
+    file?: File
+  ): FormData {
+    const form = new FormData();
+    if (file) form.append('photo', file);
+
+    if (dto.firstName != null) form.append('firstName', dto.firstName);
+    if (dto.lastName != null) form.append('lastName', dto.lastName);
+    if (dto.nickName != null) form.append('nickName', dto.nickName);
+    if (dto.idNumber != null) form.append('idNumber', dto.idNumber);
+    if (dto.birthDate != null) form.append('birthDate', dto.birthDate);
+    if (dto.email != null) form.append('email', dto.email);
+    if (dto.position != null) form.append('position', dto.position);
+    if (dto.alternatePosition != null) form.append('alternatePosition', dto.alternatePosition);
+    if (dto.height != null) form.append('height', String(dto.height));
+    if (dto.weight != null) form.append('weight', String(dto.weight));
+    if (dto.address != null) form.append('address', JSON.stringify(dto.address));
+    if (dto.clothingSizes != null) form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
+
+    return form;
   }
 
   // DELETE ─────────────────────────────────────────────────
