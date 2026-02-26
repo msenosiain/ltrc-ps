@@ -5,7 +5,6 @@ import {
   Min,
   IsString,
   IsIn,
-  ValidateNested,
 } from 'class-validator';
 
 export class PaginationDto<TFilter = any> {
@@ -22,7 +21,6 @@ export class PaginationDto<TFilter = any> {
   size = 10;
 
   @IsOptional()
-  @ValidateNested()
   @Transform(({ value }) => {
     if (!value) return undefined;
     if (typeof value === 'string') {
