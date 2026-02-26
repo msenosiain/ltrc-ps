@@ -1,5 +1,8 @@
 import {CommonModule} from '@angular/common';
 import {Component, inject} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {BreakpointObserver} from '@angular/cdk/layout';
+import {map} from 'rxjs';
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {Router, RouterModule} from "@angular/router";
@@ -20,6 +23,13 @@ export class DashboardComponent {
   Role = Role;
   public authService = inject(AuthService);
   public router = inject(Router);
+
+  isSmallScreen = toSignal(
+    inject(BreakpointObserver).observe('(max-width: 960px)').pipe(
+      map(result => result.matches)
+    ),
+    { initialValue: false }
+  );
 
   logout() {
     this.authService.logout();
