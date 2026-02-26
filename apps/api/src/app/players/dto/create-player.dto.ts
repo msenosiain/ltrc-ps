@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { Transform, Type } from 'class-transformer';
+import { Transform, Type, plainToInstance } from 'class-transformer';
 import { parse } from 'date-fns';
 import {
   ClothingSizesEnum,
@@ -117,12 +117,18 @@ export class CreatePlayerDto {
   readonly weight?: number;
 
   @IsOptional()
+  @Transform(({ value }) => {
+    const obj = typeof value === 'string' ? JSON.parse(value) : value;
+    return plainToInstance(AddressDto, obj);
+  })
   @ValidateNested()
-  @Type(() => AddressDto)
   readonly address?: AddressDto;
 
   @IsOptional()
+  @Transform(({ value }) => {
+    const obj = typeof value === 'string' ? JSON.parse(value) : value;
+    return plainToInstance(ClothingSizesDto, obj);
+  })
   @ValidateNested()
-  @Type(() => ClothingSizesDto)
   readonly clothingSizes?: ClothingSizesDto;
 }
