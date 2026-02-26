@@ -1,0 +1,36 @@
+info:
+  name: Matches - PATCH /matches/:id
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/matches/:id"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "completed",
+        "result": {
+          "homeScore": 28,
+          "awayScore": 14
+        },
+        "notes": "Victoria sólida, buen juego de forwards",
+        "videos": [
+          {
+            "url": "https://www.youtube.com/watch?v=example",
+            "name": "Partido completo",
+            "description": "Grabación completa del partido",
+            "targetPlayers": []
+          }
+        ]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Reemplazar :id por el id del partido. Todos los campos son opcionales.

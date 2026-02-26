@@ -1,0 +1,17 @@
+info:
+  name: Matches - DELETE /matches/:id
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/matches/:id"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Reemplazar :id por el id del partido

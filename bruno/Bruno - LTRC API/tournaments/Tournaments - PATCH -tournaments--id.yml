@@ -1,0 +1,23 @@
+info:
+  name: Tournaments - PATCH /tournaments/:id
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/tournaments/:id"
+  body:
+    type: json
+    data: |-
+      {
+        "description": "Descripción actualizada"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: Reemplazar :id por el id del torneo

@@ -1,0 +1,23 @@
+info:
+  name: Tournaments - POST /tournaments
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/tournaments"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Torneo Regional del Litoral",
+        "season": "2025",
+        "description": "Torneo regional organizado por la UAR"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
