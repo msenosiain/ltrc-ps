@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TournamentEntity } from './schemas/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { TournamentFilterDto } from './dto/tournament-filter.dto';
 
 @Injectable()
 export class TournamentsService {
@@ -15,8 +16,20 @@ export class TournamentsService {
     return this.tournamentModel.create(dto);
   }
 
-  async findAll() {
-    return this.tournamentModel.find().sort({ name: 1 }).exec();
+  async findAll(filters: TournamentFilterDto = {}) {
+    const { searchTerm, sortBy, sortOrder = 'desc' } = filters;
+    const query: Record<string, unknown> = {};
+
+    if (searchTerm) {
+      const regex = new RegExp(searchTerm, 'i');
+      query['$or'] = [{ name: regex }, { season: regex }];
+    }
+
+    const sort: Record<string, 1 | -1> = sortBy
+      ? { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+      : { season: -1 };
+
+    return this.tournamentModel.find(query).sort(sort).exec();
   }
 
   async findOne(id: string) {

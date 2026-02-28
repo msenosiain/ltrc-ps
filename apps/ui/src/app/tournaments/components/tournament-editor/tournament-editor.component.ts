@@ -1,15 +1,24 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TournamentsService, TournamentFormValue } from '../../services/tournaments.service';
 import { Tournament } from '@ltrc-ps/shared-api-model';
 import { TournamentFormComponent } from '../tournament-form/tournament-form.component';
+import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ltrc-tournament-editor',
   standalone: true,
-  imports: [MatProgressBarModule, TournamentFormComponent],
+  imports: [
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    TournamentFormComponent,
+  ],
   templateUrl: './tournament-editor.component.html',
   styleUrl: './tournament-editor.component.scss',
 })
@@ -17,6 +26,7 @@ export class TournamentEditorComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly tournamentsService = inject(TournamentsService);
+  private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
@@ -57,6 +67,27 @@ export class TournamentEditorComponent implements OnInit {
       .createTournament(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: onSuccess, error: onError });
+  }
+
+  onDelete(): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '380px',
+      data: {
+        title: 'Eliminar torneo',
+        message: `¿Estás seguro que querés eliminar "${this.tournament?.name}"? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+      },
+    });
+
+    ref.afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (!confirmed) return;
+        this.tournamentsService
+          .deleteTournament(this.tournament!.id!)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(() => this.router.navigate(['/dashboard/tournaments']));
+      });
   }
 
   onCancel(): void {

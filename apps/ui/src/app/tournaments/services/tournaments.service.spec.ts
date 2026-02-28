@@ -28,13 +28,21 @@ describe('TournamentsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('getTournaments should GET /tournaments', () => {
+  it('getTournaments should GET /tournaments without params', () => {
     const mockTournaments = [{ id: '1', name: 'Copa 2024' }];
     service.getTournaments().subscribe((res) => expect(res).toEqual(mockTournaments));
 
     const req = httpMock.expectOne(`${API_BASE}/tournaments`);
     expect(req.request.method).toBe('GET');
     req.flush(mockTournaments);
+  });
+
+  it('getTournaments should pass searchTerm as query param', () => {
+    service.getTournaments('copa').subscribe();
+
+    const req = httpMock.expectOne(`${API_BASE}/tournaments?searchTerm=copa`);
+    expect(req.request.method).toBe('GET');
+    req.flush([]);
   });
 
   it('getTournamentById should GET /tournaments/:id', () => {
