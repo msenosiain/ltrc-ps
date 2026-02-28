@@ -13,17 +13,17 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <table mat-table [dataSource]="tournaments" class="tournaments-table mat-elevation-z2">
+  <table mat-table [dataSource]="tournaments" matSort matSortActive="season" matSortDirection="desc" class="tournaments-table mat-elevation-z2">
 
     <!-- Nombre -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
       <td mat-cell *matCellDef="let tournament">{{ tournament.name }}</td>
     </ng-container>
 
     <!-- Temporada -->
     <ng-container matColumnDef="season">
-      <th mat-header-cell *matHeaderCellDef>Temporada</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Temporada</th>
       <td mat-cell *matCellDef="let tournament">{{ tournament.season }}</td>
     </ng-container>
 

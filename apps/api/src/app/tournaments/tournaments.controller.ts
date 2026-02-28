@@ -6,11 +6,13 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 // @UseGuards(JwtAuthGuard)
@@ -19,8 +21,8 @@ export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
   @Get()
-  async findAll() {
-    return this.tournamentsService.findAll();
+  async findAll(@Query() filters: TournamentFilterDto) {
+    return this.tournamentsService.findAll(filters);
   }
 
   @Post()
