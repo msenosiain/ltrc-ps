@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Tournament } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
@@ -18,8 +18,12 @@ export class TournamentsService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly tournamentsApiUrl = `${this.config.baseUrl}/tournaments`;
 
-  getTournaments(): Observable<Tournament[]> {
-    return this.httpClient.get<Tournament[]>(this.tournamentsApiUrl);
+  getTournaments(searchTerm?: string, sortBy?: string, sortOrder?: 'asc' | 'desc'): Observable<Tournament[]> {
+    let params = new HttpParams();
+    if (searchTerm) params = params.set('searchTerm', searchTerm);
+    if (sortBy) params = params.set('sortBy', sortBy);
+    if (sortOrder) params = params.set('sortOrder', sortOrder);
+    return this.httpClient.get<Tournament[]>(this.tournamentsApiUrl, { params });
   }
 
   getTournamentById(id: string): Observable<Tournament> {
