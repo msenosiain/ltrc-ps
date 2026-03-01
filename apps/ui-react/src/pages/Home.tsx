@@ -40,7 +40,7 @@ const RULES = [
 
 export function Home() {
   return (
-    <main className="min-h-screen bg-secondary p-8">
+    <main className="min-h-screen bg-navy p-8">
       <section className="space-y-8">
         <div className="flex gap-2">
           <h1 className="text-h1 text-ink text-6xl">2026 LTRC</h1>
@@ -49,7 +49,7 @@ export function Home() {
         {RULES.map((rule, index) => (
           <div key={rule.title} className="flex gap-4 items-start">
             {/* Número */}
-            <span className="text-xl font-bold text-primary">{index + 1}.</span>
+            <span className="text-xl font-bold text-interactive">{index + 1}.</span>
 
             {/* Texto */}
             <div className="space-y-1">

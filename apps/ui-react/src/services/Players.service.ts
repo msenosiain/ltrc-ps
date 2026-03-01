@@ -38,12 +38,16 @@ export function buildPlayerFormData(
   const scalarFields = [
     'idNumber', 'firstName', 'lastName', 'nickName',
     'birthDate', 'email', 'position', 'alternatePosition',
-    'height', 'weight',
+    'height', 'weight', 'divisionId',
   ] as const;
 
   for (const field of scalarFields) {
-    const value = (playerData as Record<string, unknown>)[field];
+    let value = (playerData as Record<string, unknown>)[field];
     if (value !== undefined && value !== null && value !== '') {
+      if (field === 'birthDate' && typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        const [y, m, d] = value.split('-');
+        value = `${d}/${m}/${y}`;
+      }
       fd.append(field, String(value));
     }
   }
@@ -68,6 +72,11 @@ export function buildPlayerFormData(
         fd.append(`clothingSizes[${f}]`, String(sizes[f]));
       }
     }
+  }
+
+  // Array equipoIds
+  if (Array.isArray(playerData.equipoIds)) {
+    playerData.equipoIds.forEach((id, i) => fd.append(`equipoIds[${i}]`, id));
   }
 
   // Foto

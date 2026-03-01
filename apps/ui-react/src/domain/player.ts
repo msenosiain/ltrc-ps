@@ -62,6 +62,8 @@ export interface Player {
   weight?: number;
   clothingSizes?: ClothingSizes;
   photoId?: string;
+  divisionId?: string;
+  equipoIds?: string[];
   createdAt?: string;
   updatedAt?: string;
 }

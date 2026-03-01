@@ -32,6 +32,8 @@ export class PlayerEntity extends Document {
     pants?: ClothingSizesEnum;
   };
   photoId?: string;
+  divisionId?: string;
+  equipoIds?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

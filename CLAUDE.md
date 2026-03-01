@@ -3,8 +3,8 @@
 ## ¿Qué es este proyecto?
 
 Sistema de gestión del plantel de jugadores para **Los Tordos Rugby Club (LTRC)**.
-Permite listar, crear, editar y eliminar jugadores, incluyendo foto, datos personales,
-posición en cancha y talles de equipamiento.
+Permite listar, crear, editar y eliminar jugadores, y gestionar divisiones, equipos, ejercicios y partidos.
+Incluye autenticación JWT con roles (admin, entrenador, jugador).
 
 ---
 
@@ -24,6 +24,7 @@ posición en cancha y talles de equipamiento.
 | Backend                 | **NestJS**                    | 11.x           | activo                   |
 | Base de datos           | **MongoDB** (Docker)          | latest         | activo                   |
 | ODM                     | **Mongoose**                  | 8.9.5          | activo                   |
+| Autenticación           | **JWT** + **bcrypt**          | passport-jwt   | activo                   |
 | Almacenamiento de fotos | **MongoDB GridFS**            | (vía Mongoose) | activo                   |
 | Lenguaje                | **TypeScript**                | ~5.9.3         | activo                   |
 | Tests unitarios         | **Jest**                      | ^30.2.0        | activo                   |
@@ -39,7 +40,7 @@ posición en cancha y talles de equipamiento.
 ```
 ltrc-ps/
 ├── apps/
-│   ├── api/          # Backend NestJS  → puerto 3000
+│   ├── api/          # Backend NestJS unificado → puerto 3000
 │   ├── api-e2e/      # Tests E2E del API (Jest HTTP)
 │   ├── ui-react/     # Frontend React + Vite + Tailwind 4 → puerto 4201  ← PRINCIPAL
 │   ├── ui/           # Frontend Angular → puerto 4200  [LEGACY]
@@ -49,12 +50,26 @@ ltrc-ps/
 │       └── api/      # Lib compartida: interfaces, enums, tipos
 │           └── src/
 │               ├── interfaces/   # Player, Address, ClothingSizes, PaginatedResponse
-│               └── enums/        # PlayerPositionEnum, ClothingSizesEnum
+│               └── enums/        # PlayerPositionEnum, ClothingSizesEnum, RolEnum
 └── docker/
     └── docker-compose.yml   # MongoDB en puerto 27017
 ```
 
 El alias de la lib compartida es `@ltrc-ps/shared-api-model`.
+
+### Módulos del API (`apps/api/src/`)
+
+| Módulo        | Descripción                                        |
+| ------------- | -------------------------------------------------- |
+| `auth/`       | Login, refresh token, JWT strategy, guards, decorators |
+| `users/`      | CRUD usuarios con roles (admin/entrenador/jugador) |
+| `players/`    | CRUD jugadores + fotos via GridFS                  |
+| `divisiones/` | CRUD divisiones (ps, m19, m16, m14…)               |
+| `equipos/`    | CRUD equipos por división                          |
+| `ejercicios/` | CRUD ejercicios + categorías                       |
+| `partidos/`   | CRUD partidos                                      |
+| `seed/`       | Siembra inicial de datos al arrancar (idempotente) |
+| `shared/gridfs/` | Upload/download de fotos (MongoDB GridFS)       |
 
 ### Estructura interna de `apps/ui-react/src/`
 
@@ -67,9 +82,9 @@ src/
 │   ├── auth/         # ProtectedRoute
 │   ├── layout/       # AppLayout, Header, Sidebar
 │   └── ui/           # Componentes reutilizables
-├── domain/           # Tipos y enums del dominio (player, positions)
+├── domain/           # Tipos y enums del dominio (player, positions, ejercicios, partidos)
 ├── hooks/            # Custom hooks
-├── lib/              # Clientes HTTP (ps-client, content-client)
+├── lib/              # Cliente HTTP: psApi (axios con interceptors JWT)
 ├── pages/
 │   ├── categorias/   # EjerciciosCategoria, EjercicioDetalle
 │   ├── partidos/     # PartidosList, PartidoDetalle
@@ -107,6 +122,11 @@ El archivo `.env` debe estar en `apps/api/` con:
 ```env
 API_MONGODB_URL=mongodb://localhost:27017
 API_MONGODB_DB=ltrc-ps
+JWT_SECRET=<secreto>
+JWT_EXPIRES_IN=1h
+JWT_REFRESH_EXPIRES_IN=7d
+ADMIN_EMAIL=admin@ltrc.com
+ADMIN_PASSWORD=<password>
 ```
 
 ### 3. Instalar dependencias
@@ -119,25 +139,16 @@ npm install
 
 ```bash
 # Terminal 1 – API (NestJS en :3000)
-npm run start:api
+npx nx serve api
 
 # Terminal 2 – UI React (Vite en :4201)
-npm run start:ui-react
-```
-
-O con Nx directamente:
-
-```bash
-npx nx serve api
 npx nx serve ui-react
 ```
 
 ### Levantar UI Angular (legacy)
 
 ```bash
-npm run start:ui     # Angular en :4200
-# o
-npx nx serve ui
+npx nx serve ui   # Angular en :4200
 ```
 
 ---
@@ -165,18 +176,22 @@ npx nx serve ui
 ```env
 API_MONGODB_URL=mongodb://localhost:27017
 API_MONGODB_DB=ltrc-ps
+JWT_SECRET=<secreto-largo-y-aleatorio>
+JWT_EXPIRES_IN=1h
+JWT_REFRESH_EXPIRES_IN=7d
+ADMIN_EMAIL=admin@ltrc.com
+ADMIN_PASSWORD=<password>
 ```
 
-Validadas con Joi al arrancar; el API falla si faltan.
+Validadas con Joi al arrancar; el API falla si faltan las variables requeridas.
 
 ### UI React (`apps/ui-react/.env.local`)
 
 ```env
 VITE_PS_API_URL=http://localhost:3000/api
-VITE_CONTENT_API_URL=http://localhost:3001/api
 ```
 
-Accedidas vía `import.meta.env.VITE_*`. Si no existe el archivo, se usan los valores hardcodeados en `src/lib/`.
+Accedidas vía `import.meta.env.VITE_*`. Si no existe el archivo, se usa `http://localhost:3000/api` por defecto.
 
 ### UI Angular legacy (`apps/ui/.env`)
 
@@ -190,14 +205,73 @@ NX_API_BASE_URL=http://localhost:3000/api
 
 Base: `http://localhost:3000/api`
 
-| Método | Ruta                 | Descripción                                           |
-| ------ | -------------------- | ----------------------------------------------------- |
-| GET    | `/players`           | Lista paginada con filtros y sorting                  |
-| POST   | `/players`           | Crear jugador (multipart/form-data con foto opcional) |
-| GET    | `/players/:id`       | Detalle de un jugador                                 |
-| PATCH  | `/players/:id`       | Editar jugador (multipart/form-data)                  |
-| DELETE | `/players/:id`       | Eliminar jugador + foto                               |
-| GET    | `/players/:id/photo` | Stream de la foto (GridFS)                            |
+### Auth
+
+| Método | Ruta              | Auth | Descripción               |
+| ------ | ----------------- | ---- | ------------------------- |
+| POST   | `/auth/login`     | No   | Login, devuelve JWT tokens |
+| POST   | `/auth/refresh`   | No   | Renueva access token      |
+
+### Users
+
+| Método | Ruta              | Auth  | Descripción               |
+| ------ | ----------------- | ----- | ------------------------- |
+| GET    | `/users`          | Admin | Lista usuarios            |
+| POST   | `/users`          | Admin | Crear usuario             |
+| GET    | `/users/:id`      | Admin | Detalle usuario           |
+| PATCH  | `/users/:id`      | Admin | Editar usuario            |
+| DELETE | `/users/:id`      | Admin | Eliminar usuario          |
+
+### Players
+
+| Método | Ruta                 | Auth | Descripción                                           |
+| ------ | -------------------- | ---- | ----------------------------------------------------- |
+| GET    | `/players`           | No   | Lista paginada con filtros y sorting                  |
+| POST   | `/players`           | No   | Crear jugador (multipart/form-data con foto opcional) |
+| GET    | `/players/:id`       | No   | Detalle de un jugador                                 |
+| PATCH  | `/players/:id`       | No   | Editar jugador (multipart/form-data)                  |
+| DELETE | `/players/:id`       | No   | Eliminar jugador + foto                               |
+| GET    | `/players/:id/photo` | No   | Stream de la foto (GridFS)                            |
+
+### Divisiones
+
+| Método | Ruta               | Auth  | Descripción        |
+| ------ | ------------------ | ----- | ------------------ |
+| GET    | `/divisiones`      | No    | Lista divisiones   |
+| POST   | `/divisiones`      | Admin | Crear división     |
+| PATCH  | `/divisiones/:id`  | Admin | Editar división    |
+| DELETE | `/divisiones/:id`  | Admin | Eliminar división  |
+
+### Equipos
+
+| Método | Ruta            | Auth  | Descripción      |
+| ------ | --------------- | ----- | ---------------- |
+| GET    | `/equipos`      | No    | Lista equipos    |
+| POST   | `/equipos`      | Admin | Crear equipo     |
+| PATCH  | `/equipos/:id`  | Admin | Editar equipo    |
+| DELETE | `/equipos/:id`  | Admin | Eliminar equipo  |
+
+### Ejercicios
+
+| Método | Ruta                      | Auth          | Descripción              |
+| ------ | ------------------------- | ------------- | ------------------------ |
+| GET    | `/ejercicios/categorias`  | JWT requerido | Lista categorías         |
+| POST   | `/ejercicios/categorias`  | Admin         | Crear categoría          |
+| GET    | `/ejercicios`             | JWT requerido | Lista ejercicios filtrada |
+| POST   | `/ejercicios`             | JWT requerido | Crear ejercicio          |
+| GET    | `/ejercicios/:id`         | JWT requerido | Detalle ejercicio        |
+| PATCH  | `/ejercicios/:id`         | JWT requerido | Editar ejercicio         |
+| DELETE | `/ejercicios/:id`         | JWT requerido | Eliminar ejercicio       |
+
+### Partidos
+
+| Método | Ruta             | Auth          | Descripción       |
+| ------ | ---------------- | ------------- | ----------------- |
+| GET    | `/partidos`      | JWT requerido | Lista partidos    |
+| POST   | `/partidos`      | JWT requerido | Crear partido     |
+| GET    | `/partidos/:id`  | JWT requerido | Detalle partido   |
+| PATCH  | `/partidos/:id`  | JWT requerido | Editar partido    |
+| DELETE | `/partidos/:id`  | JWT requerido | Eliminar partido  |
 
 ---
 
@@ -206,7 +280,7 @@ Base: `http://localhost:3000/api`
 | Ruta                         | Componente            | Descripción                                       |
 | ---------------------------- | --------------------- | ------------------------------------------------- |
 | `/`                          | —                     | Redirige a `/players`                             |
-| `/login`                     | `LoginPage`           | Formulario de login (llama a ltrc-content :3001)  |
+| `/login`                     | `LoginPage`           | Formulario de login (llama a `/api/auth/login`)   |
 | `/home`                      | `Home`                | Reglas del club                                   |
 | `/players`                   | `PlayersPage`         | Tabla paginada con búsqueda y filtro por posición |
 | `/players/:id`               | `PlayerDetailPage`    | Detalle del jugador con tabs                      |
@@ -217,6 +291,15 @@ Base: `http://localhost:3000/api`
 | `/partidos/:divisionId/:id`  | `PartidoDetalle`      | Detalle de partido                                |
 
 Todas las rutas excepto `/login` están protegidas por `ProtectedRoute` (requieren `isAuthenticated` del Redux `authSlice`).
+
+---
+
+## Cliente HTTP (Frontend)
+
+Un solo cliente axios: `psApi` — exportado desde `src/lib/axios.ts`.
+
+- **Interceptor request**: inyecta `Authorization: Bearer {token}` desde localStorage
+- **Interceptor 401**: hace refresh en `POST /api/auth/refresh`, guarda nuevo token, reintenta la request original
 
 ---
 
@@ -256,9 +339,16 @@ Variables CSS definidas en `apps/ui-react/src/index.css` con `@theme`:
 ### Backend (API NestJS)
 
 - [x] Modelo Player con schema Mongoose completo
-- [x] CRUD completo en el API (NestJS)
+- [x] CRUD completo de Players (NestJS)
 - [x] Paginación y filtros en el API (`searchTerm`, `position`, sorting)
 - [x] Upload/delete de fotos vía GridFS
+- [x] Autenticación JWT (login, refresh token, guards, roles)
+- [x] Módulo Users con roles (admin/entrenador/jugador)
+- [x] Módulo Divisiones (CRUD)
+- [x] Módulo Equipos (CRUD, filtro por división)
+- [x] Módulo Ejercicios + Categorías (CRUD, paginado)
+- [x] Módulo Partidos (CRUD, paginado)
+- [x] SeedService (siembra admin + datos base al arrancar)
 - [x] Lib compartida `@ltrc-ps/shared-api-model` (interfaces y enums)
 - [x] CI con GitHub Actions (lint + test + build)
 
@@ -270,7 +360,7 @@ Variables CSS definidas en `apps/ui-react/src/index.css` con `@theme`:
 - [x] `PlayersPage`: tabla paginada, búsqueda, filtro por posición, sort server-side
 - [x] `PlayerDetailPage`: tabs "Datos personales" e "Indumentaria"
 - [x] `PlayerEditPage`: formulario completo con foto
-- [x] `PlayerForm`: React Hook Form + Zod (fix de tipos en height/weight)
+- [x] `PlayerForm`: React Hook Form + Zod
 - [x] `PlayerDialog`: modal de creación con FormData + foto
 - [x] `PlayerFilters`: búsqueda con debounce + filtro posición
 - [x] TanStack Query para fetching y caché
@@ -285,8 +375,8 @@ Variables CSS definidas en `apps/ui-react/src/index.css` con `@theme`:
 
 - [ ] Tests unitarios del frontend React (muy escasos)
 - [ ] Tests E2E para la UI React
-- [ ] Módulo de equipos, estadísticas
-- [ ] No hay autenticación en el API (solo en el frontend)
+- [ ] Panel Admin (rutas vacías en AppRoutes.tsx)
+- [ ] Auth guards en endpoints de Players (decisión intencional: público por ahora)
 
 ---
 

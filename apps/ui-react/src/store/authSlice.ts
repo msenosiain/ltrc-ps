@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
-import { contentApi } from '../lib/axios'
+import { psApi } from '../lib/axios'
 
 export interface AuthUser {
   _id: string
@@ -32,7 +32,7 @@ export const loginThunk = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const { data } = await contentApi.post('/auth/login', credentials)
+      const { data } = await psApi.post('/auth/login', credentials)
       return data
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Error al iniciar sesión')

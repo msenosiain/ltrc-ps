@@ -25,11 +25,11 @@ export function Header() {
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted hidden sm:block">
             {user.firstName} {user.lastName}
-            <span className="ml-1 text-xs text-primary capitalize">({user.rol})</span>
+            <span className="ml-1 text-xs text-interactive capitalize">({user.rol})</span>
           </span>
           <button
             onClick={handleLogout}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-interactive hover:underline"
           >
             Salir
           </button>

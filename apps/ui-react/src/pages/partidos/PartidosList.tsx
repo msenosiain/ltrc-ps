@@ -25,7 +25,7 @@ export function PartidosList() {
         <select
           value={selectedDivision}
           onChange={(e) => setSelectedDivision(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
+          className="border border-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-interactive"
         >
           <option value="">Todas las divisiones</option>
           {divisiones?.map((div) => (
@@ -39,13 +39,13 @@ export function PartidosList() {
           type="date"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-primary"
+          className="border border-border rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-interactive"
         />
 
         {(selectedDivision || fecha) && (
           <button
             onClick={() => { setSelectedDivision(""); setFecha("") }}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-interactive hover:underline"
           >
             Limpiar filtros
           </button>

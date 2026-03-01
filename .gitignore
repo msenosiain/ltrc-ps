@@ -38,6 +38,9 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Claude Code machine-local settings (rutas absolutas, no compartir)
+.claude/settings.local.json
+
 .nx/cache
 .nx/workspace-data
 

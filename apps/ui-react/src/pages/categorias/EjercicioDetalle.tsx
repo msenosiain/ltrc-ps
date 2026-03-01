@@ -22,7 +22,7 @@ export function EjercicioDetalle() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center space-y-4">
         <p className="text-muted">Ejercicio no encontrado</p>
-        <Link to="/" className="text-primary underline">
+        <Link to="/" className="text-interactive underline">
           Volver al inicio
         </Link>
       </main>
@@ -35,7 +35,7 @@ export function EjercicioDetalle() {
 
         <Button
           onClick={handleGoBack}
-          className="text-sm text-primary hover:underline"
+          className="text-sm text-interactive hover:underline"
         >
           ← Volver
         </Button>

@@ -20,12 +20,12 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
+    <div className="min-h-screen bg-navy flex items-center justify-center p-4">
       <div className="bg-surface rounded-2xl shadow-card p-8 w-full max-w-sm space-y-6">
 
         {/* Logo / título */}
         <div className="text-center space-y-1">
-          <h1 className="text-3xl font-bold text-primary">LTRC</h1>
+          <h1 className="text-3xl font-bold text-interactive">LTRC</h1>
           <p className="text-sm text-muted">Iniciá sesión para continuar</p>
         </div>
 

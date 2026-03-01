@@ -1,4 +1,4 @@
-import { contentApi } from '../lib/axios'
+import { psApi } from '../lib/axios'
 import type { Partido, PartidosPaginado } from '../domain/partido'
 
 const BASE = '/partidos'
@@ -12,11 +12,11 @@ export interface PartidosFilters {
 }
 
 export async function getPartidos(filters: PartidosFilters = {}): Promise<PartidosPaginado> {
-  const { data } = await contentApi.get<PartidosPaginado>(BASE, { params: filters })
+  const { data } = await psApi.get<PartidosPaginado>(BASE, { params: filters })
   return data
 }
 
 export async function getPartido(id: string): Promise<Partido> {
-  const { data } = await contentApi.get<Partido>(`${BASE}/${id}`)
+  const { data } = await psApi.get<Partido>(`${BASE}/${id}`)
   return data
 }

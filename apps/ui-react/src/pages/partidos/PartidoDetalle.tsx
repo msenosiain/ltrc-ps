@@ -37,7 +37,7 @@ export function PartidoDetalle() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center space-y-4">
         <p className="text-muted">Partido no encontrado</p>
-        <Link to="/partidos" className="text-primary underline">
+        <Link to="/partidos" className="text-interactive underline">
           Volver a partidos
         </Link>
       </main>
@@ -48,7 +48,7 @@ export function PartidoDetalle() {
     <main className="min-h-screen bg-background px-6 py-10">
       <div className="max-w-4xl mx-auto space-y-6">
 
-        <Button onClick={() => navigate(-1)} className="text-sm text-primary hover:underline">
+        <Button onClick={() => navigate(-1)} className="text-sm text-interactive hover:underline">
           ← Volver
         </Button>
 
@@ -70,7 +70,7 @@ export function PartidoDetalle() {
               </span>
             )}
             {partido.resultado && (
-              <span className="bg-primary/10 text-primary rounded-full px-3 py-1 font-bold">
+              <span className="bg-interactive/10 text-interactive rounded-full px-3 py-1 font-bold">
                 {partido.resultado}
               </span>
             )}

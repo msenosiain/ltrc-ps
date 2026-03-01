@@ -10,6 +10,7 @@ import { PartidoDetalle } from '../pages/partidos/PartidoDetalle';
 import { PlayersPage } from '../pages/players/PlayersPage';
 import { PlayerDetailPage } from '../pages/players/PlayerDetailPage';
 import { PlayerEditPage } from '../pages/players/PlayerEditPage';
+import { PlantelPage } from '../pages/plantel/PlantelPage';
 
 export function AppRoutes() {
   return (
@@ -39,6 +40,9 @@ export function AppRoutes() {
             path="ejercicios/:categoria/:id"
             element={<EjercicioDetalle />}
           />
+
+          {/* División / Plantel */}
+          <Route path="plantel/:divisionId" element={<PlantelPage />} />
 
           {/* Partidos */}
           <Route path="partidos" element={<PartidosList />} />

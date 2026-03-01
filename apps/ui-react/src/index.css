@@ -1,21 +1,13 @@
-@import "tailwindcss";
-
-@theme {
-  --color-primary: #a12223;
-  --color-navy: #082846;
-  --color-ink: #231f20;
-
-  --color-surface: #ffffff;
-  --color-background-light: #fafafa;
-  --color-background-dark: #0f172a;
-
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-
-  --font-family-sans: 'Poppins', system-ui, sans-serif;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
+  :root {
+    --radius: 0.5rem;
+    --ring: #1c5891;            /* focus ring = azul interactive */
+  }
+
   *,
   *::before,
   *::after {
@@ -24,9 +16,9 @@
 
   body {
     margin: 0;
-    font-family: var(--font-family-sans);
-    background-color: var(--color-background-light);
-    color: var(--color-ink);
+    font-family: 'Poppins', system-ui, sans-serif;
+    background-color: #fafafa;
+    color: #231f20;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

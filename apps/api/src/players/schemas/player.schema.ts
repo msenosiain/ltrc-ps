@@ -49,6 +49,8 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     weight: Number,
     clothingSizes: ClothingSizesSchema,
     photoId: { type: String },
+    divisionId: { type: String },
+    equipoIds: [{ type: String }],
   },
   {
     timestamps: true,

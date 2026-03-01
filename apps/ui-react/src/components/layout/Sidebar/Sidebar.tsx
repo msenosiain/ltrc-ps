@@ -40,23 +40,16 @@ export function Sidebar() {
         </Link>
       </SidebarSection>
 
-      {/* PARTIDOS POR DIVISIÓN */}
+      {/* DIVISIÓN / PLANTEL */}
       <SidebarSection
-        title="Partidos"
+        title="División / Plantel"
         open={openSection === 'divisiones'}
         onToggle={() => dispatch(toggleSidebarSection('divisiones'))}
       >
-        <Link
-          to="/partidos"
-          onClick={() => setOpen(false)}
-          className="block text-sm text-gray-300 hover:text-white transition font-medium"
-        >
-          Ver todos
-        </Link>
         {divisiones?.map((div) => (
           <Link
             key={div.id}
-            to={`/partidos/${div.id}`}
+            to={`/plantel/${div.id}`}
             onClick={() => setOpen(false)}
             className="block text-sm text-gray-300 hover:text-white transition pl-2"
           >

@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDate,
   IsEmail,
   IsEnum,
@@ -125,4 +126,13 @@ export class CreatePlayerDto {
   @ValidateNested()
   @Type(() => ClothingSizesDto)
   readonly clothingSizes?: ClothingSizesDto;
+
+  @IsOptional()
+  @IsString()
+  readonly divisionId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  readonly equipoIds?: string[];
 }

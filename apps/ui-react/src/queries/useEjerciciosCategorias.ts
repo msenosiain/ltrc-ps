@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import type { EjercicioCategoria } from "../domain/ejercicios"
 import { getEjercicio, getEjercicioCategorias } from "../services/Ejercicios.service"
-import { contentApi } from "../lib/axios"
+import { psApi } from "../lib/axios"
 import type { Ejercicio } from "../utils/types"
 
 export function useEjercicioCategorias() {
@@ -25,7 +25,7 @@ export function useEjerciciosByCategoria(categoriaId?: string) {
   return useQuery<Ejercicio[]>({
     queryKey: ["ejercicios", categoriaId],
     queryFn: async () => {
-      const { data } = await contentApi.get<{ data: any[] }>('/ejercicios', {
+      const { data } = await psApi.get<{ data: any[] }>('/ejercicios', {
         params: { categoriaId, limit: 100 }
       })
       // Adaptar campos del backend al tipo frontend

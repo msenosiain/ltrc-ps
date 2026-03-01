@@ -2,10 +2,18 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, ChevronUp, ChevronDown, ChevronsUpDown, Loader2 } from 'lucide-react';
 import { usePlayers } from '../../queries/usePlayers';
+import { useDivisiones } from '../../queries/useDivisiones';
+import { useEquipos } from '../../queries/useEquipos';
 import { PlayerFilters } from './PlayerFilters';
 import { PlayerDialog } from './PlayerDialog';
 import type { Player, PlayerFilters as Filters } from '../../domain/player';
 import { getPlayerPhotoUrl } from '../../services/Players.service';
+
+function calcAge(birthDate?: string): string {
+  if (!birthDate) return '—';
+  const diff = Date.now() - new Date(birthDate).getTime();
+  return String(Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25)));
+}
 
 interface SortState {
   sortBy: string;
@@ -21,6 +29,9 @@ export function PlayersPage() {
   const [sort, setSort] = useState<SortState>({ sortBy: 'lastName', sortOrder: 'asc' });
   const [filters, setFilters] = useState<Filters>({});
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { data: divisiones = [] } = useDivisiones();
+  const { data: todosEquipos = [] } = useEquipos();
 
   const { data, isLoading, isFetching } = usePlayers({
     page,
@@ -50,9 +61,9 @@ export function PlayersPage() {
     if (sort.sortBy !== column)
       return <ChevronsUpDown size={14} className="text-muted" />;
     return sort.sortOrder === 'asc' ? (
-      <ChevronUp size={14} className="text-primary" />
+      <ChevronUp size={14} className="text-interactive" />
     ) : (
-      <ChevronDown size={14} className="text-primary" />
+      <ChevronDown size={14} className="text-interactive" />
     );
   };
 
@@ -62,7 +73,10 @@ export function PlayersPage() {
     { key: 'firstName', label: 'Nombre', sortable: true },
     { key: 'nickName', label: 'Apodo', sortable: false },
     { key: 'position', label: 'Posición', sortable: true },
-    { key: 'alternatePosition', label: 'Pos. Alt.', sortable: false },
+    { key: 'age', label: 'Edad', sortable: false },
+    { key: 'division', label: 'División', sortable: false },
+    { key: 'equipos', label: 'Equipo(s)', sortable: false },
+    { key: 'email', label: 'Email', sortable: false },
   ];
 
   return (
@@ -178,7 +192,22 @@ export function PlayersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted text-xs">
-                      {player.alternatePosition ?? '—'}
+                      {calcAge(player.birthDate)}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted">
+                      {player.divisionId
+                        ? (divisiones.find((d) => d.id === player.divisionId)?.name ?? player.divisionId)
+                        : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted">
+                      {player.equipoIds?.length
+                        ? player.equipoIds
+                            .map((eid) => todosEquipos.find((e) => e.id === eid)?.name ?? eid)
+                            .join(', ')
+                        : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-muted">
+                      {player.email ?? '—'}
                     </td>
                   </tr>
                 ))

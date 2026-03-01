@@ -6,6 +6,8 @@ import { es } from 'date-fns/locale';
 import { usePlayer } from '../../queries/usePlayer';
 import { useDeletePlayer } from '../../queries/usePlayerMutations';
 import { getPlayerPhotoUrl } from '../../services/Players.service';
+import { useDivisiones } from '../../queries/useDivisiones';
+import { useEquipos } from '../../queries/useEquipos';
 
 type TabId = 'personal' | 'indumentaria';
 
@@ -17,6 +19,8 @@ export function PlayerDetailPage() {
 
   const { data: player, isLoading } = usePlayer(id);
   const deleteMutation = useDeletePlayer();
+  const { data: divisiones = [] } = useDivisiones();
+  const { data: equipos = [] } = useEquipos(player?.divisionId);
 
   const handleDelete = () => {
     if (!id) return;
@@ -121,7 +125,7 @@ export function PlayerDetailPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-5 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px
                 ${activeTab === tab
-                  ? 'border-primary text-primary'
+                  ? 'border-interactive text-interactive'
                   : 'border-transparent text-muted hover:text-ink'}`}
             >
               {tab === 'personal' ? 'Datos personales' : 'Indumentaria'}
@@ -162,6 +166,27 @@ export function PlayerDetailPage() {
                 </div>
               )}
             </div>
+
+            {(player.divisionId || player.equipoId) && (
+              <div className="col-span-2 grid grid-cols-2 gap-4">
+                {player.divisionId && (
+                  <div>
+                    <p className={labelClass}>División</p>
+                    <p className={fieldClass}>
+                      {divisiones.find((d) => d.id === player.divisionId)?.name ?? player.divisionId}
+                    </p>
+                  </div>
+                )}
+                {player.equipoId && (
+                  <div>
+                    <p className={labelClass}>Equipo</p>
+                    <p className={fieldClass}>
+                      {equipos.find((e) => e.id === player.equipoId)?.name ?? player.equipoId}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {player.address && (
               <div>

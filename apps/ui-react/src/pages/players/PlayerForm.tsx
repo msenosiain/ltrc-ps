@@ -6,6 +6,8 @@ import { User } from 'lucide-react';
 import { PlayerPositionEnum, ClothingSizesEnum } from '../../domain/player';
 import { POSITION_OPTIONS } from '../../domain/player-positions';
 import type { Player } from '../../domain/player';
+import { useDivisiones } from '../../queries/useDivisiones';
+import { useEquipos } from '../../queries/useEquipos';
 
 const addressSchema = z.object({
   street: z.string().max(100).optional(),
@@ -41,6 +43,8 @@ const playerSchema = z.object({
   weight: z.number().min(30).max(200).optional(),
   address: addressSchema.optional(),
   clothingSizes: clothingSizesSchema.optional(),
+  divisionId: z.string().optional(),
+  equipoIds: z.array(z.string()).optional(),
 });
 
 export type PlayerFormValues = z.infer<typeof playerSchema>;
@@ -64,6 +68,8 @@ export function PlayerForm({
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<PlayerFormValues>({
     resolver: zodResolver(playerSchema),
@@ -82,8 +88,23 @@ export function PlayerForm({
       weight: initialData?.weight,
       address: initialData?.address ?? {},
       clothingSizes: initialData?.clothingSizes ?? {},
+      divisionId: initialData?.divisionId ?? '',
+      equipoIds: initialData?.equipoIds ?? [],
     },
   });
+
+  const selectedDivisionId = watch('divisionId');
+  const equipoIdsValue: string[] = watch('equipoIds') ?? [];
+  const { data: divisiones = [] } = useDivisiones();
+  const { data: equipos = [] } = useEquipos(selectedDivisionId || undefined);
+
+  const toggleEquipo = (id: string) => {
+    const current = equipoIdsValue;
+    setValue(
+      'equipoIds',
+      current.includes(id) ? current.filter((e) => e !== id) : [...current, id]
+    );
+  };
 
   const handleFormSubmit = (data: PlayerFormValues) => {
     onSubmit(data, photoRef.current);
@@ -116,7 +137,7 @@ export function PlayerForm({
           <button
             type="button"
             onClick={() => photoInputRef.current?.click()}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-interactive hover:underline"
           >
             {initialData?.photoId ? 'Cambiar foto' : 'Subir foto'}
           </button>
@@ -326,6 +347,57 @@ export function PlayerForm({
               </select>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* División y Equipos */}
+      <div className={sectionClass}>
+        <h3 className="text-sm font-semibold text-ink">División y Equipos</h3>
+        <div className="space-y-3">
+          <div>
+            <label className={labelClass}>División</label>
+            <select
+              {...register('divisionId')}
+              className={inputClass}
+              onChange={(e) => {
+                register('divisionId').onChange(e);
+                setValue('equipoIds', []);
+              }}
+            >
+              <option value="">Sin asignar</option>
+              {divisiones.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedDivisionId && (
+            <div>
+              <label className={labelClass}>Equipos</label>
+              {equipos.length === 0 ? (
+                <p className="text-xs text-muted">Sin equipos en esta división</p>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  {equipos.map((e) => (
+                    <label
+                      key={e.id}
+                      className="flex items-center gap-2 text-sm text-ink cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={equipoIdsValue.includes(e.id)}
+                        onChange={() => toggleEquipo(e.id)}
+                        className="rounded border-border accent-primary"
+                      />
+                      {e.name}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
