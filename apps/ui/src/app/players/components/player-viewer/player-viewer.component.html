@@ -7,10 +7,14 @@
         <div class="header-layout">
 
           <div class="avatar">
-            <img
-              [src]="getPlayerPhotoUrl(player.id)"
-              alt="{{ player.firstName }} {{ player.lastName }}"
-            />
+            @if (player.photoId) {
+              <img
+                [src]="getPlayerPhotoUrl(player.id)"
+                alt="{{ player.firstName }} {{ player.lastName }}"
+              />
+            } @else {
+              <mat-icon class="avatar-placeholder">account_circle</mat-icon>
+            }
           </div>
 
           <div class="main-info">

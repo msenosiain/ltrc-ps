@@ -5,6 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
 import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
@@ -21,6 +22,7 @@ import { Router } from '@angular/router';
     MatSortModule,
     MatIconModule,
     MatButtonModule,
+    MatSnackBarModule,
     PlayerSearchComponent,
   ],
   templateUrl: './players-list.component.html',
@@ -29,6 +31,9 @@ import { Router } from '@angular/router';
 export class PlayersListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly playersService = inject(PlayersService);
+  private readonly snackBar = inject(MatSnackBar);
+
+  importing = false;
 
   readonly displayedColumns = [
     'photoId',
@@ -85,5 +90,32 @@ export class PlayersListComponent implements AfterViewInit {
 
   getPlayerPhotoUrl(playerId: string): string {
     return this.playersService.getPlayerPhotoUrl(playerId);
+  }
+
+  onImportFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+
+    this.importing = true;
+    this.playersService.importPlayers(file).subscribe({
+      next: ({ created, errors }) => {
+        this.importing = false;
+        const msg =
+          errors.length > 0
+            ? `${created} importados, ${errors.length} errores`
+            : `${created} jugadores importados`;
+        this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
+        this.dataSource.setPage(0, this.paginator.pageSize);
+        this.paginator.pageIndex = 0;
+      },
+      error: () => {
+        this.importing = false;
+        this.snackBar.open('Error al importar el archivo', 'Cerrar', {
+          duration: 5000,
+        });
+      },
+    });
   }
 }
