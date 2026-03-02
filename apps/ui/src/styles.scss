@@ -82,6 +82,8 @@ $theme: mat.m2-define-light-theme((
 
 html, body {
   height: 100%;
+  width: 100%;
+  overflow-x: hidden;
   font-family: Roboto, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -92,6 +94,21 @@ html, body {
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+ltrc-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+}
+
+ltrc-dashboard {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 
 /* Material Icons fix */
