@@ -87,6 +87,75 @@
   margin-left: 6px;
 }
 
+.squad-card {
+  .section-title {
+    margin-bottom: 12px;
+  }
+}
+
+.squad-group-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mat-app-on-surface-variant, #888);
+  margin: 8px 0 6px;
+}
+
+.squad-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #eee);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.shirt-number {
+  width: 28px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--mat-app-primary, #1976d2);
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.player-name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.position-label {
+  font-size: 0.78rem;
+  color: var(--mat-app-on-surface-variant, #888);
+  flex-shrink: 0;
+}
+
+.group-divider {
+  margin: 10px 0;
+}
+
+.empty-squad {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 0 0 12px;
+}
+
+.squad-card-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
 .notes {
   margin-top: 20px;
 }

@@ -74,7 +74,53 @@
       </mat-card-content>
     </mat-card>
 
-    <ltrc-match-squad [matchId]="match.id!" [initialSquad]="match.squad" />
+    <!-- PLANTEL CONVOCADO -->
+    <mat-card class="squad-card">
+      <mat-card-content>
+        <p class="section-title">Plantel convocado</p>
+
+        @if (titulares.length > 0 || suplentes.length > 0) {
+
+          @if (titulares.length > 0) {
+            <p class="squad-group-label">Titulares</p>
+            @for (entry of titulares; track entry.player?.id) {
+              <div class="squad-entry">
+                <span class="shirt-number">{{ entry.shirtNumber }}</span>
+                <span class="player-name">
+                  {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+                </span>
+                <span class="position-label">{{ getPositionLabel(entry) }}</span>
+              </div>
+            }
+          }
+
+          @if (suplentes.length > 0) {
+            <mat-divider class="group-divider" />
+            <p class="squad-group-label">Suplentes</p>
+            @for (entry of suplentes; track entry.player?.id) {
+              <div class="squad-entry">
+                <span class="shirt-number">{{ entry.shirtNumber }}</span>
+                <span class="player-name">
+                  {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+                </span>
+                <span class="position-label">{{ getPositionLabel(entry) }}</span>
+              </div>
+            }
+          }
+
+        } @else {
+          <p class="empty-squad">Sin convocados aún.</p>
+        }
+
+        <div class="squad-card-actions">
+          <button mat-stroked-button type="button" (click)="manageSquad()">
+            <mat-icon>group</mat-icon>
+            Gestionar plantel
+          </button>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
 
     <div class="viewer-actions">
       <button mat-stroked-button type="button" (click)="backToList()">

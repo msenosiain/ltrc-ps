@@ -24,11 +24,12 @@ export class DashboardComponent {
   public authService = inject(AuthService);
   public router = inject(Router);
 
+  private readonly breakpointObserver = inject(BreakpointObserver);
   isSmallScreen = toSignal(
-    inject(BreakpointObserver).observe('(max-width: 960px)').pipe(
+    this.breakpointObserver.observe('(max-width: 960px)').pipe(
       map(result => result.matches)
     ),
-    { initialValue: false }
+    { initialValue: this.breakpointObserver.isMatched('(max-width: 960px)') }
   );
 
   logout() {
