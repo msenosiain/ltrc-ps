@@ -26,7 +26,7 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
 .personal-grid {
   display: grid;
   grid-template-columns: $photo repeat(3, $col);
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   column-gap: $gap;
   row-gap: $row-gap;
   align-items: start;
@@ -77,6 +77,7 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
   mat-form-field:nth-of-type(4) { grid-column: 2; grid-row: 2; }
   mat-form-field:nth-of-type(5) { grid-column: 3; grid-row: 2; }
   mat-form-field:nth-of-type(6) { grid-column: 4; grid-row: 2; }
+  mat-form-field:nth-of-type(7) { grid-column: 1 / span 2; grid-row: 3; }
 }
 
 // == CARD 2 - DIRECCION
@@ -137,6 +138,7 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
     mat-form-field:nth-of-type(4) { grid-column: 3; grid-row: 2; }
     mat-form-field:nth-of-type(5) { grid-column: 2; grid-row: 3; }
     mat-form-field:nth-of-type(6) { grid-column: 3; grid-row: 3; }
+    mat-form-field:nth-of-type(7) { grid-column: 1 / span 2; grid-row: 4; }
   }
 
   .address-grid {
@@ -174,6 +176,7 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
     mat-form-field:nth-of-type(4) { grid-column: 1; grid-row: 5; }
     mat-form-field:nth-of-type(5) { grid-column: 1; grid-row: 6; }
     mat-form-field:nth-of-type(6) { grid-column: 1; grid-row: 7; }
+    mat-form-field:nth-of-type(7) { grid-column: 1; grid-row: 8; }
   }
 
   .address-grid {

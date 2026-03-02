@@ -9,8 +9,9 @@ import {
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
-import { PositionOption, positionOptions } from '../../position-options';
+import { CategoryEnum, PlayerPosition, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryOption, categoryOptions } from '../../category-options';
+import { PositionOption, positionOptions, SportOption, sportOptions } from '../../position-options';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -38,14 +39,20 @@ export class PlayerSearchComponent implements OnInit {
 
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
-    position?: PlayerPositionEnum;
+    sport?: SportEnum;
+    position?: PlayerPosition;
+    category?: CategoryEnum;
   }>();
 
+  readonly sportOptions: SportOption[] = sportOptions;
+  readonly categoryOptions: CategoryOption[] = categoryOptions;
   readonly positionOptions: PositionOption[] = positionOptions;
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
-    position: [undefined as PlayerPositionEnum | undefined],
+    sport: [undefined as SportEnum | undefined],
+    position: [undefined as PlayerPosition | undefined],
+    category: [undefined as CategoryEnum | undefined],
   });
 
   ngOnInit(): void {

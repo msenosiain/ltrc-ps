@@ -17,7 +17,7 @@ import {
 
 import { Transform, Type } from 'class-transformer';
 import { parse } from 'date-fns';
-import { DATE_FORMAT, MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, DATE_FORMAT, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class VideoClipDto {
   @IsUrl()
@@ -94,6 +94,18 @@ export class CreateMatchDto {
   @IsNotEmpty()
   @IsEnum(MatchTypeEnum)
   readonly type!: MatchTypeEnum;
+
+  @IsOptional()
+  @IsEnum(SportEnum)
+  readonly sport?: SportEnum;
+
+  @IsOptional()
+  @IsEnum(CategoryEnum)
+  readonly category?: CategoryEnum;
+
+  @IsOptional()
+  @IsString()
+  readonly division?: string;
 
   @IsOptional()
   @IsMongoId()

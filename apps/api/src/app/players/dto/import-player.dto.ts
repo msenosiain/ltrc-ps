@@ -1,4 +1,4 @@
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { PlayerPosition } from '@ltrc-ps/shared-api-model';
 
 export interface ImportPlayerRow {
   lastName: string;
@@ -6,9 +6,18 @@ export interface ImportPlayerRow {
   idNumber: string;
   birthDate: unknown; // Date (Excel) or string (CSV dd/MM/yyyy)
   email: string;
-  position: PlayerPositionEnum;
+  position?: PlayerPosition;
+  secondName?: string;
   nickName?: string;
-  alternatePosition?: PlayerPositionEnum;
+  alternatePosition?: PlayerPosition;
   height?: number;
   weight?: number;
+  // talles — columna "jersey" aplica a camiseta y buzo; "short" aplica a short y pantalon
+  jersey?: string;
+  short?: string;
+  // datos de contacto
+  phone?: string;
+  // datos médicos
+  healthInsurance?: string;
+  torgIndex?: number;
 }

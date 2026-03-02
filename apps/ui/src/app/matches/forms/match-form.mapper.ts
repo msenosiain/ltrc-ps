@@ -11,6 +11,9 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
     isHome: value.isHome,
     type: value.type!,
     status: value.status,
+    sport: value.sport ?? undefined,
+    category: value.category ?? undefined,
+    division: value.division || undefined,
     tournament: value.tournament || undefined,
     result: hasResult
       ? { homeScore: value.result.homeScore!, awayScore: value.result.awayScore! }

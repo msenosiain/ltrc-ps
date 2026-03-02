@@ -174,6 +174,6 @@ export class MatchSquadComponent implements OnInit {
   }
 
   getPositionLabel(player: Player): string {
-    return this.playersService.getPositionLabel(player.position);
+    return player.position ? this.playersService.getPositionLabel(player.position) : '—';
   }
 }

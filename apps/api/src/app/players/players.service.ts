@@ -6,16 +6,17 @@ import { GridFsService } from '../shared/gridfs/gridfs.service';
 import type { File as MulterFile } from 'multer';
 import { PaginationDto } from '../shared/pagination.dto';
 import {
-  DATE_FORMAT,
+  ClothingSizesEnum,
+  HockeyPositions,
+  parseDate,
   PaginatedResponse,
   Player,
-  PlayerPositionEnum,
+  RugbyPositions,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { ImportPlayerRow } from './dto/import-player.dto';
 import * as XLSX from 'xlsx';
-import { parse, isValid } from 'date-fns';
 
 @Injectable()
 export class PlayersService {
@@ -61,7 +62,18 @@ export class PlayersService {
       );
     }
 
-    Object.assign(player, dto);
+    const parseJson = (v: unknown) =>
+      typeof v === 'string' ? JSON.parse(v) : v;
+
+    Object.assign(player, {
+      ...dto,
+      birthDate: dto.birthDate != null
+        ? (parseDate(dto.birthDate) ?? player.birthDate)
+        : player.birthDate,
+      address: dto.address != null ? parseJson(dto.address) : player.address,
+      clothingSizes: dto.clothingSizes != null ? parseJson(dto.clothingSizes) : player.clothingSizes,
+      medicalData: dto.medicalData != null ? parseJson(dto.medicalData) : player.medicalData,
+    });
     return player.save();
   }
 
@@ -77,6 +89,7 @@ export class PlayersService {
     if (filters.searchTerm) {
       queryFilters['$or'] = [
         { firstName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+        { secondName: { $regex: new RegExp(filters.searchTerm, 'i') } },
         { lastName: { $regex: new RegExp(filters.searchTerm, 'i') } },
         { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
       ];
@@ -95,12 +108,22 @@ export class PlayersService {
       ];
     }
 
+    // sport
+    if (filters.sport) {
+      queryFilters['sport'] = filters.sport;
+    }
+
+    // category
+    if (filters.category) {
+      queryFilters['category'] = filters.category;
+    }
+
     // Sorting
     const sort = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['lastName'] = -1;
+      sort['lastName'] = 1;
     }
 
     // Query a MongoDB
@@ -139,8 +162,7 @@ export class PlayersService {
   }
 
   async importFromFile(
-    buffer: Buffer,
-    filename: string
+    buffer: Buffer
   ): Promise<{ created: number; errors: { row: number; message: string }[] }> {
     const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -153,32 +175,40 @@ export class PlayersService {
       const row = rows[i];
       const rowNum = i + 2; // 1-based + header row
 
+      const validationError = this.validateImportRow(row);
+      if (validationError) {
+        errors.push({ row: rowNum, message: validationError });
+        continue;
+      }
+
       try {
-        const { lastName, firstName, idNumber, email, position } = row;
+        const str = (val: unknown) => String(val).trim();
 
-        if (!lastName) throw new Error('lastName es requerido');
-        if (!firstName) throw new Error('firstName es requerido');
-        if (!idNumber) throw new Error('idNumber es requerido');
-        if (!email) throw new Error('email es requerido');
-        if (!position) throw new Error('position es requerido');
-        if (!Object.values(PlayerPositionEnum).includes(position)) {
-          throw new Error(`position inválida: ${position}`);
-        }
-
-        const birthDate = this.parseImportDate(row.birthDate);
-        if (!birthDate) throw new Error('birthDate inválida (formato esperado: dd/MM/yyyy)');
+        const birthDate = parseDate(row.birthDate)!;
+        const jerseySize = row.jersey
+          ? (str(row.jersey).toUpperCase() as ClothingSizesEnum)
+          : undefined;
+        const shortSize = row.short
+          ? (str(row.short).toUpperCase() as ClothingSizesEnum)
+          : undefined;
+        const phoneNumber = row.phone ? str(row.phone) : undefined;
 
         await this.playerModel.create({
-          lastName: String(lastName),
-          firstName: String(firstName),
-          idNumber: String(idNumber),
-          email: String(email),
-          position,
+          lastName: str(row.lastName),
+          firstName: str(row.firstName),
+          idNumber: str(row.idNumber),
+          email: str(row.email),
           birthDate,
-          nickName: row.nickName ? String(row.nickName) : undefined,
-          alternatePosition: row.alternatePosition ?? undefined,
-          height: row.height ? Number(row.height) : undefined,
-          weight: row.weight ? Number(row.weight) : undefined,
+          ...(row.position && { position: row.position }),
+          secondName: row.secondName ? str(row.secondName) : undefined,
+          nickName: row.nickName ? str(row.nickName) : undefined,
+          ...(row.alternatePosition && { alternatePosition: row.alternatePosition }),
+          clothingSizes:
+            jerseySize || shortSize
+              ? { jersey: jerseySize, sweater: jerseySize, shorts: shortSize, pants: shortSize }
+              : undefined,
+          address: phoneNumber ? { phoneNumber } : undefined,
+          medicalData: this.buildMedicalData(row, str),
         });
 
         created++;
@@ -190,12 +220,34 @@ export class PlayersService {
     return { created, errors };
   }
 
-  private parseImportDate(val: unknown): Date | null {
-    if (!val) return null;
-    if (val instanceof Date) return isValid(val) ? val : null;
-    const str = String(val).trim();
-    if (!str) return null;
-    const parsed = parse(str, DATE_FORMAT, new Date());
-    return isValid(parsed) ? parsed : null;
+  private validateImportRow(row: ImportPlayerRow): string | null {
+    const str = (val: unknown) => (val != null ? String(val).trim() : '');
+
+    if (!str(row.lastName)) return 'lastName es requerido';
+    if (!str(row.firstName)) return 'firstName es requerido';
+    if (!str(row.idNumber)) return 'idNumber es requerido';
+    if (!str(row.email)) return 'email es requerido';
+    const allPositions = new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)]);
+    if (row.position && !allPositions.has(row.position)) {
+      return `position inválida: ${row.position}`;
+    }
+    if (!parseDate(row.birthDate)) {
+      return 'birthDate inválida (formato esperado: dd/MM/yyyy)';
+    }
+    return null;
   }
+
+  private buildMedicalData(
+    row: ImportPlayerRow,
+    str: (val: unknown) => string
+  ): { height?: number; weight?: number; torgIndex?: number; healthInsurance?: string } | undefined {
+    const d = {
+      height: row.height ? Number(row.height) : undefined,
+      weight: row.weight ? Number(row.weight) : undefined,
+      torgIndex: row.torgIndex ? Number(row.torgIndex) : undefined,
+      healthInsurance: row.healthInsurance ? str(row.healthInsurance) : undefined,
+    };
+    return Object.values(d).some((v) => v !== undefined) ? d : undefined;
+  }
+
 }

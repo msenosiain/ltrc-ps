@@ -18,7 +18,7 @@
           </div>
 
           <div class="main-info">
-            <h2 class="player-name">{{ player.lastName }}, {{ player.firstName }}</h2>
+            <h2 class="player-name">{{ player.lastName }}, {{ player.firstName }}{{ player.secondName ? ' ' + player.secondName : '' }}</h2>
 
             @if (player.nickName) {
               <span class="player-nickname">"{{ player.nickName }}"</span>
@@ -37,24 +37,19 @@
                 <span class="stat-label">Edad</span>
                 <span class="stat-value">{{ getPlayerAge(player.birthDate) }} años</span>
               </div>
-              @if (player.height) {
-                <div class="stat">
-                  <span class="stat-label">Altura</span>
-                  <span class="stat-value">{{ player.height }} cm</span>
-                </div>
-              }
-              @if (player.weight) {
-                <div class="stat">
-                  <span class="stat-label">Peso</span>
-                  <span class="stat-value">{{ player.weight }} kg</span>
-                </div>
-              }
             </div>
 
             <div class="positions">
-              <mat-chip color="primary">
-                {{ getPositionLabel(player.position) }}
-              </mat-chip>
+              @if (player.category) {
+                <mat-chip color="accent">
+                  {{ getCategoryLabel(player.category) }}
+                </mat-chip>
+              }
+              @if (player.position) {
+                <mat-chip color="primary">
+                  {{ getPositionLabel(player.position) }}
+                </mat-chip>
+              }
               @if (player.alternatePosition) {
                 <mat-chip>
                   {{ getPositionLabel(player.alternatePosition) }}
@@ -101,6 +96,41 @@
               <span class="info-label">Telefono</span>
               <span class="info-value">{{ player.address.phoneNumber }}</span>
             </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- DATOS MÉDICOS -->
+    @if (player.medicalData) {
+      <mat-card class="section-card">
+        <mat-card-content>
+          <p class="section-title">Datos médicos</p>
+          <div class="info-grid">
+            @if (player.medicalData.height) {
+              <div class="info-item">
+                <span class="info-label">Altura</span>
+                <span class="info-value">{{ player.medicalData.height }} cm</span>
+              </div>
+            }
+            @if (player.medicalData.weight) {
+              <div class="info-item">
+                <span class="info-label">Peso</span>
+                <span class="info-value">{{ player.medicalData.weight }} kg</span>
+              </div>
+            }
+            @if (player.medicalData.torgIndex != null) {
+              <div class="info-item">
+                <span class="info-label">Índice de Torg</span>
+                <span class="info-value">{{ player.medicalData.torgIndex }}</span>
+              </div>
+            }
+            @if (player.medicalData.healthInsurance) {
+              <div class="info-item">
+                <span class="info-label">Obra social</span>
+                <span class="info-value">{{ player.medicalData.healthInsurance }}</span>
+              </div>
+            }
           </div>
         </mat-card-content>
       </mat-card>

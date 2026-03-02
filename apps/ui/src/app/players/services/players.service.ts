@@ -5,7 +5,7 @@ import {
   PaginatedResponse,
   PaginationQuery,
   Player,
-  PlayerPositionEnum,
+  PlayerPosition,
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { positionOptions } from '../position-options';
@@ -81,6 +81,7 @@ export class PlayersService {
     if (file) form.append('photo', file);
 
     if (dto.firstName != null) form.append('firstName', dto.firstName);
+    if (dto.secondName != null) form.append('secondName', dto.secondName);
     if (dto.lastName != null) form.append('lastName', dto.lastName);
     if (dto.nickName != null) form.append('nickName', dto.nickName);
     if (dto.idNumber != null) form.append('idNumber', dto.idNumber);
@@ -88,10 +89,9 @@ export class PlayersService {
     if (dto.email != null) form.append('email', dto.email);
     if (dto.position != null) form.append('position', dto.position);
     if (dto.alternatePosition != null) form.append('alternatePosition', dto.alternatePosition);
-    if (dto.height != null) form.append('height', String(dto.height));
-    if (dto.weight != null) form.append('weight', String(dto.weight));
     if (dto.address != null) form.append('address', JSON.stringify(dto.address));
     if (dto.clothingSizes != null) form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
+    if (dto.medicalData != null) form.append('medicalData', JSON.stringify(dto.medicalData));
 
     return form;
   }
@@ -117,7 +117,7 @@ export class PlayersService {
 
   // UTILS ──────────────────────────────────────────────────
 
-  getPositionLabel(position: PlayerPositionEnum): string {
+  getPositionLabel(position: PlayerPosition): string {
     return positionOptions.find((o) => o.id === position)?.name ?? position;
   }
 

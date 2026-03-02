@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { MatchStatusEnum, MatchTypeEnum } from '../enums';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '../enums';
 import { Player } from './player.interface';
 import { Tournament } from './tournament.interface';
 
@@ -29,6 +29,9 @@ export interface Match extends Document {
   readonly isHome: boolean;
   readonly status: MatchStatusEnum;
   readonly type: MatchTypeEnum;
+  readonly sport?: SportEnum;
+  readonly category?: CategoryEnum;
+  readonly division?: string;
   readonly tournament?: Tournament;
   readonly squad: SquadEntry[];
   readonly videos?: VideoClip[];

@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class CreateTournamentDto {
   @IsNotEmpty()
@@ -12,4 +13,8 @@ export class CreateTournamentDto {
   @IsOptional()
   @IsString()
   readonly description?: string;
+
+  @IsOptional()
+  @IsEnum(SportEnum)
+  readonly sport?: SportEnum;
 }

@@ -1,33 +1,14 @@
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
-export interface MatchOption<T> {
-  id: T;
+export interface CategoryOption {
+  id: CategoryEnum;
   label: string;
-}
-
-export const matchStatusOptions: MatchOption<MatchStatusEnum>[] = [
-  { id: MatchStatusEnum.UPCOMING, label: 'Próximo' },
-  { id: MatchStatusEnum.COMPLETED, label: 'Finalizado' },
-  { id: MatchStatusEnum.CANCELLED, label: 'Cancelado' },
-];
-
-export const matchTypeOptions: MatchOption<MatchTypeEnum>[] = [
-  { id: MatchTypeEnum.LEAGUE, label: 'Liga' },
-  { id: MatchTypeEnum.FRIENDLY, label: 'Amistoso' },
-  { id: MatchTypeEnum.CUP, label: 'Copa' },
-];
-
-export const sportOptions: MatchOption<SportEnum>[] = [
-  { id: SportEnum.RUGBY, label: 'Rugby' },
-  { id: SportEnum.HOCKEY, label: 'Hockey sobre césped' },
-];
-
-interface CategoryOptionWithSport extends MatchOption<CategoryEnum> {
   /** null = aplica a todos los deportes */
   sport: SportEnum | null;
 }
 
-const categoryDefs: CategoryOptionWithSport[] = [
+// sport: null → disponible en ambos deportes
+const categoryDefs: CategoryOption[] = [
   { id: CategoryEnum.PLANTEL_SUPERIOR, label: 'Plantel Superior', sport: null },
   // Rugby
   { id: CategoryEnum.M19, label: 'M19', sport: SportEnum.RUGBY },
@@ -44,7 +25,7 @@ const categoryDefs: CategoryOptionWithSport[] = [
   { id: CategoryEnum.M7, label: 'M7', sport: SportEnum.RUGBY },
   { id: CategoryEnum.M6, label: 'M6', sport: SportEnum.RUGBY },
   { id: CategoryEnum.M5, label: 'M5', sport: SportEnum.RUGBY },
-  // Hockey (inferiores)
+  // Hockey
   { id: CategoryEnum.CUARTA, label: '4ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.QUINTA, label: '5ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.SEXTA, label: '6ta', sport: SportEnum.HOCKEY },
@@ -56,9 +37,9 @@ const categoryDefs: CategoryOptionWithSport[] = [
   { id: CategoryEnum.MASTER, label: 'Máster', sport: SportEnum.HOCKEY },
 ];
 
-export const matchCategoryOptions: MatchOption<CategoryEnum>[] = categoryDefs;
+export const categoryOptions: CategoryOption[] = categoryDefs;
 
-export function getCategoryOptionsBySport(sport?: SportEnum | null): MatchOption<CategoryEnum>[] {
+export function getCategoryOptionsBySport(sport?: SportEnum | null): CategoryOption[] {
   if (!sport) return categoryDefs;
   return categoryDefs.filter((c) => c.sport === null || c.sport === sport);
 }

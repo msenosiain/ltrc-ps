@@ -34,7 +34,7 @@ export class PlayersController {
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))
   async importFromFile(@UploadedFile() file: MulterFile) {
-    return this.playersService.importFromFile(file.buffer, file.originalname);
+    return this.playersService.importFromFile(file.buffer);
   }
 
   @Post()
