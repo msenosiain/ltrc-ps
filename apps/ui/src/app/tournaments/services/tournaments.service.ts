@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
 export interface TournamentFormValue {
@@ -9,6 +9,7 @@ export interface TournamentFormValue {
   season?: string;
   description?: string;
   sport?: SportEnum | null;
+  categories?: CategoryEnum[];
 }
 
 @Injectable({

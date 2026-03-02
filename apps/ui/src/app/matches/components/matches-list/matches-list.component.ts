@@ -37,13 +37,14 @@ export class MatchesListComponent implements AfterViewInit {
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ['date', 'opponent', 'tournament', 'type', 'status', 'result'];
+  readonly displayedColumns = ['date', 'opponent', 'venue', 'division', 'tournament', 'status', 'result'];
   readonly dataSource = new MatchesDataSource(this.matchesService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
+    this.dataSource.setSorting('date', SortOrder.ASC);
     this.dataSource.setPage(0, 10);
     this.cdr.detectChanges();
 

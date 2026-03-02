@@ -9,6 +9,11 @@
           <mat-option [value]="s.id">{{ s.label }}</mat-option>
         }
       </mat-select>
+      @if (searchForm.get('sport')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('sport')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
@@ -19,6 +24,11 @@
           <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
         }
       </mat-select>
+      @if (searchForm.get('status')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('status')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
@@ -29,6 +39,11 @@
           <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
         }
       </mat-select>
+      @if (searchForm.get('type')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('type')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
@@ -39,6 +54,11 @@
           <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
         }
       </mat-select>
+      @if (searchForm.get('category')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('category')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="filter-field">
@@ -49,6 +69,11 @@
           <mat-option [value]="t.id">{{ t.name }}</mat-option>
         }
       </mat-select>
+      @if (searchForm.get('tournament')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="clearField('tournament')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
     </mat-form-field>
 
   </div>

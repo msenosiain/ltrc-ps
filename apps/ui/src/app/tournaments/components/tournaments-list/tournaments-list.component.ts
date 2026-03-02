@@ -6,8 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { sportOptions } from '../../../players/position-options';
+import { CategoryEnum, SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { sportOptions } from '../../../common/sport-options';
+import { getCategoryLabel } from '../../../common/category-options';
 import { TournamentSearchComponent } from '../tournament-search/tournament-search.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -30,7 +31,7 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   private readonly tournamentsService = inject(TournamentsService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns = ['name', 'season', 'sport', 'description'];
+  readonly displayedColumns = ['name', 'season', 'sport', 'categories', 'description'];
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -76,6 +77,11 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
 
   getSportLabel(sport?: SportEnum): string {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';
+  }
+
+  getCategoriesLabel(categories?: CategoryEnum[]): string {
+    if (!categories?.length) return '';
+    return categories.map((c) => getCategoryLabel(c)).join(', ');
   }
 
   goToCreate(): void {

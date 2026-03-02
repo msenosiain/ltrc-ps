@@ -2,7 +2,7 @@ import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import { CategoryEnum, Player, PlayerPosition } from '@ltrc-ps/shared-api-model';
-import { categoryOptions } from '../../category-options';
+import { categoryOptions } from '../../../common/category-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';

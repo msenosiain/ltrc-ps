@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class TournamentEntity extends Document {
   id: string;
@@ -7,6 +7,7 @@ export class TournamentEntity extends Document {
   season?: string;
   description?: string;
   sport?: SportEnum;
+  categories?: CategoryEnum[];
   createdAt: Date;
   updatedAt: Date;
 }

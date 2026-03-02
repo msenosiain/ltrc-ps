@@ -61,12 +61,17 @@ export const appConfig: ApplicationConfig = {
     { provide: MAT_DATE_LOCALE, useValue: es },
     { provide: MatPaginatorIntl, useFactory: getEsArPaginatorIntl },
     provideDateFnsAdapter({
-      parse: { dateInput: 'dd/MM/yyyy' },
+      parse: {
+        dateInput: 'dd/MM/yyyy',
+        timeInput: 'HH:mm',
+      },
       display: {
         dateInput: 'dd/MM/yyyy',
         monthYearLabel: 'MMM yyyy',
         dateA11yLabel: 'dd/MM/yyyy',
         monthYearA11yLabel: 'MMMM yyyy',
+        timeInput: 'HH:mm',
+        timeOptionLabel: 'HH:mm',
       },
     }),
   ],

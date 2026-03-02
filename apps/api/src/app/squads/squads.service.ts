@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SquadEntity } from './schemas/squad.entity';
 import { CreateSquadDto } from './dto/create-squad.dto';
+import { UpdateSquadDto } from './dto/update-squad.dto';
 
 const POPULATE_PLAYERS = [{ path: 'players.player' }];
 
@@ -34,7 +35,7 @@ export class SquadsService {
     return squad;
   }
 
-  async update(id: string, dto: Partial<CreateSquadDto>) {
+  async update(id: string, dto: UpdateSquadDto) {
     const squad = await this.squadModel.findById(id);
     if (!squad) throw new NotFoundException('Squad not found');
 

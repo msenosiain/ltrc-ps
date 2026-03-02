@@ -11,6 +11,7 @@ import {
 
 import { SquadsService } from './squads.service';
 import { CreateSquadDto } from './dto/create-squad.dto';
+import { UpdateSquadDto } from './dto/update-squad.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 // @UseGuards(JwtAuthGuard)
@@ -36,7 +37,7 @@ export class SquadsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() dto: Partial<CreateSquadDto>
+    @Body() dto: UpdateSquadDto
   ) {
     return this.squadsService.update(id, dto);
   }

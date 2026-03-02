@@ -48,25 +48,26 @@ export class TournamentEditorComponent implements OnInit {
   onFormSubmit(payload: TournamentFormValue): void {
     this.submitting = true;
 
-    const onSuccess = (t: Tournament) => {
-      this.submitting = false;
-      this.router.navigate(['/dashboard/tournaments', t.id]);
-    };
-
     const onError = () => (this.submitting = false);
 
     if (this.editing && this.tournament?.id) {
       this.tournamentsService
         .updateTournament(this.tournament.id, payload)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: onSuccess, error: onError });
+        .subscribe({
+          next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+          error: onError,
+        });
       return;
     }
 
     this.tournamentsService
       .createTournament(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: onSuccess, error: onError });
+      .subscribe({
+        next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+        error: onError,
+      });
   }
 
   onDelete(): void {

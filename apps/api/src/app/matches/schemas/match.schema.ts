@@ -33,6 +33,7 @@ const MatchVideoSchema = new Schema(
 export const MatchSchema = new Schema<MatchEntity>(
   {
     date: { type: Date, required: true },
+    time: { type: String },
     opponent: { type: String, required: true },
     venue: { type: String, required: true },
     isHome: { type: Boolean, required: true },
