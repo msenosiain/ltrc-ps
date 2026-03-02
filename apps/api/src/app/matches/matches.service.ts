@@ -6,6 +6,7 @@ import { PaginationDto } from '../shared/pagination.dto';
 import { PaginatedResponse } from '@ltrc-ps/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
+import { UpdateMatchDto } from './dto/update-match.dto';
 import { SquadsService } from '../squads/squads.service';
 
 const POPULATE_FIELDS = [
@@ -27,7 +28,7 @@ export class MatchesService {
     return this.matchModel.create(dto as any);
   }
 
-  async update(id: string, dto: Partial<CreateMatchDto>) {
+  async update(id: string, dto: UpdateMatchDto) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');
 
@@ -82,7 +83,7 @@ export class MatchesService {
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['date'] = -1;
+      sort['date'] = 1;
     }
 
     const [items, total] = await Promise.all([
@@ -97,6 +98,15 @@ export class MatchesService {
     ]);
 
     return { items, total, page, size };
+  }
+
+  async getFieldOptions() {
+    const [opponents, venues, divisions] = await Promise.all([
+      this.matchModel.distinct('opponent'),
+      this.matchModel.distinct('venue'),
+      this.matchModel.distinct('division').then((vals) => vals.filter(Boolean)),
+    ]);
+    return { opponents, venues, divisions };
   }
 
   async findOne(id: string) {

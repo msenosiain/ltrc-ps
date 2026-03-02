@@ -11,6 +11,8 @@ export function parseDate(val: unknown): Date | null {
   if (val instanceof Date) return isValid(val) ? val : null;
   const str = String(val).trim();
   if (!str) return null;
-  const parsed = parse(str, DATE_FORMAT, new Date());
-  return isValid(parsed) ? parsed : null;
+  const withTime = parse(str, `${DATE_FORMAT} HH:mm`, new Date());
+  if (isValid(withTime)) return withTime;
+  const dateOnly = parse(str, DATE_FORMAT, new Date());
+  return isValid(dateOnly) ? dateOnly : null;
 }

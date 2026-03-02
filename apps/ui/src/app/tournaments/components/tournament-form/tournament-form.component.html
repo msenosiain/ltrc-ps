@@ -22,6 +22,15 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Categorías</mat-label>
+        <mat-select formControlName="categories" multiple>
+          @for (cat of categoryOptions; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
       <mat-form-field appearance="outline" class="season-field">
         <mat-label>Temporada</mat-label>
         <input matInput formControlName="season" placeholder="ej: 2024" />

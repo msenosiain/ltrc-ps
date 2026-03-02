@@ -23,7 +23,12 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Fecha</span>
-            <span class="info-value">{{ match.date | date: 'dd/MM/yyyy' }}</span>
+            <span class="info-value">
+              {{ match.date | date: 'dd/MM/yyyy' }}
+              @if ((match.date | date: 'HH:mm') !== '00:00') {
+                <span class="match-time">{{ match.date | date: 'HH:mm' }}</span>
+              }
+            </span>
           </div>
           <div class="info-item">
             <span class="info-label">Cancha</span>

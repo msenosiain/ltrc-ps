@@ -21,6 +21,7 @@ import { PlayersService } from './players.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { UpdatePlayerDto } from './dto/update-player.dto';
 
 @Controller('players')
 export class PlayersController {
@@ -50,10 +51,15 @@ export class PlayersController {
   @UseInterceptors(FileInterceptor('photo'))
   async update(
     @Param('id') id: string,
-    @Body() dto: Partial<CreatePlayerDto>,
+    @Body() dto: UpdatePlayerDto,
     @UploadedFile() photo?: MulterFile,
   ) {
     return this.playersService.update(id, dto, photo);
+  }
+
+  @Get('field-options')
+  async getFieldOptions() {
+    return this.playersService.getFieldOptions();
   }
 
   @Get(':id')

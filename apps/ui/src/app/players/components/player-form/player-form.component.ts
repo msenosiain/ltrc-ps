@@ -10,6 +10,9 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
+import { Observable, startWith, map } from 'rxjs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,8 +23,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Player, ClothingSizesEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { getCategoryOptionsBySport, CategoryOption } from '../../category-options';
-import { getPositionOptionsBySport, PositionOption, sportOptions } from '../../position-options';
+import { getCategoryOptionsBySport, CategoryOption } from '../../../common/category-options';
+import { sportOptions } from '../../../common/sport-options';
+import { getPositionOptionsBySport, PositionOption } from '../../position-options';
 import { buildCreatePlayerForm } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
@@ -37,6 +41,8 @@ export interface PlayerFormSubmitEvent {
   selector: 'ltrc-player-form',
   imports: [
     ReactiveFormsModule,
+    AsyncPipe,
+    MatAutocompleteModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
@@ -69,7 +75,25 @@ export class PlayerFormComponent implements OnInit, OnChanges {
 
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
 
+  private allHealthInsurances: string[] = [];
+  filteredHealthInsurances$!: Observable<string[]>;
+
   ngOnInit(): void {
+    this.filteredHealthInsurances$ = this.playerForm
+      .get('medicalData.healthInsurance')!.valueChanges.pipe(
+        startWith(''),
+        map((v) => {
+          const lc = (v ?? '').toLowerCase();
+          return this.allHealthInsurances.filter((o) => o.toLowerCase().includes(lc));
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      );
+
+    this.playersService.getFieldOptions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ healthInsurances }) => {
+        this.allHealthInsurances = healthInsurances;
+      });
     this.playerForm.get('sport')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {

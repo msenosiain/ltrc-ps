@@ -14,6 +14,7 @@ import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
+import { UpdateMatchDto } from './dto/update-match.dto';
 import { UpdateMatchSquadDto } from './dto/update-players.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -32,7 +33,7 @@ export class MatchesController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: Partial<CreateMatchDto>) {
+  async update(@Param('id') id: string, @Body() dto: UpdateMatchDto) {
     return this.matchesService.update(id, dto);
   }
 
@@ -50,6 +51,11 @@ export class MatchesController {
     @Param('squadId') squadId: string
   ) {
     return this.matchesService.applySquadTemplate(id, squadId);
+  }
+
+  @Get('field-options')
+  async getFieldOptions() {
+    return this.matchesService.getFieldOptions();
   }
 
   @Get(':id')

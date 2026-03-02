@@ -16,8 +16,23 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
+        <mat-label>Hora</mat-label>
+        <input matInput [matTimepicker]="tp" [formControl]="timeControl" />
+        <mat-timepicker-toggle matSuffix [for]="tp" />
+        <mat-timepicker #tp [interval]="30" />
+        @if (timeControl.invalid) {
+          <mat-error>La hora es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>Rival</mat-label>
-        <input matInput formControlName="opponent" />
+        <input matInput formControlName="opponent" [matAutocomplete]="opponentAc" />
+        <mat-autocomplete #opponentAc="matAutocomplete">
+          @for (opt of filteredOpponents$ | async; track opt) {
+            <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
         @if (matchForm.get('opponent')?.invalid) {
           <mat-error>El rival es obligatorio</mat-error>
         }
@@ -25,7 +40,12 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Estadio / Cancha</mat-label>
-        <input matInput formControlName="venue" />
+        <input matInput formControlName="venue" [matAutocomplete]="venueAc" />
+        <mat-autocomplete #venueAc="matAutocomplete">
+          @for (opt of filteredVenues$ | async; track opt) {
+            <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
         @if (matchForm.get('venue')?.invalid) {
           <mat-error>La cancha es obligatoria</mat-error>
         }
@@ -84,7 +104,12 @@
 
       <mat-form-field appearance="outline">
         <mat-label>División</mat-label>
-        <input matInput formControlName="division" placeholder="Ej: Primera Rama A, Segunda..." />
+        <input matInput formControlName="division" placeholder="Ej: Primera Rama A, Segunda..." [matAutocomplete]="divisionAc" />
+        <mat-autocomplete #divisionAc="matAutocomplete">
+          @for (opt of filteredDivisions$ | async; track opt) {
+            <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
       </mat-form-field>
 
       <div class="toggle-field">
@@ -140,7 +165,7 @@
       mat-flat-button
       color="primary"
       type="submit"
-      [disabled]="submitting || matchForm.invalid"
+      [disabled]="submitting || formInvalid"
     >
       <mat-icon>{{ match ? 'save' : 'add' }}</mat-icon>
       {{ match ? 'Actualizar partido' : 'Crear partido' }}

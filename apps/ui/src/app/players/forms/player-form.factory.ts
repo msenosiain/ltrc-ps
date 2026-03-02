@@ -23,7 +23,7 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
 
     sport: fb.control<SportEnum | null>(null),
     category: fb.control<CategoryEnum | null>(null),
-    position: fb.control<PlayerPosition | null>(null, Validators.required),
+    position: fb.control<PlayerPosition | null>(null),
     alternatePosition: fb.control<PlayerPosition | null>(null),
 
     address: fb.group({

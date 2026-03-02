@@ -1,13 +1,14 @@
 import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
-import { sportOptions } from '../../../players/position-options';
+import { sportOptions } from '../../../common/sport-options';
+import { getCategoryLabel } from '../../../common/category-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -27,6 +28,10 @@ export class TournamentViewerComponent implements OnInit {
 
   getSportLabel(sport?: SportEnum): string {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';
+  }
+
+  getCategoryLabel(id: CategoryEnum): string {
+    return getCategoryLabel(id);
   }
 
   ngOnInit(): void {

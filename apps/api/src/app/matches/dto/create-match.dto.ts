@@ -16,8 +16,13 @@ import {
 } from 'class-validator';
 
 import { Transform, Type } from 'class-transformer';
-import { parse } from 'date-fns';
-import { CategoryEnum, DATE_FORMAT, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  parseDate,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export class VideoClipDto {
   @IsUrl()
@@ -59,15 +64,8 @@ export class MatchResultDto {
 
 export class CreateMatchDto {
   @IsNotEmpty()
-  @Transform(({ value }) => {
-    const parsedDate = parse(value, DATE_FORMAT, new Date());
-    return parsedDate instanceof Date && !isNaN(parsedDate.getTime())
-      ? parsedDate
-      : null;
-  })
-  @IsDate({
-    message: `$property must be a Date instance with format ${DATE_FORMAT}`,
-  })
+  @Transform(({ value }) => parseDate(value))
+  @IsDate({ message: '$property must be a valid date (dd/MM/yyyy)' })
   readonly date!: Date;
 
   @IsNotEmpty()

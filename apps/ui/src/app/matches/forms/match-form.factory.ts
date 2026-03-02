@@ -1,5 +1,5 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CategoryEnum, MatchStatusEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
   return fb.group({
@@ -7,7 +7,7 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
     opponent: ['', Validators.required],
     venue: ['', Validators.required],
     isHome: [true],
-    type: [null, Validators.required],
+    type: [MatchTypeEnum.LEAGUE, Validators.required],
     status: [MatchStatusEnum.UPCOMING],
     sport: [null as SportEnum | null],
     category: [null as CategoryEnum | null],

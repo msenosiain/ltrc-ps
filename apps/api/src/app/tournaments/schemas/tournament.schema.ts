@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
 import { TournamentEntity } from './tournament.entity';
-import { SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export const TournamentSchema = new Schema<TournamentEntity>(
   {
@@ -8,6 +8,7 @@ export const TournamentSchema = new Schema<TournamentEntity>(
     season: { type: String },
     description: { type: String },
     sport: { type: String, enum: Object.values(SportEnum) },
+    categories: [{ type: String, enum: Object.values(CategoryEnum) }],
   },
   {
     timestamps: true,

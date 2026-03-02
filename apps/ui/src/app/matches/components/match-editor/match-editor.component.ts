@@ -44,24 +44,26 @@ export class MatchEditorComponent implements OnInit {
   onFormSubmit(payload: MatchFormValue): void {
     this.submitting = true;
 
-    const onSuccess = (m: Match) => {
-      this.submitting = false;
-      this.router.navigate(['/dashboard/matches', m.id]);
-    };
     const onError = () => (this.submitting = false);
 
     if (this.editing && this.match?.id) {
       this.matchesService
         .updateMatch(this.match.id, payload)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: onSuccess, error: onError });
+        .subscribe({
+          next: () => { this.submitting = false; this.router.navigate(['/dashboard/matches']); },
+          error: onError,
+        });
       return;
     }
 
     this.matchesService
       .createMatch(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: onSuccess, error: onError });
+      .subscribe({
+        next: () => { this.submitting = false; this.router.navigate(['/dashboard/matches']); },
+        error: onError,
+      });
   }
 
   onDelete(): void {
