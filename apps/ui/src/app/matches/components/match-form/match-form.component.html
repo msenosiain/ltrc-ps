@@ -1,0 +1,129 @@
+<form [formGroup]="matchForm" (ngSubmit)="onSubmit()" class="match-form-container">
+
+  <!-- DATOS DEL PARTIDO -->
+  <mat-card>
+    <mat-card-title>Datos del partido</mat-card-title>
+    <div class="match-grid">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker" />
+        <mat-datepicker #picker />
+        @if (matchForm.get('date')?.invalid) {
+          <mat-error>La fecha es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Rival</mat-label>
+        <input matInput formControlName="opponent" />
+        @if (matchForm.get('opponent')?.invalid) {
+          <mat-error>El rival es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estadio / Cancha</mat-label>
+        <input matInput formControlName="venue" />
+        @if (matchForm.get('venue')?.invalid) {
+          <mat-error>La cancha es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="type">
+          @for (opt of typeOptions; track opt.id) {
+            <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+        @if (matchForm.get('type')?.invalid) {
+          <mat-error>El tipo es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          @for (opt of statusOptions; track opt.id) {
+            <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Torneo</mat-label>
+        <mat-select formControlName="tournament">
+          <mat-option [value]="null">Sin torneo</mat-option>
+          @for (t of tournaments; track t.id) {
+            <mat-option [value]="t.id">{{ t.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="toggle-field">
+        <mat-slide-toggle formControlName="isHome">Local</mat-slide-toggle>
+        <span class="toggle-hint">
+          {{ matchForm.get('isHome')?.value ? 'Jugamos de local' : 'Jugamos de visitante' }}
+        </span>
+      </div>
+
+    </div>
+  </mat-card>
+
+  <!-- RESULTADO (solo cuando está finalizado) -->
+  @if (statusValue === MatchStatusEnum.COMPLETED) {
+    <mat-card formGroupName="result">
+      <mat-card-title>Resultado</mat-card-title>
+      <div class="result-grid">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Goles {{ matchForm.get('isHome')?.value ? 'nuestros' : 'del rival' }}</mat-label>
+          <input matInput type="number" min="0"
+            [formControlName]="matchForm.get('isHome')?.value ? 'homeScore' : 'awayScore'" />
+        </mat-form-field>
+
+        <span class="result-separator">–</span>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Goles {{ matchForm.get('isHome')?.value ? 'del rival' : 'nuestros' }}</mat-label>
+          <input matInput type="number" min="0"
+            [formControlName]="matchForm.get('isHome')?.value ? 'awayScore' : 'homeScore'" />
+        </mat-form-field>
+
+      </div>
+    </mat-card>
+  }
+
+  <!-- NOTAS -->
+  <mat-card>
+    <mat-card-title>Notas</mat-card-title>
+    <mat-form-field appearance="outline" class="notes-field">
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput formControlName="notes" rows="3"></textarea>
+    </mat-form-field>
+  </mat-card>
+
+  <!-- ACCIONES -->
+  <div class="form-actions">
+    <button mat-stroked-button type="button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="submitting || matchForm.invalid"
+    >
+      <mat-icon>{{ match ? 'save' : 'add' }}</mat-icon>
+      {{ match ? 'Actualizar partido' : 'Crear partido' }}
+    </button>
+  </div>
+
+  @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+</form>
