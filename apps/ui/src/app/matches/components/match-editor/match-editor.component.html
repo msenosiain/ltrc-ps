@@ -1,0 +1,25 @@
+<div class="match-editor">
+
+  <div class="editor-header">
+    <h2 class="editor-title">{{ editing ? 'Editar partido' : 'Nuevo partido' }}</h2>
+
+    @if (editing && match) {
+      <button mat-stroked-button color="warn" type="button" class="delete-btn" (click)="onDelete()">
+        <mat-icon>delete</mat-icon>
+        Eliminar partido
+      </button>
+    }
+
+    @if (submitting) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+  </div>
+
+  <ltrc-match-form
+    [match]="match"
+    [submitting]="submitting"
+    (formSubmit)="onFormSubmit($event)"
+    (cancel)="onCancel()"
+  />
+
+</div>
