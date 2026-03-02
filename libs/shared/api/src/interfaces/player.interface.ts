@@ -1,5 +1,7 @@
 import { Document } from 'mongoose';
-import { ClothingSizesEnum, PlayerPositionEnum } from '../enums';
+import { CategoryEnum, ClothingSizesEnum, HockeyPositions, RugbyPositions, SportEnum } from '../enums';
+
+export type PlayerPosition = RugbyPositions | HockeyPositions;
 
 export interface Address {
   street?: string;
@@ -19,9 +21,18 @@ export interface ClothingSizes {
   [key: string]: ClothingSizesEnum | undefined;
 }
 
+export interface MedicalData {
+  height?: number;
+  weight?: number;
+  torgIndex?: number;
+  healthInsurance?: string;
+}
+
 export interface PlayerFilters {
   searchTerm?: string;
-  position?: PlayerPositionEnum;
+  sport?: SportEnum;
+  position?: PlayerPosition;
+  category?: CategoryEnum;
 }
 
 export interface Player extends Document {
@@ -29,15 +40,17 @@ export interface Player extends Document {
   readonly idNumber: string;
   readonly lastName: string;
   readonly firstName: string;
+  readonly secondName?: string;
   readonly nickName?: string;
   readonly birthDate: Date;
   readonly email: string;
-  readonly address?: Address | undefined;
-  readonly position: PlayerPositionEnum;
-  readonly alternatePosition?: PlayerPositionEnum;
-  readonly height?: number;
-  readonly weight?: number;
+  readonly address?: Address;
+  readonly sport?: SportEnum;
+  readonly category?: CategoryEnum;
+  readonly position?: PlayerPosition;
+  readonly alternatePosition?: PlayerPosition;
   readonly clothingSizes?: ClothingSizes;
+  readonly medicalData?: MedicalData;
   readonly photoId?: string;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;

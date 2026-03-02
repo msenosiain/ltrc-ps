@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   OnInit,
   inject,
+  DestroyRef,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -19,11 +20,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { Match, MatchStatusEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { matchStatusOptions, matchTypeOptions } from '../../match-options';
+import { Match, MatchStatusEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  getCategoryOptionsBySport,
+  MatchOption,
+  matchStatusOptions,
+  matchTypeOptions,
+  sportOptions,
+} from '../../match-options';
 import { buildCreateMatchForm } from '../../forms/match-form.factory';
 import { MatchFormValue } from '../../forms/match-form.types';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CategoryEnum } from '@ltrc-ps/shared-api-model';
 
 @Component({
   standalone: true,
@@ -46,6 +55,7 @@ import { TournamentsService } from '../../../tournaments/services/tournaments.se
 export class MatchFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly tournamentsService = inject(TournamentsService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() match?: Match;
   @Input() submitting = false;
@@ -55,17 +65,30 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   readonly statusOptions = matchStatusOptions;
   readonly typeOptions = matchTypeOptions;
+  readonly sportOptions = sportOptions;
   readonly MatchStatusEnum = MatchStatusEnum;
 
+  categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport(null);
   tournaments: Tournament[] = [];
   matchForm: FormGroup = buildCreateMatchForm(this.fb);
 
   ngOnInit(): void {
     this.tournamentsService.getTournaments().subscribe((t) => (this.tournaments = t));
+
+    this.matchForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport: SportEnum | null) => {
+        this.categoryOptions = getCategoryOptionsBySport(sport);
+        const cat = this.matchForm.get('category')?.value;
+        if (cat && !this.categoryOptions.find((c) => c.id === cat)) {
+          this.matchForm.get('category')?.setValue(null);
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['match'] && this.match) {
+      this.categoryOptions = getCategoryOptionsBySport(this.match.sport ?? null);
       this.matchForm.patchValue({
         ...this.match,
         date: this.match.date ? new Date(this.match.date) : null,

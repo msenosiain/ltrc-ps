@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { Tournament } from '@ltrc-ps/shared-api-model';
+import { SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { sportOptions } from '../../../players/position-options';
 import { TournamentSearchComponent } from '../tournament-search/tournament-search.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -29,7 +30,7 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   private readonly tournamentsService = inject(TournamentsService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns = ['name', 'season', 'description'];
+  readonly displayedColumns = ['name', 'season', 'sport', 'description'];
 
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -37,8 +38,9 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   loading = false;
 
   private searchTerm?: string;
+  private sport?: SportEnum;
   private sortBy: string | undefined = 'season';
-  private sortOrder: 'asc' | 'desc' | undefined = 'desc';
+  private sortOrder: SortOrder | undefined = SortOrder.DESC;
 
   ngOnInit(): void {
     this.load();
@@ -47,7 +49,7 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.sort.sortChange.subscribe(() => {
       this.sortBy = this.sort.active || undefined;
-      this.sortOrder = (this.sort.direction as 'asc' | 'desc') || undefined;
+      this.sortOrder = (this.sort.direction as SortOrder) || undefined;
       this.load();
     });
   }
@@ -55,7 +57,7 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   private load(): void {
     this.loading = true;
     this.tournamentsService
-      .getTournaments(this.searchTerm, this.sortBy, this.sortOrder)
+      .getTournaments(this.searchTerm, this.sport, this.sortBy, this.sortOrder)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
@@ -66,9 +68,14 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
       });
   }
 
-  applyFilters(filters: { searchTerm?: string }): void {
+  applyFilters(filters: { searchTerm?: string; sport?: SportEnum }): void {
     this.searchTerm = filters.searchTerm;
+    this.sport = filters.sport;
     this.load();
+  }
+
+  getSportLabel(sport?: SportEnum): string {
+    return sportOptions.find((s) => s.id === sport)?.label ?? '';
   }
 
   goToCreate(): void {

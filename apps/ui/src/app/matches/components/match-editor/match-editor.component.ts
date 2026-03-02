@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -83,6 +83,12 @@ export class MatchEditorComponent implements OnInit {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => this.router.navigate(['/dashboard/matches']));
       });
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.dialog.openDialogs.length > 0) return;
+    this.onCancel();
   }
 
   onCancel(): void {

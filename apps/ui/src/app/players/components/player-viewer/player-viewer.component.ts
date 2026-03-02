@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
-import { Player, PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, Player, PlayerPosition } from '@ltrc-ps/shared-api-model';
+import { categoryOptions } from '../../category-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
@@ -52,6 +53,11 @@ export class PlayerViewerComponent implements OnInit {
     this.router.navigate(['/dashboard/players', this.player!.id, 'edit']);
   }
 
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.backToList();
+  }
+
   backToList(): void {
     this.router.navigate(['/dashboard/players']);
   }
@@ -62,7 +68,12 @@ export class PlayerViewerComponent implements OnInit {
       : '/placeholder.jpg';
   }
 
-  getPositionLabel(position: PlayerPositionEnum): string {
+  getCategoryLabel(category?: CategoryEnum): string {
+    if (!category) return '';
+    return categoryOptions.find((c) => c.id === category)?.label ?? category;
+  }
+
+  getPositionLabel(position: PlayerPosition): string {
     return this.playersService.getPositionLabel(position);
   }
 

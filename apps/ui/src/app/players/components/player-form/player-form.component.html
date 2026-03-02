@@ -7,7 +7,6 @@
       <div class="photo-column">
         <ltrc-player-photo-field
           formControlName="photo"
-          [required]="true"
         />
       </div>
 
@@ -17,6 +16,11 @@
         @if (playerForm.get('firstName')?.invalid) {
           <mat-error>Nombre es obligatorio</mat-error>
         }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Segundo nombre</mat-label>
+        <input matInput formControlName="secondName" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -110,15 +114,32 @@
     <div class="card-grid section-grid">
 
       <mat-form-field appearance="outline">
-        <mat-label>Posicion</mat-label>
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport">
+          <mat-option [value]="null">Sin especificar</mat-option>
+          @for (s of sportOptions; track s.id) {
+            <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category">
+          <mat-option [value]="null">Sin categoría</mat-option>
+          @for (cat of categories; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Posición</mat-label>
         <mat-select formControlName="position">
           @for (pos of positions; track pos.id) {
             <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
           }
         </mat-select>
-        @if (playerForm.get('position')?.invalid) {
-          <mat-error>Posicion es obligatoria</mat-error>
-        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -130,6 +151,14 @@
         </mat-select>
       </mat-form-field>
 
+    </div>
+  </mat-card>
+
+  <!-- DATOS MÉDICOS -->
+  <mat-card>
+    <mat-card-title>Datos médicos</mat-card-title>
+    <div class="card-grid section-grid" formGroupName="medicalData">
+
       <mat-form-field appearance="outline">
         <mat-label>Altura (cm)</mat-label>
         <input matInput type="number" formControlName="height" />
@@ -138,6 +167,16 @@
       <mat-form-field appearance="outline">
         <mat-label>Peso (kg)</mat-label>
         <input matInput type="number" formControlName="weight" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Índice de Torg</mat-label>
+        <input matInput type="number" step="0.01" formControlName="torgIndex" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Obra social</mat-label>
+        <input matInput formControlName="healthInsurance" />
       </mat-form-field>
 
     </div>

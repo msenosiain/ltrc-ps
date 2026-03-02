@@ -1,4 +1,4 @@
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { RugbyPositions } from '@ltrc-ps/shared-api-model';
 
 export const createPlayerDtoPlain = {
   lastName: 'Lastname 3',
@@ -6,7 +6,7 @@ export const createPlayerDtoPlain = {
   idNumber: '3',
   birthDate: '05-12-2005',
   email: 'player3@lostordos.com.ar',
-  position: PlayerPositionEnum.FULLBACK,
+  position: RugbyPositions.FULLBACK,
   address: {
     phoneNumber: '123456789',
   },
@@ -27,8 +27,8 @@ export const playersArray = [
       postalCode: '1000',
       phoneNumber: '123456789',
     },
-    position: PlayerPositionEnum.RIGHT_SECOND_ROW,
-    alternatePosition: PlayerPositionEnum.LEFT_SECOND_ROW,
+    position: RugbyPositions.RIGHT_SECOND_ROW,
+    alternatePosition: RugbyPositions.LEFT_SECOND_ROW,
     height: 200,
     weight: 119,
   },
@@ -46,8 +46,8 @@ export const playersArray = [
       postalCode: '1000',
       phoneNumber: '987654321',
     },
-    position: PlayerPositionEnum.TIGHT_HEAD_PROP,
-    alternatePosition: PlayerPositionEnum.LOOSE_HEAD_PROP,
+    position: RugbyPositions.TIGHT_HEAD_PROP,
+    alternatePosition: RugbyPositions.LOOSE_HEAD_PROP,
     height: 180,
     weight: 100,
   },
@@ -65,8 +65,8 @@ export const playersArray = [
       postalCode: '3000',
       phoneNumber: '111222333',
     },
-    position: PlayerPositionEnum.LEFT_WING,
-    alternatePosition: PlayerPositionEnum.FULLBACK,
+    position: RugbyPositions.LEFT_WING,
+    alternatePosition: RugbyPositions.FULLBACK,
     height: 200,
     weight: 119,
   },

@@ -6,6 +6,8 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  OnInit,
+  DestroyRef,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -16,8 +18,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Player, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
-import { positionOptions } from '../../position-options';
+import { Player, ClothingSizesEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getCategoryOptionsBySport, CategoryOption } from '../../category-options';
+import { getPositionOptionsBySport, PositionOption, sportOptions } from '../../position-options';
 import { buildCreatePlayerForm } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
@@ -46,25 +50,51 @@ export interface PlayerFormSubmitEvent {
   styleUrls: ['./player-form.component.scss'],
   templateUrl: './player-form.component.html',
 })
-export class PlayerFormComponent implements OnChanges {
+export class PlayerFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly playersService = inject(PlayersService);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() player?: Player;
   @Input() submitting = false;
 
-  @Output() readonly formSubmitWithPhoto =
-    new EventEmitter<PlayerFormSubmitEvent>();
+  @Output() readonly formSubmitWithPhoto = new EventEmitter<PlayerFormSubmitEvent>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  readonly positions = positionOptions;
+  readonly sportOptions = sportOptions;
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
+  positions: PositionOption[] = getPositionOptionsBySport(null);
+  categories: CategoryOption[] = getCategoryOptionsBySport(null);
+
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
+
+  ngOnInit(): void {
+    this.playerForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport: SportEnum | null) => {
+        this.positions = getPositionOptionsBySport(sport);
+        this.categories = getCategoryOptionsBySport(sport);
+        // Clear position/category if they no longer match the new sport
+        const pos = this.playerForm.get('position')?.value;
+        if (pos && !this.positions.find((p) => p.id === pos)) {
+          this.playerForm.get('position')?.setValue(null);
+        }
+        const cat = this.playerForm.get('category')?.value;
+        if (cat && !this.categories.find((c) => c.id === cat)) {
+          this.playerForm.get('category')?.setValue(null);
+        }
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {
       this.playerForm.patchValue(this.player);
+      // Trigger sport-based option filtering for loaded player
+      const sport = this.player.sport ?? null;
+      this.positions = getPositionOptionsBySport(sport);
+      this.categories = getCategoryOptionsBySport(sport);
+
       if (this.player.photoId && this.player.id) {
         this.playerForm.get('photo')?.setValue({
           previewUrl: this.playersService.getPlayerPhotoUrl(this.player.id),
