@@ -6,11 +6,16 @@ import { GridFsService } from '../shared/gridfs/gridfs.service';
 import type { File as MulterFile } from 'multer';
 import { PaginationDto } from '../shared/pagination.dto';
 import {
+  DATE_FORMAT,
   PaginatedResponse,
   Player,
+  PlayerPositionEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { ImportPlayerRow } from './dto/import-player.dto';
+import * as XLSX from 'xlsx';
+import { parse, isValid } from 'date-fns';
 
 @Injectable()
 export class PlayersService {
@@ -131,5 +136,66 @@ export class PlayersService {
     }
 
     return player.deleteOne();
+  }
+
+  async importFromFile(
+    buffer: Buffer,
+    filename: string
+  ): Promise<{ created: number; errors: { row: number; message: string }[] }> {
+    const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<ImportPlayerRow>(sheet);
+
+    let created = 0;
+    const errors: { row: number; message: string }[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rowNum = i + 2; // 1-based + header row
+
+      try {
+        const { lastName, firstName, idNumber, email, position } = row;
+
+        if (!lastName) throw new Error('lastName es requerido');
+        if (!firstName) throw new Error('firstName es requerido');
+        if (!idNumber) throw new Error('idNumber es requerido');
+        if (!email) throw new Error('email es requerido');
+        if (!position) throw new Error('position es requerido');
+        if (!Object.values(PlayerPositionEnum).includes(position)) {
+          throw new Error(`position inválida: ${position}`);
+        }
+
+        const birthDate = this.parseImportDate(row.birthDate);
+        if (!birthDate) throw new Error('birthDate inválida (formato esperado: dd/MM/yyyy)');
+
+        await this.playerModel.create({
+          lastName: String(lastName),
+          firstName: String(firstName),
+          idNumber: String(idNumber),
+          email: String(email),
+          position,
+          birthDate,
+          nickName: row.nickName ? String(row.nickName) : undefined,
+          alternatePosition: row.alternatePosition ?? undefined,
+          height: row.height ? Number(row.height) : undefined,
+          weight: row.weight ? Number(row.weight) : undefined,
+        });
+
+        created++;
+      } catch (err) {
+        errors.push({ row: rowNum, message: (err as Error).message });
+      }
+    }
+
+    return { created, errors };
+  }
+
+  private parseImportDate(val: unknown): Date | null {
+    if (!val) return null;
+    if (val instanceof Date) return isValid(val) ? val : null;
+    const str = String(val).trim();
+    if (!str) return null;
+    const parsed = parse(str, DATE_FORMAT, new Date());
+    return isValid(parsed) ? parsed : null;
   }
 }

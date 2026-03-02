@@ -31,6 +31,12 @@ export class PlayersController {
     return this.playersService.findPaginated(pagination);
   }
 
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  async importFromFile(@UploadedFile() file: MulterFile) {
+    return this.playersService.importFromFile(file.buffer, file.originalname);
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('photo'))
   async create(

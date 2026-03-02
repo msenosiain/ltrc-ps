@@ -96,6 +96,19 @@ export class PlayersService {
     return form;
   }
 
+  // IMPORT ─────────────────────────────────────────────────
+
+  importPlayers(
+    file: File
+  ): Observable<{ created: number; errors: { row: number; message: string }[] }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.httpClient.post<{
+      created: number;
+      errors: { row: number; message: string }[];
+    }>(`${this.playersApiUrl}/import`, form);
+  }
+
   // DELETE ─────────────────────────────────────────────────
 
   deletePlayer(id: string): Observable<void> {
