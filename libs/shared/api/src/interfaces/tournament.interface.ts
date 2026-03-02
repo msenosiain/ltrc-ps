@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { SportEnum } from '../enums';
+import { CategoryEnum, SportEnum } from '../enums';
 
 export interface Tournament extends Document {
   readonly id?: string;
@@ -7,6 +7,7 @@ export interface Tournament extends Document {
   readonly season?: string;
   readonly description?: string;
   readonly sport?: SportEnum;
+  readonly categories?: CategoryEnum[];
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }

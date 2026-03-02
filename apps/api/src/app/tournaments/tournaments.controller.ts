@@ -12,6 +12,7 @@ import {
 
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -33,7 +34,7 @@ export class TournamentsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() dto: Partial<CreateTournamentDto>
+    @Body() dto: UpdateTournamentDto
   ) {
     return this.tournamentsService.update(id, dto);
   }

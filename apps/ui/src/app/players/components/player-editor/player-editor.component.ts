@@ -46,24 +46,18 @@ export class PlayerEditorComponent implements OnInit {
   onFormSubmitWithPhoto({ payload, file }: PlayerFormSubmitEvent): void {
     this.submitting = true;
 
-    const onSuccess = (p: Player) => {
-      this.submitting = false;
-      this.router.navigate(['/dashboard/players', p.id]);
-    };
-
     const onError = () => (this.submitting = false);
 
     if (this.editing && this.player?.id) {
       const obs = file
-        ? this.playersService.updatePlayerWithPhoto(
-            this.player.id,
-            payload,
-            file
-          )
+        ? this.playersService.updatePlayerWithPhoto(this.player.id, payload, file)
         : this.playersService.updatePlayer(this.player.id, payload);
       obs
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: onSuccess, error: onError });
+        .subscribe({
+          next: () => { this.submitting = false; this.router.navigate(['/dashboard/players']); },
+          error: onError,
+        });
       return;
     }
 
@@ -72,7 +66,10 @@ export class PlayerEditorComponent implements OnInit {
       : this.playersService.createPlayer(payload);
     obs
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: onSuccess, error: onError });
+      .subscribe({
+        next: () => { this.submitting = false; this.router.navigate(['/dashboard/players']); },
+        error: onError,
+      });
   }
 
   onDelete(): void {

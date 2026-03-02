@@ -1,12 +1,15 @@
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   Input,
   Output,
   OnChanges,
+  OnInit,
   SimpleChanges,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,9 +18,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { TournamentFormValue } from '../../services/tournaments.service';
-import { SportOption, sportOptions } from '../../../players/position-options';
+import { SportOption, sportOptions } from '../../../common/sport-options';
+import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
 
 @Component({
   standalone: true,
@@ -35,8 +39,9 @@ import { SportOption, sportOptions } from '../../../players/position-options';
   templateUrl: './tournament-form.component.html',
   styleUrl: './tournament-form.component.scss',
 })
-export class TournamentFormComponent implements OnChanges {
+export class TournamentFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   @Input() tournament?: Tournament;
   @Input() submitting = false;
@@ -45,17 +50,38 @@ export class TournamentFormComponent implements OnChanges {
   @Output() readonly cancel = new EventEmitter<void>();
 
   readonly sportOptions: SportOption[] = sportOptions;
+  categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
 
   tournamentForm: FormGroup = this.fb.group({
     name: ['', Validators.required],
     season: [''],
     description: [''],
     sport: [null as SportEnum | null],
+    categories: [[] as CategoryEnum[]],
   });
+
+  ngOnInit(): void {
+    this.tournamentForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport: SportEnum | null) => {
+        this.categoryOptions = getCategoryOptionsBySport(sport);
+
+        const selected: CategoryEnum[] = this.tournamentForm.get('categories')?.value ?? [];
+        const validIds = new Set(this.categoryOptions.map((c) => c.id));
+        const stillValid = selected.filter((c) => validIds.has(c));
+        if (stillValid.length !== selected.length) {
+          this.tournamentForm.get('categories')?.setValue(stillValid);
+        }
+      });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tournament'] && this.tournament) {
-      this.tournamentForm.patchValue(this.tournament);
+      this.categoryOptions = getCategoryOptionsBySport(this.tournament.sport);
+      this.tournamentForm.patchValue({
+        ...this.tournament,
+        categories: this.tournament.categories ?? [],
+      });
     }
   }
 

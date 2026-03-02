@@ -2,7 +2,7 @@ import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/co
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
 import { CategoryEnum, Match, MatchStatusEnum, MatchTypeEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { matchCategoryOptions } from '../../match-options';
+import { getCategoryLabel as getCatLabel } from '../../match-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -56,8 +56,7 @@ export class MatchViewerComponent implements OnInit {
   }
 
   getCategoryLabel(category?: CategoryEnum): string {
-    if (!category) return '';
-    return matchCategoryOptions.find((c) => c.id === category)?.label ?? category;
+    return getCatLabel(category);
   }
 
   edit(): void {

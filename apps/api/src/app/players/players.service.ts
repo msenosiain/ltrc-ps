@@ -15,6 +15,7 @@ import {
 } from '@ltrc-ps/shared-api-model';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { UpdatePlayerDto } from './dto/update-player.dto';
 import { ImportPlayerRow } from './dto/import-player.dto';
 import * as XLSX from 'xlsx';
 
@@ -44,16 +45,14 @@ export class PlayersService {
     });
   }
 
-  async update(id: string, dto: Partial<CreatePlayerDto>, photo?: MulterFile) {
+  async update(id: string, dto: UpdatePlayerDto, photo?: MulterFile) {
     const player = await this.playerModel.findById(id);
     if (!player) throw new NotFoundException('Player not found');
 
     if (photo) {
-      // delete old
       if (player.photoId) {
         await this.gridFsService.deleteFile('playersPhotos', player.photoId);
       }
-      // upload new
       player.photoId = await this.gridFsService.uploadFile(
         'playersPhotos',
         photo.originalname,
@@ -62,18 +61,7 @@ export class PlayersService {
       );
     }
 
-    const parseJson = (v: unknown) =>
-      typeof v === 'string' ? JSON.parse(v) : v;
-
-    Object.assign(player, {
-      ...dto,
-      birthDate: dto.birthDate != null
-        ? (parseDate(dto.birthDate) ?? player.birthDate)
-        : player.birthDate,
-      address: dto.address != null ? parseJson(dto.address) : player.address,
-      clothingSizes: dto.clothingSizes != null ? parseJson(dto.clothingSizes) : player.clothingSizes,
-      medicalData: dto.medicalData != null ? parseJson(dto.medicalData) : player.medicalData,
-    });
+    Object.assign(player, dto);
     return player.save();
   }
 
@@ -138,6 +126,13 @@ export class PlayersService {
     ]);
 
     return { items, total, page, size };
+  }
+
+  async getFieldOptions() {
+    const healthInsurances = await this.playerModel
+      .distinct('medicalData.healthInsurance')
+      .then((vals) => vals.filter(Boolean));
+    return { healthInsurances };
   }
 
   async findOne(id: string) {

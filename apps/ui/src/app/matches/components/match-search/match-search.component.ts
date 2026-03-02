@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { matchCategoryOptions, matchStatusOptions, matchTypeOptions, sportOptions } from '../../match-options';
+import { getCategoryOptionsBySport, matchStatusOptions, matchTypeOptions, MatchOption, sportOptions } from '../../match-options';
 import { MatchFilters } from '../../forms/match-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
@@ -36,8 +36,8 @@ export class MatchSearchComponent implements OnInit {
 
   readonly statusOptions = matchStatusOptions;
   readonly typeOptions = matchTypeOptions;
-  readonly categoryOptions = matchCategoryOptions;
   readonly sportOptions = sportOptions;
+  categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport();
   tournaments: Tournament[] = [];
 
   readonly searchForm = this.fb.group({
@@ -51,8 +51,22 @@ export class MatchSearchComponent implements OnInit {
   ngOnInit(): void {
     this.tournamentsService.getTournaments().subscribe((t) => (this.tournaments = t));
 
+    this.searchForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport) => {
+        this.categoryOptions = getCategoryOptionsBySport(sport);
+        const currentCategory = this.searchForm.get('category')!.value;
+        if (currentCategory && !this.categoryOptions.some((c) => c.id === currentCategory)) {
+          this.searchForm.get('category')!.setValue(undefined, { emitEvent: false });
+        }
+      });
+
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((values) => this.filtersChange.emit(nullToUndefined(values) as MatchFilters));
+  }
+
+  clearField(field: string): void {
+    this.searchForm.get(field)?.setValue(undefined);
   }
 }

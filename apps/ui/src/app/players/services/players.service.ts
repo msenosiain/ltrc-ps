@@ -20,6 +20,12 @@ export class PlayersService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly playersApiUrl = `${this.config.baseUrl}/players`;
 
+  getFieldOptions(): Observable<{ healthInsurances: string[] }> {
+    return this.httpClient.get<{ healthInsurances: string[] }>(
+      `${this.playersApiUrl}/field-options`
+    );
+  }
+
   getPlayers(query: PaginationQuery): Observable<PaginatedResponse<Player>> {
     let params = new HttpParams();
     if (query.page) params = params.set('page', query.page);

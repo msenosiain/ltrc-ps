@@ -16,6 +16,12 @@ export class MatchesService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly matchesApiUrl = `${this.config.baseUrl}/matches`;
 
+  getFieldOptions(): Observable<{ opponents: string[]; venues: string[]; divisions: string[] }> {
+    return this.httpClient.get<{ opponents: string[]; venues: string[]; divisions: string[] }>(
+      `${this.matchesApiUrl}/field-options`
+    );
+  }
+
   getMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {
     let params = new HttpParams();
     if (query.page) params = params.set('page', query.page);

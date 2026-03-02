@@ -13,12 +13,17 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="desc" class="matches-table mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="asc" class="matches-table mat-elevation-z2">
 
     <!-- Fecha -->
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-      <td mat-cell *matCellDef="let match">{{ match.date | date: 'dd/MM/yyyy' }}</td>
+      <td mat-cell *matCellDef="let match">
+        {{ match.date | date: 'dd/MM/yyyy' }}
+        @if ((match.date | date: 'HH:mm') !== '00:00') {
+          <span class="match-time">{{ match.date | date: 'HH:mm' }}</span>
+        }
+      </td>
     </ng-container>
 
     <!-- Rival -->
@@ -46,10 +51,16 @@
       </td>
     </ng-container>
 
-    <!-- Tipo -->
-    <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Tipo</th>
-      <td mat-cell *matCellDef="let match">{{ getTypeLabel(match.type) }}</td>
+    <!-- Cancha -->
+    <ng-container matColumnDef="venue">
+      <th mat-header-cell *matHeaderCellDef>Cancha</th>
+      <td mat-cell *matCellDef="let match">{{ match.venue }}</td>
+    </ng-container>
+
+    <!-- División -->
+    <ng-container matColumnDef="division">
+      <th mat-header-cell *matHeaderCellDef>División</th>
+      <td mat-cell *matCellDef="let match">{{ match.division || '—' }}</td>
     </ng-container>
 
     <!-- Estado -->

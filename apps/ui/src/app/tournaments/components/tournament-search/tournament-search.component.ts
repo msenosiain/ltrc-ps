@@ -15,7 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { SportEnum } from '@ltrc-ps/shared-api-model';
-import { SportOption, sportOptions } from '../../../players/position-options';
+import { SportOption, sportOptions } from '../../../common/sport-options';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 
 @Component({
