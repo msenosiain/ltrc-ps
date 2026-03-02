@@ -1,0 +1,321 @@
+import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
+import { Match, Player, Squad, SquadEntry, SquadPlayerTemplate } from '@ltrc-ps/shared-api-model';
+import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
+import { PlayersService } from '../../../players/services/players.service';
+import { MatchesService } from '../../services/matches.service';
+import { SquadsService } from '../../../squads/services/squads.service';
+import {
+  SaveSquadTemplateDialogComponent,
+  SaveSquadTemplateDialogResult,
+} from '../save-squad-template-dialog/save-squad-template-dialog.component';
+
+@Component({
+  selector: 'ltrc-squad-editor',
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressBarModule,
+    MatSelectModule,
+    MatTableModule,
+    MatTooltipModule,
+  ],
+  templateUrl: './squad-editor.component.html',
+  styleUrl: './squad-editor.component.scss',
+})
+export class SquadEditorComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly matchesService = inject(MatchesService);
+  private readonly playersService = inject(PlayersService);
+  private readonly squadsService = inject(SquadsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+
+  match?: Match;
+  squadRows: SquadEntry[] = [];
+  isDirty = false;
+  saving = false;
+  squads: Squad[] = [];
+
+  selectedSquadIdCtrl = new FormControl<string | null>(null);
+
+  addForm = this.fb.group({
+    playerSearch: [null as Player | string | null],
+    shirtNumber: [null as number | null, [Validators.min(1), Validators.max(99)]],
+  });
+
+  playerSuggestions: Player[] = [];
+  selectedPlayer: Player | null = null;
+  private readonly searchSubject = new Subject<string>();
+
+  readonly displayedColumns = ['shirtNumber', 'player', 'position', 'actions'];
+
+  readonly displayPlayerFn = (player: Player | null): string =>
+    player ? `${player.lastName}, ${player.firstName}` : '';
+
+  readonly formationGroups: number[][][] = [
+    [[1, 2, 3], [4, 5], [6, 8, 7]],
+    [[9, 10, 12, 13]],
+    [[11, 15, 14]],
+  ];
+  private readonly formationShirts = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+
+  get opponentLabel(): string {
+    return this.match ? `vs. ${this.match.opponent}` : '';
+  }
+
+  get selectedSquad(): Squad | null {
+    const id = this.selectedSquadIdCtrl.value;
+    return id ? (this.squads.find((s) => s.id === id) ?? null) : null;
+  }
+
+  get titulares(): SquadEntry[] {
+    return this.squadRows.filter((e) => e.shirtNumber <= 15).sort((a, b) => a.shirtNumber - b.shirtNumber);
+  }
+
+  get suplentes(): SquadEntry[] {
+    return this.squadRows.filter((e) => e.shirtNumber > 15).sort((a, b) => a.shirtNumber - b.shirtNumber);
+  }
+
+  getFormationRow(row: number[], players: SquadPlayerTemplate[]): SquadPlayerTemplate[] {
+    return row
+      .map((n) => players.find((p) => p.shirtNumber === n))
+      .filter((p): p is SquadPlayerTemplate => p !== undefined);
+  }
+
+  hasFormationRow(row: number[], players: SquadPlayerTemplate[]): boolean {
+    return row.some((n) => players.some((p) => p.shirtNumber === n));
+  }
+
+  getExtraPlayers(players: SquadPlayerTemplate[]): SquadPlayerTemplate[] {
+    return players
+      .filter((p) => !this.formationShirts.has(p.shirtNumber))
+      .sort((a, b) => a.shirtNumber - b.shirtNumber);
+  }
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.router.navigate(['/dashboard/matches']);
+      return;
+    }
+
+    this.matchesService
+      .getMatchById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (match) => {
+          this.match = match;
+          this.squadRows = [...(match.squad ?? [])];
+        },
+        error: () => this.router.navigate(['/dashboard/matches']),
+      });
+
+    this.squadsService
+      .getSquads()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((squads) => (this.squads = squads));
+
+    this.searchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) =>
+          this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term } })
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((result) => (this.playerSuggestions = result.items));
+
+    this.addForm
+      .get('playerSearch')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        if (typeof value === 'string') {
+          this.selectedPlayer = null;
+          this.searchSubject.next(value);
+        }
+      });
+  }
+
+  onPlayerSelected(event: MatAutocompleteSelectedEvent): void {
+    this.selectedPlayer = event.option.value as Player;
+  }
+
+  addPlayer(): void {
+    const shirtNumber = this.addForm.value.shirtNumber;
+    if (!this.selectedPlayer || !shirtNumber) return;
+    this.squadRows = [...this.squadRows, { shirtNumber, player: this.selectedPlayer }];
+    this.isDirty = true;
+    this.selectedPlayer = null;
+    this.addForm.reset();
+    this.playerSuggestions = [];
+  }
+
+  removePlayer(entry: SquadEntry): void {
+    this.squadRows = this.squadRows.filter((e) => e !== entry);
+    this.isDirty = true;
+  }
+
+  applyTemplate(): void {
+    const squadId = this.selectedSquadIdCtrl.value;
+    if (!squadId || !this.match) return;
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Aplicar plantilla',
+          message: '¿Confirmar? Esto reemplazará el plantel actual.',
+          confirmLabel: 'Aplicar',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => {
+          this.saving = true;
+          return this.matchesService.applySquadFromTemplate(this.match!.id!, squadId);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (match) => {
+          this.squadRows = [...match.squad];
+          this.isDirty = false;
+          this.saving = false;
+          this.selectedSquadIdCtrl.reset();
+        },
+        error: () => (this.saving = false),
+      });
+  }
+
+  saveAsTemplate(): void {
+    this.dialog
+      .open(SaveSquadTemplateDialogComponent, {
+        width: '420px',
+        maxWidth: '95vw',
+        data: { squads: this.squads },
+      })
+      .afterClosed()
+      .pipe(
+        filter((result): result is SaveSquadTemplateDialogResult => !!result),
+        switchMap((result) => {
+          this.saving = true;
+          const players = this.squadRows.map((e) => ({
+            shirtNumber: e.shirtNumber,
+            playerId: e.player.id!,
+          }));
+          if (result.mode === 'create') {
+            return this.squadsService.createSquad({ name: result.name, players });
+          } else {
+            return this.squadsService.updateSquad(result.squadId, { players });
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.squadsService
+            .getSquads()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((squads) => (this.squads = squads));
+          this.saving = false;
+        },
+        error: () => (this.saving = false),
+      });
+  }
+
+  deleteTemplate(): void {
+    const squadId = this.selectedSquadIdCtrl.value;
+    if (!squadId) return;
+    const name = this.squads.find((s) => s.id === squadId)?.name ?? 'esta plantilla';
+
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Eliminar plantilla',
+          message: `¿Eliminar "${name}"? El plantel del partido actual no se modifica.`,
+          confirmLabel: 'Eliminar',
+        },
+      })
+      .afterClosed()
+      .pipe(
+        filter((confirmed) => !!confirmed),
+        switchMap(() => {
+          this.saving = true;
+          return this.squadsService.deleteSquad(squadId);
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: () => {
+          this.squadsService
+            .getSquads()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((squads) => (this.squads = squads));
+          this.selectedSquadIdCtrl.reset();
+          this.saving = false;
+        },
+        error: () => (this.saving = false),
+      });
+  }
+
+  saveSquad(): void {
+    if (!this.match) return;
+    this.saving = true;
+    const squad = this.squadRows.map((e) => ({
+      shirtNumber: e.shirtNumber,
+      playerId: e.player.id!,
+    }));
+
+    this.matchesService
+      .updateSquad(this.match.id!, squad)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.saving = false;
+          this.router.navigate(['/dashboard/matches', this.match!.id]);
+        },
+        error: () => (this.saving = false),
+      });
+  }
+
+  getPositionLabel(player: Player): string {
+    return player.position ? this.playersService.getPositionLabel(player.position) : '—';
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.dialog.openDialogs.length > 0) return;
+    this.cancel();
+  }
+
+  cancel(): void {
+    this.router.navigate(['/dashboard/matches', this.match?.id ?? '']);
+  }
+}
