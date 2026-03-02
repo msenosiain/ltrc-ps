@@ -1,6 +1,6 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, finalize, Observable } from 'rxjs';
-import { Match, PaginationQuery } from '@ltrc-ps/shared-api-model';
+import { Match, PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
 import { MatchFilters } from '../forms/match-form.types';
 import { MatchesService } from './matches.service';
 
@@ -15,7 +15,7 @@ export class MatchesDataSource implements DataSource<Match> {
   private pageIndex = 0;
   private pageSize = 10;
   private sortBy?: string;
-  private sortOrder?: 'asc' | 'desc';
+  private sortOrder?: SortOrder;
 
   constructor(private matchesService: MatchesService) {}
 
@@ -34,7 +34,7 @@ export class MatchesDataSource implements DataSource<Match> {
     this.load();
   }
 
-  setSorting(sortBy: string, sortOrder: 'asc' | 'desc'): void {
+  setSorting(sortBy: string, sortOrder: SortOrder): void {
     this.sortBy = sortBy;
     this.sortOrder = sortOrder;
     this.load();

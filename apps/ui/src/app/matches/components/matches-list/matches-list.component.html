@@ -13,7 +13,7 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <table mat-table [dataSource]="dataSource" matSort class="matches-table mat-elevation-z2">
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="desc" class="matches-table mat-elevation-z2">
 
     <!-- Fecha -->
     <ng-container matColumnDef="date">
@@ -31,6 +31,18 @@
           </span>
           {{ match.opponent }}
         </div>
+      </td>
+    </ng-container>
+
+    <!-- Torneo -->
+    <ng-container matColumnDef="tournament">
+      <th mat-header-cell *matHeaderCellDef>Torneo</th>
+      <td mat-cell *matCellDef="let match">
+        @if (match.tournament) {
+          <span class="tournament-name">{{ match.tournament.name }}</span>
+        } @else {
+          <span class="no-tournament">—</span>
+        }
       </td>
     </ng-container>
 

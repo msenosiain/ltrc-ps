@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
-import { Match, MatchStatusEnum, MatchTypeEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, Match, MatchStatusEnum, MatchTypeEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { matchCategoryOptions } from '../../match-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -54,8 +55,18 @@ export class MatchViewerComponent implements OnInit {
     return this.matchesService.getTypeLabel(type);
   }
 
+  getCategoryLabel(category?: CategoryEnum): string {
+    if (!category) return '';
+    return matchCategoryOptions.find((c) => c.id === category)?.label ?? category;
+  }
+
   edit(): void {
     this.router.navigate(['/dashboard/matches', this.match!.id, 'edit']);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.backToList();
   }
 
   backToList(): void {

@@ -1,5 +1,5 @@
 import { IsEnum, IsMongoId, IsOptional, IsString } from 'class-validator';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class MatchFiltersDto {
   @IsOptional()
@@ -13,6 +13,14 @@ export class MatchFiltersDto {
   @IsOptional()
   @IsMongoId()
   tournament?: string;
+
+  @IsOptional()
+  @IsEnum(SportEnum)
+  sport?: SportEnum;
+
+  @IsOptional()
+  @IsEnum(CategoryEnum)
+  category?: CategoryEnum;
 
   @IsOptional()
   @IsString()

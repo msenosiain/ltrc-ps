@@ -1,6 +1,6 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, finalize, Observable } from 'rxjs';
-import { PaginationQuery, Player, PlayerFilters } from '@ltrc-ps/shared-api-model';
+import { PaginationQuery, Player, PlayerFilters, SortOrder } from '@ltrc-ps/shared-api-model';
 import { PlayersService } from './players.service';
 
 export class PlayersDataSource implements DataSource<Player> {
@@ -14,7 +14,7 @@ export class PlayersDataSource implements DataSource<Player> {
   private pageIndex = 0;
   private pageSize = 10;
   private sortBy?: string;
-  private sortOrder?: 'asc' | 'desc';
+  private sortOrder?: SortOrder;
 
   constructor(private playersService: PlayersService) {}
 
@@ -33,7 +33,7 @@ export class PlayersDataSource implements DataSource<Player> {
     this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
   }
 
-  setSorting(sortBy: string, sortOrder: 'asc' | 'desc'): void {
+  setSorting(sortBy: string, sortOrder: SortOrder): void {
     this.sortBy = sortBy;
     this.sortOrder = sortOrder;
     this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
@@ -50,7 +50,7 @@ export class PlayersDataSource implements DataSource<Player> {
     pageSize: number,
     filters: PlayerFilters = {},
     sortBy?: string,
-    sortOrder?: 'asc' | 'desc'
+    sortOrder?: SortOrder
   ) {
     this.loadingSubject.next(true);
 

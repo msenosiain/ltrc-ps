@@ -1,4 +1,4 @@
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export interface MatchFormValue {
   date: Date | null;
@@ -7,6 +7,9 @@ export interface MatchFormValue {
   isHome: boolean;
   type: MatchTypeEnum | null;
   status: MatchStatusEnum;
+  sport: SportEnum | null;
+  category: CategoryEnum | null;
+  division: string;
   tournament: string | null;
   result: {
     homeScore: number | null;
@@ -18,6 +21,8 @@ export interface MatchFormValue {
 export interface MatchFilters {
   status?: MatchStatusEnum;
   type?: MatchTypeEnum;
+  sport?: SportEnum;
+  category?: CategoryEnum;
   tournament?: string;
   fromDate?: string;
   toDate?: string;

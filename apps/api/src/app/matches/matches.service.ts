@@ -40,7 +40,7 @@ export class MatchesService {
     if (!match) throw new NotFoundException('Match not found');
 
     match.set('squad', squad.map(({ shirtNumber, playerId }) => ({ shirtNumber, player: playerId })));
-    return (await match.save()).populate(POPULATE_FIELDS);
+    return this.stripOrphanedSquad(await (await match.save()).populate(POPULATE_FIELDS));
   }
 
   async findPaginated(
@@ -61,6 +61,14 @@ export class MatchesService {
 
     if (filters.tournament) {
       queryFilters['tournament'] = filters.tournament;
+    }
+
+    if (filters.sport) {
+      queryFilters['sport'] = filters.sport;
+    }
+
+    if (filters.category) {
+      queryFilters['category'] = filters.category;
     }
 
     if (filters.fromDate || filters.toDate) {
@@ -96,6 +104,11 @@ export class MatchesService {
       .findById(id)
       .populate(POPULATE_FIELDS);
     if (!match) throw new NotFoundException('Match not found');
+    return this.stripOrphanedSquad(match);
+  }
+
+  private stripOrphanedSquad(match: MatchEntity) {
+    match.set('squad', (match.squad ?? []).filter((e) => e.player != null));
     return match;
   }
 
@@ -110,7 +123,7 @@ export class MatchesService {
       'squad',
       squadEntries.map((e) => ({ shirtNumber: e.shirtNumber, player: e.player }))
     );
-    return (await match.save()).populate(POPULATE_FIELDS);
+    return this.stripOrphanedSquad(await (await match.save()).populate(POPULATE_FIELDS));
   }
 
   async delete(id: string) {

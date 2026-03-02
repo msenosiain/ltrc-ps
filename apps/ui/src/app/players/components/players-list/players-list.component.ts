@@ -8,7 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, PlayerPosition, SortOrder } from '@ltrc-ps/shared-api-model';
+import { categoryOptions } from '../../category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { Router } from '@angular/router';
 
@@ -40,6 +41,7 @@ export class PlayersListComponent implements AfterViewInit {
     'firstName',
     'lastName',
     'nickName',
+    'category',
     'position',
     'alternatePosition',
   ];
@@ -56,7 +58,7 @@ export class PlayersListComponent implements AfterViewInit {
       this.paginator.pageIndex = 0;
       this.dataSource.setSorting(
         this.sort.active,
-        this.sort.direction as 'asc' | 'desc'
+        this.sort.direction as SortOrder
       );
     });
 
@@ -70,10 +72,16 @@ export class PlayersListComponent implements AfterViewInit {
 
   applyFilters(filters: {
     searchTerm?: string;
-    position?: PlayerPositionEnum;
+    position?: PlayerPosition;
+    category?: CategoryEnum;
   }): void {
     this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
+  }
+
+  getCategoryLabel(category?: CategoryEnum): string {
+    if (!category) return '';
+    return categoryOptions.find((c) => c.id === category)?.label ?? category;
   }
 
   goToCreate(): void {
@@ -84,7 +92,7 @@ export class PlayersListComponent implements AfterViewInit {
     this.router.navigate(['/dashboard/players', playerId]);
   }
 
-  getPositionLabel(position: PlayerPositionEnum): string {
+  getPositionLabel(position: PlayerPosition): string {
     return this.playersService.getPositionLabel(position);
   }
 

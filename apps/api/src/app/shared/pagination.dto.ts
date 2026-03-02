@@ -1,11 +1,12 @@
 import { Transform, Type } from 'class-transformer';
 import {
+  IsEnum,
   IsNumber,
   IsOptional,
   Min,
   IsString,
-  IsIn,
 } from 'class-validator';
+import { SortOrder } from '@ltrc-ps/shared-api-model';
 
 export class PaginationDto<TFilter = any> {
   @IsOptional()
@@ -39,6 +40,6 @@ export class PaginationDto<TFilter = any> {
   sortBy?: string;
 
   @IsOptional()
-  @IsIn(['asc', 'desc'], { message: 'sortOrder must be "asc" or "desc"' })
-  readonly sortOrder?: 'asc' | 'desc';
+  @IsEnum(SortOrder, { message: 'sortOrder must be "asc" or "desc"' })
+  readonly sortOrder?: SortOrder;
 }

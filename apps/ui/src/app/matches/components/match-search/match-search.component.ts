@@ -7,8 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatchStatusEnum, MatchTypeEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { matchStatusOptions, matchTypeOptions } from '../../match-options';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { matchCategoryOptions, matchStatusOptions, matchTypeOptions, sportOptions } from '../../match-options';
 import { MatchFilters } from '../../forms/match-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
@@ -36,11 +36,15 @@ export class MatchSearchComponent implements OnInit {
 
   readonly statusOptions = matchStatusOptions;
   readonly typeOptions = matchTypeOptions;
+  readonly categoryOptions = matchCategoryOptions;
+  readonly sportOptions = sportOptions;
   tournaments: Tournament[] = [];
 
   readonly searchForm = this.fb.group({
     status: [undefined as MatchStatusEnum | undefined],
     type: [undefined as MatchTypeEnum | undefined],
+    sport: [undefined as SportEnum | undefined],
+    category: [undefined as CategoryEnum | undefined],
     tournament: [undefined as string | undefined],
   });
 

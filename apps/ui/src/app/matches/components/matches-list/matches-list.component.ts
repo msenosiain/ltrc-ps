@@ -12,7 +12,7 @@ import { MatchesService } from '../../services/matches.service';
 import { MatchesDataSource } from '../../services/matches.datasource';
 import { MatchFilters } from '../../forms/match-form.types';
 import { MatchSearchComponent } from '../match-search/match-search.component';
-import { Match, MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { Match, MatchStatusEnum, MatchTypeEnum, SortOrder } from '@ltrc-ps/shared-api-model';
 
 @Component({
   selector: 'ltrc-matches-list',
@@ -37,7 +37,7 @@ export class MatchesListComponent implements AfterViewInit {
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ['date', 'opponent', 'type', 'status', 'result'];
+  readonly displayedColumns = ['date', 'opponent', 'tournament', 'type', 'status', 'result'];
   readonly dataSource = new MatchesDataSource(this.matchesService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -51,7 +51,7 @@ export class MatchesListComponent implements AfterViewInit {
       this.paginator.pageIndex = 0;
       this.dataSource.setSorting(
         this.sort.active,
-        this.sort.direction as 'asc' | 'desc'
+        this.sort.direction as SortOrder
       );
     });
 

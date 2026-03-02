@@ -1,7 +1,7 @@
 import { mapFormToCreatePlayerDto, mapPlayerToForm } from './player-form.mapper';
 import { PlayerFormValue } from './player-form.types';
 import { Player } from '@ltrc-ps/shared-api-model';
-import { PlayerPositionEnum, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
+import { RugbyPositions, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 
 const baseForm: PlayerFormValue = {
   firstName: 'Juan',
@@ -10,7 +10,7 @@ const baseForm: PlayerFormValue = {
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
-  position: PlayerPositionEnum.FULLBACK,
+  position: RugbyPositions.FULLBACK,
   alternatePosition: null,
   height: 180,
   weight: 85,
@@ -40,8 +40,8 @@ const basePlayer: Player = {
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
-  position: PlayerPositionEnum.FULLBACK,
-  alternatePosition: PlayerPositionEnum.LEFT_WING,
+  position: RugbyPositions.FULLBACK,
+  alternatePosition: RugbyPositions.LEFT_WING,
   height: 180,
   weight: 85,
   address: {
@@ -66,7 +66,7 @@ describe('mapFormToCreatePlayerDto', () => {
     expect(result.lastName).toBe('Perez');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
-    expect(result.position).toBe(PlayerPositionEnum.FULLBACK);
+    expect(result.position).toBe(RugbyPositions.FULLBACK);
     expect(result.birthDate).toBe('15/01/2000');
   });
 
@@ -119,8 +119,8 @@ describe('mapPlayerToForm', () => {
     expect(result.nickName).toBe('Juancho');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
-    expect(result.position).toBe(PlayerPositionEnum.FULLBACK);
-    expect(result.alternatePosition).toBe(PlayerPositionEnum.LEFT_WING);
+    expect(result.position).toBe(RugbyPositions.FULLBACK);
+    expect(result.alternatePosition).toBe(RugbyPositions.LEFT_WING);
     expect(result.height).toBe(180);
     expect(result.weight).toBe(85);
   });

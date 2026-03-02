@@ -29,6 +29,18 @@
             <span class="info-label">Cancha</span>
             <span class="info-value">{{ match.venue }}</span>
           </div>
+          @if (match.category) {
+            <div class="info-item">
+              <span class="info-label">Categoría</span>
+              <span class="info-value">{{ getCategoryLabel(match.category) }}</span>
+            </div>
+          }
+          @if (match.division) {
+            <div class="info-item">
+              <span class="info-label">División</span>
+              <span class="info-value">{{ match.division }}</span>
+            </div>
+          }
           @if (tournamentName) {
             <div class="info-item">
               <span class="info-label">Torneo</span>

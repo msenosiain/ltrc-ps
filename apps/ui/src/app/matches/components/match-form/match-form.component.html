@@ -62,6 +62,31 @@
         </mat-select>
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport">
+          <mat-option [value]="null">Sin especificar</mat-option>
+          @for (s of sportOptions; track s.id) {
+            <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category">
+          <mat-option [value]="null">Sin categoría</mat-option>
+          @for (cat of categoryOptions; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>División</mat-label>
+        <input matInput formControlName="division" placeholder="Ej: Primera Rama A, Segunda..." />
+      </mat-form-field>
+
       <div class="toggle-field">
         <mat-slide-toggle formControlName="isHome">Local</mat-slide-toggle>
         <span class="toggle-hint">

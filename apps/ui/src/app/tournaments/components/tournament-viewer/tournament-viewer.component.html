@@ -8,6 +8,11 @@
           @if (tournament.season) {
             <span class="tournament-season">Temporada {{ tournament.season }}</span>
           }
+          @if (tournament.sport) {
+            <mat-chip-set>
+              <mat-chip color="primary" highlighted>{{ getSportLabel(tournament.sport) }}</mat-chip>
+            </mat-chip-set>
+          }
         </div>
 
         @if (tournament.description) {
