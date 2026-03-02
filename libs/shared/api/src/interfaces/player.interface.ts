@@ -39,6 +39,7 @@ export interface Player extends Document {
   readonly weight?: number;
   readonly clothingSizes?: ClothingSizes;
   readonly photoId?: string;
+  readonly userId?: string;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }

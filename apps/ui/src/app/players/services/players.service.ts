@@ -92,8 +92,13 @@ export class PlayersService {
     if (dto.weight != null) form.append('weight', String(dto.weight));
     if (dto.address != null) form.append('address', JSON.stringify(dto.address));
     if (dto.clothingSizes != null) form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
+    form.append('createUser', String(dto.createUser ?? false));
 
     return form;
+  }
+
+  getMyPlayer(): Observable<Player> {
+    return this.httpClient.get<Player>(`${this.playersApiUrl}/me`);
   }
 
   // DELETE ─────────────────────────────────────────────────

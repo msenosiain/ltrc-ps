@@ -123,6 +123,22 @@ $photo:    $col;  // foto ocupa exactamente 1 columna para alinear con las demas
   }
 }
 
+// == CARD - CREAR CUENTA DE USUARIO
+
+.create-user-card {
+  .create-user-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .create-user-hint {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666;
+  }
+}
+
 // == RESPONSIVE
 
 @media (max-width: 900px) {

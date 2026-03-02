@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import {
   PlayerPositionEnum,
   ClothingSizesEnum,
@@ -32,6 +32,7 @@ export class PlayerEntity extends Document {
     pants?: ClothingSizesEnum;
   };
   photoId?: string;
+  userId?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -6,7 +6,10 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  computed,
+  signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,12 +19,15 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Player, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 import { positionOptions } from '../../position-options';
 import { buildCreatePlayerForm } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
 import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
+import { AuthService } from '../../../auth/auth.service';
+import { Role } from '../../../auth/roles.enum';
 
 export interface PlayerFormSubmitEvent {
   payload: PlayerFormValue;
@@ -41,6 +47,7 @@ export interface PlayerFormSubmitEvent {
     MatCardModule,
     MatFormFieldModule,
     MatDatepickerModule,
+    MatCheckboxModule,
     PlayerPhotoFieldComponent,
   ],
   styleUrls: ['./player-form.component.scss'],
@@ -49,6 +56,17 @@ export interface PlayerFormSubmitEvent {
 export class PlayerFormComponent implements OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly playersService = inject(PlayersService);
+  private readonly authService = inject(AuthService);
+
+  private readonly currentUser = toSignal(this.authService.user$);
+  readonly isAdmin = computed(() =>
+    this.currentUser()?.roles?.includes(Role.ADMIN) ?? false
+  );
+
+  private readonly selectedPosition = signal<string | null>(null);
+  readonly filteredAlternatePositions = computed(() =>
+    this.positions.filter(p => p.id !== this.selectedPosition())
+  );
 
   @Input() player?: Player;
   @Input() submitting = false;
@@ -61,6 +79,12 @@ export class PlayerFormComponent implements OnChanges {
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
+
+  constructor() {
+    this.playerForm.get('position')!.valueChanges.subscribe(val => {
+      this.selectedPosition.set(val);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {

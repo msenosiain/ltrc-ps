@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
+import { Role } from '../../../auth/roles.enum';
 
 @Component({
   selector: 'ltrc-player-viewer',
@@ -19,6 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatButtonModule,
     MatIconModule,
     DatePipe,
+    AllowedRolesDirective,
   ],
   templateUrl: './player-viewer.component.html',
   styleUrl: './player-viewer.component.scss',
@@ -29,6 +32,7 @@ export class PlayerViewerComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
   private readonly destroyRef = inject(DestroyRef);
 
+  Role = Role;
   player?: Player;
 
   ngOnInit(): void {

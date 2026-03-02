@@ -49,6 +49,12 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     weight: Number,
     clothingSizes: ClothingSizesSchema,
     photoId: { type: String },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      unique: true,
+      sparse: true,
+    },
   },
   {
     timestamps: true,

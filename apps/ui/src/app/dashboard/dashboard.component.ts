@@ -1,5 +1,5 @@
 import {CommonModule} from '@angular/common';
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit, signal, computed} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {map} from 'rxjs';
@@ -11,6 +11,7 @@ import {AllowedRolesDirective} from '../auth/directives/allowed-roles.directive'
 import {AuthService} from '../auth/auth.service';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import {PlayersService} from '../players/services/players.service';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -19,10 +20,18 @@ import {MatIconModule} from '@angular/material/icon';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   Role = Role;
   public authService = inject(AuthService);
   public router = inject(Router);
+  private readonly playersService = inject(PlayersService);
+
+  private readonly currentUser = toSignal(this.authService.user$);
+  readonly isPlayer = computed(() =>
+    this.currentUser()?.roles?.includes(Role.PLAYER) ?? false
+  );
+
+  myPlayerId = signal<string | null>(null);
 
   isSmallScreen = toSignal(
     inject(BreakpointObserver).observe('(max-width: 960px)').pipe(
@@ -30,6 +39,20 @@ export class DashboardComponent {
     ),
     { initialValue: false }
   );
+
+  ngOnInit(): void {
+    if (this.isPlayer()) {
+      this.playersService.getMyPlayer().subscribe({
+        next: (player) => {
+          this.myPlayerId.set(player.id ?? null);
+          if (this.router.url === '/dashboard') {
+            this.router.navigate(['/dashboard/players', player.id]);
+          }
+        },
+        error: () => { /* jugador sin perfil vinculado, se queda en dashboard */ },
+      });
+    }
+  }
 
   logout() {
     this.authService.logout();

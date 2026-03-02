@@ -23,6 +23,11 @@ export class AuthController {
     return this.authService.register(userData);
   }
 
+  @Post('activate')
+  async activate(@Body() body: { email: string; password: string }) {
+    return this.authService.activateAccount(body.email, body.password);
+  }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(): Promise<void> {

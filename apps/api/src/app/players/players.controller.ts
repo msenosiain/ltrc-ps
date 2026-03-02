@@ -8,19 +8,23 @@ import {
   Param,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
   Res,
+  Req,
   NotFoundException,
   Query,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { File as MulterFile } from 'multer';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 import { PlayersService } from './players.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from '../users/schemas/user.schema';
 
 @Controller('players')
 export class PlayersController {
@@ -29,6 +33,17 @@ export class PlayersController {
   @Get()
   async findPaginated(@Query() pagination: PaginationDto<PlayerFiltersDto>) {
     return this.playersService.findPaginated(pagination);
+  }
+
+  // ⚠️ Debe estar ANTES de GET :id para que "me" no sea interpretado como un ID
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMyPlayer(@Req() req: Request) {
+    const user = (req as any).user as User;
+    const userId = (user as any)._id?.toString();
+    const player = await this.playersService.findByUserId(userId);
+    if (!player) throw new NotFoundException('No player linked to this user');
+    return player;
   }
 
   @Post()

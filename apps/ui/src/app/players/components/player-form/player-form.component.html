@@ -14,16 +14,24 @@
       <mat-form-field appearance="outline">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="firstName" />
-        @if (playerForm.get('firstName')?.invalid) {
+        @if (playerForm.get('firstName')?.errors?.['required']) {
           <mat-error>Nombre es obligatorio</mat-error>
+        } @else if (playerForm.get('firstName')?.errors?.['pattern']) {
+          <mat-error>Solo se permiten letras</mat-error>
+        } @else if (playerForm.get('firstName')?.errors?.['minlength']) {
+          <mat-error>Mínimo 2 caracteres</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Apellido</mat-label>
         <input matInput formControlName="lastName" />
-        @if (playerForm.get('lastName')?.invalid) {
+        @if (playerForm.get('lastName')?.errors?.['required']) {
           <mat-error>Apellido es obligatorio</mat-error>
+        } @else if (playerForm.get('lastName')?.errors?.['pattern']) {
+          <mat-error>Solo se permiten letras</mat-error>
+        } @else if (playerForm.get('lastName')?.errors?.['minlength']) {
+          <mat-error>Mínimo 2 caracteres</mat-error>
         }
       </mat-form-field>
 
@@ -35,14 +43,16 @@
       <mat-form-field appearance="outline">
         <mat-label>DNI</mat-label>
         <input matInput formControlName="idNumber" />
-        @if (playerForm.get('idNumber')?.invalid) {
+        @if (playerForm.get('idNumber')?.errors?.['required']) {
           <mat-error>DNI es obligatorio</mat-error>
+        } @else if (playerForm.get('idNumber')?.errors?.['pattern'] || playerForm.get('idNumber')?.errors?.['minlength'] || playerForm.get('idNumber')?.errors?.['maxlength']) {
+          <mat-error>El DNI debe tener 7 u 8 dígitos numéricos</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha de nacimiento</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="birthDate" />
+        <input matInput [matDatepicker]="picker" formControlName="birthDate" readonly />
         <mat-datepicker-toggle matSuffix [for]="picker" />
         <mat-datepicker #picker />
         @if (playerForm.get('birthDate')?.invalid) {
@@ -93,7 +103,12 @@
 
       <mat-form-field appearance="outline" class="phone-field">
         <mat-label>Telefono</mat-label>
-        <input matInput formControlName="phoneNumber" />
+        <input matInput formControlName="phoneNumber" placeholder="ej: 2664 123456" />
+        @if (playerForm.get('address.phoneNumber')?.errors?.['required']) {
+          <mat-error>Teléfono es obligatorio</mat-error>
+        } @else if (playerForm.get('address.phoneNumber')?.errors?.['pattern']) {
+          <mat-error>Formato inválido (ej: 2664 123456)</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="neighborhood-field">
@@ -124,7 +139,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Posicion alternativa</mat-label>
         <mat-select formControlName="alternatePosition">
-          @for (pos of positions; track pos.id) {
+          @for (pos of filteredAlternatePositions(); track pos.id) {
             <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
           }
         </mat-select>
@@ -133,11 +148,17 @@
       <mat-form-field appearance="outline">
         <mat-label>Altura (cm)</mat-label>
         <input matInput type="number" formControlName="height" />
+        @if (playerForm.get('height')?.errors?.['min'] || playerForm.get('height')?.errors?.['max']) {
+          <mat-error>Valor fuera de rango (100–230 cm)</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Peso (kg)</mat-label>
         <input matInput type="number" formControlName="weight" />
+        @if (playerForm.get('weight')?.errors?.['min'] || playerForm.get('weight')?.errors?.['max']) {
+          <mat-error>Valor fuera de rango (30–200 kg)</mat-error>
+        }
       </mat-form-field>
 
     </div>
@@ -186,6 +207,20 @@
 
     </div>
   </mat-card>
+
+  <!-- CREAR CUENTA DE USUARIO (solo admin, solo al crear, solo con email) -->
+  @if (!player && isAdmin() && playerForm.get('email')?.value) {
+    <mat-card class="create-user-card">
+      <div class="create-user-section">
+        <mat-checkbox formControlName="createUser" color="primary">
+          Crear cuenta de usuario para este jugador
+        </mat-checkbox>
+        <p class="create-user-hint">
+          El jugador podrá ingresar con su email y configurar su contraseña en el primer inicio de sesión.
+        </p>
+      </div>
+    </mat-card>
+  }
 
   <!-- ACCIONES -->
   <div class="form-actions">

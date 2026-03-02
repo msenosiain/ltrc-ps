@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDate,
   IsEmail,
   IsEnum,
@@ -131,4 +132,9 @@ export class CreatePlayerDto {
   })
   @ValidateNested()
   readonly clothingSizes?: ClothingSizesDto;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  readonly createUser?: boolean;
 }

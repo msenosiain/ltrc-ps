@@ -17,6 +17,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     weight: value.weight ?? undefined,
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
+    createUser: value.createUser ?? false,
   };
 }
 

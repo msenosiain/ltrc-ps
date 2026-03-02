@@ -1,4 +1,12 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
@@ -29,14 +37,38 @@ export class AuthService {
 
   async login(email: string, pass: string) {
     const user = await this.usersService.findOneByEmail(email, true);
-    if (!user || !user.password) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    // Cuenta pendiente de activación: fue creada por el admin sin contraseña
+    if (!user.password) {
+      throw new HttpException(
+        { message: 'Account pending activation', code: 'ACCOUNT_PENDING_ACTIVATION' },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    return this.generateJwt(user);
+  }
+
+  async activateAccount(email: string, password: string) {
+    const user = await this.usersService.findOneByEmail(email, true);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.password) {
+      throw new BadRequestException('Account already activated');
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
 
     return this.generateJwt(user);
   }
