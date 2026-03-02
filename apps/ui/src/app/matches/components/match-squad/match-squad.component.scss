@@ -1,0 +1,76 @@
+.squad-card {
+  mat-progress-bar {
+    border-radius: 4px 4px 0 0;
+  }
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mat-app-primary, #1976d2);
+  margin: 0 0 16px;
+}
+
+.template-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  .template-select {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+.add-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+
+  .player-search-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .shirt-number-field {
+    width: 100px;
+  }
+}
+
+.squad-table {
+  width: 100%;
+  margin-bottom: 16px;
+
+  .mat-column-shirtNumber {
+    width: 60px;
+    font-weight: 700;
+  }
+
+  .mat-column-actions {
+    width: 48px;
+    text-align: center;
+  }
+}
+
+.empty-message {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 16px 0;
+}
+
+.squad-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
