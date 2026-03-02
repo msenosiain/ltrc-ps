@@ -1,4 +1,4 @@
-// Migración: asignar deporte 'rugby' a todos los jugadores existentes sin sport
+// Migración: asignar deporte 'rugby' y categoría 'plantel_superior' a jugadores sin esos campos
 // Uso: node scripts/migrate-player-sport.js
 
 const { MongoClient } = require('mongodb');
@@ -13,12 +13,17 @@ async function main() {
   const db = client.db(DB_NAME);
   const players = db.collection('players');
 
-  const result = await players.updateMany(
+  const sportResult = await players.updateMany(
     { sport: { $exists: false } },
     { $set: { sport: 'rugby' } }
   );
+  console.log(`Sport actualizado: ${sportResult.modifiedCount} jugadores`);
 
-  console.log(`Jugadores actualizados: ${result.modifiedCount}`);
+  const categoryResult = await players.updateMany(
+    { category: { $exists: false } },
+    { $set: { category: 'plantel_superior' } }
+  );
+  console.log(`Categoría actualizada: ${categoryResult.modifiedCount} jugadores`);
 
   await client.close();
 }
