@@ -1,4 +1,7 @@
-import { mapFormToCreatePlayerDto, mapPlayerToForm } from './player-form.mapper';
+import {
+  mapFormToCreatePlayerDto,
+  mapPlayerToForm,
+} from './player-form.mapper';
 import { PlayerFormValue } from './player-form.types';
 import { Player } from '@ltrc-ps/shared-api-model';
 import { RugbyPositions, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
@@ -93,7 +96,10 @@ describe('mapFormToCreatePlayerDto', () => {
   });
 
   it('should return undefined address when phoneNumber is empty', () => {
-    const form = { ...baseForm, address: { ...baseForm.address, phoneNumber: '' } };
+    const form = {
+      ...baseForm,
+      address: { ...baseForm.address, phoneNumber: '' },
+    };
     const result = mapFormToCreatePlayerDto(form);
     expect(result.address).toBeUndefined();
   });
@@ -112,7 +118,10 @@ describe('mapFormToCreatePlayerDto', () => {
   });
 
   it('should return undefined clothingSizes when all are null', () => {
-    const form = { ...baseForm, clothingSizes: { jersey: null, shorts: null, sweater: null, pants: null } };
+    const form = {
+      ...baseForm,
+      clothingSizes: { jersey: null, shorts: null, sweater: null, pants: null },
+    };
     const result = mapFormToCreatePlayerDto(form);
     expect(result.clothingSizes).toBeUndefined();
   });
@@ -141,7 +150,10 @@ describe('mapPlayerToForm', () => {
   });
 
   it('should default address fields to empty strings when missing', () => {
-    const player = { ...basePlayer, address: { phoneNumber: '123' } } as unknown as Player;
+    const player = {
+      ...basePlayer,
+      address: { phoneNumber: '123' },
+    } as unknown as Player;
     const result = mapPlayerToForm(player);
     expect(result.address.street).toBe('');
     expect(result.address.number).toBe('');
@@ -151,7 +163,10 @@ describe('mapPlayerToForm', () => {
   });
 
   it('should default alternatePosition to null when absent', () => {
-    const player = { ...basePlayer, alternatePosition: undefined } as unknown as Player;
+    const player = {
+      ...basePlayer,
+      alternatePosition: undefined,
+    } as unknown as Player;
     const result = mapPlayerToForm(player);
     expect(result.alternatePosition).toBeNull();
   });
@@ -162,7 +177,10 @@ describe('mapPlayerToForm', () => {
   });
 
   it('should default clothing sizes to null when absent', () => {
-    const player = { ...basePlayer, clothingSizes: undefined } as unknown as Player;
+    const player = {
+      ...basePlayer,
+      clothingSizes: undefined,
+    } as unknown as Player;
     const result = mapPlayerToForm(player);
     expect(result.clothingSizes.jersey).toBeNull();
     expect(result.clothingSizes.shorts).toBeNull();

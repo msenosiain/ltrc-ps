@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
 import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
@@ -14,7 +20,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'ltrc-tournament-viewer',
   standalone: true,
-  imports: [MatCardModule, MatChipsModule, MatButtonModule, MatIconModule, DatePipe],
+  imports: [
+    MatCardModule,
+    MatChipsModule,
+    MatButtonModule,
+    MatIconModule,
+    DatePipe,
+  ],
   templateUrl: './tournament-viewer.component.html',
   styleUrl: './tournament-viewer.component.scss',
 })
@@ -52,7 +64,11 @@ export class TournamentViewerComponent implements OnInit {
   }
 
   edit(): void {
-    this.router.navigate(['/dashboard/tournaments', this.tournament!.id, 'edit']);
+    this.router.navigate([
+      '/dashboard/tournaments',
+      this.tournament!.id,
+      'edit',
+    ]);
   }
 
   @HostListener('document:keydown.escape')

@@ -1,17 +1,22 @@
 <div class="user-editor">
-
   <div class="editor-header">
-    <h2 class="editor-title">{{ editing ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+    <h2 class="editor-title">
+      {{ editing ? 'Editar usuario' : 'Nuevo usuario' }}
+    </h2>
 
     @if (editing && user) {
-      <button mat-stroked-button color="warn" type="button" class="delete-btn" (click)="onDelete()">
-        <mat-icon>delete</mat-icon>
-        Eliminar usuario
-      </button>
-    }
-
-    @if (submitting) {
-      <mat-progress-bar mode="indeterminate" />
+    <button
+      mat-stroked-button
+      color="warn"
+      type="button"
+      class="delete-btn"
+      (click)="onDelete()"
+    >
+      <mat-icon>delete</mat-icon>
+      Eliminar usuario
+    </button>
+    } @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
     }
   </div>
 
@@ -21,5 +26,4 @@
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
   />
-
 </div>

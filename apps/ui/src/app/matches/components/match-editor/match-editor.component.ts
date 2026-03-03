@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +20,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'ltrc-match-editor',
   standalone: true,
-  imports: [MatProgressBarModule, MatButtonModule, MatIconModule, MatchFormComponent],
+  imports: [
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatchFormComponent,
+  ],
   templateUrl: './match-editor.component.html',
   styleUrl: './match-editor.component.scss',
 })
@@ -51,7 +62,10 @@ export class MatchEditorComponent implements OnInit {
         .updateMatch(this.match.id, payload)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: () => { this.submitting = false; this.router.navigate(['/dashboard/matches']); },
+          next: () => {
+            this.submitting = false;
+            this.router.navigate(['/dashboard/matches']);
+          },
           error: onError,
         });
       return;
@@ -61,7 +75,10 @@ export class MatchEditorComponent implements OnInit {
       .createMatch(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => { this.submitting = false; this.router.navigate(['/dashboard/matches']); },
+        next: () => {
+          this.submitting = false;
+          this.router.navigate(['/dashboard/matches']);
+        },
         error: onError,
       });
   }
@@ -76,7 +93,8 @@ export class MatchEditorComponent implements OnInit {
       },
     });
 
-    ref.afterClosed()
+    ref
+      .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (!confirmed) return;

@@ -1,18 +1,22 @@
 <form [formGroup]="searchForm" class="search-form">
   <div class="filters-container">
-
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Deporte</mat-label>
       <mat-select formControlName="sport">
         <mat-option [value]="undefined">Todos</mat-option>
         @for (s of sportOptions; track s.id) {
-          <mat-option [value]="s.id">{{ s.label }}</mat-option>
+        <mat-option [value]="s.id">{{ s.label }}</mat-option>
         }
       </mat-select>
       @if (searchForm.get('sport')?.value) {
-        <button mat-icon-button matSuffix type="button" (click)="clearField('sport')">
-          <mat-icon>close</mat-icon>
-        </button>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('sport')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
       }
     </mat-form-field>
 
@@ -21,13 +25,18 @@
       <mat-select formControlName="status">
         <mat-option [value]="undefined">Todos</mat-option>
         @for (opt of statusOptions; track opt.id) {
-          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
         }
       </mat-select>
       @if (searchForm.get('status')?.value) {
-        <button mat-icon-button matSuffix type="button" (click)="clearField('status')">
-          <mat-icon>close</mat-icon>
-        </button>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('status')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
       }
     </mat-form-field>
 
@@ -36,13 +45,18 @@
       <mat-select formControlName="type">
         <mat-option [value]="undefined">Todos</mat-option>
         @for (opt of typeOptions; track opt.id) {
-          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
         }
       </mat-select>
       @if (searchForm.get('type')?.value) {
-        <button mat-icon-button matSuffix type="button" (click)="clearField('type')">
-          <mat-icon>close</mat-icon>
-        </button>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('type')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
       }
     </mat-form-field>
 
@@ -51,13 +65,18 @@
       <mat-select formControlName="category">
         <mat-option [value]="undefined">Todas</mat-option>
         @for (cat of categoryOptions; track cat.id) {
-          <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+        <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
         }
       </mat-select>
       @if (searchForm.get('category')?.value) {
-        <button mat-icon-button matSuffix type="button" (click)="clearField('category')">
-          <mat-icon>close</mat-icon>
-        </button>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('category')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
       }
     </mat-form-field>
 
@@ -66,15 +85,19 @@
       <mat-select formControlName="tournament">
         <mat-option [value]="undefined">Todos</mat-option>
         @for (t of tournaments; track t.id) {
-          <mat-option [value]="t.id">{{ t.name }}</mat-option>
+        <mat-option [value]="t.id">{{ t.name }}</mat-option>
         }
       </mat-select>
       @if (searchForm.get('tournament')?.value) {
-        <button mat-icon-button matSuffix type="button" (click)="clearField('tournament')">
-          <mat-icon>close</mat-icon>
-        </button>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('tournament')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
       }
     </mat-form-field>
-
   </div>
 </form>

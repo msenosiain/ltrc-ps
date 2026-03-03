@@ -1,7 +1,11 @@
 <div class="matches-list">
-
   <div class="list-header">
-    <button mat-flat-button color="primary" type="button" (click)="goToCreate()">
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="goToCreate()"
+    >
       <mat-icon>add</mat-icon>
       Agregar partido
     </button>
@@ -10,18 +14,24 @@
   <ltrc-match-search (filtersChange)="applyFilters($event)" />
 
   @if (dataSource.loading$ | async) {
-    <mat-progress-bar mode="indeterminate" />
+  <mat-progress-bar mode="indeterminate" />
   }
 
-  <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="asc" class="matches-table mat-elevation-z2">
-
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    matSortActive="date"
+    matSortDirection="asc"
+    class="matches-table mat-elevation-z2"
+  >
     <!-- Fecha -->
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
       <td mat-cell *matCellDef="let match">
-        {{ match.date | date: 'dd/MM/yyyy' }}
+        {{ match.date | date : 'dd/MM/yyyy' }}
         @if ((match.date | date: 'HH:mm') !== '00:00') {
-          <span class="match-time">{{ match.date | date: 'HH:mm' }}</span>
+        <span class="match-time">{{ match.date | date : 'HH:mm' }}</span>
         }
       </td>
     </ng-container>
@@ -31,7 +41,11 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Rival</th>
       <td mat-cell *matCellDef="let match">
         <div class="opponent-cell">
-          <span class="venue-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
+          <span
+            class="venue-badge"
+            [class.home]="match.isHome"
+            [class.away]="!match.isHome"
+          >
             {{ match.isHome ? 'L' : 'V' }}
           </span>
           {{ match.opponent }}
@@ -44,9 +58,9 @@
       <th mat-header-cell *matHeaderCellDef>Torneo</th>
       <td mat-cell *matCellDef="let match">
         @if (match.tournament) {
-          <span class="tournament-name">{{ match.tournament.name }}</span>
+        <span class="tournament-name">{{ match.tournament.name }}</span>
         } @else {
-          <span class="no-tournament">—</span>
+        <span class="no-tournament">—</span>
         }
       </td>
     </ng-container>
@@ -86,7 +100,6 @@
       (click)="viewMatchDetails(row.id)"
       class="match-row"
     ></tr>
-
   </table>
 
   <mat-paginator
@@ -95,5 +108,4 @@
     [pageSizeOptions]="[5, 10, 20]"
     showFirstLastButtons
   />
-
 </div>

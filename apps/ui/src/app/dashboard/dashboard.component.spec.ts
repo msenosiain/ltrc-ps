@@ -13,9 +13,7 @@ describe('DashboardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [DashboardComponent],
-      providers: [
-        { provide: PlayersService, useValue: mockPlayersService },
-      ],
+      providers: [{ provide: PlayersService, useValue: mockPlayersService }],
     }).compileComponents();
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;

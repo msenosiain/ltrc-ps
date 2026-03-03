@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +22,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 @Component({
   selector: 'ltrc-player-editor',
   standalone: true,
-  imports: [MatProgressBarModule, MatButtonModule, MatIconModule, PlayerFormComponent],
+  imports: [
+    MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    PlayerFormComponent,
+  ],
   templateUrl: './player-editor.component.html',
   styleUrl: './player-editor.component.scss',
 })
@@ -50,26 +61,32 @@ export class PlayerEditorComponent implements OnInit {
 
     if (this.editing && this.player?.id) {
       const obs = file
-        ? this.playersService.updatePlayerWithPhoto(this.player.id, payload, file)
+        ? this.playersService.updatePlayerWithPhoto(
+            this.player.id,
+            payload,
+            file
+          )
         : this.playersService.updatePlayer(this.player.id, payload);
-      obs
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => { this.submitting = false; this.router.navigate(['/dashboard/players']); },
-          error: onError,
-        });
+      obs.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.submitting = false;
+          this.router.navigate(['/dashboard/players']);
+        },
+        error: onError,
+      });
       return;
     }
 
     const obs = file
       ? this.playersService.createPlayerWithPhoto(payload, file)
       : this.playersService.createPlayer(payload);
-    obs
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => { this.submitting = false; this.router.navigate(['/dashboard/players']); },
-        error: onError,
-      });
+    obs.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.submitting = false;
+        this.router.navigate(['/dashboard/players']);
+      },
+      error: onError,
+    });
   }
 
   onDelete(): void {
@@ -83,7 +100,8 @@ export class PlayerEditorComponent implements OnInit {
       },
     });
 
-    ref.afterClosed()
+    ref
+      .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (!confirmed) return;

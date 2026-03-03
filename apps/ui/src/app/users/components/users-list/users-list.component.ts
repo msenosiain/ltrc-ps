@@ -46,11 +46,17 @@ export class UsersListComponent implements AfterViewInit {
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);
+      this.dataSource.setSorting(
+        this.sort.active,
+        this.sort.direction as SortOrder
+      );
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+      this.dataSource.setPage(
+        this.paginator.pageIndex,
+        this.paginator.pageSize
+      );
     });
   }
 
@@ -74,10 +80,14 @@ export class UsersListComponent implements AfterViewInit {
 
   getRoleColor(role: Role): string {
     switch (role) {
-      case Role.ADMIN: return 'warn';
-      case Role.USER: return 'primary';
-      case Role.PLAYER: return 'accent';
-      default: return 'primary';
+      case Role.ADMIN:
+        return 'warn';
+      case Role.USER:
+        return 'primary';
+      case Role.PLAYER:
+        return 'accent';
+      default:
+        return 'primary';
     }
   }
 }

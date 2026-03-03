@@ -18,11 +18,13 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {}
 
   async register(userData: Partial<User>) {
-    const existingUser = await this.usersService.findOneByEmail(userData.email!);
+    const existingUser = await this.usersService.findOneByEmail(
+      userData.email!
+    );
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -44,8 +46,11 @@ export class AuthService {
     // Cuenta pendiente de activación: fue creada por el admin sin contraseña
     if (!user.password) {
       throw new HttpException(
-        { message: 'Account pending activation', code: 'ACCOUNT_PENDING_ACTIVATION' },
-        HttpStatus.FORBIDDEN,
+        {
+          message: 'Account pending activation',
+          code: 'ACCOUNT_PENDING_ACTIVATION',
+        },
+        HttpStatus.FORBIDDEN
       );
     }
 
@@ -77,7 +82,10 @@ export class AuthService {
     const payload = this.buildJWTPayload(user);
     const refreshSecret = this.configService.get<string>(
       'AUTH_REFRESH_JWT_SECRET',
-      this.configService.get<string>('GOOGLE_AUTH_REFRESH_JWT_SECRET', 'super-secret-key'),
+      this.configService.get<string>(
+        'GOOGLE_AUTH_REFRESH_JWT_SECRET',
+        'super-secret-key'
+      )
     );
 
     return {

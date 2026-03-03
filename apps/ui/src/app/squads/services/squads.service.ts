@@ -22,7 +22,9 @@ export class SquadsService {
   private readonly baseUrl = `${this.config.baseUrl}/squads`;
 
   getSquads(category?: CategoryEnum): Observable<Squad[]> {
-    const params = category ? new HttpParams().set('category', category) : undefined;
+    const params = category
+      ? new HttpParams().set('category', category)
+      : undefined;
     return this.http.get<Squad[]>(this.baseUrl, { params });
   }
 

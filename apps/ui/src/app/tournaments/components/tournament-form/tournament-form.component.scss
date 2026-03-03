@@ -25,9 +25,15 @@ $gap: 12px;
     box-sizing: border-box;
   }
 
-  .name-field     { grid-column: 1; }
-  .season-field   { grid-column: 2; }
-  .description-field { grid-column: 1 / -1; }
+  .name-field {
+    grid-column: 1;
+  }
+  .season-field {
+    grid-column: 2;
+  }
+  .description-field {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 660px) {
@@ -36,6 +42,8 @@ $gap: 12px;
 
     .name-field,
     .season-field,
-    .description-field { grid-column: 1; }
+    .description-field {
+      grid-column: 1;
+    }
   }
 }

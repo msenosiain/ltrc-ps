@@ -1,17 +1,22 @@
 <div class="player-editor">
-
   <div class="editor-header">
-    <h2 class="editor-title">{{ editing ? 'Editar jugador' : 'Nuevo jugador' }}</h2>
+    <h2 class="editor-title">
+      {{ editing ? 'Editar jugador' : 'Nuevo jugador' }}
+    </h2>
 
     @if (editing && player) {
-      <button mat-stroked-button color="warn" type="button" class="delete-btn" (click)="onDelete()">
-        <mat-icon>delete</mat-icon>
-        Eliminar jugador
-      </button>
-    }
-
-    @if (submitting) {
-      <mat-progress-bar mode="indeterminate" />
+    <button
+      mat-stroked-button
+      color="warn"
+      type="button"
+      class="delete-btn"
+      (click)="onDelete()"
+    >
+      <mat-icon>delete</mat-icon>
+      Eliminar jugador
+    </button>
+    } @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
     }
   </div>
 
@@ -21,5 +26,4 @@
     (formSubmitWithPhoto)="onFormSubmitWithPhoto($event)"
     (cancel)="onCancel()"
   />
-
 </div>

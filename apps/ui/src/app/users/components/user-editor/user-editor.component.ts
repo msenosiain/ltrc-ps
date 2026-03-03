@@ -1,4 +1,10 @@
-import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,7 +16,10 @@ import { UsersService } from '../../services/users.service';
 import { User } from '../../User.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { UserFormValue } from '../../forms/user-form.types';
-import { mapFormToCreateUserDto, mapFormToUpdateUserDto } from '../../forms/user-form.mapper';
+import {
+  mapFormToCreateUserDto,
+  mapFormToUpdateUserDto,
+} from '../../forms/user-form.mapper';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -54,7 +63,9 @@ export class UserEditorComponent implements OnInit {
 
     const onError = () => {
       this.submitting = false;
-      this.snackBar.open('Error al guardar el usuario', 'Cerrar', { duration: 4000 });
+      this.snackBar.open('Error al guardar el usuario', 'Cerrar', {
+        duration: 4000,
+      });
     };
 
     if (this.editing && this.user?.id) {
@@ -79,7 +90,10 @@ export class UserEditorComponent implements OnInit {
       .subscribe({
         next: (created) => {
           this.submitting = false;
-          this.router.navigate(['/dashboard/users', (created as any)._id ?? (created as any).id]);
+          this.router.navigate([
+            '/dashboard/users',
+            (created as any)._id ?? (created as any).id,
+          ]);
         },
         error: onError,
       });

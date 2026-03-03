@@ -36,19 +36,37 @@ export class UsersDataSource implements DataSource<User> {
   setFilters(filters: UserFilters): void {
     this.filters = filters;
     this.pageIndex = 0;
-    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+    this.load(
+      this.pageIndex,
+      this.pageSize,
+      this.filters,
+      this.sortBy,
+      this.sortOrder
+    );
   }
 
   setSorting(sortBy: string, sortOrder: SortOrder): void {
     this.sortBy = sortBy;
     this.sortOrder = sortOrder;
-    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+    this.load(
+      this.pageIndex,
+      this.pageSize,
+      this.filters,
+      this.sortBy,
+      this.sortOrder
+    );
   }
 
   setPage(pageIndex: number, pageSize: number): void {
     this.pageIndex = pageIndex;
     this.pageSize = pageSize;
-    this.load(this.pageIndex, this.pageSize, this.filters, this.sortBy, this.sortOrder);
+    this.load(
+      this.pageIndex,
+      this.pageSize,
+      this.filters,
+      this.sortBy,
+      this.sortOrder
+    );
   }
 
   private load(

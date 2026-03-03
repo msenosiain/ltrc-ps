@@ -1,4 +1,3 @@
-
 import {
   Component,
   EventEmitter,
@@ -10,7 +9,13 @@ import {
   inject,
   DestroyRef,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
 import { MatInputModule } from '@angular/material/input';
@@ -24,7 +29,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTimepickerModule } from '@angular/material/timepicker';
-import { Match, MatchStatusEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  Match,
+  MatchStatusEnum,
+  SportEnum,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
 import {
   getCategoryOptionsBySport,
   matchStatusOptions,
@@ -87,7 +97,10 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   /** Control de hora: standalone, no forma parte de MatchFormValue.
    *  Al cambiar, fusiona la hora en el control `date` del form. */
-  readonly timeControl = new FormControl<Date | null>(null, Validators.required);
+  readonly timeControl = new FormControl<Date | null>(
+    null,
+    Validators.required
+  );
 
   private allOpponents: string[] = [];
   private allVenues: string[] = [];
@@ -101,20 +114,21 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.filteredOpponents$ = this.matchForm.get('opponent')!.valueChanges.pipe(
       startWith(''),
       map((v) => filterOptions(this.allOpponents, v ?? '')),
-      takeUntilDestroyed(this.destroyRef),
+      takeUntilDestroyed(this.destroyRef)
     );
     this.filteredVenues$ = this.matchForm.get('venue')!.valueChanges.pipe(
       startWith(''),
       map((v) => filterOptions(this.allVenues, v ?? '')),
-      takeUntilDestroyed(this.destroyRef),
+      takeUntilDestroyed(this.destroyRef)
     );
     this.filteredDivisions$ = this.matchForm.get('division')!.valueChanges.pipe(
       startWith(''),
       map((v) => filterOptions(this.allDivisions, v ?? '')),
-      takeUntilDestroyed(this.destroyRef),
+      takeUntilDestroyed(this.destroyRef)
     );
 
-    this.matchesService.getFieldOptions()
+    this.matchesService
+      .getFieldOptions()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ opponents, venues, divisions }) => {
         this.allOpponents = opponents;
@@ -122,10 +136,13 @@ export class MatchFormComponent implements OnInit, OnChanges {
         this.allDivisions = divisions;
       });
 
-    this.tournamentsService.getTournaments().subscribe((t) => (this.tournaments = t));
+    this.tournamentsService
+      .getTournaments()
+      .subscribe((t) => (this.tournaments = t));
 
-    this.matchForm.get('sport')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.matchForm
+      .get('sport')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {
         this.categoryOptions = getCategoryOptionsBySport(sport);
         const cat = this.matchForm.get('category')?.value;
@@ -140,8 +157,9 @@ export class MatchFormComponent implements OnInit, OnChanges {
       .subscribe((time) => this.applyTimeToDate(time));
 
     // Cuando el datepicker cambia la fecha, re-aplicar la hora para no perderla.
-    this.matchForm.get('date')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.matchForm
+      .get('date')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         if (this.timeControl.value) {
           this.applyTimeToDate(this.timeControl.value);
@@ -151,14 +169,15 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['match'] && this.match) {
-      this.categoryOptions = getCategoryOptionsBySport(this.match.sport ?? null);
+      this.categoryOptions = getCategoryOptionsBySport(
+        this.match.sport ?? null
+      );
       const matchDate = this.match.date ? new Date(this.match.date) : null;
       const h = matchDate?.getHours() ?? 0;
       const m = matchDate?.getMinutes() ?? 0;
-      this.timeControl.setValue(
-        (h || m) ? new Date(2000, 0, 1, h, m) : null,
-        { emitEvent: false },
-      );
+      this.timeControl.setValue(h || m ? new Date(2000, 0, 1, h, m) : null, {
+        emitEvent: false,
+      });
       this.matchForm.patchValue({
         ...this.match,
         date: matchDate,

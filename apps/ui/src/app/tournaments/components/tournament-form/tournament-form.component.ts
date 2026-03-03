@@ -10,7 +10,12 @@ import {
   inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +26,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { TournamentFormValue } from '../../services/tournaments.service';
 import { SportOption, sportOptions } from '../../../common/sport-options';
-import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
+import {
+  CategoryOption,
+  getCategoryOptionsBySport,
+} from '../../../common/category-options';
 
 @Component({
   standalone: true,
@@ -61,12 +69,14 @@ export class TournamentFormComponent implements OnInit, OnChanges {
   });
 
   ngOnInit(): void {
-    this.tournamentForm.get('sport')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.tournamentForm
+      .get('sport')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {
         this.categoryOptions = getCategoryOptionsBySport(sport);
 
-        const selected: CategoryEnum[] = this.tournamentForm.get('categories')?.value ?? [];
+        const selected: CategoryEnum[] =
+          this.tournamentForm.get('categories')?.value ?? [];
         const validIds = new Set(this.categoryOptions.map((c) => c.id));
         const stillValid = selected.filter((c) => validIds.has(c));
         if (stillValid.length !== selected.length) {
@@ -91,6 +101,8 @@ export class TournamentFormComponent implements OnInit, OnChanges {
 
   onSubmit(): void {
     if (this.tournamentForm.invalid) return;
-    this.formSubmit.emit(this.tournamentForm.getRawValue() as TournamentFormValue);
+    this.formSubmit.emit(
+      this.tournamentForm.getRawValue() as TournamentFormValue
+    );
   }
 }

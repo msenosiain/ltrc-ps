@@ -1,10 +1,17 @@
-import {HttpErrorResponse, HttpHandlerFn, HttpRequest} from '@angular/common/http';
-import {inject} from '@angular/core';
-import {AuthService} from './auth.service';
-import {catchError, switchMap, throwError} from 'rxjs';
-import {Router} from '@angular/router';
+import {
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpRequest,
+} from '@angular/common/http';
+import { inject } from '@angular/core';
+import { AuthService } from './auth.service';
+import { catchError, switchMap, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
-export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
+export function authInterceptor(
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+) {
   // Inject the current `AuthService` and use it to get an authentication token:
   const authService: AuthService = inject(AuthService);
   const router: Router = inject(Router);
@@ -21,12 +28,19 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
   return next(cloned).pipe(
     catchError((err) => {
       // Only try to refresh token if we had a token to begin with
-      if (err instanceof HttpErrorResponse && err.status === 401 && accessToken) {
+      if (
+        err instanceof HttpErrorResponse &&
+        err.status === 401 &&
+        accessToken
+      ) {
         return authService.refreshToken().pipe(
           switchMap((tokens) => {
             authService.setAccessToken(tokens.access_token);
             const newReq = req.clone({
-              headers: req.headers.set('Authorization', `Bearer ${tokens.access_token}`),
+              headers: req.headers.set(
+                'Authorization',
+                `Bearer ${tokens.access_token}`
+              ),
             });
             return next(newReq);
           }),

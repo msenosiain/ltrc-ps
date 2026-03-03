@@ -8,7 +8,12 @@ import {
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
-const allPositionValues = [...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])];
+const allPositionValues = [
+  ...new Set([
+    ...Object.values(RugbyPositions),
+    ...Object.values(HockeyPositions),
+  ]),
+];
 
 const AddressSchema = new Schema(
   {
@@ -81,7 +86,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
   },
   {
     timestamps: true,
-    collection: 'players'
+    collection: 'players',
   }
 );
 

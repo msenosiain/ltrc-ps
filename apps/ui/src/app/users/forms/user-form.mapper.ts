@@ -1,8 +1,13 @@
 import { User } from '../User.interface';
 import { UserFormValue } from './user-form.types';
-import { CreateUserPayload, UpdateUserPayload } from '../services/users.service';
+import {
+  CreateUserPayload,
+  UpdateUserPayload,
+} from '../services/users.service';
 
-export function mapFormToCreateUserDto(value: UserFormValue): CreateUserPayload {
+export function mapFormToCreateUserDto(
+  value: UserFormValue
+): CreateUserPayload {
   return {
     name: value.name,
     lastName: value.lastName,
@@ -12,7 +17,9 @@ export function mapFormToCreateUserDto(value: UserFormValue): CreateUserPayload 
   };
 }
 
-export function mapFormToUpdateUserDto(value: UserFormValue): UpdateUserPayload {
+export function mapFormToUpdateUserDto(
+  value: UserFormValue
+): UpdateUserPayload {
   return {
     name: value.name,
     lastName: value.lastName,

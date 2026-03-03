@@ -1,5 +1,11 @@
 import { IsOptional, IsString, IsEnum, IsIn } from 'class-validator';
-import { CategoryEnum, HockeyPositions, PlayerPosition, RugbyPositions, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  HockeyPositions,
+  PlayerPosition,
+  RugbyPositions,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export class PlayerFiltersDto {
   @IsOptional()
@@ -11,7 +17,12 @@ export class PlayerFiltersDto {
   sport?: SportEnum;
 
   @IsOptional()
-  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  @IsIn([
+    ...new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]),
+  ])
   position?: PlayerPosition;
 
   @IsOptional()

@@ -48,7 +48,10 @@ export class ActivateAccountComponent implements OnInit {
 
   activateForm = new FormGroup(
     {
-      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
       confirmPassword: new FormControl('', [Validators.required]),
     },
     { validators: passwordsMatch }
@@ -74,7 +77,8 @@ export class ActivateAccountComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         if (err.status === 400) {
-          this.errorMessage = 'La cuenta ya fue activada. Ingresá con tu contraseña.';
+          this.errorMessage =
+            'La cuenta ya fue activada. Ingresá con tu contraseña.';
         } else {
           this.errorMessage = 'Error al activar la cuenta. Intentá de nuevo.';
         }

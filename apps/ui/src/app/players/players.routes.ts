@@ -10,7 +10,10 @@ export const PLAYERS_ROUTES: Routes = [
     path: '',
     component: PlayersListComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Plantel - Los Tordos', allowedRoles: [Role.USER, Role.ADMIN] },
+    data: {
+      title: 'Plantel - Los Tordos',
+      allowedRoles: [Role.USER, Role.ADMIN],
+    },
   },
   {
     path: 'create',

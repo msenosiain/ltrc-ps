@@ -1,7 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialogModule,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -36,7 +40,10 @@ export class SaveSquadTemplateDialogComponent {
   readonly data: SaveSquadTemplateDialogData = inject(MAT_DIALOG_DATA);
 
   modeCtrl = new FormControl<'create' | 'overwrite'>('create');
-  nameCtrl = new FormControl<string>('', [Validators.required, Validators.minLength(2)]);
+  nameCtrl = new FormControl<string>('', [
+    Validators.required,
+    Validators.minLength(2),
+  ]);
   squadIdCtrl = new FormControl<string | null>(null, Validators.required);
 
   get isValid(): boolean {

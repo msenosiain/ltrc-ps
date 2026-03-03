@@ -47,7 +47,7 @@ export class UsersController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() dto: UpdateUserDto,
+    @Body() dto: UpdateUserDto
   ): Promise<User> {
     const user = await this.usersService.update(id, dto);
     if (!user) throw new NotFoundException('User not found');

@@ -1,4 +1,10 @@
-import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -93,13 +99,21 @@ export class UserViewerComponent implements OnInit {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe({
             next: () =>
-              this.snackBar.open('Contraseña restablecida correctamente', 'Cerrar', {
-                duration: 4000,
-              }),
+              this.snackBar.open(
+                'Contraseña restablecida correctamente',
+                'Cerrar',
+                {
+                  duration: 4000,
+                }
+              ),
             error: () =>
-              this.snackBar.open('Error al restablecer la contraseña', 'Cerrar', {
-                duration: 4000,
-              }),
+              this.snackBar.open(
+                'Error al restablecer la contraseña',
+                'Cerrar',
+                {
+                  duration: 4000,
+                }
+              ),
           });
       });
   }
@@ -120,10 +134,14 @@ export class UserViewerComponent implements OnInit {
 
   getRoleColor(role: Role): string {
     switch (role) {
-      case Role.ADMIN: return 'warn';
-      case Role.USER: return 'primary';
-      case Role.PLAYER: return 'accent';
-      default: return 'primary';
+      case Role.ADMIN:
+        return 'warn';
+      case Role.USER:
+        return 'primary';
+      case Role.PLAYER:
+        return 'accent';
+      default:
+        return 'primary';
     }
   }
 

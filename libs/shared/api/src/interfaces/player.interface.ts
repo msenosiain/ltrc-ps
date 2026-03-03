@@ -1,5 +1,11 @@
 import { Document } from 'mongoose';
-import { CategoryEnum, ClothingSizesEnum, HockeyPositions, RugbyPositions, SportEnum } from '../enums';
+import {
+  CategoryEnum,
+  ClothingSizesEnum,
+  HockeyPositions,
+  RugbyPositions,
+  SportEnum,
+} from '../enums';
 
 export type PlayerPosition = RugbyPositions | HockeyPositions;
 

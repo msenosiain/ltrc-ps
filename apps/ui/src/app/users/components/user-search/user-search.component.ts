@@ -49,7 +49,9 @@ export class UserSearchComponent implements OnInit {
   ngOnInit(): void {
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
-      .subscribe((values) => this.filtersChange.emit(nullToUndefined(values) as UserFilters));
+      .subscribe((values) =>
+        this.filtersChange.emit(nullToUndefined(values) as UserFilters)
+      );
   }
 
   clearField(field: string): void {

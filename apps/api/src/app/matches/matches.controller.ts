@@ -38,10 +38,7 @@ export class MatchesController {
   }
 
   @Patch(':id/squad')
-  async updateSquad(
-    @Param('id') id: string,
-    @Body() dto: UpdateMatchSquadDto
-  ) {
+  async updateSquad(@Param('id') id: string, @Body() dto: UpdateMatchSquadDto) {
     return this.matchesService.updateSquad(id, dto.squad);
   }
 

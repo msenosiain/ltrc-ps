@@ -80,10 +80,14 @@ export class UserFormComponent implements OnInit, OnChanges {
 
   getRoleColor(role: Role): string {
     switch (role) {
-      case Role.ADMIN: return 'warn';
-      case Role.USER: return 'primary';
-      case Role.PLAYER: return 'accent';
-      default: return 'primary';
+      case Role.ADMIN:
+        return 'warn';
+      case Role.USER:
+        return 'primary';
+      case Role.PLAYER:
+        return 'accent';
+      default:
+        return 'primary';
     }
   }
 }

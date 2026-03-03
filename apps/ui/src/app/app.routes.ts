@@ -28,7 +28,9 @@ export const routes: Routes = [
       {
         path: 'tournaments',
         loadChildren: () =>
-          import('./tournaments/tournaments.routes').then((m) => m.TOURNAMENTS_ROUTES),
+          import('./tournaments/tournaments.routes').then(
+            (m) => m.TOURNAMENTS_ROUTES
+          ),
       },
       {
         path: 'matches',

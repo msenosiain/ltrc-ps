@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { PlayerEntity } from './schemas/player.entity';
@@ -27,7 +31,7 @@ export class PlayersService {
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
     private readonly gridFsService: GridFsService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {}
 
   async create(dto: CreatePlayerDto, photo?: MulterFile) {
@@ -244,10 +248,17 @@ export class PlayersService {
           ...(row.position && { position: row.position }),
           secondName: row.secondName ? str(row.secondName) : undefined,
           nickName: row.nickName ? str(row.nickName) : undefined,
-          ...(row.alternatePosition && { alternatePosition: row.alternatePosition }),
+          ...(row.alternatePosition && {
+            alternatePosition: row.alternatePosition,
+          }),
           clothingSizes:
             jerseySize || shortSize
-              ? { jersey: jerseySize, sweater: jerseySize, shorts: shortSize, pants: shortSize }
+              ? {
+                  jersey: jerseySize,
+                  sweater: jerseySize,
+                  shorts: shortSize,
+                  pants: shortSize,
+                }
               : undefined,
           address: phoneNumber ? { phoneNumber } : undefined,
           medicalData: this.buildMedicalData(row, str),
@@ -269,7 +280,10 @@ export class PlayersService {
     if (!str(row.firstName)) return 'firstName es requerido';
     if (!str(row.idNumber)) return 'idNumber es requerido';
     if (!str(row.email)) return 'email es requerido';
-    const allPositions = new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)]);
+    const allPositions = new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]);
     if (row.position && !allPositions.has(row.position)) {
       return `position inválida: ${row.position}`;
     }
@@ -282,14 +296,22 @@ export class PlayersService {
   private buildMedicalData(
     row: ImportPlayerRow,
     str: (val: unknown) => string
-  ): { height?: number; weight?: number; torgIndex?: number; healthInsurance?: string } | undefined {
+  ):
+    | {
+        height?: number;
+        weight?: number;
+        torgIndex?: number;
+        healthInsurance?: string;
+      }
+    | undefined {
     const d = {
       height: row.height ? Number(row.height) : undefined,
       weight: row.weight ? Number(row.weight) : undefined,
       torgIndex: row.torgIndex ? Number(row.torgIndex) : undefined,
-      healthInsurance: row.healthInsurance ? str(row.healthInsurance) : undefined,
+      healthInsurance: row.healthInsurance
+        ? str(row.healthInsurance)
+        : undefined,
     };
     return Object.values(d).some((v) => v !== undefined) ? d : undefined;
   }
-
 }

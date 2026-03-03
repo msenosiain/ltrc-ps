@@ -63,7 +63,7 @@ export class PlayersController {
   @UseInterceptors(FileInterceptor('photo'))
   async create(
     @Body() dto: CreatePlayerDto,
-    @UploadedFile() photo?: MulterFile,
+    @UploadedFile() photo?: MulterFile
   ) {
     return this.playersService.create(dto, photo);
   }
@@ -73,7 +73,7 @@ export class PlayersController {
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePlayerDto,
-    @UploadedFile() photo?: MulterFile,
+    @UploadedFile() photo?: MulterFile
   ) {
     return this.playersService.update(id, dto, photo);
   }

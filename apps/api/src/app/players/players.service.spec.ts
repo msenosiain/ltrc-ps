@@ -5,7 +5,10 @@ import { PlayersService } from './players.service';
 import { PlayerEntity } from './schemas/player.entity';
 import { GridFsService } from '../shared/gridfs/gridfs.service';
 import { UsersService } from '../users/users.service';
-import { playersArray, createPlayerDtoPlain } from '../shared/mocks/playerMocks';
+import {
+  playersArray,
+  createPlayerDtoPlain,
+} from '../shared/mocks/playerMocks';
 import { plainToClass } from 'class-transformer';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import type { File as MulterFile } from 'multer';
@@ -64,29 +67,53 @@ describe('PlayersService', () => {
     it('should create a player without photo', async () => {
       mockModel.create.mockResolvedValueOnce({ id: '1', ...dto });
       const result = await service.create(dto);
-      expect(mockModel.create).toHaveBeenCalledWith({ ...dto, photoId: undefined });
+      expect(mockModel.create).toHaveBeenCalledWith({
+        ...dto,
+        photoId: undefined,
+      });
       expect(result).toMatchObject({ id: '1' });
     });
 
     it('should upload photo and create player with photoId', async () => {
-      const photo = { originalname: 'photo.jpg', buffer: Buffer.from(''), mimetype: 'image/jpeg' } as MulterFile;
+      const photo = {
+        originalname: 'photo.jpg',
+        buffer: Buffer.from(''),
+        mimetype: 'image/jpeg',
+      } as MulterFile;
       mockGridFs.uploadFile.mockResolvedValueOnce('gridfs-id-123');
-      mockModel.create.mockResolvedValueOnce({ id: '1', ...dto, photoId: 'gridfs-id-123' });
+      mockModel.create.mockResolvedValueOnce({
+        id: '1',
+        ...dto,
+        photoId: 'gridfs-id-123',
+      });
 
       const result = await service.create(dto, photo);
 
-      expect(mockGridFs.uploadFile).toHaveBeenCalledWith('playersPhotos', 'photo.jpg', photo.buffer, 'image/jpeg');
-      expect(mockModel.create).toHaveBeenCalledWith({ ...dto, photoId: 'gridfs-id-123' });
+      expect(mockGridFs.uploadFile).toHaveBeenCalledWith(
+        'playersPhotos',
+        'photo.jpg',
+        photo.buffer,
+        'image/jpeg'
+      );
+      expect(mockModel.create).toHaveBeenCalledWith({
+        ...dto,
+        photoId: 'gridfs-id-123',
+      });
       expect(result).toMatchObject({ photoId: 'gridfs-id-123' });
     });
   });
 
   describe('update()', () => {
     it('should update an existing player', async () => {
-      const player = { ...mockPlayer, save: jest.fn().mockResolvedValue(mockPlayer) };
+      const player = {
+        ...mockPlayer,
+        save: jest.fn().mockResolvedValue(mockPlayer),
+      };
       mockModel.findById.mockResolvedValueOnce(player);
 
-      const result = await service.update('player-id-1', { firstName: 'Updated' });
+      const result = await service.update('player-id-1', {
+        firstName: 'Updated',
+      });
 
       expect(mockModel.findById).toHaveBeenCalledWith('player-id-1');
       expect(player.save).toHaveBeenCalled();
@@ -95,18 +122,31 @@ describe('PlayersService', () => {
 
     it('should throw NotFoundException when player not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
-      await expect(service.update('bad-id', {})).rejects.toThrow(NotFoundException);
+      await expect(service.update('bad-id', {})).rejects.toThrow(
+        NotFoundException
+      );
     });
 
     it('should replace photo when a new one is provided', async () => {
-      const player = { ...mockPlayer, photoId: 'old-photo-id', save: jest.fn().mockResolvedValue(mockPlayer) };
+      const player = {
+        ...mockPlayer,
+        photoId: 'old-photo-id',
+        save: jest.fn().mockResolvedValue(mockPlayer),
+      };
       mockModel.findById.mockResolvedValueOnce(player);
       mockGridFs.uploadFile.mockResolvedValueOnce('new-photo-id');
 
-      const photo = { originalname: 'new.jpg', buffer: Buffer.from(''), mimetype: 'image/jpeg' } as MulterFile;
+      const photo = {
+        originalname: 'new.jpg',
+        buffer: Buffer.from(''),
+        mimetype: 'image/jpeg',
+      } as MulterFile;
       await service.update('player-id-1', {}, photo);
 
-      expect(mockGridFs.deleteFile).toHaveBeenCalledWith('playersPhotos', 'old-photo-id');
+      expect(mockGridFs.deleteFile).toHaveBeenCalledWith(
+        'playersPhotos',
+        'old-photo-id'
+      );
       expect(mockGridFs.uploadFile).toHaveBeenCalled();
       expect(player.photoId).toBe('new-photo-id');
     });
@@ -116,7 +156,12 @@ describe('PlayersService', () => {
     it('should return paginated players', async () => {
       const execMock = jest.fn().mockResolvedValue(playersArray);
       const countMock = jest.fn().mockResolvedValue(playersArray.length);
-      mockModel.find.mockReturnValue({ skip: jest.fn().mockReturnThis(), limit: jest.fn().mockReturnThis(), sort: jest.fn().mockReturnThis(), exec: execMock });
+      mockModel.find.mockReturnValue({
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+        exec: execMock,
+      });
       mockModel.countDocuments.mockReturnValue({ exec: countMock });
 
       const result = await service.findPaginated({ page: 1, size: 10 });
@@ -137,13 +182,19 @@ describe('PlayersService', () => {
 
     it('should throw NotFoundException when not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
-      await expect(service.findOne('bad-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('bad-id')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe('delete()', () => {
     it('should delete a player without photo', async () => {
-      const player = { ...mockPlayer, photoId: undefined, deleteOne: jest.fn().mockResolvedValue(true) };
+      const player = {
+        ...mockPlayer,
+        photoId: undefined,
+        deleteOne: jest.fn().mockResolvedValue(true),
+      };
       mockModel.findById.mockResolvedValueOnce(player);
 
       await service.delete('player-id-1');
@@ -153,12 +204,19 @@ describe('PlayersService', () => {
     });
 
     it('should delete photo from GridFS before deleting player', async () => {
-      const player = { ...mockPlayer, photoId: 'photo-to-delete', deleteOne: jest.fn().mockResolvedValue(true) };
+      const player = {
+        ...mockPlayer,
+        photoId: 'photo-to-delete',
+        deleteOne: jest.fn().mockResolvedValue(true),
+      };
       mockModel.findById.mockResolvedValueOnce(player);
 
       await service.delete('player-id-1');
 
-      expect(mockGridFs.deleteFile).toHaveBeenCalledWith('playersPhotos', 'photo-to-delete');
+      expect(mockGridFs.deleteFile).toHaveBeenCalledWith(
+        'playersPhotos',
+        'photo-to-delete'
+      );
       expect(player.deleteOne).toHaveBeenCalled();
     });
 
@@ -175,7 +233,10 @@ describe('PlayersService', () => {
 
       const result = await service.getPhotoStream('photo-id-123');
 
-      expect(mockGridFs.getFileStream).toHaveBeenCalledWith('playersPhotos', 'photo-id-123');
+      expect(mockGridFs.getFileStream).toHaveBeenCalledWith(
+        'playersPhotos',
+        'photo-id-123'
+      );
       expect(result).toBe(fakeStream);
     });
   });

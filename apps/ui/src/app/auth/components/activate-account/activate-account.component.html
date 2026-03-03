@@ -8,28 +8,32 @@
         Es la primera vez que ingresás. Elegí una contraseña para tu cuenta.
       </p>
 
-      <form [formGroup]="activateForm" (ngSubmit)="onSubmit()" class="activate-form">
+      <form
+        [formGroup]="activateForm"
+        (ngSubmit)="onSubmit()"
+        class="activate-form"
+      >
         <mat-form-field appearance="outline">
           <mat-label>Nueva contraseña</mat-label>
           <input matInput type="password" formControlName="password" />
           @if (activateForm.get('password')?.errors?.['minlength']) {
-            <mat-error>La contraseña debe tener al menos 8 caracteres</mat-error>
-          }
-          @if (activateForm.get('password')?.errors?.['required']) {
-            <mat-error>La contraseña es obligatoria</mat-error>
+          <mat-error>La contraseña debe tener al menos 8 caracteres</mat-error>
+          } @if (activateForm.get('password')?.errors?.['required']) {
+          <mat-error>La contraseña es obligatoria</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Confirmar contraseña</mat-label>
           <input matInput type="password" formControlName="confirmPassword" />
-          @if (activateForm.errors?.['passwordsMismatch'] && activateForm.get('confirmPassword')?.touched) {
-            <mat-error>Las contraseñas no coinciden</mat-error>
+          @if (activateForm.errors?.['passwordsMismatch'] &&
+          activateForm.get('confirmPassword')?.touched) {
+          <mat-error>Las contraseñas no coinciden</mat-error>
           }
         </mat-form-field>
 
         @if (errorMessage) {
-          <p class="error-message">{{ errorMessage }}</p>
+        <p class="error-message">{{ errorMessage }}</p>
         }
 
         <button

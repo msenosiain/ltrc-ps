@@ -130,11 +130,21 @@ export class CreatePlayerDto {
   readonly category?: CategoryEnum;
 
   @IsOptional()
-  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  @IsIn([
+    ...new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]),
+  ])
   readonly position?: PlayerPosition;
 
   @IsOptional()
-  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  @IsIn([
+    ...new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]),
+  ])
   readonly alternatePosition?: PlayerPosition;
 
   @IsOptional()

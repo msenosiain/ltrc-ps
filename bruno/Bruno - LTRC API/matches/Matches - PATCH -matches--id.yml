@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/matches/:id"
+  url: '{{baseUrl}}/matches/:id'
   body:
     type: json
     data: |-

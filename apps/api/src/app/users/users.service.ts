@@ -9,13 +9,18 @@ import { PaginatedResponse } from '@ltrc-ps/shared-api-model';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>
+  ) {}
 
   async findOneByGoogleId(googleId: string): Promise<User | null> {
     return this.userModel.findOne({ googleId }).exec();
   }
 
-  async findOneByEmail(email: string, includePassword = false): Promise<User | null> {
+  async findOneByEmail(
+    email: string,
+    includePassword = false
+  ): Promise<User | null> {
     const query = this.userModel.findOne({ email });
     if (includePassword) {
       query.select('+password');
@@ -60,7 +65,12 @@ export class UsersService {
     }
 
     const [items, total] = await Promise.all([
-      this.userModel.find(queryFilters).skip(skip).limit(size).sort(sort).exec(),
+      this.userModel
+        .find(queryFilters)
+        .skip(skip)
+        .limit(size)
+        .sort(sort)
+        .exec(),
       this.userModel.countDocuments(queryFilters).exec(),
     ]);
 

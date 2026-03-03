@@ -3,7 +3,11 @@ import { NotFoundException } from '@nestjs/common';
 import { TournamentsController } from './tournaments.controller';
 import { TournamentsService } from './tournaments.service';
 
-const mockTournament = { id: 'tournament-1', name: 'Liga Provincial', season: '2026' };
+const mockTournament = {
+  id: 'tournament-1',
+  name: 'Liga Provincial',
+  season: '2026',
+};
 
 const mockService = {
   findAll: jest.fn().mockResolvedValue([mockTournament]),
@@ -32,7 +36,9 @@ describe('TournamentsController', () => {
   });
 
   it('create() should create a tournament', async () => {
-    expect(await controller.create({ name: 'Liga Provincial', season: '2026' })).toEqual(mockTournament);
+    expect(
+      await controller.create({ name: 'Liga Provincial', season: '2026' })
+    ).toEqual(mockTournament);
   });
 
   it('getOne() should return a tournament', async () => {
@@ -41,12 +47,18 @@ describe('TournamentsController', () => {
 
   it('getOne() should propagate NotFoundException', async () => {
     mockService.findOne.mockRejectedValueOnce(new NotFoundException());
-    await expect(controller.getOne('bad-id')).rejects.toThrow(NotFoundException);
+    await expect(controller.getOne('bad-id')).rejects.toThrow(
+      NotFoundException
+    );
   });
 
   it('update() should update a tournament', async () => {
-    expect(await controller.update('tournament-1', { name: 'Copa Argentina' })).toEqual(mockTournament);
-    expect(mockService.update).toHaveBeenCalledWith('tournament-1', { name: 'Copa Argentina' });
+    expect(
+      await controller.update('tournament-1', { name: 'Copa Argentina' })
+    ).toEqual(mockTournament);
+    expect(mockService.update).toHaveBeenCalledWith('tournament-1', {
+      name: 'Copa Argentina',
+    });
   });
 
   it('delete() should delete a tournament', async () => {

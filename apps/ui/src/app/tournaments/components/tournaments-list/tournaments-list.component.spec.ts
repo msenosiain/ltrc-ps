@@ -21,7 +21,10 @@ describe('TournamentsListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TournamentsListComponent, RouterModule.forRoot([])],
       providers: [
-        { provide: TournamentsService, useValue: { getTournaments: getTournamentsSpy } },
+        {
+          provide: TournamentsService,
+          useValue: { getTournaments: getTournamentsSpy },
+        },
       ],
     }).compileComponents();
 
@@ -42,17 +45,32 @@ describe('TournamentsListComponent', () => {
   });
 
   it('should load tournaments on init with default sort by season desc', () => {
-    expect(getTournamentsSpy).toHaveBeenCalledWith(undefined, undefined, 'season', 'desc');
+    expect(getTournamentsSpy).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      'season',
+      'desc'
+    );
     expect(component.tournaments).toEqual(mockTournaments);
   });
 
   it('should call getTournaments with searchTerm when filters change', () => {
     component.applyFilters({ searchTerm: 'copa' });
-    expect(getTournamentsSpy).toHaveBeenCalledWith('copa', undefined, 'season', 'desc');
+    expect(getTournamentsSpy).toHaveBeenCalledWith(
+      'copa',
+      undefined,
+      'season',
+      'desc'
+    );
   });
 
   it('should call getTournaments without searchTerm when cleared', () => {
     component.applyFilters({ searchTerm: undefined });
-    expect(getTournamentsSpy).toHaveBeenCalledWith(undefined, undefined, 'season', 'desc');
+    expect(getTournamentsSpy).toHaveBeenCalledWith(
+      undefined,
+      undefined,
+      'season',
+      'desc'
+    );
   });
 });

@@ -11,7 +11,7 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
   const m = date.getMinutes();
 
   return {
-    date: format(date, (h || m) ? `${DATE_FORMAT} HH:mm` : DATE_FORMAT),
+    date: format(date, h || m ? `${DATE_FORMAT} HH:mm` : DATE_FORMAT),
     opponent: value.opponent,
     venue: value.venue,
     isHome: value.isHome,
@@ -22,7 +22,10 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
     division: value.division || undefined,
     tournament: value.tournament || undefined,
     result: hasResult
-      ? { homeScore: value.result.homeScore!, awayScore: value.result.awayScore! }
+      ? {
+          homeScore: value.result.homeScore!,
+          awayScore: value.result.awayScore!,
+        }
       : undefined,
     notes: value.notes || undefined,
   };

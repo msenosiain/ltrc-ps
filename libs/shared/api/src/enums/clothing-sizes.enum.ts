@@ -4,5 +4,5 @@ export enum ClothingSizesEnum {
   L = 'L',
   XL = 'XL',
   XXL = 'XXL',
-  XXXL = 'XXXL'
+  XXXL = 'XXXL',
 }

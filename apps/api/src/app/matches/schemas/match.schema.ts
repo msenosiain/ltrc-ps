@@ -1,6 +1,11 @@
 import { Schema, Types } from 'mongoose';
 import { MatchEntity } from './match.entity';
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
 

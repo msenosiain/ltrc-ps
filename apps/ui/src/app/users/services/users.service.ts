@@ -39,7 +39,9 @@ export class UsersService {
     if (query.sortBy) params = params.set('sortBy', query.sortBy);
     if (query.sortOrder) params = params.set('sortOrder', query.sortOrder);
 
-    return this.httpClient.get<PaginatedResponse<User>>(this.usersApiUrl, { params });
+    return this.httpClient.get<PaginatedResponse<User>>(this.usersApiUrl, {
+      params,
+    });
   }
 
   getUserById(id: string): Observable<User> {

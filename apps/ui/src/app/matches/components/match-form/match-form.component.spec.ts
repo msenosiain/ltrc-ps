@@ -21,7 +21,13 @@ describe('MatchFormComponent', () => {
         },
         {
           provide: MatchesService,
-          useValue: { getFieldOptions: jest.fn().mockReturnValue(of({ opponents: [], venues: [], divisions: [] })) },
+          useValue: {
+            getFieldOptions: jest
+              .fn()
+              .mockReturnValue(
+                of({ opponents: [], venues: [], divisions: [] })
+              ),
+          },
         },
       ],
     }).compileComponents();

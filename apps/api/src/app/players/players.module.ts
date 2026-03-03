@@ -20,4 +20,3 @@ import { UsersModule } from '../users/users.module';
   exports: [PlayersService],
 })
 export class PlayersModule {}
-

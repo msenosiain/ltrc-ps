@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/players"
+  url: '{{baseUrl}}/players'
   body:
     type: multipart-form
     data:
@@ -17,7 +17,7 @@ http:
         value: Manuel
       - name: idNumber
         type: text
-        value: "12345678"
+        value: '12345678'
       - name: birthDate
         type: text
         value: 09/06/1987

@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/players/:id/photo"
+  url: '{{baseUrl}}/players/:id/photo'
   params:
     - name: id
       value: 699d23d42fe26f9478378a8f

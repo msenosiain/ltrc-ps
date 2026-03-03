@@ -25,11 +25,21 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Player, ClothingSizesEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  Player,
+  ClothingSizesEnum,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { getCategoryOptionsBySport, CategoryOption } from '../../../common/category-options';
+import {
+  getCategoryOptionsBySport,
+  CategoryOption,
+} from '../../../common/category-options';
 import { sportOptions } from '../../../common/sport-options';
-import { getPositionOptionsBySport, PositionOption } from '../../position-options';
+import {
+  getPositionOptionsBySport,
+  PositionOption,
+} from '../../position-options';
 import { buildCreatePlayerForm } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
@@ -70,19 +80,20 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   private readonly authService = inject(AuthService);
 
   private readonly currentUser = toSignal(this.authService.user$);
-  readonly isAdmin = computed(() =>
-    this.currentUser()?.roles?.includes(Role.ADMIN) ?? false
+  readonly isAdmin = computed(
+    () => this.currentUser()?.roles?.includes(Role.ADMIN) ?? false
   );
 
   private readonly selectedPosition = signal<string | null>(null);
   readonly filteredAlternatePositions = computed(() =>
-    this.positions.filter(p => p.id !== this.selectedPosition())
+    this.positions.filter((p) => p.id !== this.selectedPosition())
   );
 
   @Input() player?: Player;
   @Input() submitting = false;
 
-  @Output() readonly formSubmitWithPhoto = new EventEmitter<PlayerFormSubmitEvent>();
+  @Output() readonly formSubmitWithPhoto =
+    new EventEmitter<PlayerFormSubmitEvent>();
   @Output() readonly cancel = new EventEmitter<void>();
 
   readonly sportOptions = sportOptions;
@@ -97,27 +108,32 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   filteredHealthInsurances$!: Observable<string[]>;
 
   ngOnInit(): void {
-    this.playerForm.get('position')!.valueChanges.subscribe(val => {
+    this.playerForm.get('position')!.valueChanges.subscribe((val) => {
       this.selectedPosition.set(val);
     });
 
     this.filteredHealthInsurances$ = this.playerForm
-      .get('medicalData.healthInsurance')!.valueChanges.pipe(
+      .get('medicalData.healthInsurance')!
+      .valueChanges.pipe(
         startWith(''),
         map((v) => {
           const lc = (v ?? '').toLowerCase();
-          return this.allHealthInsurances.filter((o) => o.toLowerCase().includes(lc));
+          return this.allHealthInsurances.filter((o) =>
+            o.toLowerCase().includes(lc)
+          );
         }),
-        takeUntilDestroyed(this.destroyRef),
+        takeUntilDestroyed(this.destroyRef)
       );
 
-    this.playersService.getFieldOptions()
+    this.playersService
+      .getFieldOptions()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ healthInsurances }) => {
         this.allHealthInsurances = healthInsurances;
       });
-    this.playerForm.get('sport')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.playerForm
+      .get('sport')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {
         this.positions = getPositionOptionsBySport(sport);
         this.categories = getCategoryOptionsBySport(sport);
