@@ -26,7 +26,7 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
         if (!secret) {
           // Fail fast so deployment/configurations without a secret are obvious.
           throw new Error(
-            'Missing JWT secret: please set AUTH_JWT_SECRET (or GOOGLE_AUTH_JWT_SECRET)',
+            'Missing JWT secret: please set AUTH_JWT_SECRET (or GOOGLE_AUTH_JWT_SECRET)'
           );
         }
 

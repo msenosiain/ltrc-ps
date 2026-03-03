@@ -1,4 +1,9 @@
-import { HockeyPositions, PlayerPosition, RugbyPositions, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  HockeyPositions,
+  PlayerPosition,
+  RugbyPositions,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export { SportOption, sportOptions } from '../common/sport-options';
 
@@ -40,31 +45,39 @@ const hockeyTranslations: Record<HockeyPositions, string> = {
   [HockeyPositions.CENTER_FORWARD]: 'Centrodelantero/a',
 };
 
-export const rugbyPositionOptions: PositionOption[] = (Object.values(RugbyPositions) as RugbyPositions[]).map(
-  (p) => ({
-    id: p,
-    name: `${p} - ${rugbyTranslations[p]}`,
-    sport: SportEnum.RUGBY,
-  })
-);
+export const rugbyPositionOptions: PositionOption[] = (
+  Object.values(RugbyPositions) as RugbyPositions[]
+).map((p) => ({
+  id: p,
+  name: `${p} - ${rugbyTranslations[p]}`,
+  sport: SportEnum.RUGBY,
+}));
 
-export const hockeyPositionOptions: PositionOption[] = (Object.values(HockeyPositions) as HockeyPositions[]).map(
-  (p) => ({
-    id: p,
-    name: hockeyTranslations[p],
-    sport: SportEnum.HOCKEY,
-  })
-);
+export const hockeyPositionOptions: PositionOption[] = (
+  Object.values(HockeyPositions) as HockeyPositions[]
+).map((p) => ({
+  id: p,
+  name: hockeyTranslations[p],
+  sport: SportEnum.HOCKEY,
+}));
 
-export const positionOptions: PositionOption[] = [...rugbyPositionOptions, ...hockeyPositionOptions];
+export const positionOptions: PositionOption[] = [
+  ...rugbyPositionOptions,
+  ...hockeyPositionOptions,
+];
 
-export function getPositionOptionsBySport(sport?: SportEnum | null): PositionOption[] {
+export function getPositionOptionsBySport(
+  sport?: SportEnum | null
+): PositionOption[] {
   if (sport === SportEnum.RUGBY) return rugbyPositionOptions;
   if (sport === SportEnum.HOCKEY) return hockeyPositionOptions;
   return positionOptions;
 }
 
-export function getPositionLabel(position?: PlayerPosition | null, sport?: SportEnum | null): string {
+export function getPositionLabel(
+  position?: PlayerPosition | null,
+  sport?: SportEnum | null
+): string {
   if (!position) return '';
   if (sport === SportEnum.HOCKEY) {
     const label = hockeyTranslations[position as HockeyPositions];

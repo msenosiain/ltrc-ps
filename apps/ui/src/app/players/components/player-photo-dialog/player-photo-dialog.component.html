@@ -3,15 +3,15 @@
 <mat-dialog-content>
   <div class="preview-area" (click)="photoInput.click()">
     @if (previewUrl) {
-      <img [src]="previewUrl" alt="Preview" class="preview-img" />
-      <div class="preview-overlay">
-        <mat-icon>edit</mat-icon>
-      </div>
+    <img [src]="previewUrl" alt="Preview" class="preview-img" />
+    <div class="preview-overlay">
+      <mat-icon>edit</mat-icon>
+    </div>
     } @else {
-      <div class="preview-placeholder">
-        <mat-icon>upload</mat-icon>
-        <span>Hacer clic para elegir imagen</span>
-      </div>
+    <div class="preview-placeholder">
+      <mat-icon>upload</mat-icon>
+      <span>Hacer clic para elegir imagen</span>
+    </div>
     }
   </div>
 
@@ -27,9 +27,9 @@
 <mat-dialog-actions align="end">
   <button mat-button type="button" (click)="close()">Cancelar</button>
   @if (hasCurrentPhoto) {
-    <button mat-button color="warn" type="button" (click)="remove()">
-      Quitar foto
-    </button>
+  <button mat-button color="warn" type="button" (click)="remove()">
+    Quitar foto
+  </button>
   }
   <button
     mat-raised-button

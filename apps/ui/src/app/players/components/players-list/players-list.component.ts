@@ -8,7 +8,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
-import { CategoryEnum, PlayerPosition, SortOrder } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  PlayerPosition,
+  SortOrder,
+} from '@ltrc-ps/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { Router } from '@angular/router';

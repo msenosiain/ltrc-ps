@@ -1,7 +1,10 @@
 import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
 
 export { sportOptions } from '../common/sport-options';
-export { getCategoryOptionsBySport, getCategoryLabel } from '../common/category-options';
+export {
+  getCategoryOptionsBySport,
+  getCategoryLabel,
+} from '../common/category-options';
 
 export interface MatchOption<T> {
   id: T;

@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/tournaments"
+  url: '{{baseUrl}}/tournaments'
   body:
     type: json
     data: |-

@@ -1,0 +1,51 @@
+<div class="activate-container">
+  <mat-card class="activate-card">
+    <mat-card-title>Configurar contraseña</mat-card-title>
+    <mat-card-subtitle>{{ email }}</mat-card-subtitle>
+
+    <mat-card-content>
+      <p class="activate-info">
+        Es la primera vez que ingresás. Elegí una contraseña para tu cuenta.
+      </p>
+
+      <form
+        [formGroup]="activateForm"
+        (ngSubmit)="onSubmit()"
+        class="activate-form"
+      >
+        <mat-form-field appearance="outline">
+          <mat-label>Nueva contraseña</mat-label>
+          <input matInput type="password" formControlName="password" />
+          @if (activateForm.get('password')?.errors?.['minlength']) {
+          <mat-error>La contraseña debe tener al menos 8 caracteres</mat-error>
+          } @if (activateForm.get('password')?.errors?.['required']) {
+          <mat-error>La contraseña es obligatoria</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Confirmar contraseña</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" />
+          @if (activateForm.errors?.['passwordsMismatch'] &&
+          activateForm.get('confirmPassword')?.touched) {
+          <mat-error>Las contraseñas no coinciden</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage) {
+        <p class="error-message">{{ errorMessage }}</p>
+        }
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="isLoading || activateForm.invalid"
+        >
+          <mat-icon>lock_open</mat-icon>
+          Activar cuenta
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,4 +1,10 @@
-import { IsArray, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class CreateTournamentDto {

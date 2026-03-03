@@ -104,6 +104,23 @@ export class AuthService {
     localStorage.setItem(this.refreshTokenKey, refreshToken);
   }
 
+  activate(
+    email: string,
+    password: string
+  ): Observable<{ access_token: string; refresh_token: string }> {
+    return this.http
+      .post<{ access_token: string; refresh_token: string }>(
+        `${this.authApiUrl}/activate`,
+        { email, password }
+      )
+      .pipe(
+        tap((tokens) => {
+          this.setAccessToken(tokens.access_token);
+          this.setRefreshToken(tokens.refresh_token);
+        })
+      );
+  }
+
   refreshToken(): Observable<{ access_token: string; refresh_token: string }> {
     const refreshToken = localStorage.getItem(this.refreshTokenKey);
     if (refreshToken && this.isTokenExpired(refreshToken)) {

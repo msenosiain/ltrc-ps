@@ -115,12 +115,19 @@ describe('PlayerPhotoFieldComponent', () => {
     it('should set value and call onChange on select result', () => {
       const onChange = jest.fn();
       component.registerOnChange(onChange);
-      const selectResult = { action: 'select', file: new File([''], 'p.jpg'), previewUrl: 'data:url' };
+      const selectResult = {
+        action: 'select',
+        file: new File([''], 'p.jpg'),
+        previewUrl: 'data:url',
+      };
       dialogRefMock.afterClosed.mockReturnValueOnce(of(selectResult));
 
       component.openDialog();
 
-      expect(component.value).toEqual({ file: selectResult.file, previewUrl: 'data:url' });
+      expect(component.value).toEqual({
+        file: selectResult.file,
+        previewUrl: 'data:url',
+      });
       expect(onChange).toHaveBeenCalledWith(component.value);
     });
 

@@ -23,7 +23,9 @@ async function main() {
     { category: { $exists: false } },
     { $set: { category: 'plantel_superior' } }
   );
-  console.log(`Categoría actualizada: ${categoryResult.modifiedCount} jugadores`);
+  console.log(
+    `Categoría actualizada: ${categoryResult.modifiedCount} jugadores`
+  );
 
   await client.close();
 }

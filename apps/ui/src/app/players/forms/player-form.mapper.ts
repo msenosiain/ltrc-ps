@@ -19,6 +19,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
     medicalData: mapMedicalData(value),
+    createUser: value.createUser ?? false,
   };
 }
 

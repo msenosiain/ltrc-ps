@@ -5,7 +5,7 @@ info:
 
 http:
   method: PATCH
-  url: "{{baseUrl}}/players/:id"
+  url: '{{baseUrl}}/players/:id'
   body:
     type: multipart-form
     data:
@@ -15,7 +15,7 @@ http:
       - name: photo
         type: file
         value:
-          - ""
+          - ''
   auth: inherit
 
 settings:

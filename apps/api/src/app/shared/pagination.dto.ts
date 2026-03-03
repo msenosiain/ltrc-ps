@@ -1,11 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  Min,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, Min, IsString } from 'class-validator';
 import { SortOrder } from '@ltrc-ps/shared-api-model';
 
 export class PaginationDto<TFilter = any> {

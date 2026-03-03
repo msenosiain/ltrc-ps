@@ -1,5 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { MatchesService } from './matches.service';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
@@ -51,7 +54,9 @@ describe('MatchesService', () => {
 
   it('getStatusLabel should return Spanish label', () => {
     expect(service.getStatusLabel(MatchStatusEnum.UPCOMING)).toBe('Próximo');
-    expect(service.getStatusLabel(MatchStatusEnum.COMPLETED)).toBe('Finalizado');
+    expect(service.getStatusLabel(MatchStatusEnum.COMPLETED)).toBe(
+      'Finalizado'
+    );
     expect(service.getStatusLabel(MatchStatusEnum.CANCELLED)).toBe('Cancelado');
   });
 

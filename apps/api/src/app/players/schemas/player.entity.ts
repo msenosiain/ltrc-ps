@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import {
   CategoryEnum,
   ClothingSizesEnum,
@@ -41,6 +41,7 @@ export class PlayerEntity extends Document {
     healthInsurance?: string;
   };
   photoId?: string;
+  userId?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

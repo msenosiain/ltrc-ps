@@ -3,6 +3,6 @@ variables:
   - name: baseUrl
     value: http://localhost:3000/api/v1
   - name: access_token
-    value: ""
+    value: ''
   - name: refresh_token
-    value: ""
+    value: ''

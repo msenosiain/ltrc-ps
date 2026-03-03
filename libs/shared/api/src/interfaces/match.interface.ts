@@ -1,5 +1,10 @@
 import { Document } from 'mongoose';
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '../enums';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SportEnum,
+} from '../enums';
 import { Player } from './player.interface';
 import { Tournament } from './tournament.interface';
 

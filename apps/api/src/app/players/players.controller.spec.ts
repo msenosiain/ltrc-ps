@@ -4,7 +4,10 @@ import { PlayersController } from './players.controller';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { PlayersService } from './players.service';
 import { plainToClass } from 'class-transformer';
-import { createPlayerDtoPlain, playersArray } from '../shared/mocks/playerMocks';
+import {
+  createPlayerDtoPlain,
+  playersArray,
+} from '../shared/mocks/playerMocks';
 import { Response } from 'express';
 import { Readable } from 'stream';
 
@@ -27,9 +30,11 @@ describe('PlayersController', () => {
               page: 1,
               size: 10,
             }),
-            create: jest.fn().mockImplementation((dto: CreatePlayerDto) =>
-              Promise.resolve({ _id: '1', ...dto })
-            ),
+            create: jest
+              .fn()
+              .mockImplementation((dto: CreatePlayerDto) =>
+                Promise.resolve({ _id: '1', ...dto })
+              ),
             update: jest.fn().mockResolvedValue(mockPlayer),
             findOne: jest.fn().mockResolvedValue(mockPlayer),
             getPhotoStream: jest.fn().mockResolvedValue(Readable.from(['img'])),
@@ -74,7 +79,9 @@ describe('PlayersController', () => {
 
     it('should propagate NotFoundException from service', () => {
       service.findOne.mockRejectedValueOnce(new NotFoundException());
-      expect(controller.getOne('nonexistent')).rejects.toThrow(NotFoundException);
+      expect(controller.getOne('nonexistent')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -96,7 +103,9 @@ describe('PlayersController', () => {
 
     it('should propagate NotFoundException from service', () => {
       service.delete.mockRejectedValueOnce(new NotFoundException());
-      expect(controller.delete('nonexistent')).rejects.toThrow(NotFoundException);
+      expect(controller.delete('nonexistent')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -120,9 +129,14 @@ describe('PlayersController', () => {
     });
 
     it('should throw NotFoundException when player has no photo', async () => {
-      service.findOne.mockResolvedValueOnce({ ...mockPlayer, photoId: undefined } as any);
+      service.findOne.mockResolvedValueOnce({
+        ...mockPlayer,
+        photoId: undefined,
+      } as any);
       const res = {} as Response;
-      await expect(controller.getPhoto('1', res)).rejects.toThrow(NotFoundException);
+      await expect(controller.getPhoto('1', res)).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 });

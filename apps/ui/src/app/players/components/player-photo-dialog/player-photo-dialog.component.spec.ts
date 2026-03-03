@@ -16,9 +16,7 @@ describe('PlayerPhotoDialogComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [PlayerPhotoDialogComponent, NoopAnimationsModule],
-      providers: [
-        { provide: MatDialogRef, useValue: dialogRefMock },
-      ],
+      providers: [{ provide: MatDialogRef, useValue: dialogRefMock }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlayerPhotoDialogComponent);
@@ -73,7 +71,9 @@ describe('PlayerPhotoDialogComponent', () => {
 
   describe('onFileChange()', () => {
     it('should set file and trigger FileReader on valid input', () => {
-      const fakeFile = new File(['content'], 'photo.jpg', { type: 'image/jpeg' });
+      const fakeFile = new File(['content'], 'photo.jpg', {
+        type: 'image/jpeg',
+      });
       const mockReader = {
         onload: null as any,
         result: 'data:image/jpeg;base64,abc',
@@ -81,7 +81,9 @@ describe('PlayerPhotoDialogComponent', () => {
           this.onload?.();
         }),
       };
-      jest.spyOn(window as any, 'FileReader').mockImplementation(() => mockReader);
+      jest
+        .spyOn(window as any, 'FileReader')
+        .mockImplementation(() => mockReader);
 
       const event = { target: { files: [fakeFile] } } as unknown as Event;
       component.onFileChange(event);

@@ -15,14 +15,14 @@ interface JwtPayload {
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     configService: ConfigService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: configService.get<string>(
         'AUTH_JWT_SECRET',
-        configService.get<string>('GOOGLE_AUTH_JWT_SECRET', 'super-secret-key'),
+        configService.get<string>('GOOGLE_AUTH_JWT_SECRET', 'super-secret-key')
       ),
     });
   }

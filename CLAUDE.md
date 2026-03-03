@@ -31,6 +31,7 @@ npm run prettier:fix              # Auto-fix formatting
 ## Architecture
 
 ### Monorepo Structure
+
 ```
 apps/
   ui/          # Angular 21 standalone components (es-AR locale)
@@ -43,6 +44,7 @@ docker/        # Docker Compose (MongoDB)
 ```
 
 ### Angular UI (`apps/ui/src/app/`)
+
 - **Standalone components only** — no NgModules
 - **New control flow syntax**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
 - **All components use external files**: `templateUrl` + `styleUrl` (never inline `template:` or `styles:`)
@@ -51,12 +53,14 @@ docker/        # Docker Compose (MongoDB)
 - **State**: RxJS observables in services — no NgRx
 
 Key directories:
+
 - `auth/` — JWT + Google OAuth; `AuthService`, `authInterceptor`, `authGuard`, `hasRoleGuard`
 - `players/` — lazy-loaded; `PlayersService` for CRUD + photo upload
 - `common/` — shared components/pipes
 - `app.config.ts` — DI root; `API_CONFIG_TOKEN` provides base API URL
 
 ### NestJS API (`apps/api/src/`)
+
 - Global prefix: `/api/v1`
 - Feature modules: `Auth`, `Players`, `Matches`, `Tournaments`, `Squads`, `Users`
 - MongoDB via Mongoose; GridFS for player photo storage
@@ -64,6 +68,7 @@ Key directories:
 - DTOs use `class-validator` with `ValidationPipe` (whitelist + transform)
 
 ### Shared Library
+
 - Path alias: `@ltrc-ps/shared-api-model`
 - Contains: player, match, squad, tournament interfaces + enums (positions, sizes, statuses)
 - Import from here in both UI and API for type consistency

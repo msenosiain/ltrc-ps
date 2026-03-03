@@ -10,7 +10,6 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
-
   // TODO get menu items from DB
   menuItems = [
     { id: 1, label: 'Plantel', path: '/players' },

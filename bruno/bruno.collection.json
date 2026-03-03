@@ -23,9 +23,7 @@
       "name": "Auth - POST /auth/login",
       "request": {
         "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"email\": \"user@example.com\",\n  \"pass\": \"secret\"\n}"
@@ -37,9 +35,7 @@
       "name": "Auth - POST /auth/register",
       "request": {
         "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"email\": \"new.user@example.com\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"password\": \"changeme\"\n}"
@@ -133,4 +129,3 @@
     }
   ]
 }
-

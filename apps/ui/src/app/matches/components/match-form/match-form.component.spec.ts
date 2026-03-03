@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchFormComponent } from './match-form.component';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
+import { MatchesService } from '../../services/matches.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { of } from 'rxjs';
 import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
@@ -17,6 +18,16 @@ describe('MatchFormComponent', () => {
         {
           provide: TournamentsService,
           useValue: { getTournaments: jest.fn().mockReturnValue(of([])) },
+        },
+        {
+          provide: MatchesService,
+          useValue: {
+            getFieldOptions: jest
+              .fn()
+              .mockReturnValue(
+                of({ opponents: [], venues: [], divisions: [] })
+              ),
+          },
         },
       ],
     }).compileComponents();
@@ -57,6 +68,7 @@ describe('MatchFormComponent', () => {
       status: MatchStatusEnum.UPCOMING,
       isHome: true,
     });
+    component.timeControl.setValue(new Date(2000, 0, 1, 15, 0));
     component.onSubmit();
     expect(spy).toHaveBeenCalled();
   });

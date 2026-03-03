@@ -8,20 +8,24 @@ import {
   Param,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
   Res,
+  Req,
   NotFoundException,
   Query,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { File as MulterFile } from 'multer';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 
 import { PlayersService } from './players.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { User } from '../users/schemas/user.schema';
 
 @Controller('players')
 export class PlayersController {
@@ -38,11 +42,28 @@ export class PlayersController {
     return this.playersService.importFromFile(file.buffer);
   }
 
+  // ⚠️ Debe estar ANTES de GET :id para que rutas con prefijo no sean interpretadas como un ID
+  @Get('by-user/:userId')
+  @UseGuards(JwtAuthGuard)
+  async findByUserId(@Param('userId') userId: string) {
+    return this.playersService.findByUserId(userId);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMyPlayer(@Req() req: Request) {
+    const user = (req as any).user as User;
+    const userId = (user as any)._id?.toString();
+    const player = await this.playersService.findByUserId(userId);
+    if (!player) throw new NotFoundException('No player linked to this user');
+    return player;
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('photo'))
   async create(
     @Body() dto: CreatePlayerDto,
-    @UploadedFile() photo?: MulterFile,
+    @UploadedFile() photo?: MulterFile
   ) {
     return this.playersService.create(dto, photo);
   }
@@ -52,7 +73,7 @@ export class PlayersController {
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePlayerDto,
-    @UploadedFile() photo?: MulterFile,
+    @UploadedFile() photo?: MulterFile
   ) {
     return this.playersService.update(id, dto, photo);
   }
