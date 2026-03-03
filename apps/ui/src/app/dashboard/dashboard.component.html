@@ -5,6 +5,7 @@
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="players">Jugadores</a>
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="tournaments">Torneos</a>
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="matches">Partidos</a>
+      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="users">Usuarios</a>
       @if (isPlayer() && myPlayerId()) {
         <a mat-list-item [routerLink]="['players', myPlayerId()]">Mi Perfil</a>
       }

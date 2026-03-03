@@ -253,7 +253,7 @@
   </mat-card>
 
   <!-- CREAR CUENTA DE USUARIO (solo admin, solo al crear, solo con email) -->
-  @if (!player && isAdmin() && playerForm.get('email')?.value) {
+  @if (!player?.userId && isAdmin() && playerForm.get('email')?.value) {
     <mat-card class="create-user-card">
       <div class="create-user-section">
         <mat-checkbox formControlName="createUser" color="primary">

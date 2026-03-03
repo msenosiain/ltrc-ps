@@ -28,7 +28,7 @@ describe('TournamentsController', () => {
   it('should be defined', () => expect(controller).toBeDefined());
 
   it('findAll() should return all tournaments', async () => {
-    expect(await controller.findAll()).toEqual([mockTournament]);
+    expect(await controller.findAll({})).toEqual([mockTournament]);
   });
 
   it('create() should create a tournament', async () => {

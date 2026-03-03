@@ -35,6 +35,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./matches/matches.routes').then((m) => m.MATCHES_ROUTES),
       },
+      {
+        path: 'users',
+        loadChildren: () =>
+          import('./users/users.routes').then((m) => m.USERS_ROUTES),
+      },
     ],
   },
   // Fallback to dashboard for any unknown route

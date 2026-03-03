@@ -86,6 +86,25 @@ export class PlayersService {
     }
 
     Object.assign(player, dto);
+
+    if (dto.createUser && dto.email && !player.userId) {
+      const existing = await this.usersService.findOneByEmail(dto.email);
+      if (existing) {
+        throw new ConflictException(
+          `El email ${dto.email} ya está registrado como usuario`
+        );
+      }
+
+      const user = await this.usersService.create({
+        name: dto.firstName ?? player.firstName,
+        lastName: dto.lastName ?? player.lastName,
+        email: dto.email,
+        roles: [Role.PLAYER],
+      });
+
+      player.userId = (user as any)._id;
+    }
+
     return player.save();
   }
 

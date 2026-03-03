@@ -34,8 +34,8 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
 
     sport: fb.control<SportEnum | null>(null),
     category: fb.control<CategoryEnum | null>(null),
-    position: fb.control<PlayerPosition | null>(null, [Validators.min(100), Validators.max(230)]),
-    alternatePosition: fb.control<PlayerPosition | null>(null, [Validators.min(30), Validators.max(200)]),
+    position: fb.control<PlayerPosition | null>(null),
+    alternatePosition: fb.control<PlayerPosition | null>(null),
 
     address: fb.group({
       street: fb.nonNullable.control(''),

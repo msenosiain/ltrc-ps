@@ -41,9 +41,9 @@ describe('TournamentFormComponent', () => {
 
   it('should emit formSubmit when form is valid', () => {
     const emitSpy = jest.spyOn(component.formSubmit, 'emit');
-    component.tournamentForm.setValue({ name: 'Copa 2024', season: '2024', description: '' });
+    component.tournamentForm.setValue({ name: 'Copa 2024', season: '2024', description: '', sport: null, categories: [] });
     component.onSubmit();
-    expect(emitSpy).toHaveBeenCalledWith({ name: 'Copa 2024', season: '2024', description: '' });
+    expect(emitSpy).toHaveBeenCalledWith({ name: 'Copa 2024', season: '2024', description: '', sport: null, categories: [] });
   });
 
   it('should emit cancel', () => {

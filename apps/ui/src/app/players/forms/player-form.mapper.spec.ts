@@ -5,16 +5,18 @@ import { RugbyPositions, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 
 const baseForm: PlayerFormValue = {
   firstName: 'Juan',
+  secondName: '',
   lastName: 'Perez',
   nickName: 'Juancho',
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
+  sport: null,
+  category: null,
   position: RugbyPositions.FULLBACK,
   alternatePosition: null,
-  height: 180,
-  weight: 85,
   photo: null,
+  createUser: false,
   address: {
     street: 'Av. Siempreviva',
     number: '742',
@@ -30,6 +32,12 @@ const baseForm: PlayerFormValue = {
     sweater: null,
     pants: null,
   },
+  medicalData: {
+    height: 180,
+    weight: 85,
+    torgIndex: null,
+    healthInsurance: '',
+  },
 };
 
 const basePlayer: Player = {
@@ -42,8 +50,7 @@ const basePlayer: Player = {
   email: 'juan@lostordos.com.ar',
   position: RugbyPositions.FULLBACK,
   alternatePosition: RugbyPositions.LEFT_WING,
-  height: 180,
-  weight: 85,
+  medicalData: { height: 180, weight: 85 },
   address: {
     street: 'Av. Siempreviva',
     number: '742',
@@ -72,8 +79,8 @@ describe('mapFormToCreatePlayerDto', () => {
 
   it('should map height and weight', () => {
     const result = mapFormToCreatePlayerDto(baseForm);
-    expect(result.height).toBe(180);
-    expect(result.weight).toBe(85);
+    expect(result.medicalData?.height).toBe(180);
+    expect(result.medicalData?.weight).toBe(85);
   });
 
   it('should map address with new fields', () => {

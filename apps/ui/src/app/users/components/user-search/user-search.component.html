@@ -1,0 +1,22 @@
+<form [formGroup]="searchForm" class="user-search">
+  <mat-form-field appearance="outline">
+    <mat-label>Buscar</mat-label>
+    <input matInput formControlName="searchTerm" placeholder="Nombre, apellido o email" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Rol</mat-label>
+    <mat-select formControlName="role">
+      <mat-option [value]="undefined">Todos</mat-option>
+      @for (option of roleOptions; track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+      }
+    </mat-select>
+    @if (searchForm.get('role')?.value) {
+      <button matSuffix mat-icon-button type="button" (click)="clearField('role')">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+</form>

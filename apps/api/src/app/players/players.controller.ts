@@ -42,7 +42,13 @@ export class PlayersController {
     return this.playersService.importFromFile(file.buffer);
   }
 
-  // ⚠️ Debe estar ANTES de GET :id para que "me" no sea interpretado como un ID
+  // ⚠️ Debe estar ANTES de GET :id para que rutas con prefijo no sean interpretadas como un ID
+  @Get('by-user/:userId')
+  @UseGuards(JwtAuthGuard)
+  async findByUserId(@Param('userId') userId: string) {
+    return this.playersService.findByUserId(userId);
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMyPlayer(@Req() req: Request) {

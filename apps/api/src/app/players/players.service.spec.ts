@@ -4,6 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { PlayersService } from './players.service';
 import { PlayerEntity } from './schemas/player.entity';
 import { GridFsService } from '../shared/gridfs/gridfs.service';
+import { UsersService } from '../users/users.service';
 import { playersArray, createPlayerDtoPlain } from '../shared/mocks/playerMocks';
 import { plainToClass } from 'class-transformer';
 import { CreatePlayerDto } from './dto/create-player.dto';
@@ -30,6 +31,11 @@ const mockGridFs = {
   getFileStream: jest.fn(),
 };
 
+const mockUsersService = {
+  findOneByEmail: jest.fn(),
+  create: jest.fn(),
+};
+
 describe('PlayersService', () => {
   let service: PlayersService;
 
@@ -41,6 +47,7 @@ describe('PlayersService', () => {
         PlayersService,
         { provide: getModelToken(PlayerEntity.name), useValue: mockModel },
         { provide: GridFsService, useValue: mockGridFs },
+        { provide: UsersService, useValue: mockUsersService },
       ],
     }).compile();
 
