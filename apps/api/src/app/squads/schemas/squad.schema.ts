@@ -13,6 +13,7 @@ const SquadPlayerSchema = new Schema(
 export const SquadSchema = new Schema<SquadEntity>(
   {
     name: { type: String, required: true },
+    category: { type: String },
     players: [SquadPlayerSchema],
   },
   {

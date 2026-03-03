@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { CategoryEnum } from '../enums';
 import { Player } from './player.interface';
 
 export interface SquadPlayerTemplate {
@@ -9,6 +10,7 @@ export interface SquadPlayerTemplate {
 export interface Squad extends Document {
   readonly id?: string;
   readonly name: string;
+  readonly category?: CategoryEnum;
   readonly players: SquadPlayerTemplate[];
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
