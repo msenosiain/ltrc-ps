@@ -29,7 +29,11 @@ export class SquadsService {
 
   async findAll(category?: CategoryEnum) {
     const filter = category ? { category } : {};
-    return this.squadModel.find(filter).sort({ name: 1 }).populate(POPULATE_PLAYERS).exec();
+    return this.squadModel
+      .find(filter)
+      .sort({ name: 1 })
+      .populate(POPULATE_PLAYERS)
+      .exec();
   }
 
   async findOne(id: string) {
@@ -47,7 +51,10 @@ export class SquadsService {
     if (dto.players) {
       squad.set(
         'players',
-        dto.players.map(({ shirtNumber, playerId }) => ({ shirtNumber, player: playerId }))
+        dto.players.map(({ shirtNumber, playerId }) => ({
+          shirtNumber,
+          player: playerId,
+        }))
       );
     }
 

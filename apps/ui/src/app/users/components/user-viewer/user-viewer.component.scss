@@ -1,0 +1,79 @@
+.user-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.viewer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+
+  .viewer-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+    flex: 1;
+  }
+
+  .viewer-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--mat-app-on-surface-variant, rgba(0, 0, 0, 0.6));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1rem;
+}
+
+.roles-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.linked-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.player-link {
+  color: var(--mat-app-primary, #1976d2);
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.no-player {
+  color: var(--mat-app-on-surface-variant, rgba(0, 0, 0, 0.6));
+  font-style: italic;
+  padding-top: 8px;
+}

@@ -15,7 +15,9 @@ const mockMatch = {
 };
 
 const mockService = {
-  findPaginated: jest.fn().mockResolvedValue({ items: [mockMatch], total: 1, page: 1, size: 10 }),
+  findPaginated: jest
+    .fn()
+    .mockResolvedValue({ items: [mockMatch], total: 1, page: 1, size: 10 }),
   create: jest.fn().mockResolvedValue(mockMatch),
   update: jest.fn().mockResolvedValue(mockMatch),
   updateSquad: jest.fn().mockResolvedValue(mockMatch),
@@ -45,12 +47,18 @@ describe('MatchesController', () => {
   });
 
   it('create() should create a match', async () => {
-    expect(await controller.create({ opponent: 'Rivadavia RC' } as any)).toEqual(mockMatch);
+    expect(
+      await controller.create({ opponent: 'Rivadavia RC' } as any)
+    ).toEqual(mockMatch);
   });
 
   it('update() should update a match', async () => {
-    expect(await controller.update('match-1', { opponent: 'Los Pumas' })).toEqual(mockMatch);
-    expect(mockService.update).toHaveBeenCalledWith('match-1', { opponent: 'Los Pumas' });
+    expect(
+      await controller.update('match-1', { opponent: 'Los Pumas' })
+    ).toEqual(mockMatch);
+    expect(mockService.update).toHaveBeenCalledWith('match-1', {
+      opponent: 'Los Pumas',
+    });
   });
 
   it('updateSquad() should update match squad', async () => {
@@ -60,8 +68,13 @@ describe('MatchesController', () => {
   });
 
   it('applySquadTemplate() should apply a squad template', async () => {
-    expect(await controller.applySquadTemplate('match-1', 'squad-1')).toEqual(mockMatch);
-    expect(mockService.applySquadTemplate).toHaveBeenCalledWith('match-1', 'squad-1');
+    expect(await controller.applySquadTemplate('match-1', 'squad-1')).toEqual(
+      mockMatch
+    );
+    expect(mockService.applySquadTemplate).toHaveBeenCalledWith(
+      'match-1',
+      'squad-1'
+    );
   });
 
   it('getOne() should return a match', async () => {
@@ -70,7 +83,9 @@ describe('MatchesController', () => {
 
   it('getOne() should propagate NotFoundException', async () => {
     mockService.findOne.mockRejectedValueOnce(new NotFoundException());
-    await expect(controller.getOne('bad-id')).rejects.toThrow(NotFoundException);
+    await expect(controller.getOne('bad-id')).rejects.toThrow(
+      NotFoundException
+    );
   });
 
   it('delete() should delete a match', async () => {

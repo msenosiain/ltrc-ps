@@ -1,5 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { TournamentsService } from './tournaments.service';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
@@ -30,7 +33,9 @@ describe('TournamentsService', () => {
 
   it('getTournaments should GET /tournaments without params', () => {
     const mockTournaments = [{ id: '1', name: 'Copa 2024' }];
-    service.getTournaments().subscribe((res) => expect(res).toEqual(mockTournaments));
+    service
+      .getTournaments()
+      .subscribe((res) => expect(res).toEqual(mockTournaments));
 
     const req = httpMock.expectOne(`${API_BASE}/tournaments`);
     expect(req.request.method).toBe('GET');
@@ -47,7 +52,9 @@ describe('TournamentsService', () => {
 
   it('getTournamentById should GET /tournaments/:id', () => {
     const mockTournament = { id: '1', name: 'Copa 2024' };
-    service.getTournamentById('1').subscribe((res) => expect(res).toEqual(mockTournament));
+    service
+      .getTournamentById('1')
+      .subscribe((res) => expect(res).toEqual(mockTournament));
 
     const req = httpMock.expectOne(`${API_BASE}/tournaments/1`);
     expect(req.request.method).toBe('GET');
@@ -58,7 +65,9 @@ describe('TournamentsService', () => {
     const dto = { name: 'Copa 2024', season: '2024' };
     const mockResponse = { id: '1', ...dto };
 
-    service.createTournament(dto).subscribe((res) => expect(res).toEqual(mockResponse));
+    service
+      .createTournament(dto)
+      .subscribe((res) => expect(res).toEqual(mockResponse));
 
     const req = httpMock.expectOne(`${API_BASE}/tournaments`);
     expect(req.request.method).toBe('POST');
@@ -70,7 +79,9 @@ describe('TournamentsService', () => {
     const dto = { name: 'Copa 2025' };
     const mockResponse = { id: '1', name: 'Copa 2025' };
 
-    service.updateTournament('1', dto).subscribe((res) => expect(res).toEqual(mockResponse));
+    service
+      .updateTournament('1', dto)
+      .subscribe((res) => expect(res).toEqual(mockResponse));
 
     const req = httpMock.expectOne(`${API_BASE}/tournaments/1`);
     expect(req.request.method).toBe('PATCH');

@@ -1,0 +1,31 @@
+.activate-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.activate-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.activate-info {
+  margin-bottom: 16px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.activate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin: 0;
+}

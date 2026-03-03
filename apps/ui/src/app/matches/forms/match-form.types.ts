@@ -1,4 +1,9 @@
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export interface MatchFormValue {
   date: Date | null;

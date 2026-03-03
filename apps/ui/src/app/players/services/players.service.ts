@@ -94,25 +94,35 @@ export class PlayersService {
     if (dto.birthDate != null) form.append('birthDate', dto.birthDate);
     if (dto.email != null) form.append('email', dto.email);
     if (dto.position != null) form.append('position', dto.position);
-    if (dto.alternatePosition != null) form.append('alternatePosition', dto.alternatePosition);
-    if (dto.address != null) form.append('address', JSON.stringify(dto.address));
-    if (dto.clothingSizes != null) form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
-    if (dto.medicalData != null) form.append('medicalData', JSON.stringify(dto.medicalData));
+    if (dto.alternatePosition != null)
+      form.append('alternatePosition', dto.alternatePosition);
+    if (dto.address != null)
+      form.append('address', JSON.stringify(dto.address));
+    if (dto.clothingSizes != null)
+      form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
+    if (dto.medicalData != null)
+      form.append('medicalData', JSON.stringify(dto.medicalData));
+    form.append('createUser', String(dto.createUser ?? false));
 
     return form;
   }
 
   // IMPORT ─────────────────────────────────────────────────
 
-  importPlayers(
-    file: File
-  ): Observable<{ created: number; errors: { row: number; message: string }[] }> {
+  importPlayers(file: File): Observable<{
+    created: number;
+    errors: { row: number; message: string }[];
+  }> {
     const form = new FormData();
     form.append('file', file);
     return this.httpClient.post<{
       created: number;
       errors: { row: number; message: string }[];
     }>(`${this.playersApiUrl}/import`, form);
+  }
+
+  getMyPlayer(): Observable<Player> {
+    return this.httpClient.get<Player>(`${this.playersApiUrl}/me`);
   }
 
   // DELETE ─────────────────────────────────────────────────

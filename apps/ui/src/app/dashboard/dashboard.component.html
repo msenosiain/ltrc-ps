@@ -1,15 +1,46 @@
 <mat-sidenav-container class="container">
-  <mat-sidenav [mode]="isSmallScreen() ? 'over' : 'side'" [opened]="!isSmallScreen()" #sidenav>
+  <mat-sidenav
+    [mode]="isSmallScreen() ? 'over' : 'side'"
+    [opened]="!isSmallScreen()"
+    #sidenav
+  >
     <mat-nav-list>
-      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members">Socios</a>
-      <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="players">Jugadores</a>
-      <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="tournaments">Torneos</a>
-      <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="matches">Partidos</a>
+      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members"
+        >Socios</a
+      >
+      <a
+        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        mat-list-item
+        routerLink="players"
+        >Jugadores</a
+      >
+      <a
+        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        mat-list-item
+        routerLink="tournaments"
+        >Torneos</a
+      >
+      <a
+        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        mat-list-item
+        routerLink="matches"
+        >Partidos</a
+      >
+      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="users"
+        >Usuarios</a
+      >
+      @if (isPlayer() && myPlayerId()) {
+      <a mat-list-item [routerLink]="['players', myPlayerId()]">Mi Perfil</a>
+      }
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="toolbar">
-      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir/cerrar menú">
+      <button
+        mat-icon-button
+        (click)="sidenav.toggle()"
+        aria-label="Abrir/cerrar menú"
+      >
         <mat-icon>menu</mat-icon>
       </button>
     </div>
@@ -18,10 +49,12 @@
 
       <!-- Welcome screen when no child route is active -->
       @if (router.url === '/dashboard') {
-        <div class="dashboard-home">
-          <h1>Bienvenido al Panel de Control</h1>
-          <p>Utilice el menú lateral para navegar por las opciones disponibles.</p>
-        </div>
+      <div class="dashboard-home">
+        <h1>Bienvenido al Panel de Control</h1>
+        <p>
+          Utilice el menú lateral para navegar por las opciones disponibles.
+        </p>
+      </div>
       }
     </div>
   </mat-sidenav-content>

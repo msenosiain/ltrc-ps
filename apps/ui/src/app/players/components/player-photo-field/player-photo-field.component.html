@@ -6,7 +6,9 @@
   (click)="openDialog()"
   role="button"
   tabindex="0"
-  [attr.aria-label]="value ? 'Cambiar foto del jugador' : 'Subir foto del jugador'"
+  [attr.aria-label]="
+    value ? 'Cambiar foto del jugador' : 'Subir foto del jugador'
+  "
   (keydown.enter)="openDialog()"
   (keydown.space)="openDialog()"
 >

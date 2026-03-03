@@ -19,7 +19,10 @@ describe('PlayersList', () => {
       imports: [PlayersListComponent, RouterModule.forRoot([])],
       providers: [
         { provide: PlayersService, useValue: playersServiceMock },
-        { provide: ActivatedRoute, useValue: { snapshot: {}, paramMap: { get: () => null } } },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: {}, paramMap: { get: () => null } },
+        },
       ],
     }).compileComponents();
 

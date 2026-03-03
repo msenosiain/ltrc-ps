@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, DestroyRef, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  DestroyRef,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { CategoryEnum, SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  SortOrder,
+  SportEnum,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
 import { sportOptions } from '../../../common/sport-options';
 import { getCategoryLabel } from '../../../common/category-options';
 import { TournamentSearchComponent } from '../tournament-search/tournament-search.component';
@@ -31,7 +43,13 @@ export class TournamentsListComponent implements OnInit, AfterViewInit {
   private readonly tournamentsService = inject(TournamentsService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns = ['name', 'season', 'sport', 'categories', 'description'];
+  readonly displayedColumns = [
+    'name',
+    'season',
+    'sport',
+    'categories',
+    'description',
+  ];
 
   @ViewChild(MatSort) sort!: MatSort;
 

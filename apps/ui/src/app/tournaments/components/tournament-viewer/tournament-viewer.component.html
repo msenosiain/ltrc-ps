@@ -1,58 +1,61 @@
 <div class="tournament-viewer">
   @if (tournament) {
 
-    <mat-card>
-      <mat-card-content>
-        <div class="tournament-header">
-          <h2 class="tournament-name">{{ tournament.name }}</h2>
-          @if (tournament.season) {
-            <span class="tournament-season">Temporada {{ tournament.season }}</span>
+  <mat-card>
+    <mat-card-content>
+      <div class="tournament-header">
+        <h2 class="tournament-name">{{ tournament.name }}</h2>
+        @if (tournament.season) {
+        <span class="tournament-season">Temporada {{ tournament.season }}</span>
+        } @if (tournament.sport) {
+        <mat-chip-set>
+          <mat-chip color="primary" highlighted>{{
+            getSportLabel(tournament.sport)
+          }}</mat-chip>
+        </mat-chip-set>
+        } @if (tournament.categories?.length) {
+        <mat-chip-set>
+          @for (cat of tournament.categories; track cat) {
+          <mat-chip>{{ getCategoryLabel(cat) }}</mat-chip>
           }
-          @if (tournament.sport) {
-            <mat-chip-set>
-              <mat-chip color="primary" highlighted>{{ getSportLabel(tournament.sport) }}</mat-chip>
-            </mat-chip-set>
-          }
-          @if (tournament.categories?.length) {
-            <mat-chip-set>
-              @for (cat of tournament.categories; track cat) {
-                <mat-chip>{{ getCategoryLabel(cat) }}</mat-chip>
-              }
-            </mat-chip-set>
-          }
-        </div>
-
-        @if (tournament.description) {
-          <p class="tournament-description">{{ tournament.description }}</p>
+        </mat-chip-set>
         }
+      </div>
 
-        <div class="info-grid">
-          @if (tournament.createdAt) {
-            <div class="info-item">
-              <span class="info-label">Creado</span>
-              <span class="info-value">{{ tournament.createdAt | date: 'dd/MM/yyyy' }}</span>
-            </div>
-          }
-          @if (tournament.updatedAt) {
-            <div class="info-item">
-              <span class="info-label">Actualizado</span>
-              <span class="info-value">{{ tournament.updatedAt | date: 'dd/MM/yyyy' }}</span>
-            </div>
-          }
+      @if (tournament.description) {
+      <p class="tournament-description">{{ tournament.description }}</p>
+      }
+
+      <div class="info-grid">
+        @if (tournament.createdAt) {
+        <div class="info-item">
+          <span class="info-label">Creado</span>
+          <span class="info-value">{{
+            tournament.createdAt | date : 'dd/MM/yyyy'
+          }}</span>
         </div>
-      </mat-card-content>
-    </mat-card>
+        } @if (tournament.updatedAt) {
+        <div class="info-item">
+          <span class="info-label">Actualizado</span>
+          <span class="info-value">{{
+            tournament.updatedAt | date : 'dd/MM/yyyy'
+          }}</span>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-    <div class="viewer-actions">
-      <button mat-stroked-button type="button" (click)="backToList()">
-        <mat-icon>arrow_back</mat-icon>
-        Volver
-      </button>
-      <button mat-flat-button color="primary" type="button" (click)="edit()">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
-    </div>
+  <div class="viewer-actions">
+    <button mat-stroked-button type="button" (click)="backToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+    <button mat-flat-button color="primary" type="button" (click)="edit()">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+  </div>
 
   }
 </div>

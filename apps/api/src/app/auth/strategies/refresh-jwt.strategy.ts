@@ -12,11 +12,11 @@ interface JwtPayload {
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh',
+  'jwt-refresh'
 ) {
   constructor(
     configService: ConfigService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UsersService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromBodyField('refresh'),
@@ -25,8 +25,8 @@ export class RefreshJwtStrategy extends PassportStrategy(
         'AUTH_REFRESH_JWT_SECRET',
         configService.get<string>(
           'GOOGLE_AUTH_REFRESH_JWT_SECRET',
-          'super-secret-key',
-        ),
+          'super-secret-key'
+        )
       ),
     });
   }

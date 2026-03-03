@@ -1,7 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Match, PaginatedResponse, PaginationQuery } from '@ltrc-ps/shared-api-model';
+import {
+  Match,
+  PaginatedResponse,
+  PaginationQuery,
+} from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
 import { mapFormToCreateMatchDto } from '../forms/match-form.mapper';
@@ -16,10 +20,16 @@ export class MatchesService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly matchesApiUrl = `${this.config.baseUrl}/matches`;
 
-  getFieldOptions(): Observable<{ opponents: string[]; venues: string[]; divisions: string[] }> {
-    return this.httpClient.get<{ opponents: string[]; venues: string[]; divisions: string[] }>(
-      `${this.matchesApiUrl}/field-options`
-    );
+  getFieldOptions(): Observable<{
+    opponents: string[];
+    venues: string[];
+    divisions: string[];
+  }> {
+    return this.httpClient.get<{
+      opponents: string[];
+      venues: string[];
+      divisions: string[];
+    }>(`${this.matchesApiUrl}/field-options`);
   }
 
   getMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {
@@ -31,7 +41,9 @@ export class MatchesService {
     if (query.sortBy) params = params.set('sortBy', query.sortBy);
     if (query.sortOrder) params = params.set('sortOrder', query.sortOrder);
 
-    return this.httpClient.get<PaginatedResponse<Match>>(this.matchesApiUrl, { params });
+    return this.httpClient.get<PaginatedResponse<Match>>(this.matchesApiUrl, {
+      params,
+    });
   }
 
   getMatchById(id: string): Observable<Match> {
@@ -60,11 +72,20 @@ export class MatchesService {
     return matchTypeOptions.find((o) => o.id === type)?.label ?? type;
   }
 
-  updateSquad(matchId: string, squad: { shirtNumber: number; playerId: string }[]): Observable<Match> {
-    return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${matchId}/squad`, { squad });
+  updateSquad(
+    matchId: string,
+    squad: { shirtNumber: number; playerId: string }[]
+  ): Observable<Match> {
+    return this.httpClient.patch<Match>(
+      `${this.matchesApiUrl}/${matchId}/squad`,
+      { squad }
+    );
   }
 
   applySquadFromTemplate(matchId: string, squadId: string): Observable<Match> {
-    return this.httpClient.post<Match>(`${this.matchesApiUrl}/${matchId}/squad/from/${squadId}`, {});
+    return this.httpClient.post<Match>(
+      `${this.matchesApiUrl}/${matchId}/squad/from/${squadId}`,
+      {}
+    );
   }
 }

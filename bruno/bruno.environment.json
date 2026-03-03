@@ -2,7 +2,11 @@
   "id": "bruno-ltrc-env",
   "name": "local",
   "values": [
-    { "key": "baseUrl", "value": "http://localhost:3000/api/v1", "enabled": true },
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api/v1",
+      "enabled": true
+    },
     { "key": "access_token", "value": "", "enabled": true },
     { "key": "refresh_token", "value": "", "enabled": true }
   ]

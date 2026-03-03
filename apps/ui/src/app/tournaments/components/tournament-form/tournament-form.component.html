@@ -1,14 +1,16 @@
-<form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()" class="tournament-form-container">
-
+<form
+  [formGroup]="tournamentForm"
+  (ngSubmit)="onSubmit()"
+  class="tournament-form-container"
+>
   <mat-card>
     <mat-card-title>Datos del torneo</mat-card-title>
     <div class="tournament-grid">
-
       <mat-form-field appearance="outline" class="name-field">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="name" />
         @if (tournamentForm.get('name')?.invalid) {
-          <mat-error>El nombre es obligatorio</mat-error>
+        <mat-error>El nombre es obligatorio</mat-error>
         }
       </mat-form-field>
 
@@ -17,7 +19,7 @@
         <mat-select formControlName="sport">
           <mat-option [value]="null">Sin especificar</mat-option>
           @for (s of sportOptions; track s.id) {
-            <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -26,7 +28,7 @@
         <mat-label>Categorías</mat-label>
         <mat-select formControlName="categories" multiple>
           @for (cat of categoryOptions; track cat.id) {
-            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -40,16 +42,11 @@
         <mat-label>Descripción</mat-label>
         <textarea matInput formControlName="description" rows="3"></textarea>
       </mat-form-field>
-
     </div>
   </mat-card>
 
   <div class="form-actions">
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="onCancel()"
-    >
+    <button mat-stroked-button type="button" (click)="onCancel()">
       <mat-icon>arrow_back</mat-icon>
       Cancelar
     </button>
@@ -66,7 +63,6 @@
   </div>
 
   @if (submitting) {
-    <mat-progress-bar mode="indeterminate" />
+  <mat-progress-bar mode="indeterminate" />
   }
-
 </form>

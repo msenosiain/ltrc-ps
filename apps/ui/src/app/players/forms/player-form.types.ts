@@ -8,6 +8,7 @@ import { PhotoValue } from '../components/player-photo-field/player-photo-field.
 
 export type PlayerFormValue = {
   photo?: PhotoValue | null;
+  createUser?: boolean;
 
   firstName: string;
   secondName: string;

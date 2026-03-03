@@ -1,7 +1,21 @@
-import { Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  inject,
+  OnInit,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+  MatAutocompleteModule,
+  MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -15,8 +29,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
-import { Match, Player, Squad, SquadEntry, SquadPlayerTemplate } from '@ltrc-ps/shared-api-model';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+} from 'rxjs/operators';
+import {
+  Match,
+  Player,
+  Squad,
+  SquadEntry,
+  SquadPlayerTemplate,
+} from '@ltrc-ps/shared-api-model';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { PlayersService } from '../../../players/services/players.service';
 import { MatchesService } from '../../services/matches.service';
@@ -66,7 +91,10 @@ export class SquadEditorComponent implements OnInit {
 
   addForm = this.fb.group({
     playerSearch: [null as Player | string | null],
-    shirtNumber: [null as number | null, [Validators.min(1), Validators.max(99)]],
+    shirtNumber: [
+      null as number | null,
+      [Validators.min(1), Validators.max(99)],
+    ],
   });
 
   playerSuggestions: Player[] = [];
@@ -79,11 +107,17 @@ export class SquadEditorComponent implements OnInit {
     player ? `${player.lastName}, ${player.firstName}` : '';
 
   readonly formationGroups: number[][][] = [
-    [[1, 2, 3], [4, 5], [6, 8, 7]],
+    [
+      [1, 2, 3],
+      [4, 5],
+      [6, 8, 7],
+    ],
     [[9, 10, 12, 13]],
     [[11, 15, 14]],
   ];
-  private readonly formationShirts = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+  private readonly formationShirts = new Set([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  ]);
 
   get opponentLabel(): string {
     return this.match ? `vs. ${this.match.opponent}` : '';
@@ -91,18 +125,25 @@ export class SquadEditorComponent implements OnInit {
 
   get selectedSquad(): Squad | null {
     const id = this.selectedSquadIdCtrl.value;
-    return id ? (this.squads.find((s) => s.id === id) ?? null) : null;
+    return id ? this.squads.find((s) => s.id === id) ?? null : null;
   }
 
   get titulares(): SquadEntry[] {
-    return this.squadRows.filter((e) => e.shirtNumber <= 15).sort((a, b) => a.shirtNumber - b.shirtNumber);
+    return this.squadRows
+      .filter((e) => e.shirtNumber <= 15)
+      .sort((a, b) => a.shirtNumber - b.shirtNumber);
   }
 
   get suplentes(): SquadEntry[] {
-    return this.squadRows.filter((e) => e.shirtNumber > 15).sort((a, b) => a.shirtNumber - b.shirtNumber);
+    return this.squadRows
+      .filter((e) => e.shirtNumber > 15)
+      .sort((a, b) => a.shirtNumber - b.shirtNumber);
   }
 
-  getFormationRow(row: number[], players: SquadPlayerTemplate[]): SquadPlayerTemplate[] {
+  getFormationRow(
+    row: number[],
+    players: SquadPlayerTemplate[]
+  ): SquadPlayerTemplate[] {
     return row
       .map((n) => players.find((p) => p.shirtNumber === n))
       .filter((p): p is SquadPlayerTemplate => p !== undefined);
@@ -145,14 +186,19 @@ export class SquadEditorComponent implements OnInit {
           this.playersService.getPlayers({
             page: 1,
             size: 20,
-            filters: { searchTerm: term, ...(this.match?.category && { category: this.match.category }) },
+            filters: {
+              searchTerm: term,
+              ...(this.match?.category && { category: this.match.category }),
+            },
           })
         ),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((result) => {
         const existingIds = new Set(this.squadRows.map((e) => e.player?.id));
-        this.playerSuggestions = result.items.filter((p) => !existingIds.has(p.id));
+        this.playerSuggestions = result.items.filter(
+          (p) => !existingIds.has(p.id)
+        );
       });
 
     this.addForm
@@ -177,7 +223,10 @@ export class SquadEditorComponent implements OnInit {
       this.addForm.get('shirtNumber')!.setErrors({ duplicate: true });
       return;
     }
-    this.squadRows = [...this.squadRows, { shirtNumber, player: this.selectedPlayer }];
+    this.squadRows = [
+      ...this.squadRows,
+      { shirtNumber, player: this.selectedPlayer },
+    ];
     this.isDirty = true;
     this.selectedPlayer = null;
     this.addForm.reset();
@@ -206,7 +255,10 @@ export class SquadEditorComponent implements OnInit {
         filter((confirmed) => !!confirmed),
         switchMap(() => {
           this.saving = true;
-          return this.matchesService.applySquadFromTemplate(this.match!.id!, squadId);
+          return this.matchesService.applySquadFromTemplate(
+            this.match!.id!,
+            squadId
+          );
         }),
         takeUntilDestroyed(this.destroyRef)
       )
@@ -238,7 +290,11 @@ export class SquadEditorComponent implements OnInit {
             playerId: e.player.id!,
           }));
           if (result.mode === 'create') {
-            return this.squadsService.createSquad({ name: result.name, category: this.match?.category, players });
+            return this.squadsService.createSquad({
+              name: result.name,
+              category: this.match?.category,
+              players,
+            });
           } else {
             return this.squadsService.updateSquad(result.squadId, { players });
           }
@@ -257,7 +313,8 @@ export class SquadEditorComponent implements OnInit {
   deleteTemplate(): void {
     const squadId = this.selectedSquadIdCtrl.value;
     if (!squadId) return;
-    const name = this.squads.find((s) => s.id === squadId)?.name ?? 'esta plantilla';
+    const name =
+      this.squads.find((s) => s.id === squadId)?.name ?? 'esta plantilla';
 
     this.dialog
       .open(ConfirmDialogComponent, {
@@ -314,7 +371,9 @@ export class SquadEditorComponent implements OnInit {
   }
 
   getPositionLabel(player: Player): string {
-    return player.position ? this.playersService.getPositionLabel(player.position) : '—';
+    return player.position
+      ? this.playersService.getPositionLabel(player.position)
+      : '—';
   }
 
   @HostListener('document:keydown.escape')

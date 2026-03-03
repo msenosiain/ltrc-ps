@@ -36,12 +36,23 @@ export class MatchesService {
     return match.save();
   }
 
-  async updateSquad(id: string, squad: { shirtNumber: number; playerId: string }[]) {
+  async updateSquad(
+    id: string,
+    squad: { shirtNumber: number; playerId: string }[]
+  ) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');
 
-    match.set('squad', squad.map(({ shirtNumber, playerId }) => ({ shirtNumber, player: playerId })));
-    return this.stripOrphanedSquad(await (await match.save()).populate(POPULATE_FIELDS));
+    match.set(
+      'squad',
+      squad.map(({ shirtNumber, playerId }) => ({
+        shirtNumber,
+        player: playerId,
+      }))
+    );
+    return this.stripOrphanedSquad(
+      await (await match.save()).populate(POPULATE_FIELDS)
+    );
   }
 
   async findPaginated(
@@ -110,15 +121,16 @@ export class MatchesService {
   }
 
   async findOne(id: string) {
-    const match = await this.matchModel
-      .findById(id)
-      .populate(POPULATE_FIELDS);
+    const match = await this.matchModel.findById(id).populate(POPULATE_FIELDS);
     if (!match) throw new NotFoundException('Match not found');
     return this.stripOrphanedSquad(match);
   }
 
   private stripOrphanedSquad(match: MatchEntity) {
-    match.set('squad', (match.squad ?? []).filter((e) => e.player != null));
+    match.set(
+      'squad',
+      (match.squad ?? []).filter((e) => e.player != null)
+    );
     return match;
   }
 
@@ -131,9 +143,14 @@ export class MatchesService {
 
     match.set(
       'squad',
-      squadEntries.map((e) => ({ shirtNumber: e.shirtNumber, player: e.player }))
+      squadEntries.map((e) => ({
+        shirtNumber: e.shirtNumber,
+        player: e.player,
+      }))
     );
-    return this.stripOrphanedSquad(await (await match.save()).populate(POPULATE_FIELDS));
+    return this.stripOrphanedSquad(
+      await (await match.save()).populate(POPULATE_FIELDS)
+    );
   }
 
   async delete(id: string) {

@@ -1,10 +1,19 @@
-import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TournamentsService, TournamentFormValue } from '../../services/tournaments.service';
+import {
+  TournamentsService,
+  TournamentFormValue,
+} from '../../services/tournaments.service';
 import { Tournament } from '@ltrc-ps/shared-api-model';
 import { TournamentFormComponent } from '../tournament-form/tournament-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
@@ -55,7 +64,10 @@ export class TournamentEditorComponent implements OnInit {
         .updateTournament(this.tournament.id, payload)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+          next: () => {
+            this.submitting = false;
+            this.router.navigate(['/dashboard/tournaments']);
+          },
           error: onError,
         });
       return;
@@ -65,7 +77,10 @@ export class TournamentEditorComponent implements OnInit {
       .createTournament(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+        next: () => {
+          this.submitting = false;
+          this.router.navigate(['/dashboard/tournaments']);
+        },
         error: onError,
       });
   }
@@ -80,7 +95,8 @@ export class TournamentEditorComponent implements OnInit {
       },
     });
 
-    ref.afterClosed()
+    ref
+      .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (!confirmed) return;
