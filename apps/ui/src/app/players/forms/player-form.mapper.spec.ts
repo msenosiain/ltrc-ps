@@ -128,8 +128,8 @@ describe('mapPlayerToForm', () => {
     expect(result.email).toBe('juan@lostordos.com.ar');
     expect(result.position).toBe(RugbyPositions.FULLBACK);
     expect(result.alternatePosition).toBe(RugbyPositions.LEFT_WING);
-    expect(result.height).toBe(180);
-    expect(result.weight).toBe(85);
+    expect(result.medicalData.height).toBe(180);
+    expect(result.medicalData.weight).toBe(85);
   });
 
   it('should map address with floorApartment and neighborhood', () => {
