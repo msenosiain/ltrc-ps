@@ -3,6 +3,7 @@ import {
   IsDate,
   IsEmail,
   IsEnum,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
@@ -12,11 +13,14 @@ import {
 } from 'class-validator';
 
 import { Transform, Type, plainToInstance } from 'class-transformer';
-import { parse } from 'date-fns';
 import {
+  CategoryEnum,
   ClothingSizesEnum,
-  DATE_FORMAT,
-  PlayerPositionEnum,
+  HockeyPositions,
+  parseDate,
+  PlayerPosition,
+  RugbyPositions,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
 export class AddressDto {
@@ -66,6 +70,27 @@ export class ClothingSizesDto {
   pants?: ClothingSizesEnum;
 }
 
+export class MedicalDataDto {
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  height?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  weight?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  torgIndex?: number;
+
+  @IsOptional()
+  @IsString()
+  healthInsurance?: string;
+}
+
 export class CreatePlayerDto {
   @IsNotEmpty()
   @IsString()
@@ -77,6 +102,10 @@ export class CreatePlayerDto {
 
   @IsOptional()
   @IsString()
+  readonly secondName?: string;
+
+  @IsOptional()
+  @IsString()
   readonly nickName?: string;
 
   @IsNotEmpty()
@@ -84,38 +113,29 @@ export class CreatePlayerDto {
   readonly idNumber!: string;
 
   @IsNotEmpty()
-  @Transform(({ value }) => {
-    const parsedDate = parse(value, DATE_FORMAT, new Date());
-    return parsedDate instanceof Date && !isNaN(parsedDate.getTime())
-      ? parsedDate
-      : null;
-  })
-  @IsDate({
-    message: `$property must be a Date instance with format ${DATE_FORMAT}`,
-  })
+  @Transform(({ value }) => parseDate(value))
+  @IsDate({ message: '$property must be a valid date (dd/MM/yyyy)' })
   readonly birthDate!: Date;
 
   @IsNotEmpty()
   @IsEmail()
   readonly email!: string;
 
-  @IsNotEmpty()
-  @IsEnum(PlayerPositionEnum)
-  readonly position!: PlayerPositionEnum;
+  @IsOptional()
+  @IsEnum(SportEnum)
+  readonly sport?: SportEnum;
 
   @IsOptional()
-  @IsEnum(PlayerPositionEnum)
-  readonly alternatePosition?: PlayerPositionEnum;
+  @IsEnum(CategoryEnum)
+  readonly category?: CategoryEnum;
 
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  readonly height?: number;
+  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  readonly position?: PlayerPosition;
 
   @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  readonly weight?: number;
+  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  readonly alternatePosition?: PlayerPosition;
 
   @IsOptional()
   @Transform(({ value }) => {
@@ -132,6 +152,14 @@ export class CreatePlayerDto {
   })
   @ValidateNested()
   readonly clothingSizes?: ClothingSizesDto;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    const obj = typeof value === 'string' ? JSON.parse(value) : value;
+    return plainToInstance(MedicalDataDto, obj);
+  })
+  @ValidateNested()
+  readonly medicalData?: MedicalDataDto;
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)

@@ -13,6 +13,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { SportEnum } from '@ltrc-ps/shared-api-model';
+import { SportOption, sportOptions } from '../../../common/sport-options';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 
 @Component({
@@ -24,6 +27,7 @@ import { nullToUndefined } from '../../../common/utils/null-to-undefined';
     MatIconModule,
     MatInputModule,
     MatButtonModule,
+    MatSelectModule,
   ],
   templateUrl: './tournament-search.component.html',
   styleUrl: './tournament-search.component.scss',
@@ -32,10 +36,13 @@ export class TournamentSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  @Output() readonly filtersChange = new EventEmitter<{ searchTerm?: string }>();
+  @Output() readonly filtersChange = new EventEmitter<{ searchTerm?: string; sport?: SportEnum }>();
+
+  readonly sportOptions: SportOption[] = sportOptions;
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
+    sport: [undefined as SportEnum | undefined],
   });
 
   ngOnInit(): void {
@@ -46,5 +53,9 @@ export class TournamentSearchComponent implements OnInit {
 
   clearSearch(): void {
     this.searchForm.get('searchTerm')?.setValue('');
+  }
+
+  clearField(field: string): void {
+    this.searchForm.get(field)?.setValue(undefined);
   }
 }

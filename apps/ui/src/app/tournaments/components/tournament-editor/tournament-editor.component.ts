@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -48,25 +48,26 @@ export class TournamentEditorComponent implements OnInit {
   onFormSubmit(payload: TournamentFormValue): void {
     this.submitting = true;
 
-    const onSuccess = (t: Tournament) => {
-      this.submitting = false;
-      this.router.navigate(['/dashboard/tournaments', t.id]);
-    };
-
     const onError = () => (this.submitting = false);
 
     if (this.editing && this.tournament?.id) {
       this.tournamentsService
         .updateTournament(this.tournament.id, payload)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: onSuccess, error: onError });
+        .subscribe({
+          next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+          error: onError,
+        });
       return;
     }
 
     this.tournamentsService
       .createTournament(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: onSuccess, error: onError });
+      .subscribe({
+        next: () => { this.submitting = false; this.router.navigate(['/dashboard/tournaments']); },
+        error: onError,
+      });
   }
 
   onDelete(): void {
@@ -88,6 +89,12 @@ export class TournamentEditorComponent implements OnInit {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => this.router.navigate(['/dashboard/tournaments']));
       });
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.dialog.openDialogs.length > 0) return;
+    this.onCancel();
   }
 
   onCancel(): void {

@@ -1,7 +1,9 @@
 import { Document, Types } from 'mongoose';
 import {
-  PlayerPositionEnum,
+  CategoryEnum,
   ClothingSizesEnum,
+  PlayerPosition,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
 export class PlayerEntity extends Document {
@@ -9,10 +11,11 @@ export class PlayerEntity extends Document {
   idNumber: string;
   lastName: string;
   firstName: string;
+  secondName?: string;
   nickName: string;
   birthDate: Date;
   email: string;
-  address: {
+  address?: {
     street?: string;
     number?: string;
     floorApartment?: string;
@@ -21,15 +24,21 @@ export class PlayerEntity extends Document {
     postalCode?: string;
     phoneNumber: string;
   };
-  position: PlayerPositionEnum;
-  alternatePosition?: PlayerPositionEnum;
-  height?: number;
-  weight?: number;
+  sport?: SportEnum;
+  category?: CategoryEnum;
+  position?: PlayerPosition;
+  alternatePosition?: PlayerPosition;
   clothingSizes?: {
     jersey?: ClothingSizesEnum;
     shorts?: ClothingSizesEnum;
     sweater?: ClothingSizesEnum;
     pants?: ClothingSizesEnum;
+  };
+  medicalData?: {
+    height?: number;
+    weight?: number;
+    torgIndex?: number;
+    healthInsurance?: string;
   };
   photoId?: string;
   userId?: Types.ObjectId;

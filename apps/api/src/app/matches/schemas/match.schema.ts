@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
 import { MatchEntity } from './match.entity';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
 
@@ -33,6 +33,7 @@ const MatchVideoSchema = new Schema(
 export const MatchSchema = new Schema<MatchEntity>(
   {
     date: { type: Date, required: true },
+    time: { type: String },
     opponent: { type: String, required: true },
     venue: { type: String, required: true },
     isHome: { type: Boolean, required: true },
@@ -46,6 +47,15 @@ export const MatchSchema = new Schema<MatchEntity>(
       enum: Object.values(MatchTypeEnum),
       required: true,
     },
+    sport: {
+      type: String,
+      enum: Object.values(SportEnum),
+    },
+    category: {
+      type: String,
+      enum: Object.values(CategoryEnum),
+    },
+    division: { type: String },
     tournament: { type: Types.ObjectId, ref: TournamentEntity.name },
     squad: [MatchSquadEntrySchema],
     videos: [MatchVideoSchema],

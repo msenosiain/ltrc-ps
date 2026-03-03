@@ -11,6 +11,13 @@
   background: var(--mat-app-background-color, #fafafa);
   padding: 16px 24px 0;
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .delete-btn {
+    margin-left: auto;
+  }
 
   mat-progress-bar {
     margin-top: 8px;

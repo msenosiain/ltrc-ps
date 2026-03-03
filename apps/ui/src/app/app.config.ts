@@ -11,9 +11,26 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { es } from 'date-fns/locale';
 import { authInterceptor } from './auth/auth.interceptor';
+
+function getEsArPaginatorIntl(): MatPaginatorIntl {
+  const intl = new MatPaginatorIntl();
+  intl.itemsPerPageLabel = 'Elementos por página:';
+  intl.nextPageLabel = 'Siguiente';
+  intl.previousPageLabel = 'Anterior';
+  intl.firstPageLabel = 'Primera página';
+  intl.lastPageLabel = 'Última página';
+  intl.getRangeLabel = (page, pageSize, length) => {
+    if (length === 0) return '0 de 0';
+    const start = page * pageSize + 1;
+    const end = Math.min((page + 1) * pageSize, length);
+    return `${start} – ${end} de ${length}`;
+  };
+  return intl;
+}
 
 export interface ApiConfig {
   baseUrl: string;
@@ -42,13 +59,19 @@ export const appConfig: ApplicationConfig = {
     apiConfigProvider,
     { provide: LOCALE_ID, useValue: 'es-AR' },
     { provide: MAT_DATE_LOCALE, useValue: es },
+    { provide: MatPaginatorIntl, useFactory: getEsArPaginatorIntl },
     provideDateFnsAdapter({
-      parse: { dateInput: 'dd/MM/yyyy' },
+      parse: {
+        dateInput: 'dd/MM/yyyy',
+        timeInput: 'HH:mm',
+      },
       display: {
         dateInput: 'dd/MM/yyyy',
         monthYearLabel: 'MMM yyyy',
         dateA11yLabel: 'dd/MM/yyyy',
         monthYearA11yLabel: 'MMMM yyyy',
+        timeInput: 'HH:mm',
+        timeOptionLabel: 'HH:mm',
       },
     }),
   ],

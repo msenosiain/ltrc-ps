@@ -6,17 +6,19 @@ import { format } from 'date-fns';
 export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
   return {
     firstName: value.firstName,
+    secondName: value.secondName || undefined,
     lastName: value.lastName,
     nickName: value.nickName || undefined,
     idNumber: value.idNumber,
     birthDate: format(value.birthDate!, DATE_FORMAT),
     email: value.email,
+    sport: value.sport ?? undefined,
+    category: value.category ?? undefined,
     position: value.position!,
     alternatePosition: value.alternatePosition ?? undefined,
-    height: value.height ?? undefined,
-    weight: value.weight ?? undefined,
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
+    medicalData: mapMedicalData(value),
     createUser: value.createUser ?? false,
   };
 }
@@ -27,17 +29,17 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
     photo: null, // la foto existente se maneja via existingPhotoUrl, no como PhotoValue
 
     firstName: player.firstName,
+    secondName: player.secondName ?? '',
     lastName: player.lastName,
     nickName: player.nickName ?? '',
     idNumber: player.idNumber,
     birthDate: player.birthDate,
     email: player.email,
 
-    position: player.position,
+    sport: player.sport ?? null,
+    category: player.category ?? null,
+    position: player.position ?? null,
     alternatePosition: player.alternatePosition ?? null,
-
-    height: player.height ?? null,
-    weight: player.weight ?? null,
 
     address: {
       street: player.address?.street ?? '',
@@ -54,6 +56,13 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
       shorts: player.clothingSizes?.shorts ?? null,
       sweater: player.clothingSizes?.sweater ?? null,
       pants: player.clothingSizes?.pants ?? null,
+    },
+
+    medicalData: {
+      height: player.medicalData?.height ?? null,
+      weight: player.medicalData?.weight ?? null,
+      torgIndex: player.medicalData?.torgIndex ?? null,
+      healthInsurance: player.medicalData?.healthInsurance ?? '',
     },
   };
 }
@@ -73,6 +82,16 @@ function mapAddress(value: PlayerFormValue) {
     neighborhood: a.neighborhood || undefined,
     phoneNumber: a.phoneNumber,
   };
+}
+
+function mapMedicalData(value: PlayerFormValue) {
+  const m = {
+    height: value.medicalData.height ?? undefined,
+    weight: value.medicalData.weight ?? undefined,
+    torgIndex: value.medicalData.torgIndex ?? undefined,
+    healthInsurance: value.medicalData.healthInsurance || undefined,
+  };
+  return Object.values(m).some((v) => v !== undefined) ? m : undefined;
 }
 
 function mapClothingSizes(value: PlayerFormValue) {

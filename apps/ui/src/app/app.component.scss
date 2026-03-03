@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
 .logo {
   height: 50px; /* Adjust as needed */
   margin-right: 10px;
@@ -33,5 +40,7 @@
 }
 
 .main-content {
-  padding: 20px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }

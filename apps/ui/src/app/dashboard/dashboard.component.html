@@ -4,19 +4,18 @@
       <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members">Socios</a>
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="players">Jugadores</a>
       <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="tournaments">Torneos</a>
+      <a *ltrcAllowedRoles="[Role.USER, Role.ADMIN]" mat-list-item routerLink="matches">Partidos</a>
       @if (isPlayer() && myPlayerId()) {
         <a mat-list-item [routerLink]="['players', myPlayerId()]">Mi Perfil</a>
       }
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    @if (isSmallScreen()) {
-      <div class="mobile-toolbar">
-        <button mat-icon-button (click)="sidenav.toggle()">
-          <mat-icon>menu</mat-icon>
-        </button>
-      </div>
-    }
+    <div class="toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Abrir/cerrar menú">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
     <div class="content">
       <router-outlet></router-outlet>
 

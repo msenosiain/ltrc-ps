@@ -33,11 +33,12 @@ export class DashboardComponent implements OnInit {
 
   myPlayerId = signal<string | null>(null);
 
+  private readonly breakpointObserver = inject(BreakpointObserver);
   isSmallScreen = toSignal(
-    inject(BreakpointObserver).observe('(max-width: 960px)').pipe(
+    this.breakpointObserver.observe('(max-width: 960px)').pipe(
       map(result => result.matches)
     ),
-    { initialValue: false }
+    { initialValue: this.breakpointObserver.isMatched('(max-width: 960px)') }
   );
 
   ngOnInit(): void {

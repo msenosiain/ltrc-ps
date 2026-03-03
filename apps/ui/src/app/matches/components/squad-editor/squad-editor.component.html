@@ -1,0 +1,225 @@
+@if (match) {
+
+  <div class="editor-header">
+    <button mat-icon-button type="button" (click)="cancel()" [disabled]="saving">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="editor-title">
+      <span class="editor-subtitle">Plantel convocado</span>
+      <span class="editor-match">{{ opponentLabel }}</span>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="!isDirty || saving"
+      (click)="saveSquad()"
+    >
+      <mat-icon>save</mat-icon>
+      Guardar
+    </button>
+  </div>
+
+  @if (saving) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <div class="editor-body">
+
+    <!-- ── PLANTILLAS ── -->
+    <mat-expansion-panel class="template-panel" [disabled]="saving">
+      <mat-expansion-panel-header>
+        <mat-panel-title>Plantillas</mat-panel-title>
+      </mat-expansion-panel-header>
+
+      @if (squads.length > 0) {
+        <div class="template-row">
+          <mat-form-field appearance="outline" class="template-select">
+            <mat-label>Seleccionar plantilla</mat-label>
+            <mat-select [formControl]="selectedSquadIdCtrl">
+              @for (squad of squads; track squad.id) {
+                <mat-option [value]="squad.id">{{ squad.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <button
+            mat-stroked-button
+            type="button"
+            [disabled]="!selectedSquadIdCtrl.value || saving"
+            (click)="applyTemplate()"
+          >
+            Aplicar
+          </button>
+          <button
+            mat-icon-button
+            type="button"
+            color="warn"
+            [disabled]="!selectedSquadIdCtrl.value || saving"
+            (click)="deleteTemplate()"
+            matTooltip="Eliminar plantilla"
+          >
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+
+        @if (selectedSquad) {
+          <div class="formation-preview">
+            @for (group of formationGroups; track $index) {
+              <div class="formation-group">
+                @for (row of group; track $index) {
+                  @if (hasFormationRow(row, selectedSquad.players)) {
+                    <div class="formation-row">
+                      @for (entry of getFormationRow(row, selectedSquad.players); track entry.shirtNumber) {
+                        <span class="formation-chip">
+                          <span class="chip-number">{{ entry.shirtNumber }}</span>
+                          <span class="chip-name">{{ entry.player.lastName }}</span>
+                        </span>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+            }
+            @if (getExtraPlayers(selectedSquad.players).length > 0) {
+              <div class="formation-group formation-group--extra">
+                <div class="formation-row">
+                  @for (entry of getExtraPlayers(selectedSquad.players); track entry.shirtNumber) {
+                    <span class="formation-chip">
+                      <span class="chip-number">{{ entry.shirtNumber }}</span>
+                      <span class="chip-name">{{ entry.player.lastName }}</span>
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        <p class="no-squads-hint">No hay plantillas guardadas aún.</p>
+      }
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="save-template-btn"
+        [disabled]="squadRows.length === 0 || saving"
+        (click)="saveAsTemplate()"
+      >
+        <mat-icon>bookmark_add</mat-icon>
+        Guardar formación actual como plantilla
+      </button>
+
+    </mat-expansion-panel>
+
+    <!-- ── AGREGAR JUGADOR ── -->
+    <form [formGroup]="addForm" (ngSubmit)="addPlayer()" class="add-row">
+      <mat-form-field appearance="outline" class="player-search-field">
+        <mat-label>Buscar jugador</mat-label>
+        <input
+          matInput
+          formControlName="playerSearch"
+          [matAutocomplete]="playerAuto"
+          placeholder="Apellido..."
+        />
+        <mat-autocomplete
+          #playerAuto="matAutocomplete"
+          [displayWith]="displayPlayerFn"
+          (optionSelected)="onPlayerSelected($event)"
+        >
+          @for (player of playerSuggestions; track player.id) {
+            <mat-option [value]="player">{{ player.lastName }}, {{ player.firstName }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="shirt-number-field">
+        <mat-label>Camiseta</mat-label>
+        <input matInput type="number" formControlName="shirtNumber" min="1" max="99" />
+        @if (addForm.get('shirtNumber')?.hasError('duplicate')) {
+          <mat-error>Ya existe</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="!selectedPlayer || !addForm.value.shirtNumber || saving"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </form>
+
+    <mat-divider class="section-divider" />
+
+    <!-- ── PLANTEL ACTUAL ── -->
+    @if (titulares.length > 0) {
+      <p class="squad-group-label">Titulares</p>
+      <table mat-table [dataSource]="titulares" class="squad-table">
+        <ng-container matColumnDef="shirtNumber">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.shirtNumber }}</td>
+        </ng-container>
+        <ng-container matColumnDef="player">
+          <th mat-header-cell *matHeaderCellDef>Jugador</th>
+          <td mat-cell *matCellDef="let entry">
+            {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Posición</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.player ? getPositionLabel(entry.player) : '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let entry">
+            <button mat-icon-button type="button" (click)="removePlayer(entry)" [disabled]="saving">
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    }
+
+    @if (suplentes.length > 0) {
+      <mat-divider class="group-divider" />
+      <p class="squad-group-label">Suplentes</p>
+      <table mat-table [dataSource]="suplentes" class="squad-table">
+        <ng-container matColumnDef="shirtNumber">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.shirtNumber }}</td>
+        </ng-container>
+        <ng-container matColumnDef="player">
+          <th mat-header-cell *matHeaderCellDef>Jugador</th>
+          <td mat-cell *matCellDef="let entry">
+            {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>Posición</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.player ? getPositionLabel(entry.player) : '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let entry">
+            <button mat-icon-button type="button" (click)="removePlayer(entry)" [disabled]="saving">
+              <mat-icon>remove_circle_outline</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    }
+
+    @if (titulares.length === 0 && suplentes.length === 0) {
+      <p class="empty-message">Sin jugadores convocados.</p>
+    }
+
+  </div>
+
+} @else {
+  <mat-progress-bar mode="indeterminate" />
+}

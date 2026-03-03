@@ -6,11 +6,13 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-
+import { CategoryEnum } from '@ltrc-ps/shared-api-model';
 import { SquadsService } from './squads.service';
 import { CreateSquadDto } from './dto/create-squad.dto';
+import { UpdateSquadDto } from './dto/update-squad.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 // @UseGuards(JwtAuthGuard)
@@ -19,8 +21,8 @@ export class SquadsController {
   constructor(private readonly squadsService: SquadsService) {}
 
   @Get()
-  async findAll() {
-    return this.squadsService.findAll();
+  async findAll(@Query('category') category?: CategoryEnum) {
+    return this.squadsService.findAll(category);
   }
 
   @Post()
@@ -36,7 +38,7 @@ export class SquadsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() dto: Partial<CreateSquadDto>
+    @Body() dto: UpdateSquadDto
   ) {
     return this.squadsService.update(id, dto);
   }

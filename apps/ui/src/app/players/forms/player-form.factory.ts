@@ -1,7 +1,9 @@
 import { FormBuilder, Validators } from '@angular/forms';
 import {
+  CategoryEnum,
   ClothingSizesEnum,
-  PlayerPositionEnum,
+  PlayerPosition,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
 
@@ -9,16 +11,19 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
     photo: fb.control<PhotoValue | null>(null),
     createUser: fb.nonNullable.control(false),
-    firstName: fb.nonNullable.control('', [
+    firstName: fb.nonNullable.control(
+      '',
       Validators.required,
       Validators.minLength(2),
-      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
-    ]),
-    lastName: fb.nonNullable.control('', [
+      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/)
+    ),
+    secondName: fb.nonNullable.control(''),
+    lastName: fb.nonNullable.control(
+      '',
       Validators.required,
       Validators.minLength(2),
-      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
-    ]),
+      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/)
+    ),
     nickName: fb.nonNullable.control(''),
     idNumber: fb.nonNullable.control('', [
       Validators.required,
@@ -29,11 +34,10 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
     birthDate: fb.control<Date | null>(null, Validators.required),
     email: fb.nonNullable.control('', [Validators.required, Validators.email]),
 
-    position: fb.control<PlayerPositionEnum | null>(null, Validators.required),
-    alternatePosition: fb.control<PlayerPositionEnum | null>(null),
-
-    height: fb.control<number | null>(null, [Validators.min(100), Validators.max(230)]),
-    weight: fb.control<number | null>(null, [Validators.min(30), Validators.max(200)]),
+    sport: fb.control<SportEnum | null>(null),
+    category: fb.control<CategoryEnum | null>(null),
+    position: fb.control<PlayerPosition | null>(null, [Validators.min(100), Validators.max(230)]),
+    alternatePosition: fb.control<PlayerPosition | null>(null, [Validators.min(30), Validators.max(200)]),
 
     address: fb.group({
       street: fb.nonNullable.control(''),
@@ -53,6 +57,13 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
       shorts: fb.control<ClothingSizesEnum | null>(null),
       sweater: fb.control<ClothingSizesEnum | null>(null),
       pants: fb.control<ClothingSizesEnum | null>(null),
+    }),
+
+    medicalData: fb.group({
+      height: fb.control<number | null>(null),
+      weight: fb.control<number | null>(null),
+      torgIndex: fb.control<number | null>(null),
+      healthInsurance: fb.nonNullable.control(''),
     }),
   });
 }

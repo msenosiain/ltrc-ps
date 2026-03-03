@@ -1,6 +1,8 @@
 import {
+  CategoryEnum,
   ClothingSizesEnum,
-  PlayerPositionEnum,
+  PlayerPosition,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
 
@@ -9,17 +11,17 @@ export type PlayerFormValue = {
   createUser?: boolean;
 
   firstName: string;
+  secondName: string;
   lastName: string;
   nickName: string;
   idNumber: string;
   birthDate: Date | null;
   email: string;
 
-  position: PlayerPositionEnum | null;
-  alternatePosition: PlayerPositionEnum | null;
-
-  height: number | null;
-  weight: number | null;
+  sport: SportEnum | null;
+  category: CategoryEnum | null;
+  position: PlayerPosition | null;
+  alternatePosition: PlayerPosition | null;
 
   address: {
     street: string;
@@ -36,5 +38,12 @@ export type PlayerFormValue = {
     shorts: ClothingSizesEnum | null;
     sweater: ClothingSizesEnum | null;
     pants: ClothingSizesEnum | null;
+  };
+
+  medicalData: {
+    height: number | null;
+    weight: number | null;
+    torgIndex: number | null;
+    healthInsurance: string;
   };
 };

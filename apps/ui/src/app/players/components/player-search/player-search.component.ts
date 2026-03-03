@@ -9,8 +9,10 @@ import {
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PlayerPositionEnum } from '@ltrc-ps/shared-api-model';
-import { PositionOption, positionOptions } from '../../position-options';
+import { CategoryEnum, PlayerPosition, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
+import { SportOption, sportOptions } from '../../../common/sport-options';
+import { getPositionOptionsBySport, PositionOption } from '../../position-options';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -38,17 +40,39 @@ export class PlayerSearchComponent implements OnInit {
 
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
-    position?: PlayerPositionEnum;
+    sport?: SportEnum;
+    position?: PlayerPosition;
+    category?: CategoryEnum;
   }>();
 
-  readonly positionOptions: PositionOption[] = positionOptions;
+  readonly sportOptions: SportOption[] = sportOptions;
+  categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
+  positionOptions: PositionOption[] = getPositionOptionsBySport();
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
-    position: [undefined as PlayerPositionEnum | undefined],
+    sport: [undefined as SportEnum | undefined],
+    position: [undefined as PlayerPosition | undefined],
+    category: [undefined as CategoryEnum | undefined],
   });
 
   ngOnInit(): void {
+    this.searchForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport) => {
+        this.categoryOptions = getCategoryOptionsBySport(sport);
+        this.positionOptions = getPositionOptionsBySport(sport);
+
+        const cat = this.searchForm.get('category')?.value;
+        if (cat && !this.categoryOptions.find((c) => c.id === cat)) {
+          this.searchForm.get('category')?.setValue(undefined, { emitEvent: false });
+        }
+        const pos = this.searchForm.get('position')?.value;
+        if (pos && !this.positionOptions.find((p) => p.id === pos)) {
+          this.searchForm.get('position')?.setValue(undefined, { emitEvent: false });
+        }
+      });
+
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((values) => this.filtersChange.emit(nullToUndefined(values)));

@@ -5,10 +5,12 @@ export interface PaginatedResponse<T> {
   size: number;
 }
 
+import { SortOrder } from '../enums';
+
 export interface PaginationQuery {
   page?: number;
   size?: number;
   filters?: Record<string, any>;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: SortOrder;
 }

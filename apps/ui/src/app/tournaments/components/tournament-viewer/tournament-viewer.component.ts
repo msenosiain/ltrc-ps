@@ -1,17 +1,20 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
+import { sportOptions } from '../../../common/sport-options';
+import { getCategoryLabel } from '../../../common/category-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ltrc-tournament-viewer',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule, DatePipe],
+  imports: [MatCardModule, MatChipsModule, MatButtonModule, MatIconModule, DatePipe],
   templateUrl: './tournament-viewer.component.html',
   styleUrl: './tournament-viewer.component.scss',
 })
@@ -22,6 +25,14 @@ export class TournamentViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
+
+  getSportLabel(sport?: SportEnum): string {
+    return sportOptions.find((s) => s.id === sport)?.label ?? '';
+  }
+
+  getCategoryLabel(id: CategoryEnum): string {
+    return getCategoryLabel(id);
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -42,6 +53,11 @@ export class TournamentViewerComponent implements OnInit {
 
   edit(): void {
     this.router.navigate(['/dashboard/tournaments', this.tournament!.id, 'edit']);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    this.backToList();
   }
 
   backToList(): void {

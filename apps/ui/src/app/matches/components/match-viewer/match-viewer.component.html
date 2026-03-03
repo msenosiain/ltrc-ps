@@ -1,0 +1,137 @@
+<div class="match-viewer">
+  @if (match) {
+
+    <mat-card>
+      <mat-card-content>
+
+        <div class="match-header">
+          <div class="opponent-info">
+            <span class="venue-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
+              {{ match.isHome ? 'Local' : 'Visitante' }}
+            </span>
+            <h2 class="opponent-name">vs. {{ match.opponent }}</h2>
+          </div>
+
+          <div class="chips-row">
+            <mat-chip>{{ getTypeLabel(match.type) }}</mat-chip>
+            <mat-chip class="status-chip status-{{ match.status }}">
+              {{ getStatusLabel(match.status) }}
+            </mat-chip>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Fecha</span>
+            <span class="info-value">
+              {{ match.date | date: 'dd/MM/yyyy' }}
+              @if ((match.date | date: 'HH:mm') !== '00:00') {
+                <span class="match-time">{{ match.date | date: 'HH:mm' }}</span>
+              }
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cancha</span>
+            <span class="info-value">{{ match.venue }}</span>
+          </div>
+          @if (match.category) {
+            <div class="info-item">
+              <span class="info-label">Categoría</span>
+              <span class="info-value">{{ getCategoryLabel(match.category) }}</span>
+            </div>
+          }
+          @if (match.division) {
+            <div class="info-item">
+              <span class="info-label">División</span>
+              <span class="info-value">{{ match.division }}</span>
+            </div>
+          }
+          @if (tournamentName) {
+            <div class="info-item">
+              <span class="info-label">Torneo</span>
+              <span class="info-value">{{ tournamentName }}</span>
+            </div>
+          }
+          @if (match.status === MatchStatusEnum.COMPLETED && match.result) {
+            <div class="info-item">
+              <span class="info-label">Resultado</span>
+              <span class="info-value result">
+                {{ match.isHome ? match.result.homeScore : match.result.awayScore }}
+                –
+                {{ match.isHome ? match.result.awayScore : match.result.homeScore }}
+              </span>
+            </div>
+          }
+        </div>
+
+        @if (match.notes) {
+          <div class="notes">
+            <p class="section-title">Notas</p>
+            <p class="notes-text">{{ match.notes }}</p>
+          </div>
+        }
+
+      </mat-card-content>
+    </mat-card>
+
+    <!-- PLANTEL CONVOCADO -->
+    <mat-card class="squad-card">
+      <mat-card-content>
+        <p class="section-title">Plantel convocado</p>
+
+        @if (titulares.length > 0 || suplentes.length > 0) {
+
+          @if (titulares.length > 0) {
+            <p class="squad-group-label">Titulares</p>
+            @for (entry of titulares; track entry.player?.id) {
+              <div class="squad-entry">
+                <span class="shirt-number">{{ entry.shirtNumber }}</span>
+                <span class="player-name">
+                  {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+                </span>
+                <span class="position-label">{{ getPositionLabel(entry) }}</span>
+              </div>
+            }
+          }
+
+          @if (suplentes.length > 0) {
+            <mat-divider class="group-divider" />
+            <p class="squad-group-label">Suplentes</p>
+            @for (entry of suplentes; track entry.player?.id) {
+              <div class="squad-entry">
+                <span class="shirt-number">{{ entry.shirtNumber }}</span>
+                <span class="player-name">
+                  {{ entry.player ? entry.player.lastName + ', ' + entry.player.firstName : '(eliminado)' }}
+                </span>
+                <span class="position-label">{{ getPositionLabel(entry) }}</span>
+              </div>
+            }
+          }
+
+        } @else {
+          <p class="empty-squad">Sin convocados aún.</p>
+        }
+
+        <div class="squad-card-actions">
+          <button mat-stroked-button type="button" (click)="manageSquad()">
+            <mat-icon>group</mat-icon>
+            Gestionar plantel
+          </button>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+    <div class="viewer-actions">
+      <button mat-stroked-button type="button" (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="edit()">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+
+  }
+</div>

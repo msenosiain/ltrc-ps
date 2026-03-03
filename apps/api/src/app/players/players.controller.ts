@@ -23,6 +23,7 @@ import { PlayersService } from './players.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
+import { UpdatePlayerDto } from './dto/update-player.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/schemas/user.schema';
 
@@ -33,6 +34,12 @@ export class PlayersController {
   @Get()
   async findPaginated(@Query() pagination: PaginationDto<PlayerFiltersDto>) {
     return this.playersService.findPaginated(pagination);
+  }
+
+  @Post('import')
+  @UseInterceptors(FileInterceptor('file'))
+  async importFromFile(@UploadedFile() file: MulterFile) {
+    return this.playersService.importFromFile(file.buffer);
   }
 
   // ⚠️ Debe estar ANTES de GET :id para que "me" no sea interpretado como un ID
@@ -59,10 +66,15 @@ export class PlayersController {
   @UseInterceptors(FileInterceptor('photo'))
   async update(
     @Param('id') id: string,
-    @Body() dto: Partial<CreatePlayerDto>,
+    @Body() dto: UpdatePlayerDto,
     @UploadedFile() photo?: MulterFile,
   ) {
     return this.playersService.update(id, dto, photo);
+  }
+
+  @Get('field-options')
+  async getFieldOptions() {
+    return this.playersService.getFieldOptions();
   }
 
   @Get(':id')

@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsIn } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { SortOrder, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class TournamentFilterDto {
   @IsOptional()
@@ -6,10 +7,14 @@ export class TournamentFilterDto {
   searchTerm?: string;
 
   @IsOptional()
+  @IsEnum(SportEnum)
+  sport?: SportEnum;
+
+  @IsOptional()
   @IsString()
   sortBy?: string;
 
   @IsOptional()
-  @IsIn(['asc', 'desc'])
-  sortOrder?: 'asc' | 'desc';
+  @IsEnum(SortOrder)
+  sortOrder?: SortOrder;
 }

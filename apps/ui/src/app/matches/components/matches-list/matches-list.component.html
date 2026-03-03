@@ -1,0 +1,99 @@
+<div class="matches-list">
+
+  <div class="list-header">
+    <button mat-flat-button color="primary" type="button" (click)="goToCreate()">
+      <mat-icon>add</mat-icon>
+      Agregar partido
+    </button>
+  </div>
+
+  <ltrc-match-search (filtersChange)="applyFilters($event)" />
+
+  @if (dataSource.loading$ | async) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="date" matSortDirection="asc" class="matches-table mat-elevation-z2">
+
+    <!-- Fecha -->
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+      <td mat-cell *matCellDef="let match">
+        {{ match.date | date: 'dd/MM/yyyy' }}
+        @if ((match.date | date: 'HH:mm') !== '00:00') {
+          <span class="match-time">{{ match.date | date: 'HH:mm' }}</span>
+        }
+      </td>
+    </ng-container>
+
+    <!-- Rival -->
+    <ng-container matColumnDef="opponent">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Rival</th>
+      <td mat-cell *matCellDef="let match">
+        <div class="opponent-cell">
+          <span class="venue-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
+            {{ match.isHome ? 'L' : 'V' }}
+          </span>
+          {{ match.opponent }}
+        </div>
+      </td>
+    </ng-container>
+
+    <!-- Torneo -->
+    <ng-container matColumnDef="tournament">
+      <th mat-header-cell *matHeaderCellDef>Torneo</th>
+      <td mat-cell *matCellDef="let match">
+        @if (match.tournament) {
+          <span class="tournament-name">{{ match.tournament.name }}</span>
+        } @else {
+          <span class="no-tournament">—</span>
+        }
+      </td>
+    </ng-container>
+
+    <!-- Cancha -->
+    <ng-container matColumnDef="venue">
+      <th mat-header-cell *matHeaderCellDef>Cancha</th>
+      <td mat-cell *matCellDef="let match">{{ match.venue }}</td>
+    </ng-container>
+
+    <!-- División -->
+    <ng-container matColumnDef="division">
+      <th mat-header-cell *matHeaderCellDef>División</th>
+      <td mat-cell *matCellDef="let match">{{ match.division || '—' }}</td>
+    </ng-container>
+
+    <!-- Estado -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let match">
+        <span class="status-badge status-{{ match.status }}">
+          {{ getStatusLabel(match.status) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Resultado -->
+    <ng-container matColumnDef="result">
+      <th mat-header-cell *matHeaderCellDef>Resultado</th>
+      <td mat-cell *matCellDef="let match">{{ getResultLabel(match) }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      (click)="viewMatchDetails(row.id)"
+      class="match-row"
+    ></tr>
+
+  </table>
+
+  <mat-paginator
+    [length]="dataSource.total"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  />
+
+</div>

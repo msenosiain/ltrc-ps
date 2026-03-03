@@ -1,9 +1,14 @@
 import { Schema, Types } from 'mongoose';
 import { PlayerEntity } from './player.entity';
 import {
+  CategoryEnum,
   ClothingSizesEnum,
-  PlayerPositionEnum,
+  HockeyPositions,
+  RugbyPositions,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
+
+const allPositionValues = [...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])];
 
 const AddressSchema = new Schema(
   {
@@ -28,26 +33,44 @@ const ClothingSizesSchema = new Schema(
   { _id: false }
 );
 
+const MedicalDataSchema = new Schema(
+  {
+    height: Number,
+    weight: Number,
+    torgIndex: Number,
+    healthInsurance: String,
+  },
+  { _id: false }
+);
+
 export const PlayerSchema = new Schema<PlayerEntity>(
   {
-    idNumber: String,
+    idNumber: { type: String, unique: true, index: true },
     lastName: String,
     firstName: String,
+    secondName: String,
     nickName: String,
     birthDate: Date,
-    email: String,
+    email: { type: String, unique: true, index: true },
     address: AddressSchema,
+    sport: {
+      type: String,
+      enum: Object.values(SportEnum),
+    },
+    category: {
+      type: String,
+      enum: Object.values(CategoryEnum),
+    },
     position: {
       type: String,
-      enum: Object.values(PlayerPositionEnum),
+      enum: allPositionValues,
     },
     alternatePosition: {
       type: String,
-      enum: Object.values(PlayerPositionEnum),
+      enum: allPositionValues,
     },
-    height: Number,
-    weight: Number,
     clothingSizes: ClothingSizesSchema,
+    medicalData: MedicalDataSchema,
     photoId: { type: String },
     userId: {
       type: Schema.Types.ObjectId,
