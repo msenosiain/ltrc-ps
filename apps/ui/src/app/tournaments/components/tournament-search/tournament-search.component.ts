@@ -36,7 +36,10 @@ export class TournamentSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
-  @Output() readonly filtersChange = new EventEmitter<{ searchTerm?: string; sport?: SportEnum }>();
+  @Output() readonly filtersChange = new EventEmitter<{
+    searchTerm?: string;
+    sport?: SportEnum;
+  }>();
 
   readonly sportOptions: SportOption[] = sportOptions;
 

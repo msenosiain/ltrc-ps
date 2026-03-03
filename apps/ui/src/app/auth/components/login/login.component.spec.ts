@@ -51,23 +51,32 @@ describe('LoginComponent', () => {
     });
 
     it('should call login and navigate to /dashboard on success', () => {
-      (authServiceMock.login as jest.Mock).mockReturnValueOnce(of({ access_token: 'token', refresh_token: 'refresh' }));
+      (authServiceMock.login as jest.Mock).mockReturnValueOnce(
+        of({ access_token: 'token', refresh_token: 'refresh' })
+      );
 
       component.loginForm.setValue({ email: 'user@test.com', pass: '123456' });
       component.onSubmit();
 
-      expect(authServiceMock.login).toHaveBeenCalledWith('user@test.com', '123456');
+      expect(authServiceMock.login).toHaveBeenCalledWith(
+        'user@test.com',
+        '123456'
+      );
       expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
     });
 
     it('should set errorMessage and stop loading on login failure', () => {
-      (authServiceMock.login as jest.Mock).mockReturnValueOnce(throwError(() => new Error('401')));
+      (authServiceMock.login as jest.Mock).mockReturnValueOnce(
+        throwError(() => new Error('401'))
+      );
 
       component.loginForm.setValue({ email: 'user@test.com', pass: 'wrong' });
       component.onSubmit();
 
       expect(component.isLoading).toBe(false);
-      expect(component.errorMessage).toBe('Credenciales inválidas o error de conexión');
+      expect(component.errorMessage).toBe(
+        'Credenciales inválidas o error de conexión'
+      );
     });
 
     it('should set isLoading to true while login is in progress', () => {

@@ -43,7 +43,10 @@ describe('TournamentsService', () => {
   describe('create()', () => {
     it('should create a tournament', async () => {
       mockModel.create.mockResolvedValueOnce(mockTournament);
-      const dto: CreateTournamentDto = { name: 'Liga Provincial', season: '2026' };
+      const dto: CreateTournamentDto = {
+        name: 'Liga Provincial',
+        season: '2026',
+      };
 
       const result = await service.create(dto);
 
@@ -55,7 +58,9 @@ describe('TournamentsService', () => {
   describe('findAll()', () => {
     it('should return all tournaments sorted by name', async () => {
       const execMock = jest.fn().mockResolvedValue([mockTournament]);
-      mockModel.find.mockReturnValue({ sort: jest.fn().mockReturnValue({ exec: execMock }) });
+      mockModel.find.mockReturnValue({
+        sort: jest.fn().mockReturnValue({ exec: execMock }),
+      });
 
       const result = await service.findAll();
 
@@ -76,17 +81,24 @@ describe('TournamentsService', () => {
 
     it('should throw NotFoundException when not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
-      await expect(service.findOne('bad-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('bad-id')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe('update()', () => {
     it('should update a tournament', async () => {
       const updated = { ...mockTournament, name: 'Copa Argentina' };
-      const tournament = { ...mockTournament, save: jest.fn().mockResolvedValue(updated) };
+      const tournament = {
+        ...mockTournament,
+        save: jest.fn().mockResolvedValue(updated),
+      };
       mockModel.findById.mockResolvedValueOnce(tournament);
 
-      const result = await service.update('tournament-1', { name: 'Copa Argentina' });
+      const result = await service.update('tournament-1', {
+        name: 'Copa Argentina',
+      });
 
       expect(tournament.save).toHaveBeenCalled();
       expect(result).toEqual(updated);
@@ -94,13 +106,18 @@ describe('TournamentsService', () => {
 
     it('should throw NotFoundException when not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
-      await expect(service.update('bad-id', {})).rejects.toThrow(NotFoundException);
+      await expect(service.update('bad-id', {})).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe('delete()', () => {
     it('should delete a tournament', async () => {
-      const tournament = { ...mockTournament, deleteOne: jest.fn().mockResolvedValue(true) };
+      const tournament = {
+        ...mockTournament,
+        deleteOne: jest.fn().mockResolvedValue(true),
+      };
       mockModel.findById.mockResolvedValueOnce(tournament);
 
       await service.delete('tournament-1');

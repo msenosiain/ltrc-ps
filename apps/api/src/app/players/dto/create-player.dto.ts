@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDate,
   IsEmail,
   IsEnum,
@@ -129,11 +130,21 @@ export class CreatePlayerDto {
   readonly category?: CategoryEnum;
 
   @IsOptional()
-  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  @IsIn([
+    ...new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]),
+  ])
   readonly position?: PlayerPosition;
 
   @IsOptional()
-  @IsIn([...new Set([...Object.values(RugbyPositions), ...Object.values(HockeyPositions)])])
+  @IsIn([
+    ...new Set([
+      ...Object.values(RugbyPositions),
+      ...Object.values(HockeyPositions),
+    ]),
+  ])
   readonly alternatePosition?: PlayerPosition;
 
   @IsOptional()
@@ -159,4 +170,9 @@ export class CreatePlayerDto {
   })
   @ValidateNested()
   readonly medicalData?: MedicalDataDto;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  readonly createUser?: boolean;
 }

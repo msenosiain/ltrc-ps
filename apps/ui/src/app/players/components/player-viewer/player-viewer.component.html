@@ -1,187 +1,199 @@
 <div class="player-viewer">
   @if (player) {
 
-    <!-- HEADER -->
-    <mat-card class="player-header">
-      <mat-card-content>
-        <div class="header-layout">
-
-          <div class="avatar">
-            @if (player.photoId) {
-              <img
-                [src]="getPlayerPhotoUrl(player.id)"
-                alt="{{ player.firstName }} {{ player.lastName }}"
-              />
-            } @else {
-              <mat-icon class="avatar-placeholder">account_circle</mat-icon>
-            }
-          </div>
-
-          <div class="main-info">
-            <h2 class="player-name">{{ player.lastName }}, {{ player.firstName }}{{ player.secondName ? ' ' + player.secondName : '' }}</h2>
-
-            @if (player.nickName) {
-              <span class="player-nickname">"{{ player.nickName }}"</span>
-            }
-
-            <div class="stats-row">
-              <div class="stat">
-                <span class="stat-label">DNI</span>
-                <span class="stat-value">{{ player.idNumber }}</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Nacimiento</span>
-                <span class="stat-value">{{ player.birthDate | date: 'dd/MM/yyyy' }}</span>
-              </div>
-              <div class="stat">
-                <span class="stat-label">Edad</span>
-                <span class="stat-value">{{ getPlayerAge(player.birthDate) }} años</span>
-              </div>
-            </div>
-
-            <div class="positions">
-              @if (player.category) {
-                <mat-chip color="accent">
-                  {{ getCategoryLabel(player.category) }}
-                </mat-chip>
-              }
-              @if (player.position) {
-                <mat-chip color="primary">
-                  {{ getPositionLabel(player.position) }}
-                </mat-chip>
-              }
-              @if (player.alternatePosition) {
-                <mat-chip>
-                  {{ getPositionLabel(player.alternatePosition) }}
-                </mat-chip>
-              }
-            </div>
-          </div>
-
+  <!-- HEADER -->
+  <mat-card class="player-header">
+    <mat-card-content>
+      <div class="header-layout">
+        <div class="avatar">
+          @if (player.photoId) {
+          <img
+            [src]="getPlayerPhotoUrl(player.id)"
+            alt="{{ player.firstName }} {{ player.lastName }}"
+          />
+          } @else {
+          <mat-icon class="avatar-placeholder">account_circle</mat-icon>
+          }
         </div>
-      </mat-card-content>
-    </mat-card>
 
-    <!-- DOMICILIO -->
-    @if (player.address) {
-      <mat-card class="section-card">
-        <mat-card-content>
-          <p class="section-title">Domicilio</p>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Calle</span>
-              <span class="info-value">
-                {{ player.address.street }} {{ player.address.number }}
-                @if (player.address.floorApartment) { , {{ player.address.floorApartment }} }
-              </span>
+        <div class="main-info">
+          <h2 class="player-name">
+            {{ player.lastName }}, {{ player.firstName
+            }}{{ player.secondName ? ' ' + player.secondName : '' }}
+          </h2>
+
+          @if (player.nickName) {
+          <span class="player-nickname">"{{ player.nickName }}"</span>
+          }
+
+          <div class="stats-row">
+            <div class="stat">
+              <span class="stat-label">DNI</span>
+              <span class="stat-value">{{ player.idNumber }}</span>
             </div>
-            <div class="info-item">
-              <span class="info-label">Ciudad</span>
-              <span class="info-value">
-                {{ player.address.city }}
-                @if (player.address.postalCode) { ({{ player.address.postalCode }}) }
-              </span>
+            <div class="stat">
+              <span class="stat-label">Nacimiento</span>
+              <span class="stat-value">{{
+                player.birthDate | date : 'dd/MM/yyyy'
+              }}</span>
             </div>
-            @if (player.address.neighborhood) {
-              <div class="info-item">
-                <span class="info-label">Barrio</span>
-                <span class="info-value">{{ player.address.neighborhood }}</span>
-              </div>
-            }
-            <div class="info-item">
-              <span class="info-label">Email</span>
-              <span class="info-value">{{ player.email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Telefono</span>
-              <span class="info-value">{{ player.address.phoneNumber }}</span>
+            <div class="stat">
+              <span class="stat-label">Edad</span>
+              <span class="stat-value"
+                >{{ getPlayerAge(player.birthDate) }} años</span
+              >
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
-    }
 
-    <!-- DATOS MÉDICOS -->
-    @if (player.medicalData) {
-      <mat-card class="section-card">
-        <mat-card-content>
-          <p class="section-title">Datos médicos</p>
-          <div class="info-grid">
-            @if (player.medicalData.height) {
-              <div class="info-item">
-                <span class="info-label">Altura</span>
-                <span class="info-value">{{ player.medicalData.height }} cm</span>
-              </div>
-            }
-            @if (player.medicalData.weight) {
-              <div class="info-item">
-                <span class="info-label">Peso</span>
-                <span class="info-value">{{ player.medicalData.weight }} kg</span>
-              </div>
-            }
-            @if (player.medicalData.torgIndex != null) {
-              <div class="info-item">
-                <span class="info-label">Índice de Torg</span>
-                <span class="info-value">{{ player.medicalData.torgIndex }}</span>
-              </div>
-            }
-            @if (player.medicalData.healthInsurance) {
-              <div class="info-item">
-                <span class="info-label">Obra social</span>
-                <span class="info-value">{{ player.medicalData.healthInsurance }}</span>
-              </div>
+          <div class="positions">
+            @if (player.category) {
+            <mat-chip color="accent">
+              {{ getCategoryLabel(player.category) }}
+            </mat-chip>
+            } @if (player.position) {
+            <mat-chip color="primary">
+              {{ getPositionLabel(player.position) }}
+            </mat-chip>
+            } @if (player.alternatePosition) {
+            <mat-chip>
+              {{ getPositionLabel(player.alternatePosition) }}
+            </mat-chip>
             }
           </div>
-        </mat-card-content>
-      </mat-card>
-    }
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-    <!-- INDUMENTARIA -->
-    @if (player.clothingSizes) {
-      <mat-card class="section-card">
-        <mat-card-content>
-          <p class="section-title">Indumentaria</p>
-          <div class="info-grid">
-            @if (player.clothingSizes.jersey) {
-              <div class="info-item">
-                <span class="info-label">Camiseta</span>
-                <span class="info-value">{{ player.clothingSizes.jersey }}</span>
-              </div>
+  <!-- DOMICILIO -->
+  @if (player.address) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Domicilio</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Calle</span>
+          <span class="info-value">
+            {{ player.address.street }} {{ player.address.number }} @if
+            (player.address.floorApartment) { ,
+            {{ player.address.floorApartment }} }
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Ciudad</span>
+          <span class="info-value">
+            {{ player.address.city }}
+            @if (player.address.postalCode) { ({{ player.address.postalCode }})
             }
-            @if (player.clothingSizes.shorts) {
-              <div class="info-item">
-                <span class="info-label">Short</span>
-                <span class="info-value">{{ player.clothingSizes.shorts }}</span>
-              </div>
-            }
-            @if (player.clothingSizes.sweater) {
-              <div class="info-item">
-                <span class="info-label">Buzo</span>
-                <span class="info-value">{{ player.clothingSizes.sweater }}</span>
-              </div>
-            }
-            @if (player.clothingSizes.pants) {
-              <div class="info-item">
-                <span class="info-label">Pantalon</span>
-                <span class="info-value">{{ player.clothingSizes.pants }}</span>
-              </div>
-            }
-          </div>
-        </mat-card-content>
-      </mat-card>
-    }
+          </span>
+        </div>
+        @if (player.address.neighborhood) {
+        <div class="info-item">
+          <span class="info-label">Barrio</span>
+          <span class="info-value">{{ player.address.neighborhood }}</span>
+        </div>
+        }
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ player.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Telefono</span>
+          <span class="info-value">{{ player.address.phoneNumber }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
 
-    <!-- ACCIONES -->
-    <div class="viewer-actions">
-      <button mat-stroked-button type="button" (click)="backToList()">
-        <mat-icon>arrow_back</mat-icon>
-        Volver
-      </button>
-      <button mat-flat-button color="primary" type="button" (click)="edit()">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
-    </div>
+  <!-- DATOS MÉDICOS -->
+  @if (player.medicalData) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Datos médicos</p>
+      <div class="info-grid">
+        @if (player.medicalData.height) {
+        <div class="info-item">
+          <span class="info-label">Altura</span>
+          <span class="info-value">{{ player.medicalData.height }} cm</span>
+        </div>
+        } @if (player.medicalData.weight) {
+        <div class="info-item">
+          <span class="info-label">Peso</span>
+          <span class="info-value">{{ player.medicalData.weight }} kg</span>
+        </div>
+        } @if (player.medicalData.torgIndex != null) {
+        <div class="info-item">
+          <span class="info-label">Índice de Torg</span>
+          <span class="info-value">{{ player.medicalData.torgIndex }}</span>
+        </div>
+        } @if (player.medicalData.healthInsurance) {
+        <div class="info-item">
+          <span class="info-label">Obra social</span>
+          <span class="info-value">{{
+            player.medicalData.healthInsurance
+          }}</span>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <!-- INDUMENTARIA -->
+  @if (player.clothingSizes) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Indumentaria</p>
+      <div class="info-grid">
+        @if (player.clothingSizes.jersey) {
+        <div class="info-item">
+          <span class="info-label">Camiseta</span>
+          <span class="info-value">{{ player.clothingSizes.jersey }}</span>
+        </div>
+        } @if (player.clothingSizes.shorts) {
+        <div class="info-item">
+          <span class="info-label">Short</span>
+          <span class="info-value">{{ player.clothingSizes.shorts }}</span>
+        </div>
+        } @if (player.clothingSizes.sweater) {
+        <div class="info-item">
+          <span class="info-label">Buzo</span>
+          <span class="info-value">{{ player.clothingSizes.sweater }}</span>
+        </div>
+        } @if (player.clothingSizes.pants) {
+        <div class="info-item">
+          <span class="info-label">Pantalon</span>
+          <span class="info-value">{{ player.clothingSizes.pants }}</span>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <!-- ACCIONES -->
+  <div class="viewer-actions">
+    <button
+      *ltrcAllowedRoles="[Role.ADMIN, Role.USER]"
+      mat-stroked-button
+      type="button"
+      (click)="backToList()"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+    <button
+      *ltrcAllowedRoles="[Role.ADMIN, Role.USER]"
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="edit()"
+    >
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+  </div>
 
   }
 </div>

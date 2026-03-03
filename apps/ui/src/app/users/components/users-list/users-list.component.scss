@@ -1,0 +1,29 @@
+@use '../../../common/styles/list-layout';
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+}
+
+.users-table {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .user-row {
+    @include list-layout.clickable-row;
+  }
+
+  .roles-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 4px 0;
+  }
+
+  .row-arrow {
+    color: rgba(0, 0, 0, 0.38);
+  }
+}

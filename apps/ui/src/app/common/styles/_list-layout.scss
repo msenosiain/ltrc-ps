@@ -18,7 +18,10 @@
   transition: background 0.15s;
 
   &:hover {
-    background: var(--mat-table-row-item-hover-state-layer-color, rgba(0, 0, 0, 0.04));
+    background: var(
+      --mat-table-row-item-hover-state-layer-color,
+      rgba(0, 0, 0, 0.04)
+    );
   }
 
   .mat-mdc-cell {

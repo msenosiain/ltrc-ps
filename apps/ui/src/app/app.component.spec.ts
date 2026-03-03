@@ -12,7 +12,9 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.title')?.textContent).toContain('Los Tordos Rugby Club');
+    expect(compiled.querySelector('.title')?.textContent).toContain(
+      'Los Tordos Rugby Club'
+    );
   });
   it('should create', () => {
     const fixture = TestBed.createComponent(AppComponent);

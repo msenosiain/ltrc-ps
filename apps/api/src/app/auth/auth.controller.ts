@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Req, Res, UseGuards, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+  Body,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response, Request } from 'express';
@@ -10,7 +18,7 @@ import { User } from '../users/schemas/user.schema';
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private configService: ConfigService,
+    private configService: ConfigService
   ) {}
 
   @Post('login')
@@ -21,6 +29,11 @@ export class AuthController {
   @Post('register')
   async register(@Body() userData: Partial<User>) {
     return this.authService.register(userData);
+  }
+
+  @Post('activate')
+  async activate(@Body() body: { email: string; password: string }) {
+    return this.authService.activateAccount(body.email, body.password);
   }
 
   @Get('google')
@@ -37,10 +50,10 @@ export class AuthController {
     const token = await this.authService.generateJwt(user as User);
     const callbackUrl = this.configService.get<string>(
       'GOOGLE_AUTH_CALLBACK_URL',
-      'http://localhost:4200/auth/callback',
+      'http://localhost:4200/auth/callback'
     );
     res.redirect(
-      `${callbackUrl}?access_token=${token.access_token}&refresh_token=${token.refresh_token}`,
+      `${callbackUrl}?access_token=${token.access_token}&refresh_token=${token.refresh_token}`
     );
   }
 

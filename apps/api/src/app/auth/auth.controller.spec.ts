@@ -60,7 +60,7 @@ describe('AuthController', () => {
       const mockReq = { user: mockUser } as unknown as Request;
       const mockRes = { redirect: jest.fn() } as unknown as Response;
       const mockTokens = { access_token: 'at', refresh_token: 'rt' };
-      
+
       mockAuthService.generateJwt.mockResolvedValue(mockTokens);
       mockConfigService.get.mockReturnValue('http://callback');
 
@@ -76,7 +76,7 @@ describe('AuthController', () => {
     it('should call authService.refreshToken', async () => {
       const mockUser = { email: 'test@test.com' };
       const mockReq = { user: mockUser } as unknown as Request;
-      
+
       await controller.refreshTokens(mockReq);
       expect(authService.refreshToken).toHaveBeenCalledWith(mockUser);
     });

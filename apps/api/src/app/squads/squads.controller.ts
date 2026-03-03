@@ -36,10 +36,7 @@ export class SquadsController {
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateSquadDto
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateSquadDto) {
     return this.squadsService.update(id, dto);
   }
 

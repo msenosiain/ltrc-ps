@@ -50,6 +50,15 @@ export class LoginComponent {
         },
         error: (err) => {
           this.isLoading = false;
+          if (
+            err.status === 403 &&
+            err.error?.code === 'ACCOUNT_PENDING_ACTIVATION'
+          ) {
+            this.router.navigate(['/auth/activate'], {
+              queryParams: { email },
+            });
+            return;
+          }
           this.errorMessage = 'Credenciales inválidas o error de conexión';
           console.error(err);
         },

@@ -4,4 +4,3 @@ export const environment = {
   accessTokenKey: 'access_token',
   refreshTokenKey: 'refresh_token',
 };
-

@@ -32,10 +32,7 @@ export class TournamentsController {
   }
 
   @Patch(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateTournamentDto
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateTournamentDto) {
     return this.tournamentsService.update(id, dto);
   }
 

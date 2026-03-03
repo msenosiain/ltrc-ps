@@ -60,7 +60,9 @@ describe('AuthService', () => {
   describe('register', () => {
     it('should throw ConflictException if email already exists', async () => {
       mockUsersService.findOneByEmail.mockResolvedValue(mockUser);
-      await expect(service.register({ email: 'test@test.com' })).rejects.toThrow(ConflictException);
+      await expect(
+        service.register({ email: 'test@test.com' })
+      ).rejects.toThrow(ConflictException);
     });
 
     it('should hash password and create user', async () => {
@@ -68,7 +70,10 @@ describe('AuthService', () => {
       mockUsersService.create.mockResolvedValue(mockUser);
       (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword');
 
-      const result = await service.register({ email: 'test@test.com', password: 'password' });
+      const result = await service.register({
+        email: 'test@test.com',
+        password: 'password',
+      });
 
       expect(bcrypt.hash).toHaveBeenCalledWith('password', 10);
       expect(usersService.create).toHaveBeenCalled();
@@ -79,13 +84,17 @@ describe('AuthService', () => {
   describe('login', () => {
     it('should throw UnauthorizedException if user not found', async () => {
       mockUsersService.findOneByEmail.mockResolvedValue(null);
-      await expect(service.login('test@test.com', 'pass')).rejects.toThrow(UnauthorizedException);
+      await expect(service.login('test@test.com', 'pass')).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
     it('should throw UnauthorizedException if password does not match', async () => {
       mockUsersService.findOneByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-      await expect(service.login('test@test.com', 'wrongpass')).rejects.toThrow(UnauthorizedException);
+      await expect(service.login('test@test.com', 'wrongpass')).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
     it('should return tokens if login is successful', async () => {

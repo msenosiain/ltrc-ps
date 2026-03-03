@@ -1,7 +1,6 @@
 <h2 mat-dialog-title>Guardar como plantilla</h2>
 
 <mat-dialog-content>
-
   <mat-radio-group [formControl]="modeCtrl" class="mode-group">
     <mat-radio-button value="create">Nueva plantilla</mat-radio-button>
     <mat-radio-button value="overwrite" [disabled]="data.squads.length === 0">
@@ -10,29 +9,41 @@
   </mat-radio-group>
 
   @if (modeCtrl.value === 'create') {
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Nombre de la plantilla</mat-label>
-      <input matInput [formControl]="nameCtrl" placeholder="Ej: Primera Rama A" cdkFocusInitial />
-      @if (nameCtrl.invalid && nameCtrl.touched) {
-        <mat-error>El nombre es obligatorio</mat-error>
-      }
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Nombre de la plantilla</mat-label>
+    <input
+      matInput
+      [formControl]="nameCtrl"
+      placeholder="Ej: Primera Rama A"
+      cdkFocusInitial
+    />
+    @if (nameCtrl.invalid && nameCtrl.touched) {
+    <mat-error>El nombre es obligatorio</mat-error>
+    }
+  </mat-form-field>
   } @else {
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Plantilla a sobreescribir</mat-label>
-      <mat-select [formControl]="squadIdCtrl">
-        @for (squad of data.squads; track squad.id) {
-          <mat-option [value]="squad.id">{{ squad.name }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Plantilla a sobreescribir</mat-label>
+    <mat-select [formControl]="squadIdCtrl">
+      @for (squad of data.squads; track squad.id) {
+      <mat-option [value]="squad.id">{{ squad.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
   }
-
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
-  <button mat-flat-button color="primary" type="button" (click)="onSave()" [disabled]="!isValid">
+  <button mat-stroked-button type="button" (click)="onCancel()">
+    Cancelar
+  </button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="onSave()"
+    [disabled]="!isValid"
+  >
     Guardar
   </button>
 </mat-dialog-actions>

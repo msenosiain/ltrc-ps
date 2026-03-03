@@ -43,12 +43,18 @@ describe('SquadsController', () => {
 
   it('getOne() should propagate NotFoundException', async () => {
     mockService.findOne.mockRejectedValueOnce(new NotFoundException());
-    await expect(controller.getOne('bad-id')).rejects.toThrow(NotFoundException);
+    await expect(controller.getOne('bad-id')).rejects.toThrow(
+      NotFoundException
+    );
   });
 
   it('update() should update a squad', async () => {
-    expect(await controller.update('squad-1', { name: 'Suplentes' })).toEqual(mockSquad);
-    expect(mockService.update).toHaveBeenCalledWith('squad-1', { name: 'Suplentes' });
+    expect(await controller.update('squad-1', { name: 'Suplentes' })).toEqual(
+      mockSquad
+    );
+    expect(mockService.update).toHaveBeenCalledWith('squad-1', {
+      name: 'Suplentes',
+    });
   });
 
   it('delete() should delete a squad', async () => {

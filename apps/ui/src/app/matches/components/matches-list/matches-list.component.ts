@@ -1,4 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -12,7 +18,12 @@ import { MatchesService } from '../../services/matches.service';
 import { MatchesDataSource } from '../../services/matches.datasource';
 import { MatchFilters } from '../../forms/match-form.types';
 import { MatchSearchComponent } from '../match-search/match-search.component';
-import { Match, MatchStatusEnum, MatchTypeEnum, SortOrder } from '@ltrc-ps/shared-api-model';
+import {
+  Match,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SortOrder,
+} from '@ltrc-ps/shared-api-model';
 
 @Component({
   selector: 'ltrc-matches-list',
@@ -37,7 +48,15 @@ export class MatchesListComponent implements AfterViewInit {
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ['date', 'opponent', 'venue', 'division', 'tournament', 'status', 'result'];
+  readonly displayedColumns = [
+    'date',
+    'opponent',
+    'venue',
+    'division',
+    'tournament',
+    'status',
+    'result',
+  ];
   readonly dataSource = new MatchesDataSource(this.matchesService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -57,7 +76,10 @@ export class MatchesListComponent implements AfterViewInit {
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+      this.dataSource.setPage(
+        this.paginator.pageIndex,
+        this.paginator.pageSize
+      );
     });
   }
 

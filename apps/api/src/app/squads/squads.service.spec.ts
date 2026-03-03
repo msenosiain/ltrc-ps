@@ -57,7 +57,10 @@ describe('SquadsService', () => {
           { shirtNumber: 2, playerId: 'player-id-2' },
         ],
       };
-      const created = { ...mockSquad, populate: jest.fn().mockResolvedValue(mockSquad) };
+      const created = {
+        ...mockSquad,
+        populate: jest.fn().mockResolvedValue(mockSquad),
+      };
       mockModel.create.mockResolvedValueOnce(created);
 
       const result = await service.create(dto);
@@ -78,7 +81,11 @@ describe('SquadsService', () => {
     it('should return all squads sorted by name', async () => {
       const execMock = jest.fn().mockResolvedValue([mockSquad]);
       mockModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({ populate: jest.fn().mockReturnValue({ exec: execMock }) }),
+        sort: jest
+          .fn()
+          .mockReturnValue({
+            populate: jest.fn().mockReturnValue({ exec: execMock }),
+          }),
       });
 
       const result = await service.findAll();
@@ -89,7 +96,9 @@ describe('SquadsService', () => {
 
   describe('findOne()', () => {
     it('should return a squad by id', async () => {
-      mockModel.findById.mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockSquad) });
+      mockModel.findById.mockReturnValueOnce({
+        populate: jest.fn().mockResolvedValue(mockSquad),
+      });
 
       const result = await service.findOne('squad-1');
 
@@ -98,8 +107,12 @@ describe('SquadsService', () => {
     });
 
     it('should throw NotFoundException when not found', async () => {
-      mockModel.findById.mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(null) });
-      await expect(service.findOne('bad-id')).rejects.toThrow(NotFoundException);
+      mockModel.findById.mockReturnValueOnce({
+        populate: jest.fn().mockResolvedValue(null),
+      });
+      await expect(service.findOne('bad-id')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
@@ -109,7 +122,12 @@ describe('SquadsService', () => {
         ...mockSquad,
         name: 'Equipo Titular',
         set: jest.fn(),
-        save: jest.fn().mockResolvedValue({ ...mockSquad, populate: jest.fn().mockResolvedValue(mockSquad) }),
+        save: jest
+          .fn()
+          .mockResolvedValue({
+            ...mockSquad,
+            populate: jest.fn().mockResolvedValue(mockSquad),
+          }),
       };
       mockModel.findById.mockResolvedValueOnce(squad);
 
@@ -123,7 +141,12 @@ describe('SquadsService', () => {
       const squad = {
         ...mockSquad,
         set: jest.fn(),
-        save: jest.fn().mockResolvedValue({ ...mockSquad, populate: jest.fn().mockResolvedValue(mockSquad) }),
+        save: jest
+          .fn()
+          .mockResolvedValue({
+            ...mockSquad,
+            populate: jest.fn().mockResolvedValue(mockSquad),
+          }),
       };
       mockModel.findById.mockResolvedValueOnce(squad);
 
@@ -138,13 +161,18 @@ describe('SquadsService', () => {
 
     it('should throw NotFoundException when not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
-      await expect(service.update('bad-id', {})).rejects.toThrow(NotFoundException);
+      await expect(service.update('bad-id', {})).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 
   describe('delete()', () => {
     it('should delete a squad', async () => {
-      const squad = { ...mockSquad, deleteOne: jest.fn().mockResolvedValue(true) };
+      const squad = {
+        ...mockSquad,
+        deleteOne: jest.fn().mockResolvedValue(true),
+      };
       mockModel.findById.mockResolvedValueOnce(squad);
 
       await service.delete('squad-1');
@@ -160,7 +188,9 @@ describe('SquadsService', () => {
 
   describe('getPlayers()', () => {
     it('should return players from a squad', async () => {
-      mockModel.findById.mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(mockSquad) });
+      mockModel.findById.mockReturnValueOnce({
+        populate: jest.fn().mockResolvedValue(mockSquad),
+      });
 
       const result = await service.getPlayers('squad-1');
 
@@ -168,8 +198,12 @@ describe('SquadsService', () => {
     });
 
     it('should throw NotFoundException when squad not found', async () => {
-      mockModel.findById.mockReturnValueOnce({ populate: jest.fn().mockResolvedValue(null) });
-      await expect(service.getPlayers('bad-id')).rejects.toThrow(NotFoundException);
+      mockModel.findById.mockReturnValueOnce({
+        populate: jest.fn().mockResolvedValue(null),
+      });
+      await expect(service.getPlayers('bad-id')).rejects.toThrow(
+        NotFoundException
+      );
     });
   });
 });

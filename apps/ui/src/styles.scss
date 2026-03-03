@@ -26,7 +26,7 @@ $ltrc-navy: (
     700: white,
     800: white,
     900: white,
-  )
+  ),
 );
 
 $ltrc-red: (
@@ -51,7 +51,7 @@ $ltrc-red: (
     700: white,
     800: white,
     900: white,
-  )
+  ),
 );
 
 // Define theme palettes
@@ -59,17 +59,20 @@ $primary: mat.m2-define-palette($ltrc-navy, 400);
 $accent: mat.m2-define-palette($ltrc-red, 500);
 $warn: mat.m2-define-palette(mat.$m2-red-palette);
 
-$theme: mat.m2-define-light-theme((
-  color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
-  ),
-  typography: mat.m2-define-typography-config(
-    $font-family: 'Roboto, sans-serif',
-  ),
-  density: 0,
-));
+$theme: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+      warn: $warn,
+    ),
+    typography:
+      mat.m2-define-typography-config(
+        $font-family: 'Roboto, sans-serif',
+      ),
+    density: 0,
+  )
+);
 
 @include mat.all-component-themes($theme);
 
@@ -80,7 +83,8 @@ $theme: mat.m2-define-light-theme((
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;

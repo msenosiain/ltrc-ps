@@ -1,7 +1,20 @@
-import { Component, HostListener, inject, OnInit, DestroyRef } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnInit,
+  DestroyRef,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
-import { CategoryEnum, Match, MatchStatusEnum, MatchTypeEnum, SquadEntry, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  Match,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SquadEntry,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
 import { getCategoryLabel as getCatLabel } from '../../match-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +28,14 @@ import { PlayersService } from '../../../players/services/players.service';
 @Component({
   selector: 'ltrc-match-viewer',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatChipsModule, MatDividerModule, DatePipe],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatChipsModule,
+    MatDividerModule,
+    DatePipe,
+  ],
   templateUrl: './match-viewer.component.html',
   styleUrl: './match-viewer.component.scss',
 })

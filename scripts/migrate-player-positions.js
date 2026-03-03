@@ -12,21 +12,21 @@ const { MongoClient } = require('mongodb');
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ltrc-ps';
 
 const POSITION_MAP = {
-  'Loose-head prop':    '1',
-  'Hooker':             '2',
-  'Tight-head prop':    '3',
-  'Left Second-row':    '4',
-  'Right Second-row':   '5',
-  'Blindside flanker':  '6',
-  'Open side flanker':  '7',
-  'Number 8':           '8',
-  'Scrum-half':         '9',
-  'Fly-half':           '10',
-  'Left wing':          '11',
-  'Inside centre':      '12',
-  'Outside centre':     '13',
-  'Right wing':         '14',
-  'Full-back':          '15',
+  'Loose-head prop': '1',
+  Hooker: '2',
+  'Tight-head prop': '3',
+  'Left Second-row': '4',
+  'Right Second-row': '5',
+  'Blindside flanker': '6',
+  'Open side flanker': '7',
+  'Number 8': '8',
+  'Scrum-half': '9',
+  'Fly-half': '10',
+  'Left wing': '11',
+  'Inside centre': '12',
+  'Outside centre': '13',
+  'Right wing': '14',
+  'Full-back': '15',
 };
 
 async function migrate() {

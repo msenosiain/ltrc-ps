@@ -1,0 +1,68 @@
+@if (user) {
+<div class="user-viewer">
+  <div class="viewer-header">
+    <button
+      mat-icon-button
+      (click)="backToList()"
+      aria-label="Volver a la lista"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="viewer-title">{{ user.name }} {{ user.lastName }}</h2>
+    <div class="viewer-actions">
+      <button mat-stroked-button color="warn" (click)="onResetPassword()">
+        <mat-icon>lock_reset</mat-icon>
+        Restablecer contraseña
+      </button>
+      <button mat-flat-button color="primary" (click)="edit()">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Nombre</span>
+          <span class="info-value">{{ user.name }} {{ user.lastName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Roles</span>
+          <div class="roles-chips">
+            @for (role of user.roles; track role) {
+            <mat-chip [color]="getRoleColor(role)" highlighted>{{
+              getRoleLabel(role)
+            }}</mat-chip>
+            }
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (linkedPlayer) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Jugador vinculado</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="linked-player">
+        <mat-icon>sports_rugby</mat-icon>
+        <a
+          [routerLink]="['/dashboard/players', getPlayerId(linkedPlayer)]"
+          class="player-link"
+        >
+          {{ linkedPlayer.firstName }} {{ linkedPlayer.lastName }}
+        </a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>
+}

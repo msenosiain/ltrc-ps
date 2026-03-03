@@ -1,5 +1,10 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
   return fb.group({

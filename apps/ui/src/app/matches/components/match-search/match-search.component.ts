@@ -1,4 +1,11 @@
-import { Component, DestroyRef, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -7,8 +14,20 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { CategoryEnum, MatchStatusEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
-import { getCategoryOptionsBySport, matchStatusOptions, matchTypeOptions, MatchOption, sportOptions } from '../../match-options';
+import {
+  CategoryEnum,
+  MatchStatusEnum,
+  MatchTypeEnum,
+  SportEnum,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
+import {
+  getCategoryOptionsBySport,
+  matchStatusOptions,
+  matchTypeOptions,
+  MatchOption,
+  sportOptions,
+} from '../../match-options';
 import { MatchFilters } from '../../forms/match-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
@@ -49,21 +68,31 @@ export class MatchSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.tournamentsService.getTournaments().subscribe((t) => (this.tournaments = t));
+    this.tournamentsService
+      .getTournaments()
+      .subscribe((t) => (this.tournaments = t));
 
-    this.searchForm.get('sport')!.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.searchForm
+      .get('sport')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport) => {
         this.categoryOptions = getCategoryOptionsBySport(sport);
         const currentCategory = this.searchForm.get('category')!.value;
-        if (currentCategory && !this.categoryOptions.some((c) => c.id === currentCategory)) {
-          this.searchForm.get('category')!.setValue(undefined, { emitEvent: false });
+        if (
+          currentCategory &&
+          !this.categoryOptions.some((c) => c.id === currentCategory)
+        ) {
+          this.searchForm
+            .get('category')!
+            .setValue(undefined, { emitEvent: false });
         }
       });
 
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
-      .subscribe((values) => this.filtersChange.emit(nullToUndefined(values) as MatchFilters));
+      .subscribe((values) =>
+        this.filtersChange.emit(nullToUndefined(values) as MatchFilters)
+      );
   }
 
   clearField(field: string): void {

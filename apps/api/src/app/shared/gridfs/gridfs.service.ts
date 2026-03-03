@@ -12,7 +12,12 @@ export class GridFsService {
     return new GridFSBucket(this.connection.db, { bucketName });
   }
 
-  async uploadFile(bucket: string, filename: string, buffer: Buffer, mime: string): Promise<string> {
+  async uploadFile(
+    bucket: string,
+    filename: string,
+    buffer: Buffer,
+    mime: string
+  ): Promise<string> {
     const bucketRef = this.getBucket(bucket);
 
     const stream = new Readable();
@@ -24,7 +29,8 @@ export class GridFsService {
     });
 
     return new Promise((resolve, reject) => {
-      stream.pipe(uploadStream)
+      stream
+        .pipe(uploadStream)
         .on('error', reject)
         .on('finish', () => resolve(uploadStream.id.toHexString()));
     });

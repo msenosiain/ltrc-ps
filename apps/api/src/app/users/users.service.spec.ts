@@ -45,7 +45,7 @@ describe('UsersService', () => {
 
     service = module.get<UsersService>(UsersService);
     model = module.get<Model<User>>(getModelToken(User.name));
-    
+
     // Añadimos mocks a las funciones estáticas del modelo
     (model as any).findOne = jest.fn();
     (model as any).findById = jest.fn();

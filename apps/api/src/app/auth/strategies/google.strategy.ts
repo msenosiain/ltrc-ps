@@ -17,14 +17,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
   constructor(
     private usersService: UsersService,
-    configService: ConfigService,
+    configService: ConfigService
   ) {
     // Read raw redirect URL and API_GLOBAL_PREFIX from config and normalize to avoid duplicated prefix segments
     const rawRedirect = configService.get<string>(
       'GOOGLE_AUTH_REDIRECT_URL',
-      'http://localhost:3000/api/v1/auth/google/redirect',
+      'http://localhost:3000/api/v1/auth/google/redirect'
     );
-    const apiGlobalPrefix = String(configService.get<string>('API_GLOBAL_PREFIX', '/api/v1'));
+    const apiGlobalPrefix = String(
+      configService.get<string>('API_GLOBAL_PREFIX', '/api/v1')
+    );
 
     let callbackURL: string;
     try {
@@ -38,7 +40,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       const desiredPath = segment ? `/${segment}/${terminal}` : `/${terminal}`;
 
       // Collapse repeated groups like '/api/v1/api/v1' -> '/api/v1'
-      const collapsedPath = desiredPath.replace(new RegExp(`(/${segment})+`, 'g'), `/${segment}`);
+      const collapsedPath = desiredPath.replace(
+        new RegExp(`(/${segment})+`, 'g'),
+        `/${segment}`
+      );
 
       if (isAbsolute) {
         const url = new URL(rawRedirect);
@@ -54,18 +59,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
     super({
       clientID: configService.get<string>('GOOGLE_AUTH_CLIENT_ID') || 'dummy',
-      clientSecret: configService.get<string>('GOOGLE_AUTH_CLIENT_SECRET') || 'dummy',
+      clientSecret:
+        configService.get<string>('GOOGLE_AUTH_CLIENT_SECRET') || 'dummy',
       callbackURL,
       scope: ['email', 'profile'],
     });
-    this.allowedDomain = configService.get<string>('GOOGLE_AUTH_ALLOWED_DOMAIN', '');
+    this.allowedDomain = configService.get<string>(
+      'GOOGLE_AUTH_ALLOWED_DOMAIN',
+      ''
+    );
   }
 
   async validate(
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: VerifyCallback,
+    done: VerifyCallback
   ): Promise<void> {
     const p = profile as unknown as GoogleProfile;
     const { id, name, emails } = p;
@@ -77,7 +86,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       return done(new Error('Unauthorized domain'), false);
     }
 
-    let user: User | null = await this.usersService.findOneByGoogleId(id as string);
+    let user: User | null = await this.usersService.findOneByGoogleId(
+      id as string
+    );
 
     if (!user) {
       user = await this.usersService.create({

@@ -5,7 +5,7 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/matches/:id/squad/from/:squadId"
+  url: '{{baseUrl}}/matches/:id/squad/from/:squadId'
   auth: inherit
 
 settings:
