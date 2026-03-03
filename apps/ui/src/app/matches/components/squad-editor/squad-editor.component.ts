@@ -132,25 +132,28 @@ export class SquadEditorComponent implements OnInit {
         next: (match) => {
           this.match = match;
           this.squadRows = [...(match.squad ?? [])];
+          this.loadSquads();
         },
         error: () => this.router.navigate(['/dashboard/matches']),
       });
-
-    this.squadsService
-      .getSquads()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((squads) => (this.squads = squads));
 
     this.searchSubject
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
         switchMap((term) =>
-          this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term } })
+          this.playersService.getPlayers({
+            page: 1,
+            size: 20,
+            filters: { searchTerm: term, ...(this.match?.category && { category: this.match.category }) },
+          })
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((result) => (this.playerSuggestions = result.items));
+      .subscribe((result) => {
+        const existingIds = new Set(this.squadRows.map((e) => e.player?.id));
+        this.playerSuggestions = result.items.filter((p) => !existingIds.has(p.id));
+      });
 
     this.addForm
       .get('playerSearch')!
@@ -170,6 +173,10 @@ export class SquadEditorComponent implements OnInit {
   addPlayer(): void {
     const shirtNumber = this.addForm.value.shirtNumber;
     if (!this.selectedPlayer || !shirtNumber) return;
+    if (this.squadRows.some((e) => e.shirtNumber === shirtNumber)) {
+      this.addForm.get('shirtNumber')!.setErrors({ duplicate: true });
+      return;
+    }
     this.squadRows = [...this.squadRows, { shirtNumber, player: this.selectedPlayer }];
     this.isDirty = true;
     this.selectedPlayer = null;
@@ -231,7 +238,7 @@ export class SquadEditorComponent implements OnInit {
             playerId: e.player.id!,
           }));
           if (result.mode === 'create') {
-            return this.squadsService.createSquad({ name: result.name, players });
+            return this.squadsService.createSquad({ name: result.name, category: this.match?.category, players });
           } else {
             return this.squadsService.updateSquad(result.squadId, { players });
           }
@@ -240,10 +247,7 @@ export class SquadEditorComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.squadsService
-            .getSquads()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((squads) => (this.squads = squads));
+          this.loadSquads();
           this.saving = false;
         },
         error: () => (this.saving = false),
@@ -274,15 +278,19 @@ export class SquadEditorComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.squadsService
-            .getSquads()
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe((squads) => (this.squads = squads));
+          this.loadSquads();
           this.selectedSquadIdCtrl.reset();
           this.saving = false;
         },
         error: () => (this.saving = false),
       });
+  }
+
+  private loadSquads(): void {
+    this.squadsService
+      .getSquads(this.match?.category)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((squads) => (this.squads = squads));
   }
 
   saveSquad(): void {
