@@ -1,14 +1,17 @@
 import {
   IsArray,
+  IsEnum,
   IsInt,
   IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Max,
   Min,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CategoryEnum } from '@ltrc-ps/shared-api-model';
 
 export class SquadEntryDto {
   @IsInt()
@@ -24,6 +27,10 @@ export class CreateSquadDto {
   @IsNotEmpty()
   @IsString()
   readonly name!: string;
+
+  @IsOptional()
+  @IsEnum(CategoryEnum)
+  readonly category?: CategoryEnum;
 
   @IsArray()
   @ValidateNested({ each: true })
