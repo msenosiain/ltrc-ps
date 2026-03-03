@@ -11,19 +11,17 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
     photo: fb.control<PhotoValue | null>(null),
     createUser: fb.nonNullable.control(false),
-    firstName: fb.nonNullable.control(
-      '',
+    firstName: fb.nonNullable.control('', [
       Validators.required,
       Validators.minLength(2),
-      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/)
-    ),
+      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
+    ]),
     secondName: fb.nonNullable.control(''),
-    lastName: fb.nonNullable.control(
-      '',
+    lastName: fb.nonNullable.control('', [
       Validators.required,
       Validators.minLength(2),
-      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/)
-    ),
+      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
+    ]),
     nickName: fb.nonNullable.control(''),
     idNumber: fb.nonNullable.control('', [
       Validators.required,
