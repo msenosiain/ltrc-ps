@@ -19,7 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { Role, SportEnum } from '@ltrc-ps/shared-api-model';
-import { roleOptions, getRoleColor } from '../../user-options';
+import { roleOptions } from '../../user-options';
 import { buildUserForm } from '../../forms/user-form.factory';
 import { mapUserToForm } from '../../forms/user-form.mapper';
 import { UserFormValue } from '../../forms/user-form.types';
@@ -116,7 +116,4 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.cancel.emit();
   }
 
-  getRoleColor(role: Role): string {
-    return getRoleColor(role);
-  }
 }

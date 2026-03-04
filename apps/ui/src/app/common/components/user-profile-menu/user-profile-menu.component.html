@@ -4,7 +4,7 @@
       <span class="user-name">{{ user.name }} {{ user.lastName }}</span>
       <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
     </div>
-    <span class="user-role">{{ primaryRoleLabel() }}</span>
+    <span class="user-role" [class]="primaryRoleClass()">{{ primaryRoleLabel() }}</span>
   </div>
   <mat-menu #userMenu="matMenu">
     @if (canSetPassword()) {

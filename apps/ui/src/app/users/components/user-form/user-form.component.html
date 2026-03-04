@@ -24,7 +24,7 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput formControlName="email" type="email" />
+        <input matInput formControlName="email" type="email" autocomplete="email" />
         @if (form.get('email')?.hasError('required')) {
         <mat-error>El email es requerido</mat-error>
         } @if (form.get('email')?.hasError('email')) {

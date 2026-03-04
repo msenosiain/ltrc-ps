@@ -1,3 +1,5 @@
+@use '../../../users/styles/role-chips';
+
 .user-info {
   display: flex;
   flex-direction: column;
@@ -27,5 +29,12 @@
 
 .user-role {
   font-size: 0.7rem;
-  opacity: 0.7;
+  font-weight: 500;
+
+  &.role-chip--admin { color: role-chips.$role-admin-light; }
+  &.role-chip--manager { color: role-chips.$role-manager-light; }
+  &.role-chip--player { color: role-chips.$role-player-light; }
+  &.role-chip--coach { color: role-chips.$role-coach-light; }
+  &.role-chip--trainer { color: role-chips.$role-trainer-light; }
+  &.role-chip--default { color: role-chips.$role-default-light; }
 }

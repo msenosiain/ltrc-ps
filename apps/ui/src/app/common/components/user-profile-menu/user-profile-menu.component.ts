@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../auth/auth.service';
-import { getRoleLabel } from '../../../users/user-options';
+import { getRoleLabel, getRoleClass } from '../../../users/user-options';
 
 @Component({
   selector: 'ltrc-user-profile-menu',
@@ -25,6 +25,10 @@ export class UserProfileMenuComponent {
   readonly primaryRoleLabel = computed(() => {
     const user = this.currentUser();
     return user?.roles?.length ? getRoleLabel(user.roles[0]) : '';
+  });
+  readonly primaryRoleClass = computed(() => {
+    const user = this.currentUser();
+    return user?.roles?.length ? getRoleClass(user.roles[0]) : '';
   });
 
   logout(): void {

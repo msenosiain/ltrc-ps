@@ -1,5 +1,6 @@
 /* Angular Material Theme - @use must come first */
 @use '@angular/material' as mat;
+@use 'app/users/styles/role-chips';
 
 @include mat.core();
 
