@@ -45,11 +45,15 @@
         @if (user.roles.includes(Role.COACH)) {
         <div class="info-item">
           <span class="info-label">Deportes</span>
-          <span class="info-value">{{ user.sports?.map(getSportLabel)?.join(', ') || '—' }}</span>
+          <span class="info-value">{{
+            user.sports?.map(getSportLabel)?.join(', ') || '—'
+          }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Categorías</span>
-          <span class="info-value">{{ user.categories?.map(getCategoryLabel)?.join(', ') || '—' }}</span>
+          <span class="info-value">{{
+            user.categories?.map(getCategoryLabel)?.join(', ') || '—'
+          }}</span>
         </div>
         }
       </div>

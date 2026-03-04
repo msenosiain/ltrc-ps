@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CategoryEnum, PaginatedResponse, PaginationQuery, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  PaginatedResponse,
+  PaginationQuery,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { User } from '../User.interface';
 import { Player } from '@ltrc-ps/shared-api-model';

@@ -1,9 +1,11 @@
 import {
   Component,
   DestroyRef,
+  ElementRef,
   HostListener,
   inject,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -96,6 +98,9 @@ export class SquadEditorComponent implements OnInit {
       [Validators.min(1), Validators.max(99)],
     ],
   });
+
+  @ViewChild('playerSearchInput')
+  playerSearchInput!: ElementRef<HTMLInputElement>;
 
   playerSuggestions: Player[] = [];
   selectedPlayer: Player | null = null;
@@ -231,6 +236,7 @@ export class SquadEditorComponent implements OnInit {
     this.selectedPlayer = null;
     this.addForm.reset();
     this.playerSuggestions = [];
+    setTimeout(() => this.playerSearchInput?.nativeElement.focus());
   }
 
   removePlayer(entry: SquadEntry): void {

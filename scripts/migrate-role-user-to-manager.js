@@ -22,7 +22,9 @@ async function main() {
     { arrayFilters: [{ elem: { $eq: 'user' } }] }
   );
 
-  console.log(`Migrated ${result.modifiedCount} users: role 'user' → 'manager'`);
+  console.log(
+    `Migrated ${result.modifiedCount} users: role 'user' → 'manager'`
+  );
   await client.close();
 }
 

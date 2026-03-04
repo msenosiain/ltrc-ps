@@ -1,5 +1,11 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
+import {
+  asyncScheduler,
+  BehaviorSubject,
+  finalize,
+  Observable,
+  observeOn,
+} from 'rxjs';
 import { PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
 import { User } from '../User.interface';
 import { UsersService } from './users.service';

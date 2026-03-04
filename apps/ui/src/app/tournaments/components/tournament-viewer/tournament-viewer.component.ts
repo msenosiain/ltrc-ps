@@ -7,7 +7,12 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { CategoryEnum, Role, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  Role,
+  SportEnum,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';

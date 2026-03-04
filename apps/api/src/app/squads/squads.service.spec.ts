@@ -81,11 +81,9 @@ describe('SquadsService', () => {
     it('should return all squads sorted by name', async () => {
       const execMock = jest.fn().mockResolvedValue([mockSquad]);
       mockModel.find.mockReturnValue({
-        sort: jest
-          .fn()
-          .mockReturnValue({
-            populate: jest.fn().mockReturnValue({ exec: execMock }),
-          }),
+        sort: jest.fn().mockReturnValue({
+          populate: jest.fn().mockReturnValue({ exec: execMock }),
+        }),
       });
 
       const result = await service.findAll();
@@ -122,12 +120,10 @@ describe('SquadsService', () => {
         ...mockSquad,
         name: 'Equipo Titular',
         set: jest.fn(),
-        save: jest
-          .fn()
-          .mockResolvedValue({
-            ...mockSquad,
-            populate: jest.fn().mockResolvedValue(mockSquad),
-          }),
+        save: jest.fn().mockResolvedValue({
+          ...mockSquad,
+          populate: jest.fn().mockResolvedValue(mockSquad),
+        }),
       };
       mockModel.findById.mockResolvedValueOnce(squad);
 
@@ -141,12 +137,10 @@ describe('SquadsService', () => {
       const squad = {
         ...mockSquad,
         set: jest.fn(),
-        save: jest
-          .fn()
-          .mockResolvedValue({
-            ...mockSquad,
-            populate: jest.fn().mockResolvedValue(mockSquad),
-          }),
+        save: jest.fn().mockResolvedValue({
+          ...mockSquad,
+          populate: jest.fn().mockResolvedValue(mockSquad),
+        }),
       };
       mockModel.findById.mockResolvedValueOnce(squad);
 

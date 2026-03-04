@@ -17,7 +17,10 @@ describe('UserFilterContextService', () => {
     TestBed.configureTestingModule({
       providers: [
         UserFilterContextService,
-        { provide: AuthService, useValue: { user$: userSubject.asObservable() } },
+        {
+          provide: AuthService,
+          useValue: { user$: userSubject.asObservable() },
+        },
       ],
     });
 
@@ -63,9 +66,11 @@ describe('UserFilterContextService', () => {
       expect(ctx.sportOptions).toHaveLength(1);
       expect(ctx.sportOptions[0].id).toBe(SportEnum.RUGBY);
       // Categories should be filtered to rugby + shared
-      expect(ctx.categoryOptions.every(
-        (c) => c.sport === null || c.sport === SportEnum.RUGBY
-      )).toBe(true);
+      expect(
+        ctx.categoryOptions.every(
+          (c) => c.sport === null || c.sport === SportEnum.RUGBY
+        )
+      ).toBe(true);
       done();
     });
   });

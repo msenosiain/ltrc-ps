@@ -76,7 +76,8 @@ export class SetPasswordComponent {
         if (err.status === 400) {
           this.errorMessage = 'Tu cuenta ya tiene una contraseña configurada.';
         } else {
-          this.errorMessage = 'Error al configurar la contraseña. Intentá de nuevo.';
+          this.errorMessage =
+            'Error al configurar la contraseña. Intentá de nuevo.';
         }
       },
     });
