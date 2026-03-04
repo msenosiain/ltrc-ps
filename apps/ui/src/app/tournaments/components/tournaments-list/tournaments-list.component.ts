@@ -1,9 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  inject,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -13,8 +8,16 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { TournamentsDataSource, TournamentFilters } from '../../services/tournaments.datasource';
-import { CategoryEnum, Role, SortOrder, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  TournamentsDataSource,
+  TournamentFilters,
+} from '../../services/tournaments.datasource';
+import {
+  CategoryEnum,
+  Role,
+  SortOrder,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { sportOptions } from '../../../common/sport-options';
 import { getCategoryLabel } from '../../../common/category-options';
@@ -42,7 +45,13 @@ export class TournamentsListComponent implements AfterViewInit {
   private readonly tournamentsService = inject(TournamentsService);
 
   readonly Role = Role;
-  readonly displayedColumns = ['name', 'season', 'sport', 'categories', 'description'];
+  readonly displayedColumns = [
+    'name',
+    'season',
+    'sport',
+    'categories',
+    'description',
+  ];
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -61,7 +70,10 @@ export class TournamentsListComponent implements AfterViewInit {
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+      this.dataSource.setPage(
+        this.paginator.pageIndex,
+        this.paginator.pageSize
+      );
     });
   }
 

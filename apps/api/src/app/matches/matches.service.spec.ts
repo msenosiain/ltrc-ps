@@ -104,11 +104,9 @@ describe('MatchesService', () => {
       const match = {
         ...mockMatch,
         set: jest.fn(),
-        save: jest
-          .fn()
-          .mockResolvedValue({
-            populate: jest.fn().mockResolvedValue(populated),
-          }),
+        save: jest.fn().mockResolvedValue({
+          populate: jest.fn().mockResolvedValue(populated),
+        }),
       };
       mockModel.findById.mockResolvedValueOnce(match);
 
@@ -207,11 +205,9 @@ describe('MatchesService', () => {
       const match = {
         ...mockMatch,
         set: jest.fn(),
-        save: jest
-          .fn()
-          .mockResolvedValue({
-            populate: jest.fn().mockResolvedValue(populated),
-          }),
+        save: jest.fn().mockResolvedValue({
+          populate: jest.fn().mockResolvedValue(populated),
+        }),
       };
       mockModel.findById.mockResolvedValueOnce(match);
       mockSquadsService.getPlayers.mockResolvedValueOnce(squadPlayers);

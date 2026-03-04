@@ -75,21 +75,23 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.form = buildUserForm(this.fb, this.isCreate);
     if (this.user) {
       this.form.patchValue(mapUserToForm(this.user));
-      this.filteredCategoryOptions = getCategoryOptionsBySports(this.user.sports ?? []);
+      this.filteredCategoryOptions = getCategoryOptionsBySports(
+        this.user.sports ?? []
+      );
     }
 
-    this.form.get('roles')!
-      .valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.form
+      .get('roles')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((roles: Role[]) => {
         if (!roles.includes(Role.COACH)) {
           this.form.patchValue({ sports: [], categories: [] });
         }
       });
 
-    this.form.get('sports')!
-      .valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    this.form
+      .get('sports')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sports: SportEnum[]) => {
         this.filteredCategoryOptions = getCategoryOptionsBySports(sports);
         const currentCategories = this.form.get('categories')!.value;
@@ -115,5 +117,4 @@ export class UserFormComponent implements OnInit, OnChanges {
   onCancel(): void {
     this.cancel.emit();
   }
-
 }

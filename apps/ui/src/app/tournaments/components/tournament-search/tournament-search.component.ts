@@ -59,7 +59,9 @@ export class TournamentSearchComponent implements OnInit {
         this.sportOptions = ctx.sportOptions;
 
         if (ctx.forcedSport) {
-          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+          this.searchForm
+            .get('sport')!
+            .setValue(ctx.forcedSport, { emitEvent: false });
         }
 
         this.emitFilters();

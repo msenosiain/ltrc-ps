@@ -26,7 +26,9 @@ export class TournamentsService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly tournamentsApiUrl = `${this.config.baseUrl}/tournaments`;
 
-  getTournaments(query: PaginationQuery): Observable<PaginatedResponse<Tournament>> {
+  getTournaments(
+    query: PaginationQuery
+  ): Observable<PaginatedResponse<Tournament>> {
     let params = new HttpParams();
     if (query.page) params = params.set('page', query.page);
     if (query.size) params = params.set('size', query.size);

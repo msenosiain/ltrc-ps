@@ -18,7 +18,9 @@ async function main() {
     { $set: { sports: [], categories: [] } }
   );
 
-  console.log(`Updated ${result.modifiedCount} users with sports/categories defaults`);
+  console.log(
+    `Updated ${result.modifiedCount} users with sports/categories defaults`
+  );
 
   await client.close();
 }

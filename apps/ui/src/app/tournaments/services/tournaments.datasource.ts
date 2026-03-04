@@ -1,6 +1,17 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
-import { PaginationQuery, SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import {
+  asyncScheduler,
+  BehaviorSubject,
+  finalize,
+  Observable,
+  observeOn,
+} from 'rxjs';
+import {
+  PaginationQuery,
+  SortOrder,
+  SportEnum,
+  Tournament,
+} from '@ltrc-ps/shared-api-model';
 import { TournamentsService } from './tournaments.service';
 
 export interface TournamentFilters {

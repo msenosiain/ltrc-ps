@@ -24,8 +24,13 @@ export class TournamentsService {
     pagination: PaginationDto<TournamentFilterDto>,
     caller?: User
   ): Promise<PaginatedResponse<unknown>> {
-    const { page, size, filters = {}, sortBy, sortOrder = SortOrder.DESC } =
-      pagination;
+    const {
+      page,
+      size,
+      filters = {},
+      sortBy,
+      sortOrder = SortOrder.DESC,
+    } = pagination;
     const skip = (page - 1) * size;
     const query: Record<string, unknown> = {};
 

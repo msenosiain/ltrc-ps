@@ -88,10 +88,14 @@ export class MatchSearchComponent implements OnInit {
         this.categoryOptions = ctx.categoryOptions;
 
         if (ctx.forcedSport) {
-          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+          this.searchForm
+            .get('sport')!
+            .setValue(ctx.forcedSport, { emitEvent: false });
         }
         if (ctx.forcedCategory) {
-          this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
+          this.searchForm
+            .get('category')!
+            .setValue(ctx.forcedCategory, { emitEvent: false });
         }
 
         this.emitFilters();
@@ -123,6 +127,8 @@ export class MatchSearchComponent implements OnInit {
   }
 
   private emitFilters(): void {
-    this.filtersChange.emit(nullToUndefined(this.searchForm.value) as MatchFilters);
+    this.filtersChange.emit(
+      nullToUndefined(this.searchForm.value) as MatchFilters
+    );
   }
 }

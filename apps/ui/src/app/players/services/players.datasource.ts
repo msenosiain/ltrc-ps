@@ -1,5 +1,11 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
+import {
+  asyncScheduler,
+  BehaviorSubject,
+  finalize,
+  Observable,
+  observeOn,
+} from 'rxjs';
 import {
   PaginationQuery,
   Player,

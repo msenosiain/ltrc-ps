@@ -95,7 +95,8 @@ export class MatchesService {
     // Coach server-side filter override
     if (caller?.roles?.includes(Role.COACH)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
-      if (caller.categories?.length) queryFilters['category'] = { $in: caller.categories };
+      if (caller.categories?.length)
+        queryFilters['category'] = { $in: caller.categories };
     }
 
     const sort: Record<string, 1 | -1> = {};

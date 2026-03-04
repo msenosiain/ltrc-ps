@@ -5,7 +5,12 @@ import { UserProfileMenuComponent } from './common/components/user-profile-menu/
 
 @Component({
   selector: 'ltrc-root',
-  imports: [RouterOutlet, RouterLink, MatToolbarModule, UserProfileMenuComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatToolbarModule,
+    UserProfileMenuComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
