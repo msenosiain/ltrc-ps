@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -11,8 +12,10 @@ import { PlayersDataSource } from '../../services/players.datasource';
 import {
   CategoryEnum,
   PlayerPosition,
+  Role,
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { categoryOptions } from '../../../common/category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { Router } from '@angular/router';
@@ -21,6 +24,7 @@ import { Router } from '@angular/router';
   selector: 'ltrc-players-list',
   standalone: true,
   imports: [
+    AsyncPipe,
     MatTableModule,
     MatProgressBarModule,
     MatPaginatorModule,
@@ -29,6 +33,7 @@ import { Router } from '@angular/router';
     MatButtonModule,
     MatSnackBarModule,
     PlayerSearchComponent,
+    AllowedRolesDirective,
   ],
   templateUrl: './players-list.component.html',
   styleUrls: ['./players-list.component.scss'],
@@ -39,6 +44,7 @@ export class PlayersListComponent implements AfterViewInit {
   private readonly snackBar = inject(MatSnackBar);
 
   importing = false;
+  readonly Role = Role;
 
   readonly displayedColumns = [
     'photoId',

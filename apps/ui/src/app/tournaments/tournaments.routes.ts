@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { TournamentsListComponent } from './components/tournaments-list/tournaments-list.component';
 import { TournamentViewerComponent } from './components/tournament-viewer/tournament-viewer.component';
 import { TournamentEditorComponent } from './components/tournament-editor/tournament-editor.component';
+import { hasRoleGuard } from '../auth/guards/has-role.guard';
+import { Role } from '@ltrc-ps/shared-api-model';
 
 export const TOURNAMENTS_ROUTES: Routes = [
   {
@@ -12,7 +14,8 @@ export const TOURNAMENTS_ROUTES: Routes = [
   {
     path: 'create',
     component: TournamentEditorComponent,
-    data: { title: 'Crear torneo' },
+    canActivate: [hasRoleGuard],
+    data: { title: 'Crear torneo', allowedRoles: [Role.MANAGER, Role.ADMIN] },
   },
   {
     path: ':id',
@@ -22,6 +25,7 @@ export const TOURNAMENTS_ROUTES: Routes = [
   {
     path: ':id/edit',
     component: TournamentEditorComponent,
-    data: { title: 'Editar torneo' },
+    canActivate: [hasRoleGuard],
+    data: { title: 'Editar torneo', allowedRoles: [Role.MANAGER, Role.ADMIN] },
   },
 ];

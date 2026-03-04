@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../users/User.interface';
-import { Role } from '../roles.enum';
+import { Role } from '@ltrc-ps/shared-api-model';
 import { By } from '@angular/platform-browser';
 class MockAuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
@@ -53,7 +53,7 @@ describe('AllowedRolesDirective', () => {
       name: 'Alice',
       lastName: 'Cooper',
       email: 'alice.cooper@lostordos.com.ar',
-      roles: [Role.USER],
+      roles: [Role.MANAGER],
     });
     fixture.detectChanges();
     const content = fixture.debugElement.query(By.css('.admin-content'));

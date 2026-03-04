@@ -43,7 +43,7 @@
       <mat-label>Posicion</mat-label>
       <mat-select formControlName="position">
         <mat-option [value]="undefined">Todas</mat-option>
-        @for (option of positionOptions; track option.id) {
+        @for (option of positionOptions; track $index) {
         <mat-option [value]="option.id">{{ option.name }}</mat-option>
         }
       </mat-select>

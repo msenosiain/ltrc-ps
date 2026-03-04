@@ -3,7 +3,7 @@ import { UsersListComponent } from './components/users-list/users-list.component
 import { UserViewerComponent } from './components/user-viewer/user-viewer.component';
 import { UserEditorComponent } from './components/user-editor/user-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { Role } from '../auth/roles.enum';
+import { Role } from '@ltrc-ps/shared-api-model';
 
 export const USERS_ROUTES: Routes = [
   {

@@ -1,5 +1,10 @@
 <div class="login-container">
-  <mat-card>
+  <mat-card class="login-card">
+    @if (isLoading) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+    }
     <mat-card-header>
       <mat-card-title>Iniciar Sesión</mat-card-title>
     </mat-card-header>
@@ -11,6 +16,7 @@
             matInput
             formControlName="email"
             type="email"
+            autocomplete="email"
             placeholder="email@ejemplo.com"
           />
           @if (loginForm.get('email')?.hasError('required')) {
@@ -22,7 +28,7 @@
 
         <mat-form-field appearance="fill">
           <mat-label>Contraseña</mat-label>
-          <input matInput formControlName="pass" type="password" />
+          <input matInput formControlName="pass" type="password" autocomplete="current-password" />
           @if (loginForm.get('pass')?.hasError('required')) {
           <mat-error>La contraseña es requerida</mat-error>
           }
@@ -51,6 +57,7 @@
           mat-stroked-button
           type="button"
           (click)="loginWithGoogle()"
+          [disabled]="isLoading"
           class="google-button"
         >
           <img

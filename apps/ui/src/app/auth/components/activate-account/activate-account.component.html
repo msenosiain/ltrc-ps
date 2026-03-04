@@ -1,5 +1,8 @@
 <div class="activate-container">
   <mat-card class="activate-card">
+    @if (isLoading) {
+    <mat-progress-bar mode="indeterminate" />
+    }
     <mat-card-title>Configurar contraseña</mat-card-title>
     <mat-card-subtitle>{{ email }}</mat-card-subtitle>
 
@@ -15,7 +18,7 @@
       >
         <mat-form-field appearance="outline">
           <mat-label>Nueva contraseña</mat-label>
-          <input matInput type="password" formControlName="password" />
+          <input matInput type="password" formControlName="password" autocomplete="new-password" />
           @if (activateForm.get('password')?.errors?.['minlength']) {
           <mat-error>La contraseña debe tener al menos 8 caracteres</mat-error>
           } @if (activateForm.get('password')?.errors?.['required']) {
@@ -25,7 +28,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Confirmar contraseña</mat-label>
-          <input matInput type="password" formControlName="confirmPassword" />
+          <input matInput type="password" formControlName="confirmPassword" autocomplete="new-password" />
           @if (activateForm.errors?.['passwordsMismatch'] &&
           activateForm.get('confirmPassword')?.touched) {
           <mat-error>Las contraseñas no coinciden</mat-error>

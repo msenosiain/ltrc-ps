@@ -7,7 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -69,7 +69,8 @@ export class MatchSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.tournamentsService
-      .getTournaments()
+      .getTournaments({ page: 1, size: 1000 })
+      .pipe(map((res) => res.items))
       .subscribe((t) => (this.tournaments = t));
 
     this.searchForm

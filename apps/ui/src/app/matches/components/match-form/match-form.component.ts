@@ -137,7 +137,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
       });
 
     this.tournamentsService
-      .getTournaments()
+      .getTournaments({ page: 1, size: 1000 })
+      .pipe(map((res) => res.items))
       .subscribe((t) => (this.tournaments = t));
 
     this.matchForm

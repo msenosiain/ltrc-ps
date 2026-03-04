@@ -1,4 +1,4 @@
-import { Role } from '../auth/roles.enum';
+import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export interface User {
   id?: string;
@@ -8,4 +8,7 @@ export interface User {
   name: string;
   lastName: string;
   roles: Role[];
+  hasPassword?: boolean;
+  sports?: SportEnum[];
+  categories?: CategoryEnum[];
 }
