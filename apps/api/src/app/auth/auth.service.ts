@@ -113,6 +113,8 @@ export class AuthService {
       lastName: user.lastName,
       roles: user.roles,
       hasPassword: !!user.password,
+      sports: user.sports ?? [],
+      categories: user.categories ?? [],
     };
   }
 }

@@ -31,6 +31,8 @@ import {
 import { MatchFilters } from '../../forms/match-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
+import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
+import { SportOption } from '../../../common/sport-options';
 
 @Component({
   selector: 'ltrc-match-search',
@@ -50,14 +52,18 @@ export class MatchSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly tournamentsService = inject(TournamentsService);
+  private readonly filterContext = inject(UserFilterContextService);
 
   @Output() readonly filtersChange = new EventEmitter<MatchFilters>();
 
   readonly statusOptions = matchStatusOptions;
   readonly typeOptions = matchTypeOptions;
-  readonly sportOptions = sportOptions;
+  sportOptions: SportOption[] = sportOptions;
   categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport();
   tournaments: Tournament[] = [];
+
+  showSportFilter = true;
+  showCategoryFilter = true;
 
   readonly searchForm = this.fb.group({
     status: [undefined as MatchStatusEnum | undefined],
@@ -72,6 +78,24 @@ export class MatchSearchComponent implements OnInit {
       .getTournaments({ page: 1, size: 1000 })
       .pipe(map((res) => res.items))
       .subscribe((t) => (this.tournaments = t));
+
+    this.filterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.showSportFilter = ctx.showSportFilter;
+        this.showCategoryFilter = ctx.showCategoryFilter;
+        this.sportOptions = ctx.sportOptions;
+        this.categoryOptions = ctx.categoryOptions;
+
+        if (ctx.forcedSport) {
+          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+        }
+        if (ctx.forcedCategory) {
+          this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
+        }
+
+        this.emitFilters();
+      });
 
     this.searchForm
       .get('sport')!
@@ -91,12 +115,14 @@ export class MatchSearchComponent implements OnInit {
 
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
-      .subscribe((values) =>
-        this.filtersChange.emit(nullToUndefined(values) as MatchFilters)
-      );
+      .subscribe(() => this.emitFilters());
   }
 
   clearField(field: string): void {
     this.searchForm.get(field)?.setValue(undefined);
+  }
+
+  private emitFilters(): void {
+    this.filtersChange.emit(nullToUndefined(this.searchForm.value) as MatchFilters);
   }
 }

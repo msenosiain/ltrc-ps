@@ -22,11 +22,7 @@ export class User extends Document {
   @Prop({ type: [String], enum: Role, default: [] })
   roles!: Role[];
 
-  @Prop({
-    type: [String],
-    enum: SportEnum,
-    required: true,
-  })
+  @Prop({ type: [String], enum: SportEnum, default: [] })
   sports?: SportEnum[];
 
   @Prop({ type: [String], enum: CategoryEnum, default: [] })

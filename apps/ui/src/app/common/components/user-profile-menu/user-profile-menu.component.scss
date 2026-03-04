@@ -1,0 +1,40 @@
+@use '../../../users/styles/role-chips';
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+  opacity: 0.7;
+}
+
+.user-name {
+  font-size: 0.9rem;
+}
+
+.user-role {
+  font-size: 0.7rem;
+  font-weight: 500;
+
+  &.role-chip--admin { color: role-chips.$role-admin-light; }
+  &.role-chip--manager { color: role-chips.$role-manager-light; }
+  &.role-chip--player { color: role-chips.$role-player-light; }
+  &.role-chip--coach { color: role-chips.$role-coach-light; }
+  &.role-chip--trainer { color: role-chips.$role-trainer-light; }
+  &.role-chip--default { color: role-chips.$role-default-light; }
+}
