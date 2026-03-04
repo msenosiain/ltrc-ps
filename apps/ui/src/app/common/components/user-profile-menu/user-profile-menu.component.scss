@@ -1,0 +1,31 @@
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+  padding: 4px 4px 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+  opacity: 0.7;
+}
+
+.user-name {
+  font-size: 0.9rem;
+}
+
+.user-role {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}

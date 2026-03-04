@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { SportEnum } from '@ltrc-ps/shared-api-model';
 import { SportOption, sportOptions } from '../../../common/sport-options';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
+import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 
 @Component({
   selector: 'ltrc-tournament-search',
@@ -35,13 +36,15 @@ import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 export class TournamentSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly filterContext = inject(UserFilterContextService);
 
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
     sport?: SportEnum;
   }>();
 
-  readonly sportOptions: SportOption[] = sportOptions;
+  sportOptions: SportOption[] = sportOptions;
+  showSportFilter = true;
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
@@ -49,9 +52,22 @@ export class TournamentSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.filterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.showSportFilter = ctx.showSportFilter;
+        this.sportOptions = ctx.sportOptions;
+
+        if (ctx.forcedSport) {
+          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+        }
+
+        this.emitFilters();
+      });
+
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
-      .subscribe((values) => this.filtersChange.emit(nullToUndefined(values)));
+      .subscribe(() => this.emitFilters());
   }
 
   clearSearch(): void {
@@ -60,5 +76,9 @@ export class TournamentSearchComponent implements OnInit {
 
   clearField(field: string): void {
     this.searchForm.get(field)?.setValue(undefined);
+  }
+
+  private emitFilters(): void {
+    this.filtersChange.emit(nullToUndefined(this.searchForm.value));
   }
 }

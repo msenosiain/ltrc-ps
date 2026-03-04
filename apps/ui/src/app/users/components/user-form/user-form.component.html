@@ -52,14 +52,16 @@
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
         </mat-select>
+        <mat-hint>Dejar vacío para acceso completo</mat-hint>
       </mat-form-field>
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Categorías</mat-label>
         <mat-select formControlName="categories" multiple>
-          @for (option of categoryOptions; track option.id) {
+          @for (option of filteredCategoryOptions; track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
         </mat-select>
+        <mat-hint>Dejar vacío para acceso completo</mat-hint>
       </mat-form-field>
       }
 

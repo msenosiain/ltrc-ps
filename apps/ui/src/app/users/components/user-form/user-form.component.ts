@@ -18,14 +18,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { Role, SportEnum } from '@ltrc-ps/shared-api-model';
 import { roleOptions, getRoleColor } from '../../user-options';
 import { buildUserForm } from '../../forms/user-form.factory';
 import { mapUserToForm } from '../../forms/user-form.mapper';
 import { UserFormValue } from '../../forms/user-form.types';
 import { User } from '../../User.interface';
 import { sportOptions } from '../../../common/sport-options';
-import { categoryOptions } from '../../../common/category-options';
+import {
+  CategoryOption,
+  categoryOptions,
+  getCategoryOptionsBySports,
+} from '../../../common/category-options';
 
 @Component({
   selector: 'ltrc-user-form',
@@ -54,7 +58,7 @@ export class UserFormComponent implements OnInit, OnChanges {
 
   readonly roleOptions = roleOptions;
   readonly sportOptions = sportOptions;
-  readonly categoryOptions = categoryOptions;
+  filteredCategoryOptions: CategoryOption[] = categoryOptions;
   readonly Role = Role;
 
   get isCreate(): boolean {
@@ -71,6 +75,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.form = buildUserForm(this.fb, this.isCreate);
     if (this.user) {
       this.form.patchValue(mapUserToForm(this.user));
+      this.filteredCategoryOptions = getCategoryOptionsBySports(this.user.sports ?? []);
     }
 
     this.form.get('roles')!
@@ -79,6 +84,19 @@ export class UserFormComponent implements OnInit, OnChanges {
       .subscribe((roles: Role[]) => {
         if (!roles.includes(Role.COACH)) {
           this.form.patchValue({ sports: [], categories: [] });
+        }
+      });
+
+    this.form.get('sports')!
+      .valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sports: SportEnum[]) => {
+        this.filteredCategoryOptions = getCategoryOptionsBySports(sports);
+        const currentCategories = this.form.get('categories')!.value;
+        const validIds = new Set(this.filteredCategoryOptions.map((c) => c.id));
+        const filtered = currentCategories.filter((c) => validIds.has(c));
+        if (filtered.length !== currentCategories.length) {
+          this.form.get('categories')!.setValue(filtered, { emitEvent: false });
         }
       });
   }

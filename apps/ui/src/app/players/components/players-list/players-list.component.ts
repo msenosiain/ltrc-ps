@@ -85,7 +85,9 @@ export class PlayersListComponent implements AfterViewInit {
     position?: PlayerPosition;
     category?: CategoryEnum;
   }): void {
-    this.paginator.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.pageIndex = 0;
+    }
     this.dataSource.setFilters(filters);
   }
 

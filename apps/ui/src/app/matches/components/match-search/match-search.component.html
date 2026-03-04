@@ -1,5 +1,6 @@
 <form [formGroup]="searchForm" class="search-form">
   <div class="filters-container">
+    @if (showSportFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Deporte</mat-label>
       <mat-select formControlName="sport">
@@ -19,6 +20,7 @@
       </button>
       }
     </mat-form-field>
+    }
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Estado</mat-label>
@@ -60,6 +62,7 @@
       }
     </mat-form-field>
 
+    @if (showCategoryFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="category">
@@ -79,6 +82,7 @@
       </button>
       }
     </mat-form-field>
+    }
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Torneo</mat-label>
