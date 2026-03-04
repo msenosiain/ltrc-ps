@@ -26,8 +26,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
-  Player,
   ClothingSizesEnum,
+  Player,
+  Role,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,7 +46,6 @@ import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
 import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
 import { AuthService } from '../../../auth/auth.service';
-import { Role } from '../../../auth/roles.enum';
 
 export interface PlayerFormSubmitEvent {
   payload: PlayerFormValue;

@@ -11,6 +11,7 @@ import {
   CategoryEnum,
   Player,
   PlayerPosition,
+  Role,
 } from '@ltrc-ps/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
 import { MatCardModule } from '@angular/material/card';
@@ -21,7 +22,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
-import { Role } from '../../../auth/roles.enum';
 
 @Component({
   selector: 'ltrc-player-viewer',

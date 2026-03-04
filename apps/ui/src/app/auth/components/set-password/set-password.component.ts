@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -8,7 +8,8 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,7 +25,7 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
 }
 
 @Component({
-  selector: 'ltrc-activate-account',
+  selector: 'ltrc-set-password',
   standalone: true,
   imports: [
     CommonModule,
@@ -36,19 +37,20 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
     MatProgressBarModule,
     MatIconModule,
   ],
-  templateUrl: './activate-account.component.html',
-  styleUrl: './activate-account.component.scss',
+  templateUrl: './set-password.component.html',
+  styleUrl: './set-password.component.scss',
 })
-export class ActivateAccountComponent implements OnInit {
+export class SetPasswordComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
 
-  email = '';
+  private readonly currentUser = toSignal(this.authService.user$);
+  readonly email = computed(() => this.currentUser()?.email ?? '');
+
   isLoading = false;
   errorMessage = '';
 
-  activateForm = new FormGroup(
+  form = new FormGroup(
     {
       password: new FormControl('', [
         Validators.required,
@@ -59,33 +61,28 @@ export class ActivateAccountComponent implements OnInit {
     { validators: passwordsMatch }
   );
 
-  ngOnInit(): void {
-    this.email = this.route.snapshot.queryParamMap.get('email') ?? '';
-    if (!this.email) {
-      this.router.navigate(['/login']);
-    }
-  }
-
   onSubmit(): void {
-    if (this.activateForm.invalid) return;
+    if (this.form.invalid) return;
     this.isLoading = true;
     this.errorMessage = '';
-    const { password } = this.activateForm.value;
+    const { password } = this.form.value;
 
-    this.authService.activate(this.email, password!).subscribe({
+    this.authService.activate(this.email(), password!).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.isLoading = false;
         if (err.status === 400) {
-          this.errorMessage =
-            'La cuenta ya fue activada. Ingresá con tu contraseña.';
+          this.errorMessage = 'Tu cuenta ya tiene una contraseña configurada.';
         } else {
-          this.errorMessage = 'Error al activar la cuenta. Intentá de nuevo.';
+          this.errorMessage = 'Error al configurar la contraseña. Intentá de nuevo.';
         }
-        console.error(err);
       },
     });
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

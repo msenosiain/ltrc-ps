@@ -1,6 +1,7 @@
 export * from './category.enum';
 export * from './clothing-sizes.enum';
 export * from './player-position.enum';
+export * from './role.enum';
 export * from './sport.enum';
 export * from './match-status.enum';
 export * from './match-type.enum';

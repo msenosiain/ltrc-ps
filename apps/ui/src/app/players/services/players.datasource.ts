@@ -1,5 +1,5 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { BehaviorSubject, finalize, Observable } from 'rxjs';
+import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
 import {
   PaginationQuery,
   Player,
@@ -12,7 +12,7 @@ export class PlayersDataSource implements DataSource<Player> {
   private playersSubject = new BehaviorSubject<Player[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  loading$ = this.loadingSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable().pipe(observeOn(asyncScheduler));
   total = 0;
 
   private filters: PlayerFilters = {};

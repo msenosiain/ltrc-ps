@@ -22,8 +22,10 @@ import {
   Match,
   MatchStatusEnum,
   MatchTypeEnum,
+  Role,
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 
 @Component({
   selector: 'ltrc-matches-list',
@@ -39,6 +41,7 @@ import {
     AsyncPipe,
     DatePipe,
     MatchSearchComponent,
+    AllowedRolesDirective,
   ],
   templateUrl: './matches-list.component.html',
   styleUrl: './matches-list.component.scss',
@@ -48,6 +51,7 @@ export class MatchesListComponent implements AfterViewInit {
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
+  readonly Role = Role;
   readonly displayedColumns = [
     'date',
     'opponent',

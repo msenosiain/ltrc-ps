@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Role } from '../../auth/roles.enum';
+import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -33,4 +33,14 @@ export class CreateUserDto {
   @IsArray()
   @IsEnum(Role, { each: true })
   roles?: Role[];
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(SportEnum, { each: true })
+  sports?: SportEnum[];
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(CategoryEnum, { each: true })
+  categories?: CategoryEnum[];
 }

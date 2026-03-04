@@ -3,11 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MatchEntity } from './schemas/match.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { PaginatedResponse } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse, Role } from '@ltrc-ps/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { SquadsService } from '../squads/squads.service';
+import { User } from '../users/schemas/user.schema';
 
 const POPULATE_FIELDS = [
   'tournament',
@@ -56,7 +57,8 @@ export class MatchesService {
   }
 
   async findPaginated(
-    pagination: PaginationDto<MatchFiltersDto>
+    pagination: PaginationDto<MatchFiltersDto>,
+    caller?: User
   ): Promise<PaginatedResponse<unknown>> {
     const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
     const skip = (page - 1) * size;
@@ -88,6 +90,12 @@ export class MatchesService {
       if (filters.fromDate) dateFilter['$gte'] = new Date(filters.fromDate);
       if (filters.toDate) dateFilter['$lte'] = new Date(filters.toDate);
       queryFilters['date'] = dateFilter;
+    }
+
+    // Coach server-side filter override
+    if (caller?.roles?.includes(Role.COACH)) {
+      if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
+      if (caller.categories?.length) queryFilters['category'] = { $in: caller.categories };
     }
 
     const sort: Record<string, 1 | -1> = {};

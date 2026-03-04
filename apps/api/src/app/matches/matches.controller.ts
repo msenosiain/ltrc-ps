@@ -7,8 +7,10 @@ import {
   Body,
   Param,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
@@ -23,8 +25,11 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @Get()
-  async findPaginated(@Query() pagination: PaginationDto<MatchFiltersDto>) {
-    return this.matchesService.findPaginated(pagination);
+  async findPaginated(
+    @Query() pagination: PaginationDto<MatchFiltersDto>,
+    @Req() req: Request
+  ) {
+    return this.matchesService.findPaginated(pagination, (req as any).user);
   }
 
   @Post()

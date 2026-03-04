@@ -15,6 +15,7 @@ import {
   parseDate,
   PaginatedResponse,
   Player,
+  Role,
   RugbyPositions,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerFiltersDto } from './player-filter.dto';
@@ -23,7 +24,7 @@ import { UpdatePlayerDto } from './dto/update-player.dto';
 import { ImportPlayerRow } from './dto/import-player.dto';
 import * as XLSX from 'xlsx';
 import { UsersService } from '../users/users.service';
-import { Role } from '../auth/roles.enum';
+import { User } from '../users/schemas/user.schema';
 
 @Injectable()
 export class PlayersService {
@@ -113,7 +114,8 @@ export class PlayersService {
   }
 
   async findPaginated(
-    pagination: PaginationDto<PlayerFiltersDto>
+    pagination: PaginationDto<PlayerFiltersDto>,
+    caller?: User
   ): Promise<PaginatedResponse<Player>> {
     const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
     const skip = (page - 1) * size;
@@ -151,6 +153,12 @@ export class PlayersService {
     // category
     if (filters.category) {
       queryFilters['category'] = filters.category;
+    }
+
+    // Coach server-side filter override
+    if (caller?.roles?.includes(Role.COACH)) {
+      if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
+      if (caller.categories?.length) queryFilters['category'] = { $in: caller.categories };
     }
 
     // Sorting

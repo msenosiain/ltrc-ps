@@ -112,6 +112,7 @@ export class AuthService {
       name: user.name,
       lastName: user.lastName,
       roles: user.roles,
+      hasPassword: !!user.password,
     };
   }
 }

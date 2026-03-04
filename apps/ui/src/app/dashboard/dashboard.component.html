@@ -5,23 +5,20 @@
     #sidenav
   >
     <mat-nav-list>
-      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="members"
-        >Socios</a
-      >
       <a
-        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
         mat-list-item
         routerLink="players"
         >Jugadores</a
       >
       <a
-        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
         mat-list-item
         routerLink="tournaments"
         >Torneos</a
       >
       <a
-        *ltrcAllowedRoles="[Role.USER, Role.ADMIN]"
+        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
         mat-list-item
         routerLink="matches"
         >Partidos</a
@@ -31,6 +28,9 @@
       >
       @if (isPlayer() && myPlayerId()) {
       <a mat-list-item [routerLink]="['players', myPlayerId()]">Mi Perfil</a>
+      }
+      @if (canSetPassword()) {
+      <a mat-list-item routerLink="set-password">Configurar contraseña</a>
       }
     </mat-nav-list>
   </mat-sidenav>

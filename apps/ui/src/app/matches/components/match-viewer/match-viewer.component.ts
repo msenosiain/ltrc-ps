@@ -12,9 +12,11 @@ import {
   Match,
   MatchStatusEnum,
   MatchTypeEnum,
+  Role,
   SquadEntry,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { getCategoryLabel as getCatLabel } from '../../match-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,6 +37,7 @@ import { PlayersService } from '../../../players/services/players.service';
     MatChipsModule,
     MatDividerModule,
     DatePipe,
+    AllowedRolesDirective,
   ],
   templateUrl: './match-viewer.component.html',
   styleUrl: './match-viewer.component.scss',
@@ -48,6 +51,7 @@ export class MatchViewerComponent implements OnInit {
 
   match?: Match;
   readonly MatchStatusEnum = MatchStatusEnum;
+  readonly Role = Role;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

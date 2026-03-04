@@ -1,96 +1,73 @@
 import {
+  AfterViewInit,
   Component,
   inject,
-  OnInit,
-  DestroyRef,
   ViewChild,
-  AfterViewInit,
 } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import {
-  CategoryEnum,
-  SortOrder,
-  SportEnum,
-  Tournament,
-} from '@ltrc-ps/shared-api-model';
+import { TournamentsDataSource, TournamentFilters } from '../../services/tournaments.datasource';
+import { CategoryEnum, Role, SortOrder, SportEnum } from '@ltrc-ps/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { sportOptions } from '../../../common/sport-options';
 import { getCategoryLabel } from '../../../common/category-options';
 import { TournamentSearchComponent } from '../tournament-search/tournament-search.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'ltrc-tournaments-list',
   standalone: true,
   imports: [
+    AsyncPipe,
     MatTableModule,
     MatProgressBarModule,
     MatIconModule,
     MatButtonModule,
     MatSortModule,
+    MatPaginatorModule,
     TournamentSearchComponent,
+    AllowedRolesDirective,
   ],
   templateUrl: './tournaments-list.component.html',
   styleUrl: './tournaments-list.component.scss',
 })
-export class TournamentsListComponent implements OnInit, AfterViewInit {
+export class TournamentsListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly tournamentsService = inject(TournamentsService);
-  private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns = [
-    'name',
-    'season',
-    'sport',
-    'categories',
-    'description',
-  ];
+  readonly Role = Role;
+  readonly displayedColumns = ['name', 'season', 'sport', 'categories', 'description'];
 
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  tournaments: Tournament[] = [];
-  loading = false;
-
-  private searchTerm?: string;
-  private sport?: SportEnum;
-  private sortBy: string | undefined = 'season';
-  private sortOrder: SortOrder | undefined = SortOrder.DESC;
-
-  ngOnInit(): void {
-    this.load();
-  }
+  readonly dataSource = new TournamentsDataSource(this.tournamentsService);
 
   ngAfterViewInit(): void {
+    this.dataSource.load();
+
     this.sort.sortChange.subscribe(() => {
-      this.sortBy = this.sort.active || undefined;
-      this.sortOrder = (this.sort.direction as SortOrder) || undefined;
-      this.load();
+      this.paginator.pageIndex = 0;
+      this.dataSource.setSorting(
+        this.sort.active,
+        (this.sort.direction as SortOrder) || SortOrder.DESC
+      );
+    });
+
+    this.paginator.page.subscribe(() => {
+      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
     });
   }
 
-  private load(): void {
-    this.loading = true;
-    this.tournamentsService
-      .getTournaments(this.searchTerm, this.sport, this.sortBy, this.sortOrder)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.tournaments = data;
-          this.loading = false;
-        },
-        error: () => (this.loading = false),
-      });
-  }
-
-  applyFilters(filters: { searchTerm?: string; sport?: SportEnum }): void {
-    this.searchTerm = filters.searchTerm;
-    this.sport = filters.sport;
-    this.load();
+  applyFilters(filters: TournamentFilters): void {
+    this.paginator.pageIndex = 0;
+    this.dataSource.setFilters(filters);
   }
 
   getSportLabel(sport?: SportEnum): string {

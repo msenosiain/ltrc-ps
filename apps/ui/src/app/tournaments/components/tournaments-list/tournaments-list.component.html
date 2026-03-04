@@ -1,6 +1,7 @@
 <div class="tournaments-list">
   <div class="list-header">
     <button
+      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
       mat-flat-button
       color="primary"
       type="button"
@@ -13,13 +14,13 @@
 
   <ltrc-tournament-search (filtersChange)="applyFilters($event)" />
 
-  @if (loading) {
+  @if (dataSource.loading$ | async) {
   <mat-progress-bar mode="indeterminate" />
   }
 
   <table
     mat-table
-    [dataSource]="tournaments"
+    [dataSource]="dataSource"
     matSort
     matSortActive="season"
     matSortDirection="desc"
@@ -69,4 +70,11 @@
       class="tournament-row"
     ></tr>
   </table>
+
+  <mat-paginator
+    [length]="dataSource.total"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  />
 </div>
