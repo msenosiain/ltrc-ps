@@ -3,7 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   CategoryEnum,
-  SortOrder,
+  PaginatedResponse,
+  PaginationQuery,
   SportEnum,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
@@ -25,20 +26,18 @@ export class TournamentsService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly tournamentsApiUrl = `${this.config.baseUrl}/tournaments`;
 
-  getTournaments(
-    searchTerm?: string,
-    sport?: SportEnum,
-    sortBy?: string,
-    sortOrder?: SortOrder
-  ): Observable<Tournament[]> {
+  getTournaments(query: PaginationQuery): Observable<PaginatedResponse<Tournament>> {
     let params = new HttpParams();
-    if (searchTerm) params = params.set('searchTerm', searchTerm);
-    if (sport) params = params.set('sport', sport);
-    if (sortBy) params = params.set('sortBy', sortBy);
-    if (sortOrder) params = params.set('sortOrder', sortOrder);
-    return this.httpClient.get<Tournament[]>(this.tournamentsApiUrl, {
-      params,
-    });
+    if (query.page) params = params.set('page', query.page);
+    if (query.size) params = params.set('size', query.size);
+    if (query.filters && Object.keys(query.filters).length > 0)
+      params = params.set('filters', JSON.stringify(query.filters));
+    if (query.sortBy) params = params.set('sortBy', query.sortBy);
+    if (query.sortOrder) params = params.set('sortOrder', query.sortOrder);
+    return this.httpClient.get<PaginatedResponse<Tournament>>(
+      this.tournamentsApiUrl,
+      { params }
+    );
   }
 
   getTournamentById(id: string): Observable<Tournament> {

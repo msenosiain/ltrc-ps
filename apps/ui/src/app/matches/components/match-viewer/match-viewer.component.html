@@ -113,7 +113,12 @@
       }
 
       <div class="squad-card-actions">
-        <button mat-stroked-button type="button" (click)="manageSquad()">
+        <button
+          *ltrcAllowedRoles="[Role.COACH, Role.ADMIN]"
+          mat-stroked-button
+          type="button"
+          (click)="manageSquad()"
+        >
           <mat-icon>group</mat-icon>
           Gestionar plantel
         </button>
@@ -126,7 +131,13 @@
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
-    <button mat-flat-button color="primary" type="button" (click)="edit()">
+    <button
+      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="edit()"
+    >
       <mat-icon>edit</mat-icon>
       Editar
     </button>

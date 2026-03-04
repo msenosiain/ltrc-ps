@@ -51,7 +51,13 @@
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
-    <button mat-flat-button color="primary" type="button" (click)="edit()">
+    <button
+      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
+      mat-flat-button
+      color="primary"
+      type="button"
+      (click)="edit()"
+    >
       <mat-icon>edit</mat-icon>
       Editar
     </button>

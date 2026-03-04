@@ -1,5 +1,5 @@
 import { FormBuilder, Validators } from '@angular/forms';
-import { Role } from '../../auth/roles.enum';
+import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export function buildUserForm(fb: FormBuilder, isCreate = false) {
   return fb.group({
@@ -12,7 +12,9 @@ export function buildUserForm(fb: FormBuilder, isCreate = false) {
       Validators.minLength(2),
     ]),
     email: fb.nonNullable.control('', [Validators.required, Validators.email]),
-    roles: fb.nonNullable.control<Role[]>([Role.USER], Validators.required),
+    roles: fb.nonNullable.control<Role[]>([], Validators.required),
     password: fb.control<string | null>(null, isCreate ? [] : []),
+    sports: fb.nonNullable.control<SportEnum[]>([]),
+    categories: fb.nonNullable.control<CategoryEnum[]>([]),
   });
 }

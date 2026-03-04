@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CategoryEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, Role } from '@ltrc-ps/shared-api-model';
 import { SquadEntity } from './schemas/squad.entity';
 import { CreateSquadDto } from './dto/create-squad.dto';
 import { UpdateSquadDto } from './dto/update-squad.dto';
+import { User } from '../users/schemas/user.schema';
 
 const POPULATE_PLAYERS = [{ path: 'players.player' }];
 
@@ -27,8 +28,16 @@ export class SquadsService {
     return squad!.populate(POPULATE_PLAYERS);
   }
 
-  async findAll(category?: CategoryEnum) {
-    const filter = category ? { category } : {};
+  async findAll(category?: CategoryEnum, caller?: User) {
+    let filter: Record<string, unknown> = category ? { category } : {};
+
+    // Coach server-side filter override
+    if (caller?.roles?.includes(Role.COACH)) {
+      if (caller.categories?.length) {
+        filter = { category: { $in: caller.categories } };
+      }
+    }
+
     return this.squadModel
       .find(filter)
       .sort({ name: 1 })

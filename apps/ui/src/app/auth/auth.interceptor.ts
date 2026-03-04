@@ -46,7 +46,7 @@ export function authInterceptor(
           }),
           catchError((error) => {
             authService.logout();
-            router.navigate(['/']);
+            router.navigate(['/login']);
             return throwError(() => error);
           })
         );

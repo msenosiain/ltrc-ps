@@ -1,6 +1,7 @@
 <div class="players-list">
   <div class="list-header">
     <button
+      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
       mat-flat-button
       color="primary"
       type="button"
@@ -17,6 +18,7 @@
       (change)="onImportFileSelected($event)"
     />
     <button
+      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
       mat-stroked-button
       type="button"
       [disabled]="importing"
@@ -28,6 +30,10 @@
   </div>
 
   <ltrc-player-search (filtersChange)="applyFilters($event)" />
+
+  @if ((dataSource.loading$ | async) || importing) {
+  <mat-progress-bar mode="indeterminate" />
+  }
 
   <table
     mat-table

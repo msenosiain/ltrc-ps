@@ -1,4 +1,4 @@
-import { Role } from '../../auth/roles.enum';
+import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export type UserFormValue = {
   name: string;
@@ -6,6 +6,8 @@ export type UserFormValue = {
   email: string;
   roles: Role[];
   password?: string;
+  sports?: SportEnum[];
+  categories?: CategoryEnum[];
 };
 
 export type UserFilters = {

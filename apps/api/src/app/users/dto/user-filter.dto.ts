@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { Role } from '../../auth/roles.enum';
+import { Role } from '@ltrc-ps/shared-api-model';
 
 export class UserFiltersDto {
   @IsOptional()

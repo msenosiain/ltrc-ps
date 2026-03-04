@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { distinctUntilChanged, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { Role } from '../roles.enum';
+import { Role } from '@ltrc-ps/shared-api-model';
 
 @Directive({
   selector: '[ltrcAllowedRoles]',

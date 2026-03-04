@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PaginatedResponse, PaginationQuery } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, PaginatedResponse, PaginationQuery, SportEnum } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { User } from '../User.interface';
 import { Player } from '@ltrc-ps/shared-api-model';
@@ -12,6 +12,8 @@ export interface CreateUserPayload {
   email: string;
   roles?: string[];
   password?: string;
+  sports?: SportEnum[];
+  categories?: CategoryEnum[];
 }
 
 export interface UpdateUserPayload {
@@ -19,6 +21,8 @@ export interface UpdateUserPayload {
   lastName?: string;
   email?: string;
   roles?: string[];
+  sports?: SportEnum[];
+  categories?: CategoryEnum[];
 }
 
 @Injectable({
