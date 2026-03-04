@@ -81,11 +81,15 @@ export class PlayerSearchComponent implements OnInit {
         this.categoryOptions = ctx.categoryOptions;
 
         if (ctx.forcedSport) {
-          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+          this.searchForm
+            .get('sport')!
+            .setValue(ctx.forcedSport, { emitEvent: false });
           this.positionOptions = getPositionOptionsBySport(ctx.forcedSport);
         }
         if (ctx.forcedCategory) {
-          this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
+          this.searchForm
+            .get('category')!
+            .setValue(ctx.forcedCategory, { emitEvent: false });
         }
 
         this.emitFilters();

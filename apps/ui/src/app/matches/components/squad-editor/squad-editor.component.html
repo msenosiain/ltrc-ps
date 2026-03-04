@@ -113,6 +113,7 @@
     <mat-form-field appearance="outline" class="player-search-field">
       <mat-label>Buscar jugador</mat-label>
       <input
+        #playerSearchInput
         matInput
         formControlName="playerSearch"
         [matAutocomplete]="playerAuto"
@@ -146,10 +147,11 @@
     </mat-form-field>
 
     <button
-      mat-flat-button
+      mat-fab
       color="primary"
       type="submit"
       [disabled]="!selectedPlayer || !addForm.value.shirtNumber || saving"
+      class="add-btn"
     >
       <mat-icon>add</mat-icon>
     </button>

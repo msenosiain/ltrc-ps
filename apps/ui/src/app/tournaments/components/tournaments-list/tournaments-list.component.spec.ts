@@ -10,9 +10,7 @@ describe('TournamentsListComponent', () => {
   let fixture: ComponentFixture<TournamentsListComponent>;
 
   const tournamentsServiceMock = {
-    getTournaments: jest
-      .fn()
-      .mockReturnValue(of({ total: 0, items: [] })),
+    getTournaments: jest.fn().mockReturnValue(of({ total: 0, items: [] })),
   };
 
   beforeEach(async () => {

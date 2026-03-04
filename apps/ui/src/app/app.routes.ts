@@ -41,8 +41,8 @@ export const routes: Routes = [
           import('./users/users.routes').then((m) => m.USERS_ROUTES),
       },
       { path: 'set-password', component: SetPasswordComponent },
-    ]
+    ],
   },
   // Fallback to dashboard for any unknown route
-  { path: '**', redirectTo: '/dashboard' }
+  { path: '**', redirectTo: '/dashboard' },
 ];

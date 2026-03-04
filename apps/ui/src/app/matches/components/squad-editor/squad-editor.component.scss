@@ -146,10 +146,14 @@
 
 .add-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 4px;
+
+  .add-btn {
+    --mdc-fab-container-shape: 8px;
+  }
 
   .player-search-field {
     flex: 1;

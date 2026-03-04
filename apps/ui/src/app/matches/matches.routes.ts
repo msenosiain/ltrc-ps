@@ -33,6 +33,9 @@ export const MATCHES_ROUTES: Routes = [
     path: ':id/squad',
     component: SquadEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Gestionar plantel', allowedRoles: [Role.COACH, Role.ADMIN] },
+    data: {
+      title: 'Gestionar plantel',
+      allowedRoles: [Role.COACH, Role.ADMIN],
+    },
   },
 ];
