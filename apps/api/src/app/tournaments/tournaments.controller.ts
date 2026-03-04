@@ -7,14 +7,17 @@ import {
   Body,
   Param,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { TournamentsService } from './tournaments.service';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PaginationDto } from '../shared/pagination.dto';
 
 // @UseGuards(JwtAuthGuard)
 @Controller('tournaments')
@@ -22,8 +25,11 @@ export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
   @Get()
-  async findAll(@Query() filters: TournamentFilterDto) {
-    return this.tournamentsService.findAll(filters);
+  async findAll(
+    @Query() query: PaginationDto<TournamentFilterDto>,
+    @Req() req: Request
+  ) {
+    return this.tournamentsService.findPaginated(query, (req as any).user);
   }
 
   @Post()

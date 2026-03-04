@@ -13,6 +13,10 @@
 
   <ltrc-user-search (filtersChange)="applyFilters($event)" />
 
+  @if (dataSource.loading$ | async) {
+  <mat-progress-bar mode="indeterminate" />
+  }
+
   <table
     mat-table
     [dataSource]="dataSource"

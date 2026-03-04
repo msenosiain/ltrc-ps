@@ -174,17 +174,12 @@
 
   <!-- ACCIONES -->
   <div class="viewer-actions">
-    <button
-      *ltrcAllowedRoles="[Role.ADMIN, Role.USER]"
-      mat-stroked-button
-      type="button"
-      (click)="backToList()"
-    >
+    <button mat-stroked-button type="button" (click)="backToList()">
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
     <button
-      *ltrcAllowedRoles="[Role.ADMIN, Role.USER]"
+      *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER]"
       mat-flat-button
       color="primary"
       type="button"

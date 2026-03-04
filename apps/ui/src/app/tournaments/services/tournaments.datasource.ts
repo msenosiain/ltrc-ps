@@ -1,34 +1,38 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
-import { Match, PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
-import { MatchFilters } from '../forms/match-form.types';
-import { MatchesService } from './matches.service';
+import { PaginationQuery, SortOrder, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { TournamentsService } from './tournaments.service';
 
-export class MatchesDataSource implements DataSource<Match> {
-  private matchesSubject = new BehaviorSubject<Match[]>([]);
+export interface TournamentFilters {
+  searchTerm?: string;
+  sport?: SportEnum;
+}
+
+export class TournamentsDataSource implements DataSource<Tournament> {
+  private tournamentsSubject = new BehaviorSubject<Tournament[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
   loading$ = this.loadingSubject.asObservable().pipe(observeOn(asyncScheduler));
   total = 0;
 
-  private filters: MatchFilters = {};
+  private filters: TournamentFilters = {};
   private pageIndex = 0;
   private pageSize = 10;
   private sortBy?: string;
   private sortOrder?: SortOrder;
 
-  constructor(private matchesService: MatchesService) {}
+  constructor(private tournamentsService: TournamentsService) {}
 
-  connect(_: CollectionViewer): Observable<Match[]> {
-    return this.matchesSubject.asObservable();
+  connect(_: CollectionViewer): Observable<Tournament[]> {
+    return this.tournamentsSubject.asObservable();
   }
 
   disconnect(): void {
-    this.matchesSubject.complete();
+    this.tournamentsSubject.complete();
     this.loadingSubject.complete();
   }
 
-  setFilters(filters: MatchFilters): void {
+  setFilters(filters: TournamentFilters): void {
     this.filters = filters;
     this.pageIndex = 0;
     this.load();
@@ -46,7 +50,7 @@ export class MatchesDataSource implements DataSource<Match> {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this.loadingSubject.next(true);
 
     const query: PaginationQuery = {
@@ -57,15 +61,15 @@ export class MatchesDataSource implements DataSource<Match> {
       sortOrder: this.sortOrder,
     };
 
-    this.matchesService
-      .getMatches(query)
+    this.tournamentsService
+      .getTournaments(query)
       .pipe(finalize(() => this.loadingSubject.next(false)))
       .subscribe({
         next: (res) => {
           this.total = res.total;
-          this.matchesSubject.next(res.items);
+          this.tournamentsSubject.next(res.items as Tournament[]);
         },
-        error: () => this.matchesSubject.next([]),
+        error: () => this.tournamentsSubject.next([]),
       });
   }
 }

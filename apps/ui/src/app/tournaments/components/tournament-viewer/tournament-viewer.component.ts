@@ -7,7 +7,8 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
-import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, Role, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatButtonModule,
     MatIconModule,
     DatePipe,
+    AllowedRolesDirective,
   ],
   templateUrl: './tournament-viewer.component.html',
   styleUrl: './tournament-viewer.component.scss',
@@ -37,6 +39,7 @@ export class TournamentViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
+  readonly Role = Role;
 
   getSportLabel(sport?: SportEnum): string {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';

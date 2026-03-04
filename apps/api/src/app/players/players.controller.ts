@@ -32,8 +32,11 @@ export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Get()
-  async findPaginated(@Query() pagination: PaginationDto<PlayerFiltersDto>) {
-    return this.playersService.findPaginated(pagination);
+  async findPaginated(
+    @Query() pagination: PaginationDto<PlayerFiltersDto>,
+    @Req() req: Request
+  ) {
+    return this.playersService.findPaginated(pagination, (req as any).user);
   }
 
   @Post('import')

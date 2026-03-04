@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
-import { Role } from '../auth/roles.enum';
+import { Role } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,6 +38,9 @@ export class DashboardComponent implements OnInit {
   readonly isPlayer = computed(
     () => this.currentUser()?.roles?.includes(Role.PLAYER) ?? false
   );
+  readonly canSetPassword = computed(
+    () => this.currentUser() !== null && !this.currentUser()?.hasPassword
+  );
 
   myPlayerId = signal<string | null>(null);
 
@@ -63,10 +66,5 @@ export class DashboardComponent implements OnInit {
         },
       });
     }
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/']);
   }
 }

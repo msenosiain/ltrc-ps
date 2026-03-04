@@ -1,5 +1,5 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { BehaviorSubject, finalize, Observable } from 'rxjs';
+import { asyncScheduler, BehaviorSubject, finalize, Observable, observeOn } from 'rxjs';
 import { PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
 import { User } from '../User.interface';
 import { UsersService } from './users.service';
@@ -13,7 +13,7 @@ export class UsersDataSource implements DataSource<User> {
   private usersSubject = new BehaviorSubject<User[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
-  loading$ = this.loadingSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable().pipe(observeOn(asyncScheduler));
   total = 0;
 
   private filters: UserFilters = {};

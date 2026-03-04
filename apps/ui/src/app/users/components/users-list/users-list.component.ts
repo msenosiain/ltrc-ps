@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -7,18 +8,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { SortOrder } from '@ltrc-ps/shared-api-model';
+import { Role, SortOrder } from '@ltrc-ps/shared-api-model';
 import { UsersService } from '../../services/users.service';
 import { UsersDataSource, UserFilters } from '../../services/users.datasource';
 import { UserSearchComponent } from '../user-search/user-search.component';
-import { Role } from '../../../auth/roles.enum';
-import { getRoleLabel } from '../../user-options';
+import { getRoleLabel, getRoleColor } from '../../user-options';
 import { User } from '../../User.interface';
 
 @Component({
   selector: 'ltrc-users-list',
   standalone: true,
   imports: [
+    AsyncPipe,
     MatTableModule,
     MatProgressBarModule,
     MatPaginatorModule,
@@ -79,15 +80,6 @@ export class UsersListComponent implements AfterViewInit {
   }
 
   getRoleColor(role: Role): string {
-    switch (role) {
-      case Role.ADMIN:
-        return 'warn';
-      case Role.USER:
-        return 'primary';
-      case Role.PLAYER:
-        return 'accent';
-      default:
-        return 'primary';
-    }
+    return getRoleColor(role);
   }
 }

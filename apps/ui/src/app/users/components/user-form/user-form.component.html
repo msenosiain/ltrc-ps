@@ -44,6 +44,25 @@
         }
       </mat-form-field>
 
+      @if (isCoach) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Deportes</mat-label>
+        <mat-select formControlName="sports" multiple>
+          @for (option of sportOptions; track option.id) {
+          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Categorías</mat-label>
+        <mat-select formControlName="categories" multiple>
+          @for (option of categoryOptions; track option.id) {
+          <mat-option [value]="option.id">{{ option.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+
       @if (isCreate) {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Contraseña (opcional)</mat-label>

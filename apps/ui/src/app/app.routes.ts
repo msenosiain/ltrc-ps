@@ -4,10 +4,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthCallbackComponent } from './auth/components/auth-callback/auth-callback.component';
 import { authGuard } from './auth/guards/auth.guard';
 
-import { hasRoleGuard } from './auth/guards/has-role.guard';
-import { Role } from './auth/roles.enum';
 import { LoginComponent } from './auth/components/login/login.component';
 import { ActivateAccountComponent } from './auth/components/activate-account/activate-account.component';
+import { SetPasswordComponent } from './auth/components/set-password/set-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -17,8 +16,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [authGuard, hasRoleGuard],
-    data: { allowedRoles: [Role.USER, Role.ADMIN, Role.PLAYER] },
+    canActivate: [authGuard],
     children: [
       {
         path: 'players',
@@ -42,8 +40,9 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./users/users.routes').then((m) => m.USERS_ROUTES),
       },
-    ],
+      { path: 'set-password', component: SetPasswordComponent },
+    ]
   },
   // Fallback to dashboard for any unknown route
-  { path: '**', redirectTo: '/dashboard' },
+  { path: '**', redirectTo: '/dashboard' }
 ];

@@ -15,10 +15,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../User.interface';
-import { Role } from '../../../auth/roles.enum';
-import { getRoleLabel } from '../../user-options';
+import { getRoleLabel, getRoleColor } from '../../user-options';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
-import { Player } from '@ltrc-ps/shared-api-model';
+import { Player, Role } from '@ltrc-ps/shared-api-model';
+import { getCategoryLabel } from '../../../common/category-options';
+import { getSportLabel } from '../../../common/sport-options';
 
 @Component({
   selector: 'ltrc-user-viewer',
@@ -133,17 +134,11 @@ export class UserViewerComponent implements OnInit {
   }
 
   getRoleColor(role: Role): string {
-    switch (role) {
-      case Role.ADMIN:
-        return 'warn';
-      case Role.USER:
-        return 'primary';
-      case Role.PLAYER:
-        return 'accent';
-      default:
-        return 'primary';
-    }
+    return getRoleColor(role);
   }
+
+  getSportLabel = getSportLabel;
+  getCategoryLabel = getCategoryLabel;
 
   getPlayerId(player: Player): string {
     return (player as any)._id ?? (player as any).id ?? '';
