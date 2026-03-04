@@ -66,7 +66,9 @@ export class TournamentsListComponent implements AfterViewInit {
   }
 
   applyFilters(filters: TournamentFilters): void {
-    this.paginator.pageIndex = 0;
+    if (this.paginator) {
+      this.paginator.pageIndex = 0;
+    }
     this.dataSource.setFilters(filters);
   }
 

@@ -29,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
+import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 
 @Component({
   selector: 'ltrc-player-search',
@@ -47,6 +48,7 @@ import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 export class PlayerSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly filterContext = inject(UserFilterContextService);
 
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
@@ -55,9 +57,12 @@ export class PlayerSearchComponent implements OnInit {
     category?: CategoryEnum;
   }>();
 
-  readonly sportOptions: SportOption[] = sportOptions;
+  sportOptions: SportOption[] = sportOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
   positionOptions: PositionOption[] = getPositionOptionsBySport();
+
+  showSportFilter = true;
+  showCategoryFilter = true;
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
@@ -67,11 +72,30 @@ export class PlayerSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.filterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.showSportFilter = ctx.showSportFilter;
+        this.showCategoryFilter = ctx.showCategoryFilter;
+        this.sportOptions = ctx.sportOptions;
+        this.categoryOptions = ctx.categoryOptions;
+
+        if (ctx.forcedSport) {
+          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+          this.positionOptions = getPositionOptionsBySport(ctx.forcedSport);
+        }
+        if (ctx.forcedCategory) {
+          this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
+        }
+
+        this.emitFilters();
+      });
+
     this.searchForm
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport) => {
-        this.categoryOptions = getCategoryOptionsBySport(sport);
+        this.categoryOptions = this.filterCategoryOptions(sport);
         this.positionOptions = getPositionOptionsBySport(sport);
 
         const cat = this.searchForm.get('category')?.value;
@@ -90,10 +114,18 @@ export class PlayerSearchComponent implements OnInit {
 
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
-      .subscribe((values) => this.filtersChange.emit(nullToUndefined(values)));
+      .subscribe(() => this.emitFilters());
   }
 
   clearField(field: string): void {
     this.searchForm.get(field)?.setValue(undefined);
+  }
+
+  private filterCategoryOptions(sport?: SportEnum | null): CategoryOption[] {
+    return getCategoryOptionsBySport(sport);
+  }
+
+  private emitFilters(): void {
+    this.filtersChange.emit(nullToUndefined(this.searchForm.value));
   }
 }

@@ -31,23 +31,31 @@ describe('TournamentsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('getTournaments should GET /tournaments without params', () => {
-    const mockTournaments = [{ id: '1', name: 'Copa 2024' }];
+  it('getTournaments should GET /tournaments with pagination params', () => {
+    const mockResponse = { total: 1, items: [{ id: '1', name: 'Copa 2024' }] };
     service
-      .getTournaments()
-      .subscribe((res) => expect(res).toEqual(mockTournaments));
+      .getTournaments({ page: 1, size: 10 })
+      .subscribe((res) => expect(res).toEqual(mockResponse));
 
-    const req = httpMock.expectOne(`${API_BASE}/tournaments`);
+    const req = httpMock.expectOne(
+      (r) => r.url === `${API_BASE}/tournaments` && r.params.get('page') === '1'
+    );
     expect(req.request.method).toBe('GET');
-    req.flush(mockTournaments);
+    req.flush(mockResponse);
   });
 
-  it('getTournaments should pass searchTerm as query param', () => {
-    service.getTournaments('copa').subscribe();
+  it('getTournaments should pass filters as JSON string', () => {
+    service
+      .getTournaments({ page: 1, size: 10, filters: { searchTerm: 'copa' } })
+      .subscribe();
 
-    const req = httpMock.expectOne(`${API_BASE}/tournaments?searchTerm=copa`);
+    const req = httpMock.expectOne(
+      (r) =>
+        r.url === `${API_BASE}/tournaments` &&
+        r.params.get('filters') === '{"searchTerm":"copa"}'
+    );
     expect(req.request.method).toBe('GET');
-    req.flush([]);
+    req.flush({ total: 0, items: [] });
   });
 
   it('getTournamentById should GET /tournaments/:id', () => {

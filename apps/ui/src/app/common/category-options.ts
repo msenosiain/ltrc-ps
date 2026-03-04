@@ -46,6 +46,15 @@ export function getCategoryOptionsBySport(
   return categoryDefs.filter((c) => c.sport === null || c.sport === sport);
 }
 
+export function getCategoryOptionsBySports(
+  sports: SportEnum[]
+): CategoryOption[] {
+  if (!sports.length) return categoryDefs;
+  return categoryDefs.filter(
+    (c) => c.sport === null || sports.includes(c.sport!)
+  );
+}
+
 export function getCategoryLabel(id?: CategoryEnum | null): string {
   if (!id) return '';
   return categoryDefs.find((c) => c.id === id)?.label ?? id;

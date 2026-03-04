@@ -36,7 +36,7 @@
           <span class="info-label">Roles</span>
           <div class="roles-chips">
             @for (role of user.roles; track role) {
-            <mat-chip [color]="getRoleColor(role)" highlighted>{{
+            <mat-chip [ngClass]="getRoleClass(role)">{{
               getRoleLabel(role)
             }}</mat-chip>
             }

@@ -1,0 +1,59 @@
+// Base role colors (for chips, badges on light backgrounds)
+$role-admin: #a60a14;
+$role-manager: #8b050b;
+$role-player: #1565c0;
+$role-coach: #c89200;
+$role-trainer: #2e7d32;
+$role-default: #36445f;
+
+// Light variants (for text on dark backgrounds)
+$role-admin-light: #ff6b6b;
+$role-manager-light: #ff8a8a;
+$role-player-light: #64b5f6;
+$role-coach-light: #ffd54f;
+$role-trainer-light: #81c784;
+$role-default-light: #b0bec5;
+
+mat-chip {
+  &.role-chip--admin {
+    --mdc-chip-elevated-container-color: #{$role-admin};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-admin};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--manager {
+    --mdc-chip-elevated-container-color: #{$role-manager};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-manager};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--player {
+    --mdc-chip-elevated-container-color: #{$role-player};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-player};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--coach {
+    --mdc-chip-elevated-container-color: #{$role-coach};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-coach};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--trainer {
+    --mdc-chip-elevated-container-color: #{$role-trainer};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-trainer};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--default {
+    --mdc-chip-elevated-container-color: #{$role-default};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-default};
+    --mat-chip-label-text-color: #fff;
+  }
+}

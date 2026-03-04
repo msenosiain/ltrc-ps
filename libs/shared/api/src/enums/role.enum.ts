@@ -3,4 +3,5 @@ export enum Role {
   MANAGER = 'manager',
   PLAYER = 'player',
   COACH = 'coach',
+  TRAINER = 'trainer',
 }

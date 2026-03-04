@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -12,7 +12,7 @@ import { Role, SortOrder } from '@ltrc-ps/shared-api-model';
 import { UsersService } from '../../services/users.service';
 import { UsersDataSource, UserFilters } from '../../services/users.datasource';
 import { UserSearchComponent } from '../user-search/user-search.component';
-import { getRoleLabel, getRoleColor } from '../../user-options';
+import { getRoleLabel, getRoleClass } from '../../user-options';
 import { User } from '../../User.interface';
 
 @Component({
@@ -20,6 +20,7 @@ import { User } from '../../User.interface';
   standalone: true,
   imports: [
     AsyncPipe,
+    NgClass,
     MatTableModule,
     MatProgressBarModule,
     MatPaginatorModule,
@@ -79,7 +80,7 @@ export class UsersListComponent implements AfterViewInit {
     return getRoleLabel(role);
   }
 
-  getRoleColor(role: Role): string {
-    return getRoleColor(role);
+  getRoleClass(role: Role): string {
+    return getRoleClass(role);
   }
 }

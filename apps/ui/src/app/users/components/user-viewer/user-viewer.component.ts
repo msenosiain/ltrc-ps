@@ -5,6 +5,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,7 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../User.interface';
-import { getRoleLabel, getRoleColor } from '../../user-options';
+import { getRoleLabel, getRoleClass } from '../../user-options';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { Player, Role } from '@ltrc-ps/shared-api-model';
 import { getCategoryLabel } from '../../../common/category-options';
@@ -25,6 +26,7 @@ import { getSportLabel } from '../../../common/sport-options';
   selector: 'ltrc-user-viewer',
   standalone: true,
   imports: [
+    NgClass,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
@@ -133,8 +135,8 @@ export class UserViewerComponent implements OnInit {
     return getRoleLabel(role);
   }
 
-  getRoleColor(role: Role): string {
-    return getRoleColor(role);
+  getRoleClass(role: Role): string {
+    return getRoleClass(role);
   }
 
   getSportLabel = getSportLabel;

@@ -5,13 +5,7 @@
       <span class="title">Los Tordos Rugby Club</span>
     </div>
 
-    <div class="user-section">
-      @if (user$ | async; as user) {
-      <span class="user-name">{{ user.name }} {{ user.lastName }}</span>
-      <button mat-button routerLink="/dashboard">DASHBOARD</button>
-      <button mat-button (click)="logout()">CERRAR SESIÓN</button>
-      }
-    </div>
+    <ltrc-user-profile-menu />
   </div>
 </mat-toolbar>
 <div class="main-content">
