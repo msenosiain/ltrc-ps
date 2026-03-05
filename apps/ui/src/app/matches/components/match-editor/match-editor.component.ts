@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
 import { MatchFormValue } from '../../forms/match-form.types';
@@ -16,6 +17,7 @@ import { Match } from '@ltrc-ps/shared-api-model';
 import { MatchFormComponent } from '../match-form/match-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
   selector: 'ltrc-match-editor',
@@ -34,6 +36,7 @@ export class MatchEditorComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly matchesService = inject(MatchesService);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
   match?: Match;
@@ -55,7 +58,10 @@ export class MatchEditorComponent implements OnInit {
   onFormSubmit(payload: MatchFormValue): void {
     this.submitting = true;
 
-    const onError = () => (this.submitting = false);
+    const onError = (err: unknown) => {
+      this.submitting = false;
+      this.snackBar.open(getErrorMessage(err, 'Error al guardar el partido'), 'Cerrar', { duration: 5000 });
+    };
 
     if (this.editing && this.match?.id) {
       this.matchesService

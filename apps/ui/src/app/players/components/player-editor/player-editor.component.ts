@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import { Player } from '@ltrc-ps/shared-api-model';
@@ -18,6 +19,7 @@ import {
 } from '../player-form/player-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
   selector: 'ltrc-player-editor',
@@ -36,6 +38,7 @@ export class PlayerEditorComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly playersService = inject(PlayersService);
   private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
   player?: Player;
@@ -57,7 +60,10 @@ export class PlayerEditorComponent implements OnInit {
   onFormSubmitWithPhoto({ payload, file }: PlayerFormSubmitEvent): void {
     this.submitting = true;
 
-    const onError = () => (this.submitting = false);
+    const onError = (err: unknown) => {
+      this.submitting = false;
+      this.snackBar.open(getErrorMessage(err, 'Error al guardar el jugador'), 'Cerrar', { duration: 5000 });
+    };
 
     if (this.editing && this.player?.id) {
       const obs = file

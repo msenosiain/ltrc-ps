@@ -47,10 +47,22 @@ export class PlayersService {
       );
     }
 
-    const player = await this.playerModel.create({
-      ...dto,
-      photoId,
-    });
+    let player;
+    try {
+      player = await this.playerModel.create({
+        ...dto,
+        photoId,
+      });
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        const field = Object.keys(err.keyPattern ?? {})[0];
+        const value = err.keyValue?.[field];
+        throw new ConflictException(
+          `Ya existe un jugador con ${field} "${value}"`
+        );
+      }
+      throw err;
+    }
 
     if (dto.createUser && dto.email) {
       const existing = await this.usersService.findOneByEmail(dto.email);
@@ -110,7 +122,18 @@ export class PlayersService {
       player.userId = (user as any)._id;
     }
 
-    return player.save();
+    try {
+      return await player.save();
+    } catch (err: any) {
+      if (err?.code === 11000) {
+        const field = Object.keys(err.keyPattern ?? {})[0];
+        const value = err.keyValue?.[field];
+        throw new ConflictException(
+          `Ya existe un jugador con ${field} "${value}"`
+        );
+      }
+      throw err;
+    }
   }
 
   async findPaginated(

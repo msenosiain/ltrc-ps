@@ -21,6 +21,7 @@ import {
   mapFormToUpdateUserDto,
 } from '../../forms/user-form.mapper';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
+import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
   selector: 'ltrc-user-editor',
@@ -61,11 +62,9 @@ export class UserEditorComponent implements OnInit {
   onFormSubmit(value: UserFormValue): void {
     this.submitting = true;
 
-    const onError = () => {
+    const onError = (err: unknown) => {
       this.submitting = false;
-      this.snackBar.open('Error al guardar el usuario', 'Cerrar', {
-        duration: 4000,
-      });
+      this.snackBar.open(getErrorMessage(err, 'Error al guardar el usuario'), 'Cerrar', { duration: 5000 });
     };
 
     if (this.editing && this.user?.id) {
