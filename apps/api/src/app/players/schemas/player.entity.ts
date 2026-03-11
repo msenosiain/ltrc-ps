@@ -2,6 +2,7 @@ import { Document, Types } from 'mongoose';
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   PlayerPosition,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -26,6 +27,7 @@ export class PlayerEntity extends Document {
   };
   sport?: SportEnum;
   category?: CategoryEnum;
+  branch?: HockeyBranchEnum;
   position?: PlayerPosition;
   alternatePosition?: PlayerPosition;
   clothingSizes?: {

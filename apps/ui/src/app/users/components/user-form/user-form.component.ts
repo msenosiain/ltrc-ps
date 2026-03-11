@@ -18,7 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import { HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 import { roleOptions } from '../../user-options';
 import { buildUserForm } from '../../forms/user-form.factory';
 import { mapUserToForm } from '../../forms/user-form.mapper';
@@ -56,8 +56,11 @@ export class UserFormComponent implements OnInit, OnChanges {
   @Output() readonly formSubmit = new EventEmitter<UserFormValue>();
   @Output() readonly cancel = new EventEmitter<void>();
 
+  private static readonly SPORT_ROLES: Role[] = [Role.COACH, Role.MANAGER, Role.TRAINER];
+
   readonly roleOptions = roleOptions;
   readonly sportOptions = sportOptions;
+  readonly branchOptions = Object.values(HockeyBranchEnum);
   filteredCategoryOptions: CategoryOption[] = categoryOptions;
   readonly Role = Role;
 
@@ -65,8 +68,13 @@ export class UserFormComponent implements OnInit, OnChanges {
     return !this.user;
   }
 
-  get isCoach(): boolean {
-    return this.form.get('roles')?.value?.includes(Role.COACH) ?? false;
+  get hasSportRole(): boolean {
+    const roles = this.form.get('roles')?.value ?? [];
+    return UserFormComponent.SPORT_ROLES.some((r) => roles.includes(r));
+  }
+
+  get hasHockey(): boolean {
+    return this.form.get('sports')?.value?.includes(SportEnum.HOCKEY) ?? false;
   }
 
   form = buildUserForm(this.fb, true);
@@ -84,8 +92,9 @@ export class UserFormComponent implements OnInit, OnChanges {
       .get('roles')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((roles: Role[]) => {
-        if (!roles.includes(Role.COACH)) {
-          this.form.patchValue({ sports: [], categories: [] });
+        const hasSportRole = UserFormComponent.SPORT_ROLES.some((r) => roles.includes(r));
+        if (!hasSportRole) {
+          this.form.patchValue({ sports: [], categories: [], branches: [] });
         }
       });
 
@@ -99,6 +108,9 @@ export class UserFormComponent implements OnInit, OnChanges {
         const filtered = currentCategories.filter((c) => validIds.has(c));
         if (filtered.length !== currentCategories.length) {
           this.form.get('categories')!.setValue(filtered, { emitEvent: false });
+        }
+        if (!sports.includes(SportEnum.HOCKEY)) {
+          this.form.get('branches')!.setValue([], { emitEvent: false });
         }
       });
   }

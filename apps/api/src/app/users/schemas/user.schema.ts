@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 @Schema()
 export class User extends Document {
@@ -27,6 +27,9 @@ export class User extends Document {
 
   @Prop({ type: [String], enum: CategoryEnum, default: [] })
   categories?: CategoryEnum[];
+
+  @Prop({ type: [String], enum: HockeyBranchEnum, default: [] })
+  branches?: HockeyBranchEnum[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -49,7 +49,7 @@
         }
       </mat-form-field>
 
-      @if (isCoach) {
+      @if (hasSportRole) {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Deportes</mat-label>
         <mat-select formControlName="sports" multiple>
@@ -68,6 +68,17 @@
         </mat-select>
         <mat-hint>Dejar vacío para acceso completo</mat-hint>
       </mat-form-field>
+      @if (hasHockey) {
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ramas (Hockey)</mat-label>
+        <mat-select formControlName="branches" multiple>
+          @for (b of branchOptions; track b) {
+          <mat-option [value]="b">{{ b }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Dejar vacío para acceso a todas las ramas</mat-hint>
+      </mat-form-field>
+      }
       } @if (isCreate) {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Contraseña (opcional)</mat-label>

@@ -1,6 +1,7 @@
 import { IsOptional, IsString, IsEnum, IsIn } from 'class-validator';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   HockeyPositions,
   PlayerPosition,
   RugbyPositions,
@@ -28,4 +29,8 @@ export class PlayerFiltersDto {
   @IsOptional()
   @IsEnum(CategoryEnum)
   category?: CategoryEnum;
+
+  @IsOptional()
+  @IsEnum(HockeyBranchEnum)
+  branch?: HockeyBranchEnum;
 }

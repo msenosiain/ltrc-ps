@@ -2,6 +2,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   PlayerPosition,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -34,6 +35,7 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
 
     sport: fb.control<SportEnum | null>(null),
     category: fb.control<CategoryEnum | null>(null),
+    branch: fb.control<HockeyBranchEnum | null>(null),
     position: fb.control<PlayerPosition | null>(null),
     alternatePosition: fb.control<PlayerPosition | null>(null),
 

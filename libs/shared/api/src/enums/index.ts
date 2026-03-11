@@ -1,5 +1,6 @@
 export * from './category.enum';
 export * from './clothing-sizes.enum';
+export * from './hockey-branch.enum';
 export * from './player-position.enum';
 export * from './role.enum';
 export * from './sport.enum';
