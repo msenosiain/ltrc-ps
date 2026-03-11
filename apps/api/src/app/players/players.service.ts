@@ -178,6 +178,11 @@ export class PlayersService {
       queryFilters['category'] = filters.category;
     }
 
+    // branch (hockey)
+    if (filters.branch) {
+      queryFilters['branch'] = filters.branch;
+    }
+
     // Coach server-side filter override
     if (caller?.roles?.includes(Role.COACH)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };

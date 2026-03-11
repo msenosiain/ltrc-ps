@@ -1,4 +1,4 @@
-import { CategoryEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export type UserFormValue = {
   name: string;
@@ -8,6 +8,7 @@ export type UserFormValue = {
   password?: string;
   sports?: SportEnum[];
   categories?: CategoryEnum[];
+  branches?: HockeyBranchEnum[];
 };
 
 export type UserFilters = {

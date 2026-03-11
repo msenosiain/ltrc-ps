@@ -10,7 +10,7 @@ import { GridFsModule } from './shared/gridfs/gridfs.module';
 import { AuthModule } from './auth/auth.module';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
-import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
 
 export const configSchema = Joi.object({
   API_PORT: Joi.number().integer().default(3000),
@@ -56,7 +56,7 @@ export const configSchema = Joi.object({
     MatchesModule,
     TournamentsModule,
     SquadsModule,
+    HealthModule,
   ],
-  controllers: [HealthController],
 })
 export class AppModule {}

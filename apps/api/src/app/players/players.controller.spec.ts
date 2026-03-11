@@ -61,7 +61,8 @@ describe('PlayersController', () => {
 
   describe('findPaginated()', () => {
     it('should return a paginated response', () => {
-      expect(controller.findPaginated({ page: 1, size: 10 })).resolves.toEqual({
+      const mockReq = { user: { roles: [] } } as any;
+      expect(controller.findPaginated({ page: 1, size: 10 }, mockReq)).resolves.toEqual({
         items: playersArray,
         total: playersArray.length,
         page: 1,

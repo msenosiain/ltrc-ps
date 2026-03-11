@@ -160,6 +160,18 @@
         </mat-select>
       </mat-form-field>
 
+      @if (isHockey) {
+      <mat-form-field appearance="outline">
+        <mat-label>Rama</mat-label>
+        <mat-select formControlName="branch">
+          <mat-option [value]="null">Sin rama</mat-option>
+          @for (b of branchOptions; track b) {
+          <mat-option [value]="b">{{ b }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
+
       <mat-form-field appearance="outline">
         <mat-label>Posición</mat-label>
         <mat-select formControlName="position">

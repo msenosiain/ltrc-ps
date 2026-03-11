@@ -14,6 +14,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     email: value.email,
     sport: value.sport ?? undefined,
     category: value.category ?? undefined,
+    branch: value.branch ?? undefined,
     position: value.position!,
     alternatePosition: value.alternatePosition ?? undefined,
     address: mapAddress(value),
@@ -38,6 +39,7 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
 
     sport: player.sport ?? null,
     category: player.category ?? null,
+    branch: player.branch ?? null,
     position: player.position ?? null,
     alternatePosition: player.alternatePosition ?? null,
 
