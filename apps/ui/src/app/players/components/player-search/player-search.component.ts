@@ -11,6 +11,7 @@ import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   PlayerPosition,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -55,20 +56,24 @@ export class PlayerSearchComponent implements OnInit {
     sport?: SportEnum;
     position?: PlayerPosition;
     category?: CategoryEnum;
+    branch?: HockeyBranchEnum;
   }>();
 
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
   positionOptions: PositionOption[] = getPositionOptionsBySport();
+  readonly branchOptions = Object.values(HockeyBranchEnum);
 
   showSportFilter = true;
   showCategoryFilter = true;
+  showBranchFilter = false;
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
     sport: [undefined as SportEnum | undefined],
     position: [undefined as PlayerPosition | undefined],
     category: [undefined as CategoryEnum | undefined],
+    branch: [undefined as HockeyBranchEnum | undefined],
   });
 
   ngOnInit(): void {
@@ -85,6 +90,7 @@ export class PlayerSearchComponent implements OnInit {
             .get('sport')!
             .setValue(ctx.forcedSport, { emitEvent: false });
           this.positionOptions = getPositionOptionsBySport(ctx.forcedSport);
+          this.showBranchFilter = ctx.forcedSport === SportEnum.HOCKEY;
         }
         if (ctx.forcedCategory) {
           this.searchForm
@@ -101,6 +107,7 @@ export class PlayerSearchComponent implements OnInit {
       .subscribe((sport) => {
         this.categoryOptions = this.filterCategoryOptions(sport);
         this.positionOptions = getPositionOptionsBySport(sport);
+        this.showBranchFilter = sport === SportEnum.HOCKEY;
 
         const cat = this.searchForm.get('category')?.value;
         if (cat && !this.categoryOptions.find((c) => c.id === cat)) {
@@ -112,6 +119,11 @@ export class PlayerSearchComponent implements OnInit {
         if (pos && !this.positionOptions.find((p) => p.id === pos)) {
           this.searchForm
             .get('position')
+            ?.setValue(undefined, { emitEvent: false });
+        }
+        if (!this.showBranchFilter) {
+          this.searchForm
+            .get('branch')
             ?.setValue(undefined, { emitEvent: false });
         }
       });

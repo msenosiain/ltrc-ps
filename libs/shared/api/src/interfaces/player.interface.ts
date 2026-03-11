@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   HockeyPositions,
   RugbyPositions,
   SportEnum,
@@ -39,6 +40,7 @@ export interface PlayerFilters {
   sport?: SportEnum;
   position?: PlayerPosition;
   category?: CategoryEnum;
+  branch?: HockeyBranchEnum;
 }
 
 export interface Player extends Document {
@@ -53,6 +55,7 @@ export interface Player extends Document {
   readonly address?: Address;
   readonly sport?: SportEnum;
   readonly category?: CategoryEnum;
+  readonly branch?: HockeyBranchEnum;
   readonly position?: PlayerPosition;
   readonly alternatePosition?: PlayerPosition;
   readonly clothingSizes?: ClothingSizes;

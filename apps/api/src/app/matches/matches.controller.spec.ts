@@ -41,7 +41,8 @@ describe('MatchesController', () => {
   it('should be defined', () => expect(controller).toBeDefined());
 
   it('findPaginated() should return paginated matches', async () => {
-    const result = await controller.findPaginated({ page: 1, size: 10 });
+    const mockReq = { user: { roles: [] } } as any;
+    const result = await controller.findPaginated({ page: 1, size: 10 }, mockReq);
     expect(result.items).toEqual([mockMatch]);
     expect(result.total).toBe(1);
   });

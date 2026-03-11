@@ -3,6 +3,7 @@ import { PlayerEntity } from './player.entity';
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   HockeyPositions,
   RugbyPositions,
   SportEnum,
@@ -65,6 +66,10 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     category: {
       type: String,
       enum: Object.values(CategoryEnum),
+    },
+    branch: {
+      type: String,
+      enum: Object.values(HockeyBranchEnum),
     },
     position: {
       type: String,

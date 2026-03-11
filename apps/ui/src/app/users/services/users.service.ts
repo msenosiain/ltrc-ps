@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   PaginatedResponse,
   PaginationQuery,
   SportEnum,
@@ -19,6 +20,7 @@ export interface CreateUserPayload {
   password?: string;
   sports?: SportEnum[];
   categories?: CategoryEnum[];
+  branches?: HockeyBranchEnum[];
 }
 
 export interface UpdateUserPayload {
@@ -28,6 +30,7 @@ export interface UpdateUserPayload {
   roles?: string[];
   sports?: SportEnum[];
   categories?: CategoryEnum[];
+  branches?: HockeyBranchEnum[];
 }
 
 @Injectable({

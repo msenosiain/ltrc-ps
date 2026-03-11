@@ -27,6 +27,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import {
   ClothingSizesEnum,
+  HockeyBranchEnum,
   Player,
   Role,
   SportEnum,
@@ -97,10 +98,15 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   @Output() readonly cancel = new EventEmitter<void>();
 
   readonly sportOptions = sportOptions;
+  readonly branchOptions = Object.values(HockeyBranchEnum);
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
   positions: PositionOption[] = getPositionOptionsBySport(null);
   categories: CategoryOption[] = getCategoryOptionsBySport(null);
+
+  get isHockey(): boolean {
+    return this.playerForm.get('sport')?.value === SportEnum.HOCKEY;
+  }
 
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
 
@@ -145,6 +151,10 @@ export class PlayerFormComponent implements OnInit, OnChanges {
         const cat = this.playerForm.get('category')?.value;
         if (cat && !this.categories.find((c) => c.id === cat)) {
           this.playerForm.get('category')?.setValue(null);
+        }
+        // Clear branch if sport is not hockey
+        if (sport !== SportEnum.HOCKEY) {
+          this.playerForm.get('branch')?.setValue(null);
         }
       });
   }

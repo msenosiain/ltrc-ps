@@ -16,6 +16,7 @@ import { Transform, Type, plainToInstance } from 'class-transformer';
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   HockeyPositions,
   parseDate,
   PlayerPosition,
@@ -128,6 +129,10 @@ export class CreatePlayerDto {
   @IsOptional()
   @IsEnum(CategoryEnum)
   readonly category?: CategoryEnum;
+
+  @IsOptional()
+  @IsEnum(HockeyBranchEnum)
+  readonly branch?: HockeyBranchEnum;
 
   @IsOptional()
   @IsIn([

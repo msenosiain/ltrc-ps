@@ -16,6 +16,7 @@ export function mapFormToCreateUserDto(
     password: value.password || undefined,
     sports: value.sports,
     categories: value.categories,
+    branches: value.branches,
   };
 }
 
@@ -29,6 +30,7 @@ export function mapFormToUpdateUserDto(
     roles: value.roles,
     sports: value.sports,
     categories: value.categories,
+    branches: value.branches,
   };
 }
 
@@ -41,5 +43,6 @@ export function mapUserToForm(user: User): UserFormValue {
     password: undefined,
     sports: user.sports ?? [],
     categories: user.categories ?? [],
+    branches: user.branches ?? [],
   };
 }

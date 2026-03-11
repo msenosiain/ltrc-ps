@@ -18,6 +18,7 @@ const mockModel = {
   create: jest.fn(),
   find: jest.fn(),
   findById: jest.fn(),
+  countDocuments: jest.fn(),
 };
 
 describe('TournamentsService', () => {
@@ -55,17 +56,19 @@ describe('TournamentsService', () => {
     });
   });
 
-  describe('findAll()', () => {
-    it('should return all tournaments sorted by name', async () => {
+  describe('findPaginated()', () => {
+    it('should return paginated tournaments', async () => {
       const execMock = jest.fn().mockResolvedValue([mockTournament]);
-      mockModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({ exec: execMock }),
-      });
+      const limitMock = jest.fn().mockReturnValue({ exec: execMock });
+      const skipMock = jest.fn().mockReturnValue({ limit: limitMock });
+      const sortMock = jest.fn().mockReturnValue({ skip: skipMock });
+      mockModel.find.mockReturnValue({ sort: sortMock });
+      mockModel.countDocuments.mockResolvedValue(1);
 
-      const result = await service.findAll();
+      const result = await service.findPaginated({ page: 1, size: 10 });
 
       expect(mockModel.find).toHaveBeenCalled();
-      expect(result).toEqual([mockTournament]);
+      expect(result).toEqual({ items: [mockTournament], total: 1, page: 1, size: 10 });
     });
   });
 

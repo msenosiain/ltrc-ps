@@ -1,6 +1,7 @@
 import {
   CategoryEnum,
   ClothingSizesEnum,
+  HockeyBranchEnum,
   PlayerPosition,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -20,6 +21,7 @@ export type PlayerFormValue = {
 
   sport: SportEnum | null;
   category: CategoryEnum | null;
+  branch: HockeyBranchEnum | null;
   position: PlayerPosition | null;
   alternatePosition: PlayerPosition | null;
 

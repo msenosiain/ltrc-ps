@@ -10,7 +10,7 @@ const mockTournament = {
 };
 
 const mockService = {
-  findAll: jest.fn().mockResolvedValue([mockTournament]),
+  findPaginated: jest.fn().mockResolvedValue({ items: [mockTournament], total: 1, page: 1, size: 10 }),
   create: jest.fn().mockResolvedValue(mockTournament),
   findOne: jest.fn().mockResolvedValue(mockTournament),
   update: jest.fn().mockResolvedValue(mockTournament),
@@ -31,8 +31,11 @@ describe('TournamentsController', () => {
 
   it('should be defined', () => expect(controller).toBeDefined());
 
-  it('findAll() should return all tournaments', async () => {
-    expect(await controller.findAll({})).toEqual([mockTournament]);
+  it('findAll() should return paginated tournaments', async () => {
+    const mockReq = { user: { roles: [] } } as any;
+    const result = await controller.findAll({} as any, mockReq);
+    expect(result.items).toEqual([mockTournament]);
+    expect(result.total).toBe(1);
   });
 
   it('create() should create a tournament', async () => {
