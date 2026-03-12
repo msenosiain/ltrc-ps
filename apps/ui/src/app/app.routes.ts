@@ -40,6 +40,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./users/users.routes').then((m) => m.USERS_ROUTES),
       },
+      {
+        path: 'branches',
+        loadChildren: () =>
+          import('./branches/branches.routes').then(
+            (m) => m.BRANCHES_ROUTES
+          ),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },

@@ -1,7 +1,7 @@
 <div class="players-list">
   <div class="list-header">
     <button
-      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
+      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
       mat-flat-button
       color="primary"
       type="button"
@@ -18,7 +18,7 @@
       (change)="onImportFileSelected($event)"
     />
     <button
-      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
+      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
       mat-stroked-button
       type="button"
       [disabled]="importing"
@@ -35,7 +35,7 @@
       (change)="onSurveyFileSelected($event)"
     />
     <button
-      *ltrcAllowedRoles="[Role.ADMIN]"
+      *ltrcAllowedRoles="[RoleEnum.ADMIN]"
       mat-stroked-button
       type="button"
       [disabled]="importing"

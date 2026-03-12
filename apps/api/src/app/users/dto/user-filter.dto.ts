@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export class UserFiltersDto {
   @IsOptional()
@@ -7,6 +7,6 @@ export class UserFiltersDto {
   searchTerm?: string;
 
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsEnum(RoleEnum)
+  role?: RoleEnum;
 }

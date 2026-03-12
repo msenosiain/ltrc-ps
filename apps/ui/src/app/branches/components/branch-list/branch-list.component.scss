@@ -1,0 +1,55 @@
+@use '../../../common/styles/list-layout';
+
+.branch-list {
+  padding: 16px;
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.tab-filters {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0 0;
+
+  .filter-field {
+    width: 240px;
+  }
+}
+
+.tab-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0;
+}
+
+.branch-table {
+  width: 100%;
+}
+
+.player-link {
+  color: var(--mat-sys-primary, #1976d2);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.empty-tab {
+  text-align: center;
+  padding: 32px 16px;
+  color: rgba(0, 0, 0, 0.38);
+  font-style: italic;
+}

@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,14 +29,15 @@ import { PlayersService } from '../players/services/players.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit {
-  Role = Role;
+  RoleEnum = RoleEnum;
+  SportEnum = SportEnum;
   public authService = inject(AuthService);
   public router = inject(Router);
   private readonly playersService = inject(PlayersService);
 
   private readonly currentUser = toSignal(this.authService.user$);
   readonly isPlayer = computed(
-    () => this.currentUser()?.roles?.includes(Role.PLAYER) ?? false
+    () => this.currentUser()?.roles?.includes(RoleEnum.PLAYER) ?? false
   );
   readonly canSetPassword = computed(
     () => this.currentUser() !== null && !this.currentUser()?.hasPassword

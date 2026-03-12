@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../users/User.interface';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 import { By } from '@angular/platform-browser';
 class MockAuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
@@ -14,13 +14,13 @@ class MockAuthService {
   }
 }
 @Component({
-  template: `<p *ltrcAllowedRoles="[Role.ADMIN]" class="admin-content">
+  template: `<p *ltrcAllowedRoles="[RoleEnum.ADMIN]" class="admin-content">
     Admin Only
   </p>`,
   imports: [AllowedRolesDirective],
 })
 class TestComponent {
-  Role = Role;
+  RoleEnum = RoleEnum;
 }
 describe('AllowedRolesDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
@@ -39,7 +39,7 @@ describe('AllowedRolesDirective', () => {
       googleId: '1234',
       name: 'Alice Cooper',
       email: 'alice.cooper@lostordos.com.ar',
-      roles: [Role.ADMIN],
+      roles: [RoleEnum.ADMIN],
     });
     fixture.detectChanges();
     const content = fixture.debugElement.query(By.css('.admin-content'));
@@ -51,7 +51,7 @@ describe('AllowedRolesDirective', () => {
       googleId: '1234',
       name: 'Alice Cooper',
       email: 'alice.cooper@lostordos.com.ar',
-      roles: [Role.MANAGER],
+      roles: [RoleEnum.MANAGER],
     });
     fixture.detectChanges();
     const content = fixture.debugElement.query(By.css('.admin-content'));

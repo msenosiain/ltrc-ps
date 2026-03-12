@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 import { roleOptions } from '../../user-options';
 import { UserFilters } from '../../forms/user-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
@@ -43,7 +43,7 @@ export class UserSearchComponent implements OnInit {
 
   readonly searchForm = this.fb.group({
     searchTerm: [''],
-    role: [undefined as Role | undefined],
+    role: [undefined as RoleEnum | undefined],
   });
 
   ngOnInit(): void {

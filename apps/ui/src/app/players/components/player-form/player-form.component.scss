@@ -149,7 +149,19 @@ $photo: $col;
   }
 }
 
-// == CARD 3 - DATOS DEPORTIVOS / DATOS MÉDICOS / INDUMENTARIA (4 cols)
+// == CARD 3 - DATOS DEPORTIVOS (5 cols) / DATOS MÉDICOS / INDUMENTARIA (4 cols)
+
+.sport-grid {
+  display: grid;
+  grid-template-columns: repeat(5, $col);
+  gap: $gap;
+  align-items: start;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
 
 .section-grid,
 .clothing-grid {
@@ -252,6 +264,10 @@ $photo: $col;
     }
   }
 
+  .sport-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   .section-grid,
   .clothing-grid {
     grid-template-columns: 1fr 1fr;
@@ -345,6 +361,7 @@ $photo: $col;
     }
   }
 
+  .sport-grid,
   .section-grid,
   .clothing-grid {
     grid-template-columns: 1fr;

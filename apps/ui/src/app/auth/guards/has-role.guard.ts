@@ -2,10 +2,10 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { filter, map, take } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export const hasRoleGuard: CanActivateFn = (route) => {
-  const allowedRoles: Role[] = route.data?.['allowedRoles'];
+  const allowedRoles: RoleEnum[] = route.data?.['allowedRoles'];
   const authService = inject(AuthService);
   const router = inject(Router);
 

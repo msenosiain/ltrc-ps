@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
 import {
   CategoryEnum,
-  Role,
+  RoleEnum,
   SportEnum,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
@@ -44,7 +44,7 @@ export class TournamentViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
 
   getSportLabel(sport?: SportEnum): string {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';

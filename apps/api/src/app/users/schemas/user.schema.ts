@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 import {
   CategoryEnum,
   HockeyBranchEnum,
-  Role,
+  RoleEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
@@ -27,8 +27,8 @@ export class User extends Document {
   @Prop({ required: false, select: false })
   password?: string;
 
-  @Prop({ type: [String], enum: Role, default: [] })
-  roles!: Role[];
+  @Prop({ type: [String], enum: RoleEnum, default: [] })
+  roles!: RoleEnum[];
 
   @Prop({ type: [String], enum: SportEnum, default: [] })
   sports?: SportEnum[];

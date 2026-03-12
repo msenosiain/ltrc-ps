@@ -3,7 +3,7 @@ import { PlayersListComponent } from './components/players-list/players-list.com
 import { PlayerViewerComponent } from './components/player-viewer/player-viewer.component';
 import { PlayerEditorComponent } from './components/player-editor/player-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export const PLAYERS_ROUTES: Routes = [
   {
@@ -15,7 +15,7 @@ export const PLAYERS_ROUTES: Routes = [
     path: 'create',
     component: PlayerEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Crear jugador', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Crear jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
   {
     path: ':id',
@@ -26,6 +26,6 @@ export const PLAYERS_ROUTES: Routes = [
     path: ':id/edit',
     component: PlayerEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Editar jugador', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Editar jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
 ];
