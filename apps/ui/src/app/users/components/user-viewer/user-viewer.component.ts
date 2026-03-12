@@ -87,7 +87,7 @@ export class UserViewerComponent implements OnInit {
       width: '380px',
       data: {
         title: 'Restablecer contraseña',
-        message: `¿Estás seguro que querés restablecer la contraseña de ${this.user?.name} ${this.user?.lastName}? El usuario deberá activar su cuenta nuevamente.`,
+        message: `¿Estás seguro que querés restablecer la contraseña de ${this.user?.name}? El usuario deberá activar su cuenta nuevamente.`,
         confirmLabel: 'Restablecer',
       },
     });

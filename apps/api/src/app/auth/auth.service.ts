@@ -110,7 +110,6 @@ export class AuthService {
       sub: (user as any)._id?.toString() || user.googleId,
       email: user.email,
       name: user.name,
-      lastName: user.lastName,
       roles: user.roles,
       hasPassword: !!user.password,
       sports: user.sports ?? [],

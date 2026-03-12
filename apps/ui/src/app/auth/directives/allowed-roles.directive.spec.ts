@@ -37,8 +37,7 @@ describe('AllowedRolesDirective', () => {
   it('should show element when user is admin', () => {
     mockService.setUser({
       googleId: '1234',
-      name: 'Alice',
-      lastName: 'Cooper',
+      name: 'Alice Cooper',
       email: 'alice.cooper@lostordos.com.ar',
       roles: [Role.ADMIN],
     });
@@ -50,8 +49,7 @@ describe('AllowedRolesDirective', () => {
   it('should hide element when user is not admin', () => {
     mockService.setUser({
       googleId: '1234',
-      name: 'Alice',
-      lastName: 'Cooper',
+      name: 'Alice Cooper',
       email: 'alice.cooper@lostordos.com.ar',
       roles: [Role.MANAGER],
     });

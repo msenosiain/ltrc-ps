@@ -48,8 +48,7 @@ export class PlayersListComponent implements AfterViewInit {
 
   readonly displayedColumns = [
     'photoId',
-    'firstName',
-    'lastName',
+    'name',
     'nickName',
     'category',
     'position',

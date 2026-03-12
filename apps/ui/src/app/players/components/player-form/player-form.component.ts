@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -152,10 +152,15 @@ export class PlayerFormComponent implements OnInit, OnChanges {
         if (cat && !this.categories.find((c) => c.id === cat)) {
           this.playerForm.get('category')?.setValue(null);
         }
-        // Clear branch if sport is not hockey
-        if (sport !== SportEnum.HOCKEY) {
-          this.playerForm.get('branch')?.setValue(null);
+        // Branch: required for hockey, cleared otherwise
+        const branchCtrl = this.playerForm.get('branch')!;
+        if (sport === SportEnum.HOCKEY) {
+          branchCtrl.setValidators(Validators.required);
+        } else {
+          branchCtrl.clearValidators();
+          branchCtrl.setValue(null);
         }
+        branchCtrl.updateValueAndValidity();
       });
   }
 

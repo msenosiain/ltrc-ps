@@ -52,9 +52,8 @@ const MedicalDataSchema = new Schema(
 export const PlayerSchema = new Schema<PlayerEntity>(
   {
     idNumber: { type: String, unique: true, index: true },
-    lastName: String,
-    firstName: String,
-    secondName: String,
+    name: { type: String, required: true },
+    memberNumber: String,
     nickName: String,
     birthDate: Date,
     email: { type: String, unique: true, index: true },

@@ -96,7 +96,7 @@ export class PlayerEditorComponent implements OnInit {
   }
 
   onDelete(): void {
-    const name = `${this.player?.firstName} ${this.player?.lastName}`;
+    const name = this.player?.name ?? '';
     const ref = this.dialog.open(ConfirmDialogComponent, {
       width: '380px',
       data: {

@@ -30,8 +30,7 @@ describe('UserFilterContextService', () => {
   function emitUser(overrides: Partial<User> = {}): void {
     userSubject.next({
       email: 'test@test.com',
-      name: 'Test',
-      lastName: 'User',
+      name: 'Test User',
       roles: [],
       sports: [],
       categories: [],

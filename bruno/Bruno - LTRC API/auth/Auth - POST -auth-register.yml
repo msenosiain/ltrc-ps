@@ -14,8 +14,7 @@ http:
     data: |-
       {
         "email": "new.user@example.com",
-        "firstName": "New",
-        "lastName": "User",
+        "name": "New User",
         "password": "changeme"
       }
   auth: inherit

@@ -19,8 +19,7 @@ describe('AuthService', () => {
     _id: '507f1f77bcf86cd799439011',
     email: 'test@test.com',
     password: 'hashedPassword',
-    name: 'Test',
-    lastName: 'User',
+    name: 'Test User',
     roles: ['user'],
   } as unknown as User;
 

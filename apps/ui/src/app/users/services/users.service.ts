@@ -14,7 +14,7 @@ import { Player } from '@ltrc-ps/shared-api-model';
 
 export interface CreateUserPayload {
   name: string;
-  lastName: string;
+  memberNumber?: string;
   email: string;
   roles?: string[];
   password?: string;
@@ -25,7 +25,7 @@ export interface CreateUserPayload {
 
 export interface UpdateUserPayload {
   name?: string;
-  lastName?: string;
+  memberNumber?: string;
   email?: string;
   roles?: string[];
   sports?: SportEnum[];

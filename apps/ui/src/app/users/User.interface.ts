@@ -6,7 +6,7 @@ export interface User {
   sub?: string;
   email: string;
   name: string;
-  lastName: string;
+  memberNumber?: string;
   roles: Role[];
   hasPassword?: boolean;
   sports?: SportEnum[];
