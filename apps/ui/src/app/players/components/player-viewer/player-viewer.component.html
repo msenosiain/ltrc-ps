@@ -7,10 +7,7 @@
       <div class="header-layout">
         <div class="avatar">
           @if (player.photoId) {
-          <img
-            [src]="getPlayerPhotoUrl(player.id)"
-            alt="{{ player.name }}"
-          />
+          <img [src]="getPlayerPhotoUrl(player.id)" alt="{{ player.name }}" />
           } @else {
           <mat-icon class="avatar-placeholder">account_circle</mat-icon>
           }
@@ -126,8 +123,7 @@
           <span class="info-label">Email</span>
           <span class="info-value">{{ player.parentContact.email }}</span>
         </div>
-        }
-        @if (player.parentContact.phone) {
+        } @if (player.parentContact.phone) {
         <div class="info-item">
           <span class="info-label">Teléfono</span>
           <span class="info-value">{{ player.parentContact.phone }}</span>

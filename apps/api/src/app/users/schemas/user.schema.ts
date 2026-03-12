@@ -1,6 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { CategoryEnum, HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  HockeyBranchEnum,
+  Role,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 
 @Schema()
 export class User extends Document {

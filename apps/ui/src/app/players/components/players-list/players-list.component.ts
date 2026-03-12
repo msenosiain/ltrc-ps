@@ -54,16 +54,8 @@ export class PlayersListComponent implements AfterViewInit {
   importing = false;
   readonly Role = Role;
 
-  private readonly baseColumns = [
-    'photoId',
-    'name',
-    'nickName',
-    'category',
-  ];
-  private readonly afterCategoryColumns = [
-    'position',
-    'alternatePosition',
-  ];
+  private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
+  private readonly afterCategoryColumns = ['position', 'alternatePosition'];
   displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
   readonly dataSource = new PlayersDataSource(this.playersService);
@@ -105,9 +97,16 @@ export class PlayersListComponent implements AfterViewInit {
 
   private updateColumns(sport?: SportEnum): void {
     if (sport === SportEnum.HOCKEY) {
-      this.displayedColumns = [...this.baseColumns, 'branch', ...this.afterCategoryColumns];
+      this.displayedColumns = [
+        ...this.baseColumns,
+        'branch',
+        ...this.afterCategoryColumns,
+      ];
     } else {
-      this.displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
+      this.displayedColumns = [
+        ...this.baseColumns,
+        ...this.afterCategoryColumns,
+      ];
     }
   }
 

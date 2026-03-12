@@ -12,7 +12,11 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Apellido y Nombre</mat-label>
-        <input matInput formControlName="name" placeholder="Apellido y Nombre" />
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Apellido y Nombre"
+        />
         @if (playerForm.get('name')?.errors?.['required']) {
         <mat-error>Apellido y Nombre es obligatorio</mat-error>
         } @else if (playerForm.get('name')?.errors?.['pattern']) {

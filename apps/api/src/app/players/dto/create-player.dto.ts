@@ -121,7 +121,9 @@ export class CreatePlayerDto {
 
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => typeof value === 'string' ? value.replace(/\D/g, '') : value)
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.replace(/\D/g, '') : value
+  )
   readonly idNumber!: string;
 
   @IsNotEmpty()

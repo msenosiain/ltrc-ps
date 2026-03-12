@@ -263,27 +263,37 @@ export class PlayersService {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const rowNum = i + 2;
-        const label = sport ? `[${sheetName}] fila ${rowNum}` : `fila ${rowNum}`;
+        const label = sport
+          ? `[${sheetName}] fila ${rowNum}`
+          : `fila ${rowNum}`;
 
-        const str = (val: unknown) =>
-          val != null ? String(val).trim() : '';
+        const str = (val: unknown) => (val != null ? String(val).trim() : '');
 
         const name = str(row.Nombre);
         const idNumber = str(row['N° Doc.']).replace(/\D/g, '');
         const email = str(row.Email);
 
         if (!name) {
-          errors.push({ row: rowNum, message: `${label}: Nombre es requerido` });
+          errors.push({
+            row: rowNum,
+            message: `${label}: Nombre es requerido`,
+          });
           continue;
         }
         if (!idNumber) {
-          errors.push({ row: rowNum, message: `${label}: N° Doc. es requerido` });
+          errors.push({
+            row: rowNum,
+            message: `${label}: N° Doc. es requerido`,
+          });
           continue;
         }
 
         const birthDate = parseDate(row['Fecha Nac.']);
         if (!birthDate) {
-          errors.push({ row: rowNum, message: `${label}: Fecha Nac. inválida` });
+          errors.push({
+            row: rowNum,
+            message: `${label}: Fecha Nac. inválida`,
+          });
           continue;
         }
 
@@ -308,7 +318,10 @@ export class PlayersService {
           });
           created++;
         } catch (err) {
-          errors.push({ row: rowNum, message: `${label}: ${(err as Error).message}` });
+          errors.push({
+            row: rowNum,
+            message: `${label}: ${(err as Error).message}`,
+          });
         }
       }
     }
@@ -316,9 +329,7 @@ export class PlayersService {
     return { created, errors };
   }
 
-  async updateFromSurvey(
-    buffer: Buffer
-  ): Promise<{
+  async updateFromSurvey(buffer: Buffer): Promise<{
     updated: number;
     notFound: { row: number; dni: string; name: string }[];
     errors: { row: number; message: string }[];
@@ -347,7 +358,9 @@ export class PlayersService {
       try {
         const player = await this.playerModel.findOne({ idNumber: dni });
         if (!player) {
-          const name = [str(row.Apellido), str(row.Nombre)].filter(Boolean).join(', ') || '—';
+          const name =
+            [str(row.Apellido), str(row.Nombre)].filter(Boolean).join(', ') ||
+            '—';
           notFound.push({ row: rowNum, dni, name });
           continue;
         }
@@ -361,15 +374,23 @@ export class PlayersService {
         }
 
         const healthInsurance = str(row['Obra Social']);
-        if (healthInsurance && healthInsurance !== '-' && healthInsurance !== '.') {
+        if (
+          healthInsurance &&
+          healthInsurance !== '-' &&
+          healthInsurance !== '.'
+        ) {
           player.medicalData = {
             ...(player.medicalData ?? {}),
             healthInsurance,
           };
         }
 
-        const jersey = str(row['Talle Camiseta']).toUpperCase() as ClothingSizesEnum;
-        const shorts = str(row['Talle Short/Falda']).toUpperCase() as ClothingSizesEnum;
+        const jersey = str(
+          row['Talle Camiseta']
+        ).toUpperCase() as ClothingSizesEnum;
+        const shorts = str(
+          row['Talle Short/Falda']
+        ).toUpperCase() as ClothingSizesEnum;
         const hasJersey = validSizes.has(jersey);
         const hasShorts = validSizes.has(shorts);
 

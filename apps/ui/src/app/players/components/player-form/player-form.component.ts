@@ -12,7 +12,12 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';

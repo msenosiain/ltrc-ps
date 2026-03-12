@@ -7,33 +7,37 @@
   </p>
 
   @if (data.notFound?.length) {
-    <h3 class="section-title">
-      <mat-icon class="section-title__icon section-title__icon--warn">warning</mat-icon>
-      No encontrados ({{ data.notFound!.length }})
-    </h3>
-    <div class="result-list">
-      @for (item of data.notFound; track item.row) {
-        <div class="result-list__item">
-          <span class="result-list__row">Fila {{ item.row }}</span>
-          <span class="result-list__detail">DNI {{ item.dni }} — {{ item.name }}</span>
-        </div>
-      }
+  <h3 class="section-title">
+    <mat-icon class="section-title__icon section-title__icon--warn"
+      >warning</mat-icon
+    >
+    No encontrados ({{ data.notFound!.length }})
+  </h3>
+  <div class="result-list">
+    @for (item of data.notFound; track item.row) {
+    <div class="result-list__item">
+      <span class="result-list__row">Fila {{ item.row }}</span>
+      <span class="result-list__detail"
+        >DNI {{ item.dni }} — {{ item.name }}</span
+      >
     </div>
-  }
-
-  @if (data.errors?.length) {
-    <h3 class="section-title">
-      <mat-icon class="section-title__icon section-title__icon--error">error</mat-icon>
-      Errores ({{ data.errors!.length }})
-    </h3>
-    <div class="result-list">
-      @for (item of data.errors; track item.row) {
-        <div class="result-list__item">
-          <span class="result-list__row">Fila {{ item.row }}</span>
-          <span class="result-list__detail">{{ item.message }}</span>
-        </div>
-      }
+    }
+  </div>
+  } @if (data.errors?.length) {
+  <h3 class="section-title">
+    <mat-icon class="section-title__icon section-title__icon--error"
+      >error</mat-icon
+    >
+    Errores ({{ data.errors!.length }})
+  </h3>
+  <div class="result-list">
+    @for (item of data.errors; track item.row) {
+    <div class="result-list__item">
+      <span class="result-list__row">Fila {{ item.row }}</span>
+      <span class="result-list__detail">{{ item.message }}</span>
     </div>
+    }
+  </div>
   }
 </mat-dialog-content>
 

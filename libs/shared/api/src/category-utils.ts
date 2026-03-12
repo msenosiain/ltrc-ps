@@ -18,7 +18,11 @@ const RUGBY_CATEGORIES: CategoryEnum[] = [
   CategoryEnum.M19,
 ];
 
-const HOCKEY_AGE_RANGES: { min: number; max: number; category: CategoryEnum }[] = [
+const HOCKEY_AGE_RANGES: {
+  min: number;
+  max: number;
+  category: CategoryEnum;
+}[] = [
   { min: 5, max: 6, category: CategoryEnum.PRE_DECIMA },
   { min: 7, max: 8, category: CategoryEnum.DECIMA },
   { min: 9, max: 10, category: CategoryEnum.NOVENA },

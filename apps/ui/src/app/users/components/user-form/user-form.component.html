@@ -7,7 +7,11 @@
       <div class="form-row">
         <mat-form-field appearance="outline">
           <mat-label>Apellido y Nombre</mat-label>
-          <input matInput formControlName="name" placeholder="Apellido y Nombre" />
+          <input
+            matInput
+            formControlName="name"
+            placeholder="Apellido y Nombre"
+          />
           @if (form.get('name')?.hasError('required')) {
           <mat-error>El nombre es requerido</mat-error>
           }
@@ -75,8 +79,7 @@
         </mat-select>
         <mat-hint>Dejar vacío para acceso a todas las ramas</mat-hint>
       </mat-form-field>
-      }
-      } @if (isCreate) {
+      } } @if (isCreate) {
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Contraseña (opcional)</mat-label>
         <input
