@@ -37,7 +37,7 @@ export class UsersListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly usersService = inject(UsersService);
 
-  readonly displayedColumns = ['name', 'lastName', 'email', 'roles', 'actions'];
+  readonly displayedColumns = ['name', 'email', 'roles', 'actions'];
   readonly dataSource = new UsersDataSource(this.usersService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

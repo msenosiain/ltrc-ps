@@ -48,7 +48,6 @@ export class UsersService {
     if (filters.searchTerm) {
       queryFilters['$or'] = [
         { name: { $regex: new RegExp(filters.searchTerm, 'i') } },
-        { lastName: { $regex: new RegExp(filters.searchTerm, 'i') } },
         { email: { $regex: new RegExp(filters.searchTerm, 'i') } },
       ];
     }
@@ -61,7 +60,7 @@ export class UsersService {
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['lastName'] = 1;
+      sort['name'] = 1;
     }
 
     const [items, total] = await Promise.all([

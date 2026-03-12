@@ -10,9 +10,8 @@ import {
 export class PlayerEntity extends Document {
   id: string;
   idNumber: string;
-  lastName: string;
-  firstName: string;
-  secondName?: string;
+  name: string;
+  memberNumber?: string;
   nickName: string;
   birthDate: Date;
   email: string;

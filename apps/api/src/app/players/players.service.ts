@@ -73,8 +73,7 @@ export class PlayersService {
       }
 
       const user = await this.usersService.create({
-        name: dto.firstName,
-        lastName: dto.lastName,
+        name: dto.name,
         email: dto.email,
         roles: [Role.PLAYER],
       });
@@ -113,8 +112,7 @@ export class PlayersService {
       }
 
       const user = await this.usersService.create({
-        name: dto.firstName ?? player.firstName,
-        lastName: dto.lastName ?? player.lastName,
+        name: dto.name ?? player.name,
         email: dto.email,
         roles: [Role.PLAYER],
       });
@@ -145,12 +143,10 @@ export class PlayersService {
 
     const queryFilters = {};
 
-    // searchTerm → firstName, lastName o nickName
+    // searchTerm → name o nickName
     if (filters.searchTerm) {
       queryFilters['$or'] = [
-        { firstName: { $regex: new RegExp(filters.searchTerm, 'i') } },
-        { secondName: { $regex: new RegExp(filters.searchTerm, 'i') } },
-        { lastName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+        { name: { $regex: new RegExp(filters.searchTerm, 'i') } },
         { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
       ];
     }
@@ -195,7 +191,7 @@ export class PlayersService {
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['lastName'] = 1;
+      sort['name'] = 1;
     }
 
     // Query a MongoDB
@@ -277,13 +273,11 @@ export class PlayersService {
         const phoneNumber = row.phone ? str(row.phone) : undefined;
 
         await this.playerModel.create({
-          lastName: str(row.lastName),
-          firstName: str(row.firstName),
+          name: str(row.name),
           idNumber: str(row.idNumber),
           email: str(row.email),
           birthDate,
           ...(row.position && { position: row.position }),
-          secondName: row.secondName ? str(row.secondName) : undefined,
           nickName: row.nickName ? str(row.nickName) : undefined,
           ...(row.alternatePosition && {
             alternatePosition: row.alternatePosition,
@@ -313,8 +307,7 @@ export class PlayersService {
   private validateImportRow(row: ImportPlayerRow): string | null {
     const str = (val: unknown) => (val != null ? String(val).trim() : '');
 
-    if (!str(row.lastName)) return 'lastName es requerido';
-    if (!str(row.firstName)) return 'firstName es requerido';
+    if (!str(row.name)) return 'name es requerido';
     if (!str(row.idNumber)) return 'idNumber es requerido';
     if (!str(row.email)) return 'email es requerido';
     const allPositions = new Set([

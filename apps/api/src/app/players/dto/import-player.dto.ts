@@ -1,13 +1,11 @@
 import { PlayerPosition } from '@ltrc-ps/shared-api-model';
 
 export interface ImportPlayerRow {
-  lastName: string;
-  firstName: string;
+  name: string;
   idNumber: string;
   birthDate: unknown; // Date (Excel) or string (CSV dd/MM/yyyy)
   email: string;
   position?: PlayerPosition;
-  secondName?: string;
   nickName?: string;
   alternatePosition?: PlayerPosition;
   height?: number;

@@ -39,7 +39,7 @@
     mat-table
     [dataSource]="dataSource"
     matSort
-    matSortActive="lastName"
+    matSortActive="name"
     matSortDirection="asc"
     class="players-table mat-elevation-z2"
   >
@@ -50,7 +50,7 @@
         @if (player.photoId) {
         <img
           [src]="getPlayerPhotoUrl(player.id)"
-          alt="{{ player.firstName }} {{ player.lastName }}"
+          alt="{{ player.name }}"
           class="player-photo"
         />
         } @else {
@@ -60,18 +60,9 @@
     </ng-container>
 
     <!-- Nombre -->
-    <ng-container matColumnDef="firstName">
+    <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-      <td mat-cell *matCellDef="let player">
-        {{ player.firstName
-        }}{{ player.secondName ? ' ' + player.secondName : '' }}
-      </td>
-    </ng-container>
-
-    <!-- Apellido -->
-    <ng-container matColumnDef="lastName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido</th>
-      <td mat-cell *matCellDef="let player">{{ player.lastName }}</td>
+      <td mat-cell *matCellDef="let player">{{ player.name }}</td>
     </ng-container>
 
     <!-- Apodo -->

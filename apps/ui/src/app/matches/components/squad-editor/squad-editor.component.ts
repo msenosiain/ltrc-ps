@@ -109,7 +109,7 @@ export class SquadEditorComponent implements OnInit {
   readonly displayedColumns = ['shirtNumber', 'player', 'position', 'actions'];
 
   readonly displayPlayerFn = (player: Player | null): string =>
-    player ? `${player.lastName}, ${player.firstName}` : '';
+    player ? player.name : '';
 
   readonly formationGroups: number[][][] = [
     [

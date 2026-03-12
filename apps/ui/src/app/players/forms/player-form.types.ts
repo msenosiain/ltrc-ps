@@ -11,9 +11,8 @@ export type PlayerFormValue = {
   photo?: PhotoValue | null;
   createUser?: boolean;
 
-  firstName: string;
-  secondName: string;
-  lastName: string;
+  name: string;
+  memberNumber: string;
   nickName: string;
   idNumber: string;
   birthDate: Date | null;

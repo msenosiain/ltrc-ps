@@ -11,30 +11,13 @@
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="firstName" />
-        @if (playerForm.get('firstName')?.errors?.['required']) {
-        <mat-error>Nombre es obligatorio</mat-error>
-        } @else if (playerForm.get('firstName')?.errors?.['pattern']) {
+        <mat-label>Apellido y Nombre</mat-label>
+        <input matInput formControlName="name" placeholder="Apellido y Nombre" />
+        @if (playerForm.get('name')?.errors?.['required']) {
+        <mat-error>Apellido y Nombre es obligatorio</mat-error>
+        } @else if (playerForm.get('name')?.errors?.['pattern']) {
         <mat-error>Solo se permiten letras</mat-error>
-        } @else if (playerForm.get('firstName')?.errors?.['minlength']) {
-        <mat-error>Mínimo 2 caracteres</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Segundo nombre</mat-label>
-        <input matInput formControlName="secondName" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Apellido</mat-label>
-        <input matInput formControlName="lastName" />
-        @if (playerForm.get('lastName')?.errors?.['required']) {
-        <mat-error>Apellido es obligatorio</mat-error>
-        } @else if (playerForm.get('lastName')?.errors?.['pattern']) {
-        <mat-error>Solo se permiten letras</mat-error>
-        } @else if (playerForm.get('lastName')?.errors?.['minlength']) {
+        } @else if (playerForm.get('name')?.errors?.['minlength']) {
         <mat-error>Mínimo 2 caracteres</mat-error>
         }
       </mat-form-field>
@@ -42,6 +25,11 @@
       <mat-form-field appearance="outline">
         <mat-label>Apodo</mat-label>
         <input matInput formControlName="nickName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>N° de socio</mat-label>
+        <input matInput formControlName="memberNumber" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -143,32 +131,38 @@
       <mat-form-field appearance="outline">
         <mat-label>Deporte</mat-label>
         <mat-select formControlName="sport">
-          <mat-option [value]="null">Sin especificar</mat-option>
           @for (s of sportOptions; track s.id) {
           <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
         </mat-select>
+        @if (playerForm.get('sport')?.errors?.['required']) {
+        <mat-error>Deporte es obligatorio</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="category">
-          <mat-option [value]="null">Sin categoría</mat-option>
           @for (cat of categories; track cat.id) {
           <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
           }
         </mat-select>
+        @if (playerForm.get('category')?.errors?.['required']) {
+        <mat-error>Categoría es obligatoria</mat-error>
+        }
       </mat-form-field>
 
       @if (isHockey) {
       <mat-form-field appearance="outline">
         <mat-label>Rama</mat-label>
         <mat-select formControlName="branch">
-          <mat-option [value]="null">Sin rama</mat-option>
           @for (b of branchOptions; track b) {
           <mat-option [value]="b">{{ b }}</mat-option>
           }
         </mat-select>
+        @if (playerForm.get('branch')?.errors?.['required']) {
+        <mat-error>Rama es obligatoria</mat-error>
+        }
       </mat-form-field>
       }
 

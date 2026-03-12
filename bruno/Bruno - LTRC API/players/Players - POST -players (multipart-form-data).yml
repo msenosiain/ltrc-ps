@@ -9,12 +9,9 @@ http:
   body:
     type: multipart-form
     data:
-      - name: lastName
+      - name: name
         type: text
-        value: Arroyo
-      - name: firstName
-        type: text
-        value: Manuel
+        value: Manuel Arroyo
       - name: idNumber
         type: text
         value: '12345678'

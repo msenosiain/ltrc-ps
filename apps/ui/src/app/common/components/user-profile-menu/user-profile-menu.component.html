@@ -1,7 +1,7 @@
 @if (currentUser(); as user) {
 <div class="user-info" [matMenuTriggerFor]="userMenu">
   <div class="user-name-row">
-    <span class="user-name">{{ user.name }} {{ user.lastName }}</span>
+    <span class="user-name">{{ user.name }}</span>
     <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
   </div>
   <span class="user-role" [class]="primaryRoleClass()">{{

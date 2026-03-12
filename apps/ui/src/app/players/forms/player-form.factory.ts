@@ -12,18 +12,13 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
     photo: fb.control<PhotoValue | null>(null),
     createUser: fb.nonNullable.control(false),
-    firstName: fb.nonNullable.control('', [
-      Validators.required,
-      Validators.minLength(2),
-      Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
-    ]),
-    secondName: fb.nonNullable.control(''),
-    lastName: fb.nonNullable.control('', [
+    name: fb.nonNullable.control('', [
       Validators.required,
       Validators.minLength(2),
       Validators.pattern(/^[a-zA-ZÀ-ÿ\s'-]+$/),
     ]),
     nickName: fb.nonNullable.control(''),
+    memberNumber: fb.nonNullable.control(''),
     idNumber: fb.nonNullable.control('', [
       Validators.required,
       Validators.minLength(7),
@@ -33,8 +28,8 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
     birthDate: fb.control<Date | null>(null, Validators.required),
     email: fb.nonNullable.control('', [Validators.required, Validators.email]),
 
-    sport: fb.control<SportEnum | null>(null),
-    category: fb.control<CategoryEnum | null>(null),
+    sport: fb.control<SportEnum | null>(null, Validators.required),
+    category: fb.control<CategoryEnum | null>(null, Validators.required),
     branch: fb.control<HockeyBranchEnum | null>(null),
     position: fb.control<PlayerPosition | null>(null),
     alternatePosition: fb.control<PlayerPosition | null>(null),
