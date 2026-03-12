@@ -305,6 +305,18 @@ export class PlayersService {
         const parentName = str(row['Nombre Jefe']);
         const memberNumber = row.Socio ? String(row.Socio) : undefined;
 
+        const isMinor =
+          new Date().getFullYear() - birthDate.getFullYear() < 18;
+        const hasDistinctParent =
+          isMinor && parentName && parentName.toUpperCase() !== name.toUpperCase();
+
+        const parentContact = hasDistinctParent
+          ? {
+              name: parentName,
+              ...(email ? { email } : {}),
+            }
+          : undefined;
+
         try {
           await this.playerModel.create({
             name,
@@ -314,7 +326,7 @@ export class PlayersService {
             sport,
             category,
             memberNumber,
-            parentContact: parentName ? { name: parentName } : undefined,
+            parentContact,
           });
           created++;
         } catch (err) {
