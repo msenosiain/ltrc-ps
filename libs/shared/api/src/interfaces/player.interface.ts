@@ -35,6 +35,12 @@ export interface MedicalData {
   healthInsurance?: string;
 }
 
+export interface ParentContact {
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface PlayerFilters {
   searchTerm?: string;
   sport?: SportEnum;
@@ -59,6 +65,7 @@ export interface Player extends Document {
   readonly alternatePosition?: PlayerPosition;
   readonly clothingSizes?: ClothingSizes;
   readonly medicalData?: MedicalData;
+  readonly parentContact?: ParentContact;
   readonly photoId?: string;
   readonly userId?: string;
   readonly createdAt?: Date;

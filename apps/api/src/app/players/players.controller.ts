@@ -45,6 +45,12 @@ export class PlayersController {
     return this.playersService.importFromFile(file.buffer);
   }
 
+  @Post('update-from-survey')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateFromSurvey(@UploadedFile() file: MulterFile) {
+    return this.playersService.updateFromSurvey(file.buffer);
+  }
+
   // ⚠️ Debe estar ANTES de GET :id para que rutas con prefijo no sean interpretadas como un ID
   @Get('by-user/:userId')
   @UseGuards(JwtAuthGuard)

@@ -60,5 +60,11 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
       torgIndex: fb.control<number | null>(null),
       healthInsurance: fb.nonNullable.control(''),
     }),
+
+    parentContact: fb.group({
+      name: fb.nonNullable.control(''),
+      email: fb.nonNullable.control(''),
+      phone: fb.nonNullable.control(''),
+    }),
   });
 }

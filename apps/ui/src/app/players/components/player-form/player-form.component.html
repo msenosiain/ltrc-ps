@@ -12,7 +12,11 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Apellido y Nombre</mat-label>
-        <input matInput formControlName="name" placeholder="Apellido y Nombre" />
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Apellido y Nombre"
+        />
         @if (playerForm.get('name')?.errors?.['required']) {
         <mat-error>Apellido y Nombre es obligatorio</mat-error>
         } @else if (playerForm.get('name')?.errors?.['pattern']) {
@@ -123,6 +127,32 @@
       </mat-form-field>
     </div>
   </mat-card>
+
+  <!-- DATOS DEL PADRE/MADRE/TUTOR -->
+  @if (isMinor()) {
+  <mat-card>
+    <mat-card-title>Datos del padre/madre/tutor</mat-card-title>
+    <div class="card-grid section-grid" formGroupName="parentContact">
+      <mat-form-field appearance="outline">
+        <mat-label>Apellido y Nombre</mat-label>
+        <input matInput formControlName="name" />
+        @if (playerForm.get('parentContact.name')?.errors?.['required']) {
+        <mat-error>Nombre del padre/madre/tutor es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Teléfono</mat-label>
+        <input matInput formControlName="phone" />
+      </mat-form-field>
+    </div>
+  </mat-card>
+  }
 
   <!-- DATOS DEPORTIVOS -->
   <mat-card>

@@ -12,7 +12,12 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -85,6 +90,12 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     () => this.currentUser()?.roles?.includes(Role.ADMIN) ?? false
   );
 
+  private readonly playersAge = signal<number | null>(null);
+  readonly isMinor = computed(() => {
+    const age = this.playersAge();
+    return age !== null && age < 18;
+  });
+
   private readonly selectedPosition = signal<string | null>(null);
   readonly filteredAlternatePositions = computed(() =>
     this.positions.filter((p) => p.id !== this.selectedPosition())
@@ -117,6 +128,26 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     this.playerForm.get('position')!.valueChanges.subscribe((val) => {
       this.selectedPosition.set(val);
     });
+
+    this.playerForm
+      .get('birthDate')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((birthDate: Date | null) => {
+        if (birthDate) {
+          this.playersAge.set(
+            this.playersService.calculatePlayerAge(birthDate)
+          );
+        } else {
+          this.playersAge.set(null);
+        }
+        const nameCtrl = this.playerForm.get('parentContact.name')!;
+        if (this.isMinor()) {
+          nameCtrl.setValidators(Validators.required);
+        } else {
+          nameCtrl.clearValidators();
+        }
+        nameCtrl.updateValueAndValidity();
+      });
 
     this.filteredHealthInsurances$ = this.playerForm
       .get('medicalData.healthInsurance')!
@@ -171,6 +202,13 @@ export class PlayerFormComponent implements OnInit, OnChanges {
       const sport = this.player.sport ?? null;
       this.positions = getPositionOptionsBySport(sport);
       this.categories = getCategoryOptionsBySport(sport);
+
+      // Trigger age calculation for loaded player
+      if (this.player.birthDate) {
+        this.playersAge.set(
+          this.playersService.calculatePlayerAge(this.player.birthDate)
+        );
+      }
 
       if (this.player.photoId && this.player.id) {
         this.playerForm.get('photo')?.setValue({

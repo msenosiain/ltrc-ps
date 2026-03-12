@@ -6,9 +6,10 @@ import {
   PaginationQuery,
   Player,
   PlayerPosition,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
-import { positionOptions } from '../position-options';
+import { getPositionLabel } from '../position-options';
 import { PlayerFormValue } from '../forms/player-form.types';
 import { mapFormToCreatePlayerDto } from '../forms/player-form.mapper';
 
@@ -92,6 +93,9 @@ export class PlayersService {
     if (dto.idNumber != null) form.append('idNumber', dto.idNumber);
     if (dto.birthDate != null) form.append('birthDate', dto.birthDate);
     if (dto.email != null) form.append('email', dto.email);
+    if (dto.sport != null) form.append('sport', dto.sport);
+    if (dto.category != null) form.append('category', dto.category);
+    if (dto.branch != null) form.append('branch', dto.branch);
     if (dto.position != null) form.append('position', dto.position);
     if (dto.alternatePosition != null)
       form.append('alternatePosition', dto.alternatePosition);
@@ -101,6 +105,8 @@ export class PlayersService {
       form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
     if (dto.medicalData != null)
       form.append('medicalData', JSON.stringify(dto.medicalData));
+    if (dto.parentContact != null)
+      form.append('parentContact', JSON.stringify(dto.parentContact));
     form.append('createUser', String(dto.createUser ?? false));
 
     return form;
@@ -120,6 +126,20 @@ export class PlayersService {
     }>(`${this.playersApiUrl}/import`, form);
   }
 
+  updateFromSurvey(file: File): Observable<{
+    updated: number;
+    notFound: { row: number; dni: string; name: string }[];
+    errors: { row: number; message: string }[];
+  }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.httpClient.post<{
+      updated: number;
+      notFound: { row: number; dni: string; name: string }[];
+      errors: { row: number; message: string }[];
+    }>(`${this.playersApiUrl}/update-from-survey`, form);
+  }
+
   getMyPlayer(): Observable<Player> {
     return this.httpClient.get<Player>(`${this.playersApiUrl}/me`);
   }
@@ -132,8 +152,8 @@ export class PlayersService {
 
   // UTILS ──────────────────────────────────────────────────
 
-  getPositionLabel(position: PlayerPosition): string {
-    return positionOptions.find((o) => o.id === position)?.name ?? position;
+  getPositionLabel(position: PlayerPosition, sport?: SportEnum | null): string {
+    return getPositionLabel(position, sport);
   }
 
   getPlayerPhotoUrl(playerId: string): string {

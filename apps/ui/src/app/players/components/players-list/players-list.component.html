@@ -27,6 +27,23 @@
       <mat-icon>upload_file</mat-icon>
       Importar
     </button>
+    <input
+      #surveyInput
+      type="file"
+      accept=".xlsx"
+      hidden
+      (change)="onSurveyFileSelected($event)"
+    />
+    <button
+      *ltrcAllowedRoles="[Role.ADMIN]"
+      mat-stroked-button
+      type="button"
+      [disabled]="importing"
+      (click)="surveyInput.click()"
+    >
+      <mat-icon>sync</mat-icon>
+      Actualizar desde encuesta
+    </button>
   </div>
 
   <ltrc-player-search (filtersChange)="applyFilters($event)" />
@@ -61,7 +78,9 @@
 
     <!-- Nombre -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Apellido y Nombre
+      </th>
       <td mat-cell *matCellDef="let player">{{ player.name }}</td>
     </ng-container>
 
@@ -79,11 +98,17 @@
       </td>
     </ng-container>
 
+    <!-- Rama -->
+    <ng-container matColumnDef="branch">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Rama</th>
+      <td mat-cell *matCellDef="let player">{{ player.branch }}</td>
+    </ng-container>
+
     <!-- Posicion -->
     <ng-container matColumnDef="position">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Posicion</th>
       <td mat-cell *matCellDef="let player">
-        {{ getPositionLabel(player.position) }}
+        {{ getPositionLabel(player.position, player.sport) }}
       </td>
     </ng-container>
 
@@ -93,7 +118,7 @@
         Pos. alternativa
       </th>
       <td mat-cell *matCellDef="let player">
-        {{ getPositionLabel(player.alternatePosition) }}
+        {{ getPositionLabel(player.alternatePosition, player.sport) }}
       </td>
     </ng-container>
 
