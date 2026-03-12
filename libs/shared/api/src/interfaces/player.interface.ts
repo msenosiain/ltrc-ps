@@ -46,9 +46,8 @@ export interface PlayerFilters {
 export interface Player extends Document {
   readonly id?: string;
   readonly idNumber: string;
-  readonly lastName: string;
-  readonly firstName: string;
-  readonly secondName?: string;
+  readonly name: string;
+  readonly memberNumber?: string;
   readonly nickName?: string;
   readonly birthDate: Date;
   readonly email: string;

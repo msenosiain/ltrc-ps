@@ -8,7 +8,7 @@
     >
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h2 class="viewer-title">{{ user.name }} {{ user.lastName }}</h2>
+    <h2 class="viewer-title">{{ user.name }}</h2>
     <div class="viewer-actions">
       <button mat-stroked-button color="warn" (click)="onResetPassword()">
         <mat-icon>lock_reset</mat-icon>
@@ -26,8 +26,14 @@
       <div class="info-grid">
         <div class="info-item">
           <span class="info-label">Nombre</span>
-          <span class="info-value">{{ user.name }} {{ user.lastName }}</span>
+          <span class="info-value">{{ user.name }}</span>
         </div>
+        @if (user.memberNumber) {
+        <div class="info-item">
+          <span class="info-label">N° de socio</span>
+          <span class="info-value">{{ user.memberNumber }}</span>
+        </div>
+        }
         <div class="info-item">
           <span class="info-label">Email</span>
           <span class="info-value">{{ user.email }}</span>
@@ -72,7 +78,7 @@
           [routerLink]="['/dashboard/players', getPlayerId(linkedPlayer)]"
           class="player-link"
         >
-          {{ linkedPlayer.firstName }} {{ linkedPlayer.lastName }}
+          {{ linkedPlayer.name }}
         </a>
       </div>
     </mat-card-content>

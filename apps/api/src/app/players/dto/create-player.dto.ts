@@ -95,15 +95,11 @@ export class MedicalDataDto {
 export class CreatePlayerDto {
   @IsNotEmpty()
   @IsString()
-  readonly lastName!: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly firstName!: string;
+  readonly name!: string;
 
   @IsOptional()
-  @IsString()
-  readonly secondName?: string;
+  @IsNumberString()
+  readonly memberNumber?: string;
 
   @IsOptional()
   @IsString()
@@ -122,13 +118,13 @@ export class CreatePlayerDto {
   @IsEmail()
   readonly email!: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsEnum(SportEnum)
-  readonly sport?: SportEnum;
+  readonly sport!: SportEnum;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsEnum(CategoryEnum)
-  readonly category?: CategoryEnum;
+  readonly category!: CategoryEnum;
 
   @IsOptional()
   @IsEnum(HockeyBranchEnum)

@@ -14,11 +14,8 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Apellido</mat-label>
-          <input matInput formControlName="lastName" />
-          @if (form.get('lastName')?.hasError('required')) {
-          <mat-error>El apellido es requerido</mat-error>
-          }
+          <mat-label>N° de socio</mat-label>
+          <input matInput formControlName="memberNumber" />
         </mat-form-field>
       </div>
 

@@ -112,7 +112,7 @@ describe('PlayersService', () => {
       mockModel.findById.mockResolvedValueOnce(player);
 
       const result = await service.update('player-id-1', {
-        firstName: 'Updated',
+        name: 'Updated',
       });
 
       expect(mockModel.findById).toHaveBeenCalledWith('player-id-1');

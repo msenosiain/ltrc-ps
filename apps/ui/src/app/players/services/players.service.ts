@@ -86,9 +86,8 @@ export class PlayersService {
     const form = new FormData();
     if (file) form.append('photo', file);
 
-    if (dto.firstName != null) form.append('firstName', dto.firstName);
-    if (dto.secondName != null) form.append('secondName', dto.secondName);
-    if (dto.lastName != null) form.append('lastName', dto.lastName);
+    if (dto.name != null) form.append('name', dto.name);
+    if (dto.memberNumber != null) form.append('memberNumber', dto.memberNumber);
     if (dto.nickName != null) form.append('nickName', dto.nickName);
     if (dto.idNumber != null) form.append('idNumber', dto.idNumber);
     if (dto.birthDate != null) form.append('birthDate', dto.birthDate);

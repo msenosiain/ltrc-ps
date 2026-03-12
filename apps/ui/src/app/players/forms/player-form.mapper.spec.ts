@@ -7,9 +7,8 @@ import { Player } from '@ltrc-ps/shared-api-model';
 import { RugbyPositions, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
 
 const baseForm: PlayerFormValue = {
-  firstName: 'Juan',
-  secondName: '',
-  lastName: 'Perez',
+  name: 'Juan Perez',
+  memberNumber: '',
   nickName: 'Juancho',
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
@@ -45,8 +44,7 @@ const baseForm: PlayerFormValue = {
 
 const basePlayer: Player = {
   id: 'player-1',
-  firstName: 'Juan',
-  lastName: 'Perez',
+  name: 'Juan Perez',
   nickName: 'Juancho',
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
@@ -72,8 +70,7 @@ const basePlayer: Player = {
 describe('mapFormToCreatePlayerDto', () => {
   it('should map required fields correctly', () => {
     const result = mapFormToCreatePlayerDto(baseForm);
-    expect(result.firstName).toBe('Juan');
-    expect(result.lastName).toBe('Perez');
+    expect(result.name).toBe('Juan Perez');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
     expect(result.position).toBe(RugbyPositions.FULLBACK);
@@ -130,8 +127,7 @@ describe('mapFormToCreatePlayerDto', () => {
 describe('mapPlayerToForm', () => {
   it('should map player fields to form', () => {
     const result = mapPlayerToForm(basePlayer);
-    expect(result.firstName).toBe('Juan');
-    expect(result.lastName).toBe('Perez');
+    expect(result.name).toBe('Juan Perez');
     expect(result.nickName).toBe('Juancho');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');

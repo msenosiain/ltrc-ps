@@ -9,7 +9,7 @@
           @if (player.photoId) {
           <img
             [src]="getPlayerPhotoUrl(player.id)"
-            alt="{{ player.firstName }} {{ player.lastName }}"
+            alt="{{ player.name }}"
           />
           } @else {
           <mat-icon class="avatar-placeholder">account_circle</mat-icon>
@@ -18,8 +18,7 @@
 
         <div class="main-info">
           <h2 class="player-name">
-            {{ player.lastName }}, {{ player.firstName
-            }}{{ player.secondName ? ' ' + player.secondName : '' }}
+            {{ player.name }}
           </h2>
 
           @if (player.nickName) {
@@ -27,6 +26,12 @@
           }
 
           <div class="stats-row">
+            @if (player.memberNumber) {
+            <div class="stat">
+              <span class="stat-label">N° de socio</span>
+              <span class="stat-value">{{ player.memberNumber }}</span>
+            </div>
+            }
             <div class="stat">
               <span class="stat-label">DNI</span>
               <span class="stat-value">{{ player.idNumber }}</span>

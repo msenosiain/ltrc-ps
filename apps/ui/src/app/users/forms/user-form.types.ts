@@ -2,7 +2,7 @@ import { CategoryEnum, HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared
 
 export type UserFormValue = {
   name: string;
-  lastName: string;
+  memberNumber: string;
   email: string;
   roles: Role[];
   password?: string;

@@ -1,8 +1,7 @@
 import { RugbyPositions } from '@ltrc-ps/shared-api-model';
 
 export const createPlayerDtoPlain = {
-  lastName: 'Lastname 3',
-  firstName: 'Firstname 3',
+  name: 'Firstname 3 Lastname 3',
   idNumber: '3',
   birthDate: '05-12-2005',
   email: 'player3@lostordos.com.ar',
@@ -14,8 +13,7 @@ export const createPlayerDtoPlain = {
 
 export const playersArray = [
   {
-    lastName: 'Lastname 1',
-    firstName: 'Firstname 1',
+    name: 'Firstname 1 Lastname 1',
     idNumber: '1',
     birthDate: '05-12-2005',
     email: 'player1@lostordos.com.ar',
@@ -33,8 +31,7 @@ export const playersArray = [
     weight: 119,
   },
   {
-    lastName: 'Lastname 2',
-    firstName: 'Firstname 2',
+    name: 'Firstname 2 Lastname 2',
     idNumber: '2',
     birthDate: '05-12-2005',
     email: 'player2@lostordos.com.ar',
@@ -52,8 +49,7 @@ export const playersArray = [
     weight: 100,
   },
   {
-    lastName: 'Lastname 3',
-    firstName: 'Firstname 3',
+    name: 'Firstname 3 Lastname 3',
     idNumber: '3',
     birthDate: '05-12-2005',
     email: 'player3@lostordos.com.ar',

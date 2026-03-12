@@ -94,8 +94,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       user = await this.usersService.create({
         email: emails?.[0]?.value,
         googleId: id as string,
-        name: name?.givenName,
-        lastName: name?.familyName,
+        name: [name?.givenName, name?.familyName].filter(Boolean).join(' '),
       } as Partial<User>);
     }
     done(null, user);

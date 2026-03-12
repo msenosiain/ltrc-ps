@@ -99,7 +99,7 @@ export class UserEditorComponent implements OnInit {
   }
 
   onDelete(): void {
-    const name = `${this.user?.name} ${this.user?.lastName}`;
+    const name = this.user?.name ?? '';
     const ref = this.dialog.open(ConfirmDialogComponent, {
       width: '380px',
       data: {

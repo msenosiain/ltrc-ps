@@ -5,9 +5,8 @@ import { format } from 'date-fns';
 // FORM -> CREATE DTO (NestJS)
 export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
   return {
-    firstName: value.firstName,
-    secondName: value.secondName || undefined,
-    lastName: value.lastName,
+    name: value.name,
+    memberNumber: value.memberNumber || undefined,
     nickName: value.nickName || undefined,
     idNumber: value.idNumber,
     birthDate: format(value.birthDate!, DATE_FORMAT),
@@ -29,9 +28,8 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
   return {
     photo: null, // la foto existente se maneja via existingPhotoUrl, no como PhotoValue
 
-    firstName: player.firstName,
-    secondName: player.secondName ?? '',
-    lastName: player.lastName,
+    name: player.name,
+    memberNumber: player.memberNumber ?? '',
     nickName: player.nickName ?? '',
     idNumber: player.idNumber,
     birthDate: player.birthDate,
