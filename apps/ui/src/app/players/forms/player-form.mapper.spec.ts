@@ -40,6 +40,11 @@ const baseForm: PlayerFormValue = {
     torgIndex: null,
     healthInsurance: '',
   },
+  parentContact: {
+    name: '',
+    email: '',
+    phone: '',
+  },
 };
 
 const basePlayer: Player = {

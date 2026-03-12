@@ -7,10 +7,7 @@
       <div class="header-layout">
         <div class="avatar">
           @if (player.photoId) {
-          <img
-            [src]="getPlayerPhotoUrl(player.id)"
-            alt="{{ player.name }}"
-          />
+          <img [src]="getPlayerPhotoUrl(player.id)" alt="{{ player.name }}" />
           } @else {
           <mat-icon class="avatar-placeholder">account_circle</mat-icon>
           }
@@ -57,11 +54,11 @@
             </mat-chip>
             } @if (player.position) {
             <mat-chip color="primary">
-              {{ getPositionLabel(player.position) }}
+              {{ getPositionLabel(player.position, player.sport) }}
             </mat-chip>
             } @if (player.alternatePosition) {
             <mat-chip>
-              {{ getPositionLabel(player.alternatePosition) }}
+              {{ getPositionLabel(player.alternatePosition, player.sport) }}
             </mat-chip>
             }
           </div>
@@ -106,6 +103,32 @@
           <span class="info-label">Telefono</span>
           <span class="info-value">{{ player.address.phoneNumber }}</span>
         </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <!-- DATOS DEL PADRE/MADRE/TUTOR -->
+  @if (player.parentContact) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Padre/Madre/Tutor</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Nombre</span>
+          <span class="info-value">{{ player.parentContact.name }}</span>
+        </div>
+        @if (player.parentContact.email) {
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ player.parentContact.email }}</span>
+        </div>
+        } @if (player.parentContact.phone) {
+        <div class="info-item">
+          <span class="info-label">Teléfono</span>
+          <span class="info-value">{{ player.parentContact.phone }}</span>
+        </div>
+        }
       </div>
     </mat-card-content>
   </mat-card>

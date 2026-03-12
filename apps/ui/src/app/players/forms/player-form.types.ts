@@ -47,4 +47,10 @@ export type PlayerFormValue = {
     torgIndex: number | null;
     healthInsurance: string;
   };
+
+  parentContact: {
+    name: string;
+    email: string;
+    phone: string;
+  };
 };

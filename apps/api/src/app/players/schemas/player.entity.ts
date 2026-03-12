@@ -41,6 +41,11 @@ export class PlayerEntity extends Document {
     torgIndex?: number;
     healthInsurance?: string;
   };
+  parentContact?: {
+    name: string;
+    email?: string;
+    phone?: string;
+  };
   photoId?: string;
   userId?: Types.ObjectId;
   createdAt: Date;

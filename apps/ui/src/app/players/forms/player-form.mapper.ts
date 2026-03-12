@@ -19,6 +19,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
     medicalData: mapMedicalData(value),
+    parentContact: mapParentContact(value),
     createUser: value.createUser ?? false,
   };
 }
@@ -64,6 +65,12 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
       torgIndex: player.medicalData?.torgIndex ?? null,
       healthInsurance: player.medicalData?.healthInsurance ?? '',
     },
+
+    parentContact: {
+      name: player.parentContact?.name ?? '',
+      email: player.parentContact?.email ?? '',
+      phone: player.parentContact?.phone ?? '',
+    },
   };
 }
 
@@ -102,4 +109,14 @@ function mapClothingSizes(value: PlayerFormValue) {
     pants: value.clothingSizes.pants ?? undefined,
   };
   return Object.values(c).some((v) => v !== undefined) ? c : undefined;
+}
+
+function mapParentContact(value: PlayerFormValue) {
+  const pc = value.parentContact;
+  if (!pc.name) return undefined;
+  return {
+    name: pc.name,
+    email: pc.email || undefined,
+    phone: pc.phone || undefined,
+  };
 }
