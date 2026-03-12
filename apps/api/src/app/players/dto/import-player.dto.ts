@@ -19,3 +19,30 @@ export interface ImportPlayerRow {
   healthInsurance?: string;
   torgIndex?: number;
 }
+
+/** Row shape from the padrón Excel (column headers as-is) */
+export interface PadronRow {
+  Socio?: number;
+  Nombre: string;
+  'N° Doc.': string | number;
+  'Fecha Nac.': unknown;
+  'Nombre Jefe'?: string;
+  Email?: string;
+}
+
+/** Row shape from the survey Excel (Google Forms responses) */
+export interface SurveyRow {
+  'Marca temporal'?: unknown;
+  Nombre: string;
+  Apellido: string;
+  DNI: string | number;
+  'Fecha de nacimiento'?: unknown;
+  'Correo Electrónico'?: string;
+  Telefono?: string | number;
+  'Obra Social'?: string;
+  'Talle Camiseta'?: string;
+  'Talle Short/Falda'?: string;
+  Deporte?: string;
+  'División Hockey'?: string;
+  'División Rugby'?: string;
+}

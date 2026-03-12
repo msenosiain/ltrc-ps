@@ -49,6 +49,15 @@ const MedicalDataSchema = new Schema(
   { _id: false }
 );
 
+const ParentContactSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    email: String,
+    phone: String,
+  },
+  { _id: false }
+);
+
 export const PlayerSchema = new Schema<PlayerEntity>(
   {
     idNumber: { type: String, unique: true, index: true },
@@ -80,6 +89,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     },
     clothingSizes: ClothingSizesSchema,
     medicalData: MedicalDataSchema,
+    parentContact: ParentContactSchema,
     photoId: { type: String },
     userId: {
       type: Schema.Types.ObjectId,

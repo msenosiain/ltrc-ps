@@ -111,6 +111,32 @@ export class PlayersListComponent implements AfterViewInit {
     return this.playersService.getPlayerPhotoUrl(playerId);
   }
 
+  onSurveyFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+
+    this.importing = true;
+    this.playersService.updateFromSurvey(file).subscribe({
+      next: ({ updated, notFound, errors }) => {
+        this.importing = false;
+        const parts = [`${updated} actualizados`];
+        if (notFound > 0) parts.push(`${notFound} no encontrados`);
+        if (errors.length > 0) parts.push(`${errors.length} errores`);
+        this.snackBar.open(parts.join(', '), 'Cerrar', { duration: 5000 });
+        this.dataSource.setPage(0, this.paginator.pageSize);
+        this.paginator.pageIndex = 0;
+      },
+      error: () => {
+        this.importing = false;
+        this.snackBar.open('Error al procesar la encuesta', 'Cerrar', {
+          duration: 5000,
+        });
+      },
+    });
+  }
+
   onImportFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];

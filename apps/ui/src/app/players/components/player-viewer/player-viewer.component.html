@@ -111,6 +111,33 @@
   </mat-card>
   }
 
+  <!-- DATOS DEL PADRE/MADRE/TUTOR -->
+  @if (player.parentContact) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Padre/Madre/Tutor</p>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Nombre</span>
+          <span class="info-value">{{ player.parentContact.name }}</span>
+        </div>
+        @if (player.parentContact.email) {
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ player.parentContact.email }}</span>
+        </div>
+        }
+        @if (player.parentContact.phone) {
+        <div class="info-item">
+          <span class="info-label">Teléfono</span>
+          <span class="info-value">{{ player.parentContact.phone }}</span>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
   <!-- DATOS MÉDICOS -->
   @if (player.medicalData) {
   <mat-card class="section-card">

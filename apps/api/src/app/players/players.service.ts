@@ -10,6 +10,7 @@ import { GridFsService } from '../shared/gridfs/gridfs.service';
 import type { File as MulterFile } from 'multer';
 import { PaginationDto } from '../shared/pagination.dto';
 import {
+  calculateCategory,
   ClothingSizesEnum,
   HockeyPositions,
   parseDate,
@@ -17,11 +18,12 @@ import {
   Player,
   Role,
   RugbyPositions,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
-import { ImportPlayerRow } from './dto/import-player.dto';
+import { ImportPlayerRow, PadronRow, SurveyRow } from './dto/import-player.dto';
 import * as XLSX from 'xlsx';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
@@ -244,104 +246,155 @@ export class PlayersService {
     buffer: Buffer
   ): Promise<{ created: number; errors: { row: number; message: string }[] }> {
     const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json<ImportPlayerRow>(sheet);
 
     let created = 0;
     const errors: { row: number; message: string }[] = [];
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      const rowNum = i + 2; // 1-based + header row
+    const sportMap: Record<string, SportEnum> = {
+      hockey: SportEnum.HOCKEY,
+      rugby: SportEnum.RUGBY,
+    };
 
-      const validationError = this.validateImportRow(row);
-      if (validationError) {
-        errors.push({ row: rowNum, message: validationError });
-        continue;
-      }
+    for (const sheetName of workbook.SheetNames) {
+      const sport = sportMap[sheetName.toLowerCase()];
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json<PadronRow>(sheet);
 
-      try {
-        const str = (val: unknown) => String(val).trim();
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const rowNum = i + 2;
+        const label = sport ? `[${sheetName}] fila ${rowNum}` : `fila ${rowNum}`;
 
-        const birthDate = parseDate(row.birthDate)!;
-        const jerseySize = row.jersey
-          ? (str(row.jersey).toUpperCase() as ClothingSizesEnum)
+        const str = (val: unknown) =>
+          val != null ? String(val).trim() : '';
+
+        const name = str(row.Nombre);
+        const idNumber = str(row['N° Doc.']);
+        const email = str(row.Email);
+
+        if (!name) {
+          errors.push({ row: rowNum, message: `${label}: Nombre es requerido` });
+          continue;
+        }
+        if (!idNumber) {
+          errors.push({ row: rowNum, message: `${label}: N° Doc. es requerido` });
+          continue;
+        }
+
+        const birthDate = parseDate(row['Fecha Nac.']);
+        if (!birthDate) {
+          errors.push({ row: rowNum, message: `${label}: Fecha Nac. inválida` });
+          continue;
+        }
+
+        const birthYear = birthDate.getFullYear();
+        const category = sport
+          ? calculateCategory(birthYear, sport)
           : undefined;
-        const shortSize = row.short
-          ? (str(row.short).toUpperCase() as ClothingSizesEnum)
-          : undefined;
-        const phoneNumber = row.phone ? str(row.phone) : undefined;
 
-        await this.playerModel.create({
-          name: str(row.name),
-          idNumber: str(row.idNumber),
-          email: str(row.email),
-          birthDate,
-          ...(row.position && { position: row.position }),
-          nickName: row.nickName ? str(row.nickName) : undefined,
-          ...(row.alternatePosition && {
-            alternatePosition: row.alternatePosition,
-          }),
-          clothingSizes:
-            jerseySize || shortSize
-              ? {
-                  jersey: jerseySize,
-                  sweater: jerseySize,
-                  shorts: shortSize,
-                  pants: shortSize,
-                }
-              : undefined,
-          address: phoneNumber ? { phoneNumber } : undefined,
-          medicalData: this.buildMedicalData(row, str),
-        });
+        const parentName = str(row['Nombre Jefe']);
+        const memberNumber = row.Socio ? String(row.Socio) : undefined;
 
-        created++;
-      } catch (err) {
-        errors.push({ row: rowNum, message: (err as Error).message });
+        try {
+          await this.playerModel.create({
+            name,
+            idNumber,
+            email: email || undefined,
+            birthDate,
+            sport,
+            category,
+            memberNumber,
+            parentContact: parentName ? { name: parentName } : undefined,
+          });
+          created++;
+        } catch (err) {
+          errors.push({ row: rowNum, message: `${label}: ${(err as Error).message}` });
+        }
       }
     }
 
     return { created, errors };
   }
 
-  private validateImportRow(row: ImportPlayerRow): string | null {
-    const str = (val: unknown) => (val != null ? String(val).trim() : '');
+  async updateFromSurvey(
+    buffer: Buffer
+  ): Promise<{
+    updated: number;
+    notFound: number;
+    errors: { row: number; message: string }[];
+  }> {
+    const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<SurveyRow>(sheet);
 
-    if (!str(row.name)) return 'name es requerido';
-    if (!str(row.idNumber)) return 'idNumber es requerido';
-    if (!str(row.email)) return 'email es requerido';
-    const allPositions = new Set([
-      ...Object.values(RugbyPositions),
-      ...Object.values(HockeyPositions),
-    ]);
-    if (row.position && !allPositions.has(row.position)) {
-      return `position inválida: ${row.position}`;
-    }
-    if (!parseDate(row.birthDate)) {
-      return 'birthDate inválida (formato esperado: dd/MM/yyyy)';
-    }
-    return null;
-  }
+    let updated = 0;
+    let notFound = 0;
+    const errors: { row: number; message: string }[] = [];
 
-  private buildMedicalData(
-    row: ImportPlayerRow,
-    str: (val: unknown) => string
-  ):
-    | {
-        height?: number;
-        weight?: number;
-        torgIndex?: number;
-        healthInsurance?: string;
+    const validSizes = new Set(Object.values(ClothingSizesEnum));
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const rowNum = i + 2;
+      const str = (val: unknown) => (val != null ? String(val).trim() : '');
+
+      const dni = str(row.DNI);
+      if (!dni) {
+        errors.push({ row: rowNum, message: 'DNI vacío' });
+        continue;
       }
-    | undefined {
-    const d = {
-      height: row.height ? Number(row.height) : undefined,
-      weight: row.weight ? Number(row.weight) : undefined,
-      torgIndex: row.torgIndex ? Number(row.torgIndex) : undefined,
-      healthInsurance: row.healthInsurance
-        ? str(row.healthInsurance)
-        : undefined,
-    };
-    return Object.values(d).some((v) => v !== undefined) ? d : undefined;
+
+      try {
+        const player = await this.playerModel.findOne({ idNumber: dni });
+        if (!player) {
+          notFound++;
+          continue;
+        }
+
+        const phone = str(row.Telefono);
+        if (phone) {
+          player.address = {
+            ...(player.address ?? { phoneNumber: '' }),
+            phoneNumber: phone,
+          };
+        }
+
+        const healthInsurance = str(row['Obra Social']);
+        if (healthInsurance && healthInsurance !== '-' && healthInsurance !== '.') {
+          player.medicalData = {
+            ...(player.medicalData ?? {}),
+            healthInsurance,
+          };
+        }
+
+        const jersey = str(row['Talle Camiseta']).toUpperCase() as ClothingSizesEnum;
+        const shorts = str(row['Talle Short/Falda']).toUpperCase() as ClothingSizesEnum;
+        const hasJersey = validSizes.has(jersey);
+        const hasShorts = validSizes.has(shorts);
+
+        if (hasJersey || hasShorts) {
+          player.clothingSizes = {
+            ...(player.clothingSizes ?? {}),
+            ...(hasJersey ? { jersey, sweater: jersey } : {}),
+            ...(hasShorts ? { shorts, pants: shorts } : {}),
+          };
+        }
+
+        const email = str(row['Correo Electrónico']);
+        if (email && !player.email) {
+          player.email = email;
+        }
+
+        await player.save();
+        updated++;
+      } catch (err) {
+        errors.push({
+          row: rowNum,
+          message: `DNI ${dni}: ${(err as Error).message}`,
+        });
+      }
+    }
+
+    return { updated, notFound, errors };
   }
 }

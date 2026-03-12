@@ -27,6 +27,23 @@
       <mat-icon>upload_file</mat-icon>
       Importar
     </button>
+    <input
+      #surveyInput
+      type="file"
+      accept=".xlsx"
+      hidden
+      (change)="onSurveyFileSelected($event)"
+    />
+    <button
+      *ltrcAllowedRoles="[Role.ADMIN]"
+      mat-stroked-button
+      type="button"
+      [disabled]="importing"
+      (click)="surveyInput.click()"
+    >
+      <mat-icon>sync</mat-icon>
+      Actualizar desde encuesta
+    </button>
   </div>
 
   <ltrc-player-search (filtersChange)="applyFilters($event)" />

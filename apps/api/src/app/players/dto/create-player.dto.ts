@@ -92,6 +92,20 @@ export class MedicalDataDto {
   healthInsurance?: string;
 }
 
+export class ParentContactDto {
+  @IsNotEmpty()
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+}
+
 export class CreatePlayerDto {
   @IsNotEmpty()
   @IsString()
@@ -171,6 +185,14 @@ export class CreatePlayerDto {
   })
   @ValidateNested()
   readonly medicalData?: MedicalDataDto;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    const obj = typeof value === 'string' ? JSON.parse(value) : value;
+    return plainToInstance(ParentContactDto, obj);
+  })
+  @ValidateNested()
+  readonly parentContact?: ParentContactDto;
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
