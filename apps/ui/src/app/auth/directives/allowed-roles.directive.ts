@@ -8,13 +8,16 @@ import {
 } from '@angular/core';
 import { distinctUntilChanged, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { User } from '../../users/User.interface';
+
+export type RoleRule = RoleEnum | { role: RoleEnum; sport: SportEnum };
 
 @Directive({
   selector: '[ltrcAllowedRoles]',
 })
 export class AllowedRolesDirective implements OnInit, OnDestroy {
-  @Input('ltrcAllowedRoles') allowedRoles?: Role[];
+  @Input('ltrcAllowedRoles') allowedRoles?: RoleRule[];
   private sub?: Subscription;
 
   constructor(
@@ -26,14 +29,10 @@ export class AllowedRolesDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sub = this.authService.user$
       .pipe(
-        map((user) =>
-          Boolean(
-            user && user.roles.some((role) => this.allowedRoles?.includes(role))
-          )
-        ),
+        map((user) => Boolean(user && this.matchesAnyRule(user))),
         distinctUntilChanged(),
-        tap((hasRole) =>
-          hasRole
+        tap((allowed) =>
+          allowed
             ? this.viewContainerRef.createEmbeddedView(this.templateRef)
             : this.viewContainerRef.clear()
         )
@@ -43,5 +42,18 @@ export class AllowedRolesDirective implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  private matchesAnyRule(user: User): boolean {
+    if (!this.allowedRoles) return false;
+    return this.allowedRoles.some((rule) => {
+      if (typeof rule === 'string') {
+        return user.roles.includes(rule);
+      }
+      return (
+        user.roles.includes(rule.role) &&
+        (user.sports ?? []).includes(rule.sport)
+      );
+    });
   }
 }

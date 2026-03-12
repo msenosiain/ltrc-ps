@@ -3,4 +3,5 @@ export enum HockeyBranchEnum {
   B = 'B',
   C = 'C',
   D = 'D',
+  E = 'E',
 }

@@ -16,7 +16,7 @@ import {
   parseDate,
   PaginatedResponse,
   Player,
-  Role,
+  RoleEnum,
   RugbyPositions,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -77,7 +77,7 @@ export class PlayersService {
       const user = await this.usersService.create({
         name: dto.name,
         email: dto.email,
-        roles: [Role.PLAYER],
+        roles: [RoleEnum.PLAYER],
       });
 
       player.userId = (user as any)._id;
@@ -116,7 +116,7 @@ export class PlayersService {
       const user = await this.usersService.create({
         name: dto.name ?? player.name,
         email: dto.email,
-        roles: [Role.PLAYER],
+        roles: [RoleEnum.PLAYER],
       });
 
       player.userId = (user as any)._id;
@@ -182,10 +182,12 @@ export class PlayersService {
     }
 
     // Coach server-side filter override
-    if (caller?.roles?.includes(Role.COACH)) {
+    if (caller?.roles?.includes(RoleEnum.COACH)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
       if (caller.categories?.length)
         queryFilters['category'] = { $in: caller.categories };
+      if (caller.branches?.length)
+        queryFilters['branch'] = { $in: caller.branches };
     }
 
     // Sorting

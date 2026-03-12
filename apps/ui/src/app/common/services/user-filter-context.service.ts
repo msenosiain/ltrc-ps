@@ -1,6 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map, shareReplay } from 'rxjs';
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import {
+  CategoryEnum,
+  HockeyBranchEnum,
+  SportEnum,
+} from '@ltrc-ps/shared-api-model';
 import { AuthService } from '../../auth/auth.service';
 import {
   CategoryOption,
@@ -8,6 +12,7 @@ import {
   getCategoryOptionsBySports,
 } from '../category-options';
 import { SportOption, sportOptions } from '../sport-options';
+import { BranchOption, branchOptions } from '../branch-options';
 
 export interface FilterContext {
   showSportFilter: boolean;
@@ -17,6 +22,10 @@ export interface FilterContext {
   showCategoryFilter: boolean;
   categoryOptions: CategoryOption[];
   forcedCategory?: CategoryEnum;
+
+  showBranchFilter: boolean;
+  branchOptions: BranchOption[];
+  forcedBranch?: HockeyBranchEnum;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +37,7 @@ export class UserFilterContextService {
       map((user) => {
         const userSports = user?.sports ?? [];
         const userCategories = user?.categories ?? [];
+        const userBranches = user?.branches ?? [];
 
         const showSportFilter = userSports.length !== 1;
         const forcedSport = userSports.length === 1 ? userSports[0] : undefined;
@@ -50,6 +60,15 @@ export class UserFilterContextService {
             ? allCategoryOptions
             : allCategoryOptions.filter((c) => userCategories.includes(c.id));
 
+        // Branches
+        const showBranchFilter = userBranches.length !== 1;
+        const forcedBranch =
+          userBranches.length === 1 ? userBranches[0] : undefined;
+        const filteredBranchOptions =
+          userBranches.length === 0
+            ? branchOptions
+            : branchOptions.filter((b) => userBranches.includes(b.id));
+
         return {
           showSportFilter,
           sportOptions: filteredSportOptions,
@@ -57,6 +76,9 @@ export class UserFilterContextService {
           showCategoryFilter,
           categoryOptions: filteredCategoryOptions,
           forcedCategory,
+          showBranchFilter,
+          branchOptions: filteredBranchOptions,
+          forcedBranch,
         };
       }),
       shareReplay(1)

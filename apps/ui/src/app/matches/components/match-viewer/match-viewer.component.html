@@ -114,7 +114,7 @@
 
       <div class="squad-card-actions">
         <button
-          *ltrcAllowedRoles="[Role.COACH, Role.ADMIN]"
+          *ltrcAllowedRoles="[RoleEnum.COACH, RoleEnum.ADMIN]"
           mat-stroked-button
           type="button"
           (click)="manageSquad()"
@@ -132,7 +132,7 @@
       Volver
     </button>
     <button
-      *ltrcAllowedRoles="[Role.MANAGER, Role.ADMIN]"
+      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
       mat-flat-button
       color="primary"
       type="button"

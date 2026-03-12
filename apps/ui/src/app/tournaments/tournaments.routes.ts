@@ -3,7 +3,7 @@ import { TournamentsListComponent } from './components/tournaments-list/tourname
 import { TournamentViewerComponent } from './components/tournament-viewer/tournament-viewer.component';
 import { TournamentEditorComponent } from './components/tournament-editor/tournament-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export const TOURNAMENTS_ROUTES: Routes = [
   {
@@ -15,7 +15,7 @@ export const TOURNAMENTS_ROUTES: Routes = [
     path: 'create',
     component: TournamentEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Crear torneo', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Crear torneo', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
   {
     path: ':id',
@@ -26,6 +26,6 @@ export const TOURNAMENTS_ROUTES: Routes = [
     path: ':id/edit',
     component: TournamentEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Editar torneo', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Editar torneo', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
 ];

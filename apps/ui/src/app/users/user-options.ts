@@ -1,28 +1,28 @@
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export const roleOptions = [
-  { id: Role.ADMIN, label: 'Administrador' },
-  { id: Role.MANAGER, label: 'Manager' },
-  { id: Role.PLAYER, label: 'Jugador' },
-  { id: Role.COACH, label: 'Entrenador' },
-  { id: Role.TRAINER, label: 'Preparador Físico' },
+  { id: RoleEnum.ADMIN, label: 'Administrador' },
+  { id: RoleEnum.MANAGER, label: 'Manager' },
+  { id: RoleEnum.PLAYER, label: 'Jugador' },
+  { id: RoleEnum.COACH, label: 'Entrenador' },
+  { id: RoleEnum.TRAINER, label: 'Preparador Físico' },
 ];
 
-export function getRoleLabel(role: Role): string {
+export function getRoleLabel(role: RoleEnum): string {
   return roleOptions.find((o) => o.id === role)?.label ?? role;
 }
 
-export function getRoleClass(role: Role): string {
+export function getRoleClass(role: RoleEnum): string {
   switch (role) {
-    case Role.ADMIN:
+    case RoleEnum.ADMIN:
       return 'role-chip--admin';
-    case Role.MANAGER:
+    case RoleEnum.MANAGER:
       return 'role-chip--manager';
-    case Role.PLAYER:
+    case RoleEnum.PLAYER:
       return 'role-chip--player';
-    case Role.COACH:
+    case RoleEnum.COACH:
       return 'role-chip--coach';
-    case Role.TRAINER:
+    case RoleEnum.TRAINER:
       return 'role-chip--trainer';
     default:
       return 'role-chip--default';

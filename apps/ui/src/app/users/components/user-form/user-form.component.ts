@@ -18,7 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import { HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 import { roleOptions } from '../../user-options';
 import { buildUserForm } from '../../forms/user-form.factory';
 import { mapUserToForm } from '../../forms/user-form.mapper';
@@ -56,13 +56,13 @@ export class UserFormComponent implements OnInit, OnChanges {
   @Output() readonly formSubmit = new EventEmitter<UserFormValue>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  private static readonly SPORT_ROLES: Role[] = [Role.COACH, Role.MANAGER, Role.TRAINER];
+  private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER];
 
   readonly roleOptions = roleOptions;
   readonly sportOptions = sportOptions;
   readonly branchOptions = Object.values(HockeyBranchEnum);
   filteredCategoryOptions: CategoryOption[] = categoryOptions;
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
 
   get isCreate(): boolean {
     return !this.user;
@@ -91,7 +91,7 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.form
       .get('roles')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((roles: Role[]) => {
+      .subscribe((roles: RoleEnum[]) => {
         const hasSportRole = UserFormComponent.SPORT_ROLES.some((r) => roles.includes(r));
         if (!hasSportRole) {
           this.form.patchValue({ sports: [], categories: [], branches: [] });

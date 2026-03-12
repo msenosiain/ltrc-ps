@@ -4,7 +4,7 @@ import { MatchViewerComponent } from './components/match-viewer/match-viewer.com
 import { MatchEditorComponent } from './components/match-editor/match-editor.component';
 import { SquadEditorComponent } from './components/squad-editor/squad-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { Role } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 export const MATCHES_ROUTES: Routes = [
   {
@@ -16,7 +16,7 @@ export const MATCHES_ROUTES: Routes = [
     path: 'create',
     component: MatchEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Crear partido', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Crear partido', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
   {
     path: ':id',
@@ -27,7 +27,7 @@ export const MATCHES_ROUTES: Routes = [
     path: ':id/edit',
     component: MatchEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Editar partido', allowedRoles: [Role.MANAGER, Role.ADMIN] },
+    data: { title: 'Editar partido', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
   },
   {
     path: ':id/squad',
@@ -35,7 +35,7 @@ export const MATCHES_ROUTES: Routes = [
     canActivate: [hasRoleGuard],
     data: {
       title: 'Gestionar plantel',
-      allowedRoles: [Role.COACH, Role.ADMIN],
+      allowedRoles: [RoleEnum.COACH, RoleEnum.ADMIN],
     },
   },
 ];

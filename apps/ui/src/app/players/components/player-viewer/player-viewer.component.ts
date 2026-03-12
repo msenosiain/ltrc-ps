@@ -9,12 +9,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   Player,
   PlayerPosition,
-  Role,
+  RoleEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
+import { getBranchLabel } from '../../../common/branch-options';
+import { getSportLabel } from '../../../common/sport-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +47,7 @@ export class PlayerViewerComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
   private readonly destroyRef = inject(DestroyRef);
 
-  Role = Role;
+  RoleEnum = RoleEnum;
   player?: Player;
 
   ngOnInit(): void {
@@ -94,5 +97,13 @@ export class PlayerViewerComponent implements OnInit {
 
   getPlayerAge(birthDate: Date): number {
     return this.playersService.calculatePlayerAge(birthDate);
+  }
+
+  getBranchLabel(branch?: HockeyBranchEnum | null): string {
+    return getBranchLabel(branch);
+  }
+
+  getSportLabel(sport?: SportEnum | null): string {
+    return getSportLabel(sport);
   }
 }

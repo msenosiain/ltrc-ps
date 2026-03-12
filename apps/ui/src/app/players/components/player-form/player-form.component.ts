@@ -34,7 +34,7 @@ import {
   ClothingSizesEnum,
   HockeyBranchEnum,
   Player,
-  Role,
+  RoleEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -87,7 +87,7 @@ export class PlayerFormComponent implements OnInit, OnChanges {
 
   private readonly currentUser = toSignal(this.authService.user$);
   readonly isAdmin = computed(
-    () => this.currentUser()?.roles?.includes(Role.ADMIN) ?? false
+    () => this.currentUser()?.roles?.includes(RoleEnum.ADMIN) ?? false
   );
 
   private readonly playersAge = signal<number | null>(null);

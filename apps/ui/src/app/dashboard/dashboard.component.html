@@ -6,24 +6,30 @@
   >
     <mat-nav-list>
       <a
-        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, { role: RoleEnum.COACH, sport: SportEnum.RUGBY }]"
         mat-list-item
         routerLink="players"
         >Jugadores</a
       >
       <a
-        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
         mat-list-item
         routerLink="tournaments"
         >Torneos</a
       >
       <a
-        *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER, Role.COACH, Role.PLAYER]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.PLAYER]"
         mat-list-item
         routerLink="matches"
         >Partidos</a
       >
-      <a *ltrcAllowedRoles="[Role.ADMIN]" mat-list-item routerLink="users"
+      <a
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, { role: RoleEnum.MANAGER, sport: SportEnum.HOCKEY }, { role: RoleEnum.COACH, sport: SportEnum.HOCKEY }]"
+        mat-list-item
+        routerLink="branches"
+        >Ramas</a
+      >
+      <a *ltrcAllowedRoles="[RoleEnum.ADMIN]" mat-list-item routerLink="users"
         >Usuarios</a
       >
       @if (isPlayer() && myPlayerId()) {

@@ -32,7 +32,7 @@ const rugbyTranslations: Record<RugbyPositions, string> = {
 };
 
 const hockeyTranslations: Record<HockeyPositions, string> = {
-  [HockeyPositions.GOALKEEPER]: 'Arquera/Arquero',
+  [HockeyPositions.GOALKEEPER]: 'Arquera',
   [HockeyPositions.LIBERO]: 'Líbero',
   [HockeyPositions.STOPPER]: 'Stopper',
   [HockeyPositions.RIGHT_BACK]: 'Lateral derecha',
@@ -40,9 +40,9 @@ const hockeyTranslations: Record<HockeyPositions, string> = {
   [HockeyPositions.CENTRAL_MID]: 'Volante central',
   [HockeyPositions.RIGHT_INTERIOR]: 'Interior derecha',
   [HockeyPositions.LEFT_INTERIOR]: 'Interior izquierda',
-  [HockeyPositions.RIGHT_WING]: 'Extremo derecha',
-  [HockeyPositions.LEFT_WING]: 'Extremo izquierda',
-  [HockeyPositions.CENTER_FORWARD]: 'Centrodelantero/a',
+  [HockeyPositions.RIGHT_WING]: 'Extrema derecha',
+  [HockeyPositions.LEFT_WING]: 'Extrema izquierda',
+  [HockeyPositions.CENTER_FORWARD]: 'Centrodelantera',
 };
 
 export const rugbyPositionOptions: PositionOption[] = (

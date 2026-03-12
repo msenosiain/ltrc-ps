@@ -18,7 +18,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   PlayerPosition,
-  Role,
+  RoleEnum,
   SortOrder,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -52,7 +52,7 @@ export class PlayersListComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
 
   importing = false;
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
 
   private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
   private readonly afterCategoryColumns = ['position', 'alternatePosition'];

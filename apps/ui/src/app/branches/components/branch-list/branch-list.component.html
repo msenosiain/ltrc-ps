@@ -1,0 +1,117 @@
+<div class="branch-list">
+  <div class="list-header">
+    <button
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+      mat-stroked-button
+      (click)="importInput.click()"
+      [disabled]="importing"
+    >
+      <mat-icon>upload_file</mat-icon>
+      Importar ramas
+    </button>
+    <input
+      #importInput
+      hidden
+      type="file"
+      accept=".xlsx,.csv"
+      (change)="onImportFileSelected($event)"
+    />
+  </div>
+
+  <ltrc-branch-search (filtersChange)="onFiltersChange($event)" />
+
+  @if ((loading$ | async) || importing) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (tabs.length > 0) {
+    <div class="tab-filters">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Buscar por nombre o apodo</mat-label>
+        <input matInput [(ngModel)]="searchTerm" />
+        @if (searchTerm) {
+          <button matSuffix mat-icon-button (click)="searchTerm = ''">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Posición</mat-label>
+        <mat-select [(ngModel)]="positionFilter">
+          <mat-option [value]="undefined">Todas</mat-option>
+          @for (pos of positionOptions; track pos.id) {
+            <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-tab-group animationDuration="0ms">
+      @for (tab of tabs; track tab.label) {
+        <mat-tab>
+          <ng-template mat-tab-label>
+            {{ tab.label }}
+            <span class="tab-count">{{ getFilteredAssignments(tab).length }}</span>
+          </ng-template>
+
+          <div class="tab-actions">
+            <button
+              mat-stroked-button
+              (click)="navigateToDetail(tab)"
+            >
+              <mat-icon>edit</mat-icon>
+              Gestionar
+            </button>
+          </div>
+
+          @if (getFilteredAssignments(tab).length > 0) {
+            <table
+              mat-table
+              [dataSource]="getFilteredAssignments(tab)"
+              matSort
+              (matSortChange)="onSortChange($event)"
+              class="branch-table"
+            >
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                <td mat-cell *matCellDef="let row">
+                  <a class="player-link" (click)="viewPlayer(row)">
+                    {{ getPlayerField(row, 'name') }}
+                  </a>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="position">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Posición</th>
+                <td mat-cell *matCellDef="let row">{{ getPlayerPosition(row) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="alternatePosition">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pos. alternativa</th>
+                <td mat-cell *matCellDef="let row">{{ getPlayerAlternatePosition(row) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="idNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>DNI</th>
+                <td mat-cell *matCellDef="let row">{{ getPlayerField(row, 'idNumber') }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="birthDate">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Nac.</th>
+                <td mat-cell *matCellDef="let row">{{ getPlayerField(row, 'birthDate') }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          } @else {
+            <div class="empty-tab">
+              <p>Sin jugadoras asignadas</p>
+            </div>
+          }
+        </mat-tab>
+      }
+    </mat-tab-group>
+  }
+</div>
