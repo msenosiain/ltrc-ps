@@ -65,7 +65,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     memberNumber: String,
     nickName: String,
     birthDate: Date,
-    email: { type: String, unique: true, index: true },
+    email: { type: String, index: true },
     address: AddressSchema,
     sport: {
       type: String,

@@ -13,6 +13,9 @@ export class User extends Document {
   @Prop({ required: false })
   memberNumber?: string;
 
+  @Prop({ unique: true, sparse: true })
+  idNumber?: string;
+
   @Prop({ required: true, unique: true })
   email!: string;
 
