@@ -41,6 +41,9 @@ export class DashboardComponent implements OnInit {
   readonly canSetPassword = computed(
     () => this.currentUser() !== null && !this.currentUser()?.hasPassword
   );
+  readonly hasNoRoles = computed(
+    () => !this.currentUser()?.roles?.length
+  );
 
   myPlayerId = signal<string | null>(null);
 

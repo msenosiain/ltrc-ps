@@ -6,9 +6,10 @@ import {
   PaginationQuery,
   Player,
   PlayerPosition,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
-import { positionOptions } from '../position-options';
+import { getPositionLabel } from '../position-options';
 import { PlayerFormValue } from '../forms/player-form.types';
 import { mapFormToCreatePlayerDto } from '../forms/player-form.mapper';
 
@@ -127,14 +128,14 @@ export class PlayersService {
 
   updateFromSurvey(file: File): Observable<{
     updated: number;
-    notFound: number;
+    notFound: { row: number; dni: string; name: string }[];
     errors: { row: number; message: string }[];
   }> {
     const form = new FormData();
     form.append('file', file);
     return this.httpClient.post<{
       updated: number;
-      notFound: number;
+      notFound: { row: number; dni: string; name: string }[];
       errors: { row: number; message: string }[];
     }>(`${this.playersApiUrl}/update-from-survey`, form);
   }
@@ -151,8 +152,8 @@ export class PlayersService {
 
   // UTILS ──────────────────────────────────────────────────
 
-  getPositionLabel(position: PlayerPosition): string {
-    return positionOptions.find((o) => o.id === position)?.name ?? position;
+  getPositionLabel(position: PlayerPosition, sport?: SportEnum | null): string {
+    return getPositionLabel(position, sport);
   }
 
   getPlayerPhotoUrl(playerId: string): string {

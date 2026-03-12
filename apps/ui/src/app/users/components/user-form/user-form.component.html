@@ -6,8 +6,8 @@
     <mat-card-content>
       <div class="form-row">
         <mat-form-field appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="name" />
+          <mat-label>Apellido y Nombre</mat-label>
+          <input matInput formControlName="name" placeholder="Apellido y Nombre" />
           @if (form.get('name')?.hasError('required')) {
           <mat-error>El nombre es requerido</mat-error>
           }

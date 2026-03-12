@@ -57,11 +57,11 @@
             </mat-chip>
             } @if (player.position) {
             <mat-chip color="primary">
-              {{ getPositionLabel(player.position) }}
+              {{ getPositionLabel(player.position, player.sport) }}
             </mat-chip>
             } @if (player.alternatePosition) {
             <mat-chip>
-              {{ getPositionLabel(player.alternatePosition) }}
+              {{ getPositionLabel(player.alternatePosition, player.sport) }}
             </mat-chip>
             }
           </div>

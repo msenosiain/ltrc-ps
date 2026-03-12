@@ -12,6 +12,7 @@ import {
   Player,
   PlayerPosition,
   Role,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
 import { MatCardModule } from '@angular/material/card';
@@ -87,8 +88,8 @@ export class PlayerViewerComponent implements OnInit {
     return categoryOptions.find((c) => c.id === category)?.label ?? category;
   }
 
-  getPositionLabel(position: PlayerPosition): string {
-    return this.playersService.getPositionLabel(position);
+  getPositionLabel(position: PlayerPosition, sport?: SportEnum | null): string {
+    return this.playersService.getPositionLabel(position, sport);
   }
 
   getPlayerAge(birthDate: Date): number {

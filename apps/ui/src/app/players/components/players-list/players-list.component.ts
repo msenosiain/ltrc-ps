@@ -7,13 +7,20 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
 import {
+  ImportResultDialogComponent,
+  ImportResultDialogData,
+} from '../../../common/components/import-result-dialog/import-result-dialog.component';
+import {
   CategoryEnum,
+  HockeyBranchEnum,
   PlayerPosition,
   Role,
   SortOrder,
+  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { categoryOptions } from '../../../common/category-options';
@@ -42,18 +49,22 @@ export class PlayersListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly playersService = inject(PlayersService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   importing = false;
   readonly Role = Role;
 
-  readonly displayedColumns = [
+  private readonly baseColumns = [
     'photoId',
     'name',
     'nickName',
     'category',
+  ];
+  private readonly afterCategoryColumns = [
     'position',
     'alternatePosition',
   ];
+  displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
   readonly dataSource = new PlayersDataSource(this.playersService);
 
@@ -81,13 +92,23 @@ export class PlayersListComponent implements AfterViewInit {
 
   applyFilters(filters: {
     searchTerm?: string;
+    sport?: SportEnum;
     position?: PlayerPosition;
     category?: CategoryEnum;
   }): void {
     if (this.paginator) {
       this.paginator.pageIndex = 0;
     }
+    this.updateColumns(filters.sport);
     this.dataSource.setFilters(filters);
+  }
+
+  private updateColumns(sport?: SportEnum): void {
+    if (sport === SportEnum.HOCKEY) {
+      this.displayedColumns = [...this.baseColumns, 'branch', ...this.afterCategoryColumns];
+    } else {
+      this.displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
+    }
   }
 
   getCategoryLabel(category?: CategoryEnum): string {
@@ -103,8 +124,8 @@ export class PlayersListComponent implements AfterViewInit {
     this.router.navigate(['/dashboard/players', playerId]);
   }
 
-  getPositionLabel(position: PlayerPosition): string {
-    return this.playersService.getPositionLabel(position);
+  getPositionLabel(position: PlayerPosition, sport?: SportEnum | null): string {
+    return this.playersService.getPositionLabel(position, sport);
   }
 
   getPlayerPhotoUrl(playerId: string): string {
@@ -121,10 +142,22 @@ export class PlayersListComponent implements AfterViewInit {
     this.playersService.updateFromSurvey(file).subscribe({
       next: ({ updated, notFound, errors }) => {
         this.importing = false;
-        const parts = [`${updated} actualizados`];
-        if (notFound > 0) parts.push(`${notFound} no encontrados`);
-        if (errors.length > 0) parts.push(`${errors.length} errores`);
-        this.snackBar.open(parts.join(', '), 'Cerrar', { duration: 5000 });
+        if (notFound.length > 0 || errors.length > 0) {
+          this.dialog.open(ImportResultDialogComponent, {
+            width: '500px',
+            data: {
+              title: 'Resultado de encuesta',
+              successCount: updated,
+              successLabel: 'actualizados',
+              notFound,
+              errors,
+            } satisfies ImportResultDialogData,
+          });
+        } else {
+          this.snackBar.open(`${updated} actualizados`, 'Cerrar', {
+            duration: 5000,
+          });
+        }
         this.dataSource.setPage(0, this.paginator.pageSize);
         this.paginator.pageIndex = 0;
       },
@@ -147,11 +180,21 @@ export class PlayersListComponent implements AfterViewInit {
     this.playersService.importPlayers(file).subscribe({
       next: ({ created, errors }) => {
         this.importing = false;
-        const msg =
-          errors.length > 0
-            ? `${created} importados, ${errors.length} errores`
-            : `${created} jugadores importados`;
-        this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
+        if (errors.length > 0) {
+          this.dialog.open(ImportResultDialogComponent, {
+            width: '500px',
+            data: {
+              title: 'Resultado de importación',
+              successCount: created,
+              successLabel: 'importados',
+              errors,
+            } satisfies ImportResultDialogData,
+          });
+        } else {
+          this.snackBar.open(`${created} jugadores importados`, 'Cerrar', {
+            duration: 5000,
+          });
+        }
         this.dataSource.setPage(0, this.paginator.pageSize);
         this.paginator.pageIndex = 0;
       },

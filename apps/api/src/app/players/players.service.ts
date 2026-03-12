@@ -269,7 +269,7 @@ export class PlayersService {
           val != null ? String(val).trim() : '';
 
         const name = str(row.Nombre);
-        const idNumber = str(row['N° Doc.']);
+        const idNumber = str(row['N° Doc.']).replace(/\D/g, '');
         const email = str(row.Email);
 
         if (!name) {
@@ -320,7 +320,7 @@ export class PlayersService {
     buffer: Buffer
   ): Promise<{
     updated: number;
-    notFound: number;
+    notFound: { row: number; dni: string; name: string }[];
     errors: { row: number; message: string }[];
   }> {
     const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
@@ -328,7 +328,7 @@ export class PlayersService {
     const rows = XLSX.utils.sheet_to_json<SurveyRow>(sheet);
 
     let updated = 0;
-    let notFound = 0;
+    const notFound: { row: number; dni: string; name: string }[] = [];
     const errors: { row: number; message: string }[] = [];
 
     const validSizes = new Set(Object.values(ClothingSizesEnum));
@@ -338,7 +338,7 @@ export class PlayersService {
       const rowNum = i + 2;
       const str = (val: unknown) => (val != null ? String(val).trim() : '');
 
-      const dni = str(row.DNI);
+      const dni = str(row.DNI).replace(/\D/g, '');
       if (!dni) {
         errors.push({ row: rowNum, message: 'DNI vacío' });
         continue;
@@ -347,7 +347,8 @@ export class PlayersService {
       try {
         const player = await this.playerModel.findOne({ idNumber: dni });
         if (!player) {
-          notFound++;
+          const name = [str(row.Apellido), str(row.Nombre)].filter(Boolean).join(', ') || '—';
+          notFound.push({ row: rowNum, dni, name });
           continue;
         }
 
