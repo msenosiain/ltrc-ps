@@ -22,7 +22,7 @@ import {
   Match,
   MatchStatusEnum,
   MatchTypeEnum,
-  Role,
+  RoleEnum,
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
@@ -51,7 +51,7 @@ export class MatchesListComponent implements AfterViewInit {
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'date',
     'opponent',

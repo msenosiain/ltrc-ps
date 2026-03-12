@@ -18,7 +18,7 @@ import { UsersService } from '../../services/users.service';
 import { User } from '../../User.interface';
 import { getRoleLabel, getRoleClass } from '../../user-options';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
-import { Player, Role } from '@ltrc-ps/shared-api-model';
+import { Player, RoleEnum } from '@ltrc-ps/shared-api-model';
 import { getCategoryLabel } from '../../../common/category-options';
 import { getSportLabel } from '../../../common/sport-options';
 
@@ -47,7 +47,7 @@ export class UserViewerComponent implements OnInit {
 
   user?: User;
   linkedPlayer?: Player | null;
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -131,11 +131,11 @@ export class UserViewerComponent implements OnInit {
     this.router.navigate(['/dashboard/users']);
   }
 
-  getRoleLabel(role: Role): string {
+  getRoleLabel(role: RoleEnum): string {
     return getRoleLabel(role);
   }
 
-  getRoleClass(role: Role): string {
+  getRoleClass(role: RoleEnum): string {
     return getRoleClass(role);
   }
 

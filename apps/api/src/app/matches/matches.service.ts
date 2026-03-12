@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MatchEntity } from './schemas/match.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { PaginatedResponse, Role } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse, RoleEnum } from '@ltrc-ps/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -93,7 +93,7 @@ export class MatchesService {
     }
 
     // Coach server-side filter override
-    if (caller?.roles?.includes(Role.COACH)) {
+    if (caller?.roles?.includes(RoleEnum.COACH)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
       if (caller.categories?.length)
         queryFilters['category'] = { $in: caller.categories };

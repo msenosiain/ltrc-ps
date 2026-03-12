@@ -48,11 +48,22 @@
           </div>
 
           <div class="positions">
+            @if (player.sport) {
+            <mat-chip>
+              {{ getSportLabel(player.sport) }}
+            </mat-chip>
+            }
             @if (player.category) {
             <mat-chip color="accent">
               {{ getCategoryLabel(player.category) }}
             </mat-chip>
-            } @if (player.position) {
+            }
+            @if (player.branch) {
+            <mat-chip color="primary">
+              {{ getBranchLabel(player.branch) }}
+            </mat-chip>
+            }
+            @if (player.position) {
             <mat-chip color="primary">
               {{ getPositionLabel(player.position, player.sport) }}
             </mat-chip>
@@ -207,7 +218,7 @@
       Volver
     </button>
     <button
-      *ltrcAllowedRoles="[Role.ADMIN, Role.MANAGER]"
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
       mat-flat-button
       color="primary"
       type="button"

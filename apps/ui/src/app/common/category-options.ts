@@ -26,7 +26,6 @@ const categoryDefs: CategoryOption[] = [
   { id: CategoryEnum.M6, label: 'M6', sport: SportEnum.RUGBY },
   { id: CategoryEnum.M5, label: 'M5', sport: SportEnum.RUGBY },
   // Hockey
-  { id: CategoryEnum.CUARTA, label: '4ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.QUINTA, label: '5ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.SEXTA, label: '6ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.SEPTIMA, label: '7ma', sport: SportEnum.HOCKEY },
@@ -34,6 +33,7 @@ const categoryDefs: CategoryOption[] = [
   { id: CategoryEnum.NOVENA, label: '9na', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.DECIMA, label: '10ma', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.PRE_DECIMA, label: 'Pre-décima', sport: SportEnum.HOCKEY },
+  { id: CategoryEnum.CUARTA, label: '4ta', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.MASTER, label: 'Máster', sport: SportEnum.HOCKEY },
 ];
 

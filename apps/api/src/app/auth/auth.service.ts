@@ -114,6 +114,7 @@ export class AuthService {
       hasPassword: !!user.password,
       sports: user.sports ?? [],
       categories: user.categories ?? [],
+      branches: user.branches ?? [],
     };
   }
 }

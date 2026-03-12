@@ -12,7 +12,7 @@ import {
   Match,
   MatchStatusEnum,
   MatchTypeEnum,
-  Role,
+  RoleEnum,
   SquadEntry,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
@@ -51,7 +51,7 @@ export class MatchViewerComponent implements OnInit {
 
   match?: Match;
   readonly MatchStatusEnum = MatchStatusEnum;
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

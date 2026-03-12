@@ -5,6 +5,7 @@ import { PlayersModule } from './players/players.module';
 import { MatchesModule } from './matches/matches.module';
 import { TournamentsModule } from './tournaments/tournaments.module';
 import { SquadsModule } from './squads/squads.module';
+import { BranchAssignmentsModule } from './branch-assignments/branch-assignments.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GridFsModule } from './shared/gridfs/gridfs.module';
 import { AuthModule } from './auth/auth.module';
@@ -56,6 +57,7 @@ export const configSchema = Joi.object({
     MatchesModule,
     TournamentsModule,
     SquadsModule,
+    BranchAssignmentsModule,
     HealthModule,
   ],
 })

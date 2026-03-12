@@ -5,7 +5,7 @@ import { TournamentEntity } from './schemas/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { TournamentFilterDto } from './dto/tournament-filter.dto';
-import { PaginatedResponse, Role, SortOrder } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse, RoleEnum, SortOrder } from '@ltrc-ps/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 import { PaginationDto } from '../shared/pagination.dto';
 
@@ -41,7 +41,7 @@ export class TournamentsService {
     if (filters.sport) query['sport'] = filters.sport;
 
     // Coach server-side filter override
-    if (caller?.roles?.includes(Role.COACH)) {
+    if (caller?.roles?.includes(RoleEnum.COACH)) {
       if (caller.sports?.length) query['sport'] = { $in: caller.sports };
     }
 

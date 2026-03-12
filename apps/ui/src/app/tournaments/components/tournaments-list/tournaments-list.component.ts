@@ -14,7 +14,7 @@ import {
 } from '../../services/tournaments.datasource';
 import {
   CategoryEnum,
-  Role,
+  RoleEnum,
   SortOrder,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -44,7 +44,7 @@ export class TournamentsListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly tournamentsService = inject(TournamentsService);
 
-  readonly Role = Role;
+  readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'name',
     'season',

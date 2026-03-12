@@ -1,4 +1,4 @@
-import { CategoryEnum, HockeyBranchEnum, Role, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export interface User {
   id?: string;
@@ -7,7 +7,7 @@ export interface User {
   email: string;
   name: string;
   memberNumber?: string;
-  roles: Role[];
+  roles: RoleEnum[];
   hasPassword?: boolean;
   sports?: SportEnum[];
   categories?: CategoryEnum[];

@@ -1,0 +1,36 @@
+<div class="search-form">
+  <div class="filters-container" [formGroup]="searchForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Temporada</mat-label>
+      <mat-select formControlName="season">
+        @for (year of seasonOptions; track year) {
+          <mat-option [value]="year">{{ year }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (showCategoryFilter) {
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category">
+          <mat-option [value]="undefined">Todas</mat-option>
+          @for (cat of categoryOptions; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
+    @if (showBranchFilter) {
+      <mat-form-field appearance="outline">
+        <mat-label>Rama</mat-label>
+        <mat-select formControlName="branch">
+          <mat-option [value]="undefined">Todas</mat-option>
+          @for (b of filteredBranchOptions; track b.id) {
+            <mat-option [value]="b.id">{{ b.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+  </div>
+</div>
