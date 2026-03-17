@@ -45,9 +45,15 @@ export class UserViewerComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
+  private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER];
+
   user?: User;
   linkedPlayer?: Player | null;
   readonly RoleEnum = RoleEnum;
+
+  get hasSportRoles(): boolean {
+    return this.user?.roles.some(r => UserViewerComponent.SPORT_ROLES.includes(r)) ?? false;
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

@@ -1,54 +1,42 @@
 @if (user) {
 <div class="user-viewer">
-  <div class="viewer-header">
-    <button
-      mat-icon-button
-      (click)="backToList()"
-      aria-label="Volver a la lista"
-    >
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h2 class="viewer-title">{{ user.name }}</h2>
-    <div class="viewer-actions">
-      <button mat-stroked-button color="warn" (click)="onResetPassword()">
-        <mat-icon>lock_reset</mat-icon>
-        Restablecer contraseña
-      </button>
-      <button mat-flat-button color="primary" (click)="edit()">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
-    </div>
-  </div>
 
-  <mat-card>
+  <!-- HEADER -->
+  <mat-card class="user-header">
     <mat-card-content>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-label">Apellido y Nombre</span>
-          <span class="info-value">{{ user.name }}</span>
-        </div>
-        @if (user.memberNumber) {
-        <div class="info-item">
-          <span class="info-label">N° de socio</span>
-          <span class="info-value">{{ user.memberNumber }}</span>
-        </div>
-        }
-        <div class="info-item">
-          <span class="info-label">Email</span>
-          <span class="info-value">{{ user.email }}</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Roles</span>
-          <div class="roles-chips">
-            @for (role of user.roles; track role) {
-            <mat-chip [ngClass]="getRoleClass(role)">{{
-              getRoleLabel(role)
-            }}</mat-chip>
-            }
+      <div class="main-info">
+        <h2 class="user-name">{{ user.name }}</h2>
+
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-label">Email</span>
+            <span class="stat-value">{{ user.email }}</span>
           </div>
+          @if (user.memberNumber) {
+          <div class="stat">
+            <span class="stat-label">N° de socio</span>
+            <span class="stat-value">{{ user.memberNumber }}</span>
+          </div>
+          }
         </div>
-        @if (user.roles.includes(RoleEnum.COACH)) {
+
+        <div class="chips-row">
+          @for (role of user.roles; track role) {
+          <mat-chip [ngClass]="getRoleClass(role)">{{
+            getRoleLabel(role)
+          }}</mat-chip>
+          }
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- DEPORTES / CATEGORÍAS / RAMAS -->
+  @if (hasSportRoles) {
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Asignación deportiva</p>
+      <div class="info-grid">
         <div class="info-item">
           <span class="info-label">Deportes</span>
           <span class="info-value">{{
@@ -61,17 +49,22 @@
             user.categories?.map(getCategoryLabel)?.join(', ') || '—'
           }}</span>
         </div>
+        @if (user.branches?.length) {
+        <div class="info-item">
+          <span class="info-label">Ramas (Hockey)</span>
+          <span class="info-value">{{ user.branches!.join(', ') }}</span>
+        </div>
         }
       </div>
     </mat-card-content>
   </mat-card>
+  }
 
+  <!-- JUGADOR VINCULADO -->
   @if (linkedPlayer) {
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Jugador vinculado</mat-card-title>
-    </mat-card-header>
+  <mat-card class="section-card">
     <mat-card-content>
+      <p class="section-title">Jugador vinculado</p>
       <div class="linked-player">
         <mat-icon>sports_rugby</mat-icon>
         <a
@@ -84,5 +77,22 @@
     </mat-card-content>
   </mat-card>
   }
+
+  <!-- ACCIONES -->
+  <div class="viewer-actions">
+    <button mat-stroked-button type="button" (click)="backToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+    <button mat-stroked-button color="warn" (click)="onResetPassword()">
+      <mat-icon>lock_reset</mat-icon>
+      Restablecer contraseña
+    </button>
+    <button mat-flat-button color="primary" (click)="edit()">
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+  </div>
+
 </div>
 }
