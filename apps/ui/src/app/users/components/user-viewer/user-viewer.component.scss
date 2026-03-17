@@ -1,65 +1,118 @@
 .user-viewer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
+  gap: 12px;
+  padding: 0;
 }
 
-.viewer-header {
+// ════════════════════════════════════════════════════════════
+// HEADER CARD
+// ════════════════════════════════════════════════════════════
+.user-header {
+  mat-card-content {
+    padding: 20px 24px;
+  }
+}
+
+.main-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 4px;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
 
-  .viewer-title {
-    font-size: 1.25rem;
+.user-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mat-app-on-surface-variant, #888);
     font-weight: 500;
-    margin: 0;
-    flex: 1;
   }
 
-  .viewer-actions {
-    display: flex;
-    gap: 8px;
+  .stat-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mat-app-on-surface, rgba(0, 0, 0, 0.87));
   }
+}
+
+.chips-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+// ════════════════════════════════════════════════════════════
+// SECTION CARDS
+// ════════════════════════════════════════════════════════════
+.section-card {
+  mat-card-content {
+    padding: 16px 24px 20px;
+  }
+}
+
+.section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mat-app-primary, #1976d2);
+  margin: 0 0 14px;
 }
 
 .info-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 32px;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+
+  .info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mat-app-on-surface-variant, #888);
+    font-weight: 500;
+  }
+
+  .info-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--mat-app-on-surface, rgba(0, 0, 0, 0.87));
+  }
 }
 
-.info-label {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--mat-app-on-surface-variant, rgba(0, 0, 0, 0.6));
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.info-value {
-  font-size: 1rem;
-}
-
-.roles-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
+// ════════════════════════════════════════════════════════════
+// JUGADOR VINCULADO
+// ════════════════════════════════════════════════════════════
 .linked-player {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-top: 8px;
 }
 
 .player-link {
@@ -72,8 +125,20 @@
   }
 }
 
-.no-player {
-  color: var(--mat-app-on-surface-variant, rgba(0, 0, 0, 0.6));
-  font-style: italic;
-  padding-top: 8px;
+// ════════════════════════════════════════════════════════════
+// ACCIONES
+// ════════════════════════════════════════════════════════════
+.viewer-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
 }
+

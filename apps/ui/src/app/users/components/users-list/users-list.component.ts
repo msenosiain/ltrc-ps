@@ -13,6 +13,7 @@ import { UsersService } from '../../services/users.service';
 import { UsersDataSource, UserFilters } from '../../services/users.datasource';
 import { UserSearchComponent } from '../user-search/user-search.component';
 import { getRoleLabel, getRoleClass } from '../../user-options';
+import { getCategoryLabel } from '../../../common/category-options';
 import { User } from '../../User.interface';
 
 @Component({
@@ -37,7 +38,7 @@ export class UsersListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly usersService = inject(UsersService);
 
-  readonly displayedColumns = ['name', 'email', 'roles', 'actions'];
+  readonly displayedColumns = ['name', 'roles', 'categories', 'branches', 'email', 'actions'];
   readonly dataSource = new UsersDataSource(this.usersService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -82,5 +83,9 @@ export class UsersListComponent implements AfterViewInit {
 
   getRoleClass(role: RoleEnum): string {
     return getRoleClass(role);
+  }
+
+  getCategoriesLabel(user: User): string {
+    return user.categories?.map(getCategoryLabel).join(', ') || '';
   }
 }
