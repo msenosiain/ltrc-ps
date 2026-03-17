@@ -104,21 +104,11 @@
       <td mat-cell *matCellDef="let player">{{ player.branch }}</td>
     </ng-container>
 
-    <!-- Posicion -->
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Posicion</th>
+    <!-- Posiciones -->
+    <ng-container matColumnDef="positions">
+      <th mat-header-cell *matHeaderCellDef>Posiciones</th>
       <td mat-cell *matCellDef="let player">
-        {{ getPositionLabel(player.position, player.sport) }}
-      </td>
-    </ng-container>
-
-    <!-- Posicion alternativa -->
-    <ng-container matColumnDef="alternatePosition">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>
-        Pos. alternativa
-      </th>
-      <td mat-cell *matCellDef="let player">
-        {{ getPositionLabel(player.alternatePosition, player.sport) }}
+        {{ getPositionsLabel(player.positions, player.sport) }}
       </td>
     </ng-container>
 

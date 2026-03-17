@@ -15,8 +15,7 @@ const baseForm: PlayerFormValue = {
   email: 'juan@lostordos.com.ar',
   sport: null,
   category: null,
-  position: RugbyPositions.FULLBACK,
-  alternatePosition: null,
+  positions: [RugbyPositions.FULLBACK],
   photo: null,
   createUser: false,
   address: {
@@ -40,11 +39,7 @@ const baseForm: PlayerFormValue = {
     torgIndex: null,
     healthInsurance: '',
   },
-  parentContact: {
-    name: '',
-    email: '',
-    phone: '',
-  },
+  parentContacts: [],
 };
 
 const basePlayer: Player = {
@@ -54,8 +49,7 @@ const basePlayer: Player = {
   idNumber: '12345678',
   birthDate: new Date(2000, 0, 15),
   email: 'juan@lostordos.com.ar',
-  position: RugbyPositions.FULLBACK,
-  alternatePosition: RugbyPositions.LEFT_WING,
+  positions: [RugbyPositions.FULLBACK, RugbyPositions.LEFT_WING],
   medicalData: { height: 180, weight: 85 },
   address: {
     street: 'Av. Siempreviva',
@@ -78,7 +72,7 @@ describe('mapFormToCreatePlayerDto', () => {
     expect(result.name).toBe('Juan Perez');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
-    expect(result.position).toBe(RugbyPositions.FULLBACK);
+    expect(result.positions).toEqual([RugbyPositions.FULLBACK]);
     expect(result.birthDate).toBe('15/01/2000');
   });
 
@@ -136,8 +130,7 @@ describe('mapPlayerToForm', () => {
     expect(result.nickName).toBe('Juancho');
     expect(result.idNumber).toBe('12345678');
     expect(result.email).toBe('juan@lostordos.com.ar');
-    expect(result.position).toBe(RugbyPositions.FULLBACK);
-    expect(result.alternatePosition).toBe(RugbyPositions.LEFT_WING);
+    expect(result.positions).toEqual([RugbyPositions.FULLBACK, RugbyPositions.LEFT_WING]);
     expect(result.medicalData.height).toBe(180);
     expect(result.medicalData.weight).toBe(85);
   });
@@ -163,13 +156,13 @@ describe('mapPlayerToForm', () => {
     expect(result.address.city).toBe('');
   });
 
-  it('should default alternatePosition to null when absent', () => {
+  it('should default positions to empty array when absent', () => {
     const player = {
       ...basePlayer,
-      alternatePosition: undefined,
+      positions: undefined,
     } as unknown as Player;
     const result = mapPlayerToForm(player);
-    expect(result.alternatePosition).toBeNull();
+    expect(result.positions).toEqual([]);
   });
 
   it('should set photo to null (existing photo managed separately)', () => {

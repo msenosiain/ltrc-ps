@@ -98,8 +98,8 @@ export class MatchViewerComponent implements OnInit {
   }
 
   getPositionLabel(entry: SquadEntry): string {
-    return entry.player?.position
-      ? this.playersService.getPositionLabel(entry.player.position)
+    return entry.player?.positions?.length
+      ? entry.player.positions.map((p) => this.playersService.getPositionLabel(p)).join(', ')
       : '—';
   }
 

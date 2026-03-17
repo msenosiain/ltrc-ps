@@ -153,17 +153,9 @@ export class PlayersService {
       ];
     }
 
-    // position → position o alternatePosition
+    // position → busca en el array positions
     if (filters.position) {
-      queryFilters['$and'] = [
-        queryFilters['$and'] || {},
-        {
-          $or: [
-            { position: filters.position },
-            { alternatePosition: filters.position },
-          ],
-        },
-      ];
+      queryFilters['positions'] = filters.position;
     }
 
     // sport
@@ -312,11 +304,11 @@ export class PlayersService {
         const hasDistinctParent =
           isMinor && parentName && parentName.toUpperCase() !== name.toUpperCase();
 
-        const parentContact = hasDistinctParent
-          ? {
+        const parentContacts = hasDistinctParent
+          ? [{
               name: parentName,
               ...(email ? { email } : {}),
-            }
+            }]
           : undefined;
 
         try {
@@ -328,7 +320,7 @@ export class PlayersService {
             sport,
             category,
             memberNumber,
-            parentContact,
+            parentContacts,
           });
           created++;
         } catch (err) {

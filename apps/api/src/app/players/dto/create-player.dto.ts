@@ -148,22 +148,21 @@ export class CreatePlayerDto {
   readonly branch?: HockeyBranchEnum;
 
   @IsOptional()
-  @IsIn([
-    ...new Set([
-      ...Object.values(RugbyPositions),
-      ...Object.values(HockeyPositions),
-    ]),
-  ])
-  readonly position?: PlayerPosition;
-
-  @IsOptional()
-  @IsIn([
-    ...new Set([
-      ...Object.values(RugbyPositions),
-      ...Object.values(HockeyPositions),
-    ]),
-  ])
-  readonly alternatePosition?: PlayerPosition;
+  @IsIn(
+    [
+      ...new Set([
+        ...Object.values(RugbyPositions),
+        ...Object.values(HockeyPositions),
+      ]),
+    ],
+    { each: true }
+  )
+  @Transform(({ value }) => {
+    if (!value) return value;
+    const arr = typeof value === 'string' ? JSON.parse(value) : value;
+    return Array.isArray(arr) ? arr : [arr];
+  })
+  readonly positions?: PlayerPosition[];
 
   @IsOptional()
   @Transform(({ value }) => {
@@ -191,11 +190,14 @@ export class CreatePlayerDto {
 
   @IsOptional()
   @Transform(({ value }) => {
-    const obj = typeof value === 'string' ? JSON.parse(value) : value;
-    return plainToInstance(ParentContactDto, obj);
+    const arr = typeof value === 'string' ? JSON.parse(value) : value;
+    // Support legacy single-object format
+    const items = Array.isArray(arr) ? arr : [arr];
+    return items.map((item: any) => plainToInstance(ParentContactDto, item));
   })
-  @ValidateNested()
-  readonly parentContact?: ParentContactDto;
+  @ValidateNested({ each: true })
+  @Type(() => ParentContactDto)
+  readonly parentContacts?: ParentContactDto[];
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)

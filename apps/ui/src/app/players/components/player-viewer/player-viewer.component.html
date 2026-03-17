@@ -63,13 +63,9 @@
               {{ getBranchLabel(player.branch) }}
             </mat-chip>
             }
-            @if (player.position) {
+            @for (pos of player.positions; track pos) {
             <mat-chip color="primary">
-              {{ getPositionLabel(player.position, player.sport) }}
-            </mat-chip>
-            } @if (player.alternatePosition) {
-            <mat-chip>
-              {{ getPositionLabel(player.alternatePosition, player.sport) }}
+              {{ getPositionLabel(pos, player.sport) }}
             </mat-chip>
             }
           </div>
@@ -120,27 +116,32 @@
   }
 
   <!-- DATOS DEL PADRE/MADRE/TUTOR -->
-  @if (player.parentContact) {
+  @if (player.parentContacts?.length) {
   <mat-card class="section-card">
     <mat-card-content>
       <p class="section-title">Padre/Madre/Tutor</p>
+      @for (pc of player.parentContacts; track pc.name; let i = $index) {
+      @if (i > 0) {
+      <hr class="contact-divider" />
+      }
       <div class="info-grid">
         <div class="info-item">
           <span class="info-label">Nombre</span>
-          <span class="info-value">{{ player.parentContact.name }}</span>
+          <span class="info-value">{{ pc.name }}</span>
         </div>
-        @if (player.parentContact.email) {
+        @if (pc.email) {
         <div class="info-item">
           <span class="info-label">Email</span>
-          <span class="info-value">{{ player.parentContact.email }}</span>
+          <span class="info-value">{{ pc.email }}</span>
         </div>
-        } @if (player.parentContact.phone) {
+        } @if (pc.phone) {
         <div class="info-item">
           <span class="info-label">Teléfono</span>
-          <span class="info-value">{{ player.parentContact.phone }}</span>
+          <span class="info-value">{{ pc.phone }}</span>
         </div>
         }
       </div>
+      }
     </mat-card-content>
   </mat-card>
   }
