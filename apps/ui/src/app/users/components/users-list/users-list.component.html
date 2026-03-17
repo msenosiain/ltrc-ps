@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <ltrc-user-search (filtersChange)="applyFilters($event)" />
+  <ltrc-user-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />
 
   @if (dataSource.loading$ | async) {
   <mat-progress-bar mode="indeterminate" />

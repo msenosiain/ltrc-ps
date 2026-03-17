@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -15,6 +15,7 @@ import { UserSearchComponent } from '../user-search/user-search.component';
 import { getRoleLabel, getRoleClass } from '../../user-options';
 import { getCategoryLabel } from '../../../common/category-options';
 import { User } from '../../User.interface';
+import { ListStateService } from '../../../common/services/list-state.service';
 
 @Component({
   selector: 'ltrc-users-list',
@@ -34,18 +35,38 @@ import { User } from '../../User.interface';
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss',
 })
-export class UsersListComponent implements AfterViewInit {
+export class UsersListComponent implements AfterViewInit, OnDestroy {
+  private static readonly STATE_KEY = 'users';
   private readonly router = inject(Router);
   private readonly usersService = inject(UsersService);
+  private readonly listState = inject(ListStateService);
 
   readonly displayedColumns = ['name', 'roles', 'categories', 'branches', 'email', 'actions'];
   readonly dataSource = new UsersDataSource(this.usersService);
+  readonly savedState = this.listState.get(UsersListComponent.STATE_KEY);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  private currentFilters: UserFilters = this.savedState?.filters ?? {};
+
   ngAfterViewInit(): void {
-    this.dataSource.setPage(0, 10);
+    const s = this.savedState;
+    const pageIndex = s?.pageIndex ?? 0;
+    const pageSize = s?.pageSize ?? 10;
+
+    this.paginator.pageIndex = pageIndex;
+    this.paginator.pageSize = pageSize;
+
+    if (s?.sortBy) {
+      this.sort.active = s.sortBy;
+      this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
+    }
+
+    if (s?.sortBy) {
+      this.dataSource.setSorting(s.sortBy, s.sortOrder!);
+    }
+    this.dataSource.setPage(pageIndex, pageSize);
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
@@ -53,6 +74,7 @@ export class UsersListComponent implements AfterViewInit {
         this.sort.active,
         this.sort.direction as SortOrder
       );
+      this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
@@ -60,12 +82,29 @@ export class UsersListComponent implements AfterViewInit {
         this.paginator.pageIndex,
         this.paginator.pageSize
       );
+      this.saveState();
     });
   }
 
+  ngOnDestroy(): void {
+    this.saveState();
+  }
+
   applyFilters(filters: UserFilters): void {
+    this.currentFilters = filters;
     this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
+    this.saveState();
+  }
+
+  private saveState(): void {
+    this.listState.save(UsersListComponent.STATE_KEY, {
+      filters: this.currentFilters,
+      pageIndex: this.paginator?.pageIndex ?? 0,
+      pageSize: this.paginator?.pageSize ?? 10,
+      sortBy: this.sort?.active,
+      sortOrder: this.sort?.direction as SortOrder,
+    });
   }
 
   goToCreate(): void {

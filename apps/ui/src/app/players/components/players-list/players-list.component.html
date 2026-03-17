@@ -46,7 +46,7 @@
     </button>
   </div>
 
-  <ltrc-player-search (filtersChange)="applyFilters($event)" />
+  <ltrc-player-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />
 
   @if ((dataSource.loading$ | async) || importing) {
   <mat-progress-bar mode="indeterminate" />

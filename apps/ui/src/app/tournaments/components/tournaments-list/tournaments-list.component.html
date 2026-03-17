@@ -12,7 +12,7 @@
     </button>
   </div>
 
-  <ltrc-tournament-search (filtersChange)="applyFilters($event)" />
+  <ltrc-tournament-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />
 
   @if (dataSource.loading$ | async) {
   <mat-progress-bar mode="indeterminate" />

@@ -3,6 +3,7 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -37,6 +38,8 @@ export class UserSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
 
+  @Input() initialFilters?: Record<string, unknown>;
+
   @Output() readonly filtersChange = new EventEmitter<UserFilters>();
 
   readonly roleOptions = roleOptions;
@@ -47,6 +50,10 @@ export class UserSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.initialFilters) {
+      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+    }
+
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe((values) =>

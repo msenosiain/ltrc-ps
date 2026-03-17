@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -41,6 +41,7 @@ import {
   ImportResultDialogComponent,
   ImportResultDialogData,
 } from '../../../common/components/import-result-dialog/import-result-dialog.component';
+import { ListStateService } from '../../../common/services/list-state.service';
 
 export interface BranchTab {
   label: string;
@@ -73,11 +74,15 @@ const ALL_BRANCHES = Object.values(HockeyBranchEnum);
   templateUrl: './branch-list.component.html',
   styleUrl: './branch-list.component.scss',
 })
-export class BranchListComponent {
+export class BranchListComponent implements OnDestroy {
+  private static readonly STATE_KEY = 'branches';
   private readonly service = inject(BranchAssignmentsService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly listState = inject(ListStateService);
+
+  readonly savedState = this.listState.get(BranchListComponent.STATE_KEY);
 
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
@@ -96,16 +101,29 @@ export class BranchListComponent {
   searchTerm = '';
   positionFilter: string | undefined;
   private currentSort: Sort = { active: '', direction: '' };
-  private currentFilters: BranchSearchFilters = {
+  private currentFilters: BranchSearchFilters = this.savedState?.filters ?? {
     season: new Date().getFullYear(),
   };
 
   private readonly hockeyCategories: CategoryOption[] =
     getCategoryOptionsBySport(SportEnum.HOCKEY);
 
+  ngOnDestroy(): void {
+    this.saveState();
+  }
+
   onFiltersChange(filters: BranchSearchFilters): void {
     this.currentFilters = filters;
     this.load();
+    this.saveState();
+  }
+
+  private saveState(): void {
+    this.listState.save(BranchListComponent.STATE_KEY, {
+      filters: this.currentFilters,
+      pageIndex: 0,
+      pageSize: 0,
+    });
   }
 
   getFilteredAssignments(tab: BranchTab): BranchAssignment[] {

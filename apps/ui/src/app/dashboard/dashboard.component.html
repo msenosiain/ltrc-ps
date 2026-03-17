@@ -9,31 +9,39 @@
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, { role: RoleEnum.COACH, sport: SportEnum.RUGBY }]"
         mat-list-item
         routerLink="players"
+        routerLinkActive="active-link"
         >Jugadores</a
       >
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
         mat-list-item
         routerLink="tournaments"
+        routerLinkActive="active-link"
         >Torneos</a
       >
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.PLAYER]"
         mat-list-item
         routerLink="matches"
+        routerLinkActive="active-link"
         >Partidos</a
       >
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN, { role: RoleEnum.MANAGER, sport: SportEnum.HOCKEY }, { role: RoleEnum.COACH, sport: SportEnum.HOCKEY }]"
         mat-list-item
         routerLink="branches"
+        routerLinkActive="active-link"
         >Ramas</a
       >
-      <a *ltrcAllowedRoles="[RoleEnum.ADMIN]" mat-list-item routerLink="users"
+      <a
+        *ltrcAllowedRoles="[RoleEnum.ADMIN]"
+        mat-list-item
+        routerLink="users"
+        routerLinkActive="active-link"
         >Usuarios</a
       >
       @if (isPlayer() && myPlayerId()) {
-      <a mat-list-item [routerLink]="['players', myPlayerId()]">Mi Perfil</a>
+      <a mat-list-item [routerLink]="['players', myPlayerId()]" routerLinkActive="active-link">Mi Perfil</a>
       }
     </mat-nav-list>
   </mat-sidenav>

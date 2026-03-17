@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -26,6 +26,7 @@ import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.di
 import { categoryOptions } from '../../../common/category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
 import { Router } from '@angular/router';
+import { ListStateService } from '../../../common/services/list-state.service';
 
 @Component({
   selector: 'ltrc-players-list',
@@ -45,11 +46,13 @@ import { Router } from '@angular/router';
   templateUrl: './players-list.component.html',
   styleUrls: ['./players-list.component.scss'],
 })
-export class PlayersListComponent implements AfterViewInit {
+export class PlayersListComponent implements AfterViewInit, OnDestroy {
+  private static readonly STATE_KEY = 'players';
   private readonly router = inject(Router);
   private readonly playersService = inject(PlayersService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly listState = inject(ListStateService);
 
   importing = false;
   readonly RoleEnum = RoleEnum;
@@ -59,12 +62,28 @@ export class PlayersListComponent implements AfterViewInit {
   displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
   readonly dataSource = new PlayersDataSource(this.playersService);
+  readonly savedState = this.listState.get(PlayersListComponent.STATE_KEY);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  private currentFilters: Record<string, unknown> = this.savedState?.filters ?? {};
+
   ngAfterViewInit(): void {
-    this.dataSource.setPage(0, 10);
+    const s = this.savedState;
+    const pageIndex = s?.pageIndex ?? 0;
+    const pageSize = s?.pageSize ?? 10;
+
+    this.paginator.pageIndex = pageIndex;
+    this.paginator.pageSize = pageSize;
+
+    if (s?.sortBy) {
+      this.sort.active = s.sortBy;
+      this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
+      this.dataSource.setSorting(s.sortBy, s.sortOrder!);
+    }
+
+    this.dataSource.setPage(pageIndex, pageSize);
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
@@ -72,6 +91,7 @@ export class PlayersListComponent implements AfterViewInit {
         this.sort.active,
         this.sort.direction as SortOrder
       );
+      this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
@@ -79,7 +99,12 @@ export class PlayersListComponent implements AfterViewInit {
         this.paginator.pageIndex,
         this.paginator.pageSize
       );
+      this.saveState();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.saveState();
   }
 
   applyFilters(filters: {
@@ -88,11 +113,23 @@ export class PlayersListComponent implements AfterViewInit {
     position?: PlayerPosition;
     category?: CategoryEnum;
   }): void {
+    this.currentFilters = filters;
     if (this.paginator) {
       this.paginator.pageIndex = 0;
     }
     this.updateColumns(filters.sport);
     this.dataSource.setFilters(filters);
+    this.saveState();
+  }
+
+  private saveState(): void {
+    this.listState.save(PlayersListComponent.STATE_KEY, {
+      filters: this.currentFilters,
+      pageIndex: this.paginator?.pageIndex ?? 0,
+      pageSize: this.paginator?.pageSize ?? 10,
+      sortBy: this.sort?.active,
+      sortOrder: this.sort?.direction as SortOrder,
+    });
   }
 
   private updateColumns(sport?: SportEnum): void {

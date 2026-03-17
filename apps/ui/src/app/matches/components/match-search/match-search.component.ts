@@ -3,6 +3,7 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -54,6 +55,8 @@ export class MatchSearchComponent implements OnInit {
   private readonly tournamentsService = inject(TournamentsService);
   private readonly filterContext = inject(UserFilterContextService);
 
+  @Input() initialFilters?: Record<string, unknown>;
+
   @Output() readonly filtersChange = new EventEmitter<MatchFilters>();
 
   readonly statusOptions = matchStatusOptions;
@@ -74,6 +77,10 @@ export class MatchSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.initialFilters) {
+      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+    }
+
     this.tournamentsService
       .getTournaments({ page: 1, size: 1000 })
       .pipe(map((res) => res.items))

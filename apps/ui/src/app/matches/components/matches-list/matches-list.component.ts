@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
+  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -26,6 +27,7 @@ import {
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
+import { ListStateService } from '../../../common/services/list-state.service';
 
 @Component({
   selector: 'ltrc-matches-list',
@@ -46,10 +48,12 @@ import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.di
   templateUrl: './matches-list.component.html',
   styleUrl: './matches-list.component.scss',
 })
-export class MatchesListComponent implements AfterViewInit {
+export class MatchesListComponent implements AfterViewInit, OnDestroy {
+  private static readonly STATE_KEY = 'matches';
   private readonly router = inject(Router);
   private readonly matchesService = inject(MatchesService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly listState = inject(ListStateService);
 
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
@@ -62,13 +66,27 @@ export class MatchesListComponent implements AfterViewInit {
     'result',
   ];
   readonly dataSource = new MatchesDataSource(this.matchesService);
+  readonly savedState = this.listState.get(MatchesListComponent.STATE_KEY);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  private currentFilters: MatchFilters = this.savedState?.filters ?? {};
+
   ngAfterViewInit(): void {
-    this.dataSource.setSorting('date', SortOrder.ASC);
-    this.dataSource.setPage(0, 10);
+    const s = this.savedState;
+    const pageIndex = s?.pageIndex ?? 0;
+    const pageSize = s?.pageSize ?? 10;
+    const sortBy = s?.sortBy || 'date';
+    const sortOrder = s?.sortOrder || SortOrder.ASC;
+
+    this.paginator.pageIndex = pageIndex;
+    this.paginator.pageSize = pageSize;
+    this.sort.active = sortBy;
+    this.sort.direction = sortOrder as '' | 'asc' | 'desc';
+
+    this.dataSource.setSorting(sortBy, sortOrder);
+    this.dataSource.setPage(pageIndex, pageSize);
     this.cdr.detectChanges();
 
     this.sort.sortChange.subscribe(() => {
@@ -77,6 +95,7 @@ export class MatchesListComponent implements AfterViewInit {
         this.sort.active,
         this.sort.direction as SortOrder
       );
+      this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
@@ -84,14 +103,31 @@ export class MatchesListComponent implements AfterViewInit {
         this.paginator.pageIndex,
         this.paginator.pageSize
       );
+      this.saveState();
     });
   }
 
+  ngOnDestroy(): void {
+    this.saveState();
+  }
+
   applyFilters(filters: MatchFilters): void {
+    this.currentFilters = filters;
     if (this.paginator) {
       this.paginator.pageIndex = 0;
     }
     this.dataSource.setFilters(filters);
+    this.saveState();
+  }
+
+  private saveState(): void {
+    this.listState.save(MatchesListComponent.STATE_KEY, {
+      filters: this.currentFilters,
+      pageIndex: this.paginator?.pageIndex ?? 0,
+      pageSize: this.paginator?.pageSize ?? 10,
+      sortBy: this.sort?.active,
+      sortOrder: this.sort?.direction as SortOrder,
+    });
   }
 
   goToCreate(): void {

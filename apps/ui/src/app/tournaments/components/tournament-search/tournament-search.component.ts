@@ -3,6 +3,7 @@ import {
   DestroyRef,
   EventEmitter,
   inject,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -38,6 +39,8 @@ export class TournamentSearchComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly filterContext = inject(UserFilterContextService);
 
+  @Input() initialFilters?: Record<string, unknown>;
+
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
     sport?: SportEnum;
@@ -52,6 +55,10 @@ export class TournamentSearchComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.initialFilters) {
+      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+    }
+
     this.filterContext.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((ctx) => {

@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnInit,
   Output,
   inject,
@@ -38,6 +39,8 @@ export interface BranchSearchFilters {
   styleUrl: './branch-search.component.scss',
 })
 export class BranchSearchComponent implements OnInit {
+  @Input() initialFilters?: Record<string, unknown>;
+
   @Output() filtersChange = new EventEmitter<BranchSearchFilters>();
 
   private readonly fb = inject(FormBuilder);
@@ -58,6 +61,10 @@ export class BranchSearchComponent implements OnInit {
   showBranchFilter = true;
 
   ngOnInit(): void {
+    if (this.initialFilters) {
+      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+    }
+
     this.filterContext.filterContext$.subscribe((ctx) => {
       if (ctx.forcedCategory) {
         this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });

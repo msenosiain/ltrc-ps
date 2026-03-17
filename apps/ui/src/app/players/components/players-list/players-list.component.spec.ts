@@ -3,16 +3,32 @@ import { PlayersListComponent } from './players-list.component';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import { of } from 'rxjs';
+import { ListStateService } from '../../../common/services/list-state.service';
+import { SortOrder, SportEnum } from '@ltrc-ps/shared-api-model';
 
 describe('PlayersList', () => {
   let component: PlayersListComponent;
   let fixture: ComponentFixture<PlayersListComponent>;
+  let listStateService: ListStateService;
 
   const playersServiceMock = {
     getPositionLabel: jest.fn().mockReturnValue('Position'),
     getPlayerPhotoUrl: jest.fn().mockReturnValue(''),
     getPlayers: jest.fn().mockReturnValue(of({ total: 0, items: [] })),
   } as Partial<PlayersService>;
+
+  const stubPaginatorAndSort = (comp: PlayersListComponent) => {
+    comp.paginator = {
+      pageIndex: 0,
+      pageSize: 10,
+      page: { subscribe: () => ({ unsubscribe: () => {} }) },
+    } as any;
+    comp.sort = {
+      active: '',
+      direction: '',
+      sortChange: { subscribe: () => ({ unsubscribe: () => {} }) },
+    } as any;
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -26,24 +42,55 @@ describe('PlayersList', () => {
       ],
     }).compileComponents();
 
+    listStateService = TestBed.inject(ListStateService);
+    listStateService.clear('players');
+
     fixture = TestBed.createComponent(PlayersListComponent);
     component = fixture.componentInstance;
-
-    // Stubs mínimos para evitar errores en ngAfterViewInit (sort & paginator)
-    component.paginator = {
-      pageIndex: 0,
-      pageSize: 10,
-      page: { subscribe: () => ({ unsubscribe: () => {} }) },
-    } as any;
-    component.sort = {
-      active: '',
-      direction: '',
-      sortChange: { subscribe: () => ({ unsubscribe: () => {} }) },
-    } as any;
-
+    stubPaginatorAndSort(component);
     fixture.detectChanges();
   });
+
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('ListState integration', () => {
+    it('should save state on applyFilters', () => {
+      const filters = { searchTerm: 'test', sport: SportEnum.HOCKEY };
+      component.applyFilters(filters);
+
+      const saved = listStateService.get('players');
+      expect(saved).toBeDefined();
+      expect(saved!.filters).toEqual(filters);
+      expect(saved!.pageIndex).toBe(0);
+    });
+
+    it('should save state on destroy', () => {
+      component.applyFilters({ searchTerm: 'before destroy' });
+      component.ngOnDestroy();
+
+      const saved = listStateService.get('players');
+      expect(saved).toBeDefined();
+      expect(saved!.filters).toEqual({ searchTerm: 'before destroy' });
+    });
+
+    it('should restore saved filters on init', () => {
+      listStateService.save('players', {
+        filters: { searchTerm: 'restored' },
+        pageIndex: 2,
+        pageSize: 20,
+        sortBy: 'name',
+        sortOrder: SortOrder.ASC,
+      });
+
+      const fixture2 = TestBed.createComponent(PlayersListComponent);
+      const component2 = fixture2.componentInstance;
+
+      expect(component2.savedState).toBeDefined();
+      expect(component2.savedState!.filters).toEqual({ searchTerm: 'restored' });
+      expect(component2.savedState!.pageIndex).toBe(2);
+      expect(component2.savedState!.sortBy).toBe('name');
+    });
   });
 });

@@ -18,7 +18,7 @@
     />
   </div>
 
-  <ltrc-branch-search (filtersChange)="onFiltersChange($event)" />
+  <ltrc-branch-search [initialFilters]="savedState?.filters" (filtersChange)="onFiltersChange($event)" />
 
   @if ((loading$ | async) || importing) {
     <mat-progress-bar mode="indeterminate" />

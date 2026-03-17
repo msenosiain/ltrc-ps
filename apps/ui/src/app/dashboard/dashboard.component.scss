@@ -11,6 +11,13 @@
 
 mat-sidenav {
   width: 250px;
+
+  .active-link {
+    background: rgba(54, 68, 95, 0.15);
+    color: #36445f;
+    font-weight: 500;
+    border-left: 3px solid #36445f;
+  }
 }
 
 .toolbar {
