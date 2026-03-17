@@ -63,10 +63,7 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
       this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
     }
 
-    if (s?.sortBy) {
-      this.dataSource.setSorting(s.sortBy, s.sortOrder!);
-    }
-    this.dataSource.setPage(pageIndex, pageSize);
+    this.dataSource.configure(pageIndex, pageSize, s?.sortBy, s?.sortOrder);
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;

@@ -173,8 +173,9 @@ export class PlayersService {
       queryFilters['branch'] = filters.branch;
     }
 
-    // Coach server-side filter override
-    if (caller?.roles?.includes(RoleEnum.COACH)) {
+    // Server-side restriction: limit results to user's assigned scope
+    // (applies to any non-admin user with sports/categories/branches assigned)
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
       if (caller.categories?.length)
         queryFilters['category'] = { $in: caller.categories };
@@ -183,10 +184,11 @@ export class PlayersService {
     }
 
     // Sorting
-    const sort = {};
+    const sort: Record<string, 1 | -1> = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
+      sort['category'] = 1;
       sort['name'] = 1;
     }
 
@@ -262,10 +264,12 @@ export class PlayersService {
           : `fila ${rowNum}`;
 
         const str = (val: unknown) => (val != null ? String(val).trim() : '');
+        const toTitleCase = (s: string) =>
+          s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
-        const name = str(row.Nombre);
+        const name = toTitleCase(str(row.Nombre));
         const idNumber = str(row['N° Doc.']).replace(/\D/g, '');
-        const email = str(row.Email);
+        const email = str(row.Email).toLowerCase();
 
         if (!name) {
           errors.push({
@@ -296,7 +300,7 @@ export class PlayersService {
           ? calculateCategory(birthYear, sport)
           : undefined;
 
-        const parentName = str(row['Nombre Jefe']);
+        const parentName = toTitleCase(str(row['Nombre Jefe']));
         const memberNumber = row.Socio ? String(row.Socio) : undefined;
 
         const isMinor =
@@ -425,4 +429,5 @@ export class PlayersService {
 
     return { updated, notFound, errors };
   }
+
 }

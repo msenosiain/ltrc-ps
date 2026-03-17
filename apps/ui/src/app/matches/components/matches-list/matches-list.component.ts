@@ -85,8 +85,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     this.sort.active = sortBy;
     this.sort.direction = sortOrder as '' | 'asc' | 'desc';
 
-    this.dataSource.setSorting(sortBy, sortOrder);
-    this.dataSource.setPage(pageIndex, pageSize);
+    this.dataSource.configure(pageIndex, pageSize, sortBy, sortOrder);
     this.cdr.detectChanges();
 
     this.sort.sortChange.subscribe(() => {

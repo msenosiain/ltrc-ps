@@ -92,8 +92,8 @@ export class MatchesService {
       queryFilters['date'] = dateFilter;
     }
 
-    // Coach server-side filter override
-    if (caller?.roles?.includes(RoleEnum.COACH)) {
+    // Server-side restriction: limit results to user's assigned scope
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
       if (caller.categories?.length)
         queryFilters['category'] = { $in: caller.categories };

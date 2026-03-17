@@ -19,12 +19,12 @@ import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PaginationDto } from '../shared/pagination.dto';
 
-// @UseGuards(JwtAuthGuard)
 @Controller('tournaments')
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findAll(
     @Query() query: PaginationDto<TournamentFilterDto>,
     @Req() req: Request

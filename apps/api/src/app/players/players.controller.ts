@@ -32,6 +32,7 @@ export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findPaginated(
     @Query() pagination: PaginationDto<PlayerFiltersDto>,
     @Req() req: Request

@@ -31,8 +31,8 @@ export class SquadsService {
   async findAll(category?: CategoryEnum, caller?: User) {
     let filter: Record<string, unknown> = category ? { category } : {};
 
-    // Coach server-side filter override
-    if (caller?.roles?.includes(RoleEnum.COACH)) {
+    // Server-side restriction: limit results to user's assigned scope
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       if (caller.categories?.length) {
         filter = { category: { $in: caller.categories } };
       }

@@ -18,6 +18,7 @@ import {
 } from '@ltrc-ps/shared-api-model';
 import {
   CategoryOption,
+  categoryOptions,
   getCategoryOptionsBySport,
 } from '../../../common/category-options';
 import { SportOption, sportOptions } from '../../../common/sport-options';
@@ -71,6 +72,8 @@ export class PlayerSearchComponent implements OnInit {
   showCategoryFilter = true;
   showBranchFilter = false;
 
+  private allowedCategories: CategoryEnum[] | undefined;
+
   readonly searchForm = this.fb.group({
     searchTerm: [''],
     sport: [undefined as SportEnum | undefined],
@@ -91,6 +94,11 @@ export class PlayerSearchComponent implements OnInit {
         this.showCategoryFilter = ctx.showCategoryFilter;
         this.sportOptions = ctx.sportOptions;
         this.categoryOptions = ctx.categoryOptions;
+        this.allowedCategories = ctx.forcedCategory
+          ? [ctx.forcedCategory]
+          : ctx.categoryOptions.length < categoryOptions.length
+            ? ctx.categoryOptions.map((c) => c.id)
+            : undefined;
 
         if (ctx.forcedSport) {
           this.searchForm
@@ -145,7 +153,9 @@ export class PlayerSearchComponent implements OnInit {
   }
 
   private filterCategoryOptions(sport?: SportEnum | null): CategoryOption[] {
-    return getCategoryOptionsBySport(sport);
+    const options = getCategoryOptionsBySport(sport);
+    if (!this.allowedCategories) return options;
+    return options.filter((c) => this.allowedCategories!.includes(c.id));
   }
 
   private emitFilters(): void {

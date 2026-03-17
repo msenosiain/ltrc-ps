@@ -43,6 +43,14 @@ export class TournamentsDataSource implements DataSource<Tournament> {
     this.loadingSubject.complete();
   }
 
+  /** Set page/sort state without loading — use before first setFilters call */
+  configure(pageIndex: number, pageSize: number, sortBy?: string, sortOrder?: SortOrder): void {
+    this.pageIndex = pageIndex;
+    this.pageSize = pageSize;
+    this.sortBy = sortBy;
+    this.sortOrder = sortOrder;
+  }
+
   setFilters(filters: TournamentFilters): void {
     this.filters = filters;
     this.pageIndex = 0;

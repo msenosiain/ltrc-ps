@@ -39,57 +39,41 @@ export class UsersDataSource implements DataSource<User> {
     this.loadingSubject.complete();
   }
 
+  /** Set page/sort state without loading — use before first setFilters call */
+  configure(pageIndex: number, pageSize: number, sortBy?: string, sortOrder?: SortOrder): void {
+    this.pageIndex = pageIndex;
+    this.pageSize = pageSize;
+    this.sortBy = sortBy;
+    this.sortOrder = sortOrder;
+  }
+
   setFilters(filters: UserFilters): void {
     this.filters = filters;
     this.pageIndex = 0;
-    this.load(
-      this.pageIndex,
-      this.pageSize,
-      this.filters,
-      this.sortBy,
-      this.sortOrder
-    );
+    this.load();
   }
 
   setSorting(sortBy: string, sortOrder: SortOrder): void {
     this.sortBy = sortBy;
     this.sortOrder = sortOrder;
-    this.load(
-      this.pageIndex,
-      this.pageSize,
-      this.filters,
-      this.sortBy,
-      this.sortOrder
-    );
+    this.load();
   }
 
   setPage(pageIndex: number, pageSize: number): void {
     this.pageIndex = pageIndex;
     this.pageSize = pageSize;
-    this.load(
-      this.pageIndex,
-      this.pageSize,
-      this.filters,
-      this.sortBy,
-      this.sortOrder
-    );
+    this.load();
   }
 
-  private load(
-    pageIndex: number,
-    pageSize: number,
-    filters: UserFilters = {},
-    sortBy?: string,
-    sortOrder?: SortOrder
-  ) {
+  private load(): void {
     this.loadingSubject.next(true);
 
     const query: PaginationQuery = {
-      page: pageIndex + 1,
-      size: pageSize,
-      filters,
-      sortBy,
-      sortOrder,
+      page: this.pageIndex + 1,
+      size: this.pageSize,
+      filters: this.filters,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder,
     };
 
     this.usersService

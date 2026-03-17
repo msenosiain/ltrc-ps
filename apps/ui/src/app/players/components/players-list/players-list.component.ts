@@ -80,10 +80,9 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
     if (s?.sortBy) {
       this.sort.active = s.sortBy;
       this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
-      this.dataSource.setSorting(s.sortBy, s.sortOrder!);
     }
 
-    this.dataSource.setPage(pageIndex, pageSize);
+    this.dataSource.configure(pageIndex, pageSize, s?.sortBy, s?.sortOrder);
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;

@@ -68,6 +68,8 @@ export class MatchSearchComponent implements OnInit {
   showSportFilter = true;
   showCategoryFilter = true;
 
+  private allowedCategories: CategoryEnum[] | undefined;
+
   readonly searchForm = this.fb.group({
     status: [undefined as MatchStatusEnum | undefined],
     type: [undefined as MatchTypeEnum | undefined],
@@ -93,6 +95,11 @@ export class MatchSearchComponent implements OnInit {
         this.showCategoryFilter = ctx.showCategoryFilter;
         this.sportOptions = ctx.sportOptions;
         this.categoryOptions = ctx.categoryOptions;
+        this.allowedCategories = ctx.forcedCategory
+          ? [ctx.forcedCategory]
+          : ctx.categoryOptions.length < getCategoryOptionsBySport().length
+            ? ctx.categoryOptions.map((c) => c.id)
+            : undefined;
 
         if (ctx.forcedSport) {
           this.searchForm
@@ -112,7 +119,10 @@ export class MatchSearchComponent implements OnInit {
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport) => {
-        this.categoryOptions = getCategoryOptionsBySport(sport);
+        const allForSport = getCategoryOptionsBySport(sport);
+        this.categoryOptions = this.allowedCategories
+          ? allForSport.filter((c) => this.allowedCategories!.includes(c.id))
+          : allForSport;
         const currentCategory = this.searchForm.get('category')!.value;
         if (
           currentCategory &&

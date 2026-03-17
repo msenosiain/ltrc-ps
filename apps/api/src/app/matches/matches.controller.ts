@@ -25,6 +25,7 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async findPaginated(
     @Query() pagination: PaginationDto<MatchFiltersDto>,
     @Req() req: Request
