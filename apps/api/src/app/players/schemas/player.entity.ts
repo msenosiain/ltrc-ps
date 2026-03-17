@@ -27,8 +27,7 @@ export class PlayerEntity extends Document {
   sport?: SportEnum;
   category?: CategoryEnum;
   branch?: HockeyBranchEnum;
-  position?: PlayerPosition;
-  alternatePosition?: PlayerPosition;
+  positions?: PlayerPosition[];
   clothingSizes?: {
     jersey?: ClothingSizesEnum;
     shorts?: ClothingSizesEnum;
@@ -41,11 +40,11 @@ export class PlayerEntity extends Document {
     torgIndex?: number;
     healthInsurance?: string;
   };
-  parentContact?: {
+  parentContacts?: {
     name: string;
     email?: string;
     phone?: string;
-  };
+  }[];
   photoId?: string;
   userId?: Types.ObjectId;
   createdAt: Date;

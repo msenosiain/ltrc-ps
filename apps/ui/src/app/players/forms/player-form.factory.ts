@@ -1,4 +1,4 @@
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   CategoryEnum,
   ClothingSizesEnum,
@@ -7,6 +7,14 @@ import {
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
+
+export function buildParentContactGroup(fb: FormBuilder): FormGroup {
+  return fb.group({
+    name: fb.nonNullable.control(''),
+    email: fb.nonNullable.control(''),
+    phone: fb.nonNullable.control(''),
+  });
+}
 
 export function buildCreatePlayerForm(fb: FormBuilder) {
   return fb.group({
@@ -31,8 +39,7 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
     sport: fb.control<SportEnum | null>(null, Validators.required),
     category: fb.control<CategoryEnum | null>(null, Validators.required),
     branch: fb.control<HockeyBranchEnum | null>(null),
-    position: fb.control<PlayerPosition | null>(null),
-    alternatePosition: fb.control<PlayerPosition | null>(null),
+    positions: fb.array<FormControl<PlayerPosition | null>>([]),
 
     address: fb.group({
       street: fb.nonNullable.control(''),
@@ -61,10 +68,6 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
       healthInsurance: fb.nonNullable.control(''),
     }),
 
-    parentContact: fb.group({
-      name: fb.nonNullable.control(''),
-      email: fb.nonNullable.control(''),
-      phone: fb.nonNullable.control(''),
-    }),
+    parentContacts: fb.array<FormGroup>([]),
   });
 }

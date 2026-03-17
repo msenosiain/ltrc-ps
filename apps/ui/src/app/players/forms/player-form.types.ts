@@ -21,8 +21,7 @@ export type PlayerFormValue = {
   sport: SportEnum | null;
   category: CategoryEnum | null;
   branch: HockeyBranchEnum | null;
-  position: PlayerPosition | null;
-  alternatePosition: PlayerPosition | null;
+  positions: (PlayerPosition | null)[];
 
   address: {
     street: string;
@@ -48,9 +47,11 @@ export type PlayerFormValue = {
     healthInsurance: string;
   };
 
-  parentContact: {
-    name: string;
-    email: string;
-    phone: string;
-  };
+  parentContacts: ParentContactValue[];
+};
+
+export type ParentContactValue = {
+  name: string;
+  email: string;
+  phone: string;
 };

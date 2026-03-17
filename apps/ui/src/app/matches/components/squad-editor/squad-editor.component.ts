@@ -377,8 +377,8 @@ export class SquadEditorComponent implements OnInit {
   }
 
   getPositionLabel(player: Player): string {
-    return player.position
-      ? this.playersService.getPositionLabel(player.position)
+    return player.positions?.length
+      ? player.positions.map((p) => this.playersService.getPositionLabel(p)).join(', ')
       : '—';
   }
 

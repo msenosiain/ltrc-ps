@@ -24,7 +24,7 @@ export class PlayerFiltersDto {
       ...Object.values(HockeyPositions),
     ]),
   ])
-  position?: PlayerPosition;
+  position?: PlayerPosition; // filters by positions array ($in)
 
   @IsOptional()
   @IsEnum(CategoryEnum)

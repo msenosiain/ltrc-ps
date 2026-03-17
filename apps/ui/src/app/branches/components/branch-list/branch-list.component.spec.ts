@@ -107,25 +107,25 @@ describe('BranchListComponent', () => {
     });
   });
 
-  describe('getPlayerPosition', () => {
-    it('should return position label for hockey player', () => {
+  describe('getPlayerPositions', () => {
+    it('should return position labels for hockey player', () => {
       const assignment = {
         player: {
-          position: HockeyPositions.GOALKEEPER,
+          positions: [HockeyPositions.GOALKEEPER],
           sport: SportEnum.HOCKEY,
         },
       } as unknown as BranchAssignment;
 
-      const label = component.getPlayerPosition(assignment);
+      const label = component.getPlayerPositions(assignment);
       expect(label).toBeTruthy();
     });
 
-    it('should return empty string when player has no position', () => {
+    it('should return empty string when player has no positions', () => {
       const assignment = {
         player: { sport: SportEnum.HOCKEY },
       } as unknown as BranchAssignment;
 
-      expect(component.getPlayerPosition(assignment)).toBe('');
+      expect(component.getPlayerPositions(assignment)).toBe('');
     });
   });
 
@@ -146,7 +146,12 @@ describe('BranchListComponent', () => {
     ): BranchAssignment =>
       ({
         id: name,
-        player: { name, position, nickName: nickName ?? '', sport: SportEnum.HOCKEY },
+        player: {
+          name,
+          positions: position ? [position] : [],
+          nickName: nickName ?? '',
+          sport: SportEnum.HOCKEY,
+        },
       }) as unknown as BranchAssignment;
 
     it('should return all assignments when no filters applied', () => {

@@ -79,17 +79,15 @@ export const PlayerSchema = new Schema<PlayerEntity>(
       type: String,
       enum: Object.values(HockeyBranchEnum),
     },
-    position: {
-      type: String,
-      enum: allPositionValues,
-    },
-    alternatePosition: {
-      type: String,
-      enum: allPositionValues,
-    },
+    positions: [
+      {
+        type: String,
+        enum: allPositionValues,
+      },
+    ],
     clothingSizes: ClothingSizesSchema,
     medicalData: MedicalDataSchema,
-    parentContact: ParentContactSchema,
+    parentContacts: [ParentContactSchema],
     photoId: { type: String },
     userId: {
       type: Schema.Types.ObjectId,

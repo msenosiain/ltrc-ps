@@ -1,4 +1,4 @@
-import { Player, DATE_FORMAT } from '@ltrc-ps/shared-api-model';
+import { Player, DATE_FORMAT, PlayerPosition } from '@ltrc-ps/shared-api-model';
 import { PlayerFormValue } from './player-form.types';
 import { format } from 'date-fns';
 
@@ -14,12 +14,11 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     sport: value.sport ?? undefined,
     category: value.category ?? undefined,
     branch: value.branch ?? undefined,
-    position: value.position!,
-    alternatePosition: value.alternatePosition ?? undefined,
+    positions: value.positions.filter((p): p is PlayerPosition => p !== null),
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
     medicalData: mapMedicalData(value),
-    parentContact: mapParentContact(value),
+    parentContacts: mapParentContacts(value),
     createUser: value.createUser ?? false,
   };
 }
@@ -39,8 +38,7 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
     sport: player.sport ?? null,
     category: player.category ?? null,
     branch: player.branch ?? null,
-    position: player.position ?? null,
-    alternatePosition: player.alternatePosition ?? null,
+    positions: player.positions ?? [],
 
     address: {
       street: player.address?.street ?? '',
@@ -66,11 +64,11 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
       healthInsurance: player.medicalData?.healthInsurance ?? '',
     },
 
-    parentContact: {
-      name: player.parentContact?.name ?? '',
-      email: player.parentContact?.email ?? '',
-      phone: player.parentContact?.phone ?? '',
-    },
+    parentContacts: (player.parentContacts ?? []).map((pc) => ({
+      name: pc.name ?? '',
+      email: pc.email ?? '',
+      phone: pc.phone ?? '',
+    })),
   };
 }
 
@@ -111,12 +109,13 @@ function mapClothingSizes(value: PlayerFormValue) {
   return Object.values(c).some((v) => v !== undefined) ? c : undefined;
 }
 
-function mapParentContact(value: PlayerFormValue) {
-  const pc = value.parentContact;
-  if (!pc.name) return undefined;
-  return {
-    name: pc.name,
-    email: pc.email || undefined,
-    phone: pc.phone || undefined,
-  };
+function mapParentContacts(value: PlayerFormValue) {
+  const contacts = value.parentContacts
+    .filter((pc) => pc.name)
+    .map((pc) => ({
+      name: pc.name,
+      email: pc.email || undefined,
+      phone: pc.phone || undefined,
+    }));
+  return contacts.length ? contacts : undefined;
 }
