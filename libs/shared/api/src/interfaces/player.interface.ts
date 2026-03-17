@@ -61,11 +61,10 @@ export interface Player extends Document {
   readonly sport?: SportEnum;
   readonly category?: CategoryEnum;
   readonly branch?: HockeyBranchEnum;
-  readonly position?: PlayerPosition;
-  readonly alternatePosition?: PlayerPosition;
+  readonly positions?: PlayerPosition[];
   readonly clothingSizes?: ClothingSizes;
   readonly medicalData?: MedicalData;
-  readonly parentContact?: ParentContact;
+  readonly parentContacts?: ParentContact[];
   readonly photoId?: string;
   readonly userId?: string;
   readonly createdAt?: Date;

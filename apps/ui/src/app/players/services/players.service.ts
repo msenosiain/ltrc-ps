@@ -96,17 +96,16 @@ export class PlayersService {
     if (dto.sport != null) form.append('sport', dto.sport);
     if (dto.category != null) form.append('category', dto.category);
     if (dto.branch != null) form.append('branch', dto.branch);
-    if (dto.position != null) form.append('position', dto.position);
-    if (dto.alternatePosition != null)
-      form.append('alternatePosition', dto.alternatePosition);
+    if (dto.positions?.length)
+      form.append('positions', JSON.stringify(dto.positions));
     if (dto.address != null)
       form.append('address', JSON.stringify(dto.address));
     if (dto.clothingSizes != null)
       form.append('clothingSizes', JSON.stringify(dto.clothingSizes));
     if (dto.medicalData != null)
       form.append('medicalData', JSON.stringify(dto.medicalData));
-    if (dto.parentContact != null)
-      form.append('parentContact', JSON.stringify(dto.parentContact));
+    if (dto.parentContacts != null)
+      form.append('parentContacts', JSON.stringify(dto.parentContacts));
     form.append('createUser', String(dto.createUser ?? false));
 
     return form;

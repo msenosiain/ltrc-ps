@@ -16,6 +16,7 @@
           matInput
           formControlName="name"
           placeholder="Apellido y Nombre"
+          required
         />
         @if (playerForm.get('name')?.errors?.['required']) {
         <mat-error>Apellido y Nombre es obligatorio</mat-error>
@@ -38,7 +39,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>DNI</mat-label>
-        <input matInput formControlName="idNumber" />
+        <input matInput formControlName="idNumber" required />
         @if (playerForm.get('idNumber')?.errors?.['required']) {
         <mat-error>DNI es obligatorio</mat-error>
         } @else if (playerForm.get('idNumber')?.errors?.['pattern'] ||
@@ -55,6 +56,7 @@
           [matDatepicker]="picker"
           formControlName="birthDate"
           placeholder="DD/MM/AAAA"
+          required
         />
         <mat-datepicker-toggle matSuffix [for]="picker" />
         <mat-datepicker #picker />
@@ -65,7 +67,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" />
+        <input matInput type="email" formControlName="email" required />
         @if (playerForm.get('email')?.invalid) {
         <mat-error>Correo electronico invalido</mat-error>
         }
@@ -112,6 +114,7 @@
           matInput
           formControlName="phoneNumber"
           placeholder="ej: 2664 123456"
+          required
         />
         @if (playerForm.get('address.phoneNumber')?.errors?.['required']) {
         <mat-error>Teléfono es obligatorio</mat-error>
@@ -131,25 +134,58 @@
   <!-- DATOS DEL PADRE/MADRE/TUTOR -->
   @if (isMinor()) {
   <mat-card>
-    <mat-card-title>Datos del padre/madre/tutor</mat-card-title>
-    <div class="card-grid section-grid" formGroupName="parentContact">
-      <mat-form-field appearance="outline">
-        <mat-label>Apellido y Nombre</mat-label>
-        <input matInput formControlName="name" />
-        @if (playerForm.get('parentContact.name')?.errors?.['required']) {
-        <mat-error>Nombre del padre/madre/tutor es obligatorio</mat-error>
+    <div class="card-title-row">
+      <mat-card-title>Datos del padre/madre/tutor</mat-card-title>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addParentContact()"
+      >
+        <mat-icon>person_add</mat-icon>
+        Agregar contacto
+      </button>
+    </div>
+    <div formArrayName="parentContacts">
+      @for (contact of parentContactsArray.controls; track contact; let i = $index) {
+      <div class="parent-contact-entry">
+        @if (parentContactsArray.length > 1) {
+        <div class="parent-contact-header">
+          <span class="parent-contact-label">Contacto {{ i + 1 }}</span>
+          <button
+            mat-icon-button
+            type="button"
+            color="warn"
+            (click)="removeParentContact(i)"
+            aria-label="Eliminar contacto"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
         }
-      </mat-form-field>
+        <div class="card-grid section-grid" [formGroupName]="i">
+          <mat-form-field appearance="outline">
+            <mat-label>Apellido y Nombre</mat-label>
+            <input matInput formControlName="name" [required]="i === 0" />
+            @if (contact.get('name')?.errors?.['required']) {
+            <mat-error>Nombre del padre/madre/tutor es obligatorio</mat-error>
+            }
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" />
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Teléfono</mat-label>
-        <input matInput formControlName="phone" />
-      </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone" [required]="i === 0" />
+            @if (contact.get('phone')?.errors?.['required']) {
+            <mat-error>Teléfono del padre/madre/tutor es obligatorio</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      }
     </div>
   </mat-card>
   }
@@ -160,7 +196,7 @@
     <div class="card-grid sport-grid">
       <mat-form-field appearance="outline">
         <mat-label>Deporte</mat-label>
-        <mat-select formControlName="sport">
+        <mat-select formControlName="sport" required>
           @for (s of sportOptions; track s.id) {
           <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
@@ -172,7 +208,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Categoría</mat-label>
-        <mat-select formControlName="category">
+        <mat-select formControlName="category" required>
           @for (cat of categories; track cat.id) {
           <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
           }
@@ -185,7 +221,7 @@
       @if (isHockey) {
       <mat-form-field appearance="outline">
         <mat-label>Rama</mat-label>
-        <mat-select formControlName="branch">
+        <mat-select formControlName="branch" required>
           @for (b of branchOptions; track b) {
           <mat-option [value]="b">{{ b }}</mat-option>
           }
@@ -196,23 +232,40 @@
       </mat-form-field>
       }
 
-      <mat-form-field appearance="outline">
-        <mat-label>Posición</mat-label>
-        <mat-select formControlName="position">
-          @for (pos of positions; track pos.id) {
-          <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+    </div>
+    <div class="positions-row">
+      <div formArrayName="positions" class="positions-list">
+        @for (ctrl of positionsArray.controls; track ctrl; let i = $index) {
+        <mat-form-field appearance="outline">
+          <mat-label>Posición {{ i + 1 }}</mat-label>
+          <mat-select [formControlName]="i">
+            @for (pos of getAvailablePositions(i); track pos.id) {
+            <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+            }
+          </mat-select>
+          @if (positionsArray.length > 1) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="removePosition(i)"
+            aria-label="Quitar posición"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
           }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Posicion alternativa</mat-label>
-        <mat-select formControlName="alternatePosition">
-          @for (pos of filteredAlternatePositions(); track pos.id) {
-          <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+        </mat-form-field>
+        }
+      </div>
+      <button
+        mat-stroked-button
+        type="button"
+        class="add-position-btn"
+        (click)="addPosition()"
+      >
+        <mat-icon>add</mat-icon>
+        Posición
+      </button>
     </div>
   </mat-card>
 
@@ -329,7 +382,7 @@
       mat-flat-button
       color="primary"
       type="submit"
-      [disabled]="submitting || playerForm.invalid"
+      [disabled]="submitting"
     >
       <mat-icon>{{ player ? 'save' : 'person_add' }}</mat-icon>
       {{ player ? 'Actualizar jugador' : 'Crear jugador' }}

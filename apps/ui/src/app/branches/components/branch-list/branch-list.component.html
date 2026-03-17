@@ -82,14 +82,9 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="position">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Posición</th>
-                <td mat-cell *matCellDef="let row">{{ getPlayerPosition(row) }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="alternatePosition">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Pos. alternativa</th>
-                <td mat-cell *matCellDef="let row">{{ getPlayerAlternatePosition(row) }}</td>
+              <ng-container matColumnDef="positions">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Posiciones</th>
+                <td mat-cell *matCellDef="let row">{{ getPlayerPositions(row) }}</td>
               </ng-container>
 
               <ng-container matColumnDef="idNumber">

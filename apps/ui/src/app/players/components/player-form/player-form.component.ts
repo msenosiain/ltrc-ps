@@ -13,7 +13,9 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -34,6 +36,7 @@ import {
   ClothingSizesEnum,
   HockeyBranchEnum,
   Player,
+  PlayerPosition,
   RoleEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -47,7 +50,7 @@ import {
   getPositionOptionsBySport,
   PositionOption,
 } from '../../position-options';
-import { buildCreatePlayerForm } from '../../forms/player-form.factory';
+import { buildCreatePlayerForm, buildParentContactGroup } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
 import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
@@ -96,10 +99,7 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     return age !== null && age < 18;
   });
 
-  private readonly selectedPosition = signal<string | null>(null);
-  readonly filteredAlternatePositions = computed(() =>
-    this.positions.filter((p) => p.id !== this.selectedPosition())
-  );
+  private readonly selectedPositions = signal<Set<string>>(new Set());
 
   @Input() player?: Player;
   @Input() submitting = false;
@@ -121,14 +121,74 @@ export class PlayerFormComponent implements OnInit, OnChanges {
 
   playerForm: FormGroup = buildCreatePlayerForm(this.fb);
 
+  get positionsArray(): FormArray<FormControl<PlayerPosition | null>> {
+    return this.playerForm.get('positions') as FormArray<FormControl<PlayerPosition | null>>;
+  }
+
+  addPosition(): void {
+    this.positionsArray.push(this.fb.control<PlayerPosition | null>(null));
+  }
+
+  removePosition(index: number): void {
+    this.positionsArray.removeAt(index);
+    this.syncSelectedPositions();
+  }
+
+  getAvailablePositions(currentIndex: number): PositionOption[] {
+    const selected = new Set<string>();
+    this.positionsArray.controls.forEach((ctrl, i) => {
+      if (i !== currentIndex && ctrl.value) selected.add(ctrl.value);
+    });
+    return this.positions.filter((p) => !selected.has(p.id));
+  }
+
+  private syncSelectedPositions(): void {
+    const set = new Set<string>();
+    this.positionsArray.controls.forEach((ctrl) => {
+      if (ctrl.value) set.add(ctrl.value);
+    });
+    this.selectedPositions.set(set);
+  }
+
+  get parentContactsArray(): FormArray<FormGroup> {
+    return this.playerForm.get('parentContacts') as FormArray<FormGroup>;
+  }
+
+  addParentContact(): void {
+    const group = buildParentContactGroup(this.fb);
+    if (this.isMinor() && this.parentContactsArray.length === 0) {
+      this.setParentContactRequired(group);
+    }
+    this.parentContactsArray.push(group);
+  }
+
+  removeParentContact(index: number): void {
+    this.parentContactsArray.removeAt(index);
+    if (this.isMinor() && this.parentContactsArray.length > 0) {
+      this.setParentContactRequired(this.parentContactsArray.at(0));
+    }
+  }
+
+  private setParentContactRequired(group: FormGroup): void {
+    for (const field of ['name', 'phone']) {
+      const ctrl = group.get(field)!;
+      ctrl.setValidators(Validators.required);
+      ctrl.updateValueAndValidity();
+    }
+  }
+
+  private clearParentContactRequired(group: FormGroup): void {
+    for (const field of ['name', 'phone']) {
+      const ctrl = group.get(field)!;
+      ctrl.clearValidators();
+      ctrl.updateValueAndValidity();
+    }
+  }
+
   private allHealthInsurances: string[] = [];
   filteredHealthInsurances$!: Observable<string[]>;
 
   ngOnInit(): void {
-    this.playerForm.get('position')!.valueChanges.subscribe((val) => {
-      this.selectedPosition.set(val);
-    });
-
     this.playerForm
       .get('birthDate')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -140,13 +200,7 @@ export class PlayerFormComponent implements OnInit, OnChanges {
         } else {
           this.playersAge.set(null);
         }
-        const nameCtrl = this.playerForm.get('parentContact.name')!;
-        if (this.isMinor()) {
-          nameCtrl.setValidators(Validators.required);
-        } else {
-          nameCtrl.clearValidators();
-        }
-        nameCtrl.updateValueAndValidity();
+        this.updateParentContactsValidation();
       });
 
     this.filteredHealthInsurances$ = this.playerForm
@@ -174,11 +228,13 @@ export class PlayerFormComponent implements OnInit, OnChanges {
       .subscribe((sport: SportEnum | null) => {
         this.positions = getPositionOptionsBySport(sport);
         this.categories = getCategoryOptionsBySport(sport);
-        // Clear position/category if they no longer match the new sport
-        const pos = this.playerForm.get('position')?.value;
-        if (pos && !this.positions.find((p) => p.id === pos)) {
-          this.playerForm.get('position')?.setValue(null);
-        }
+        // Clear positions if they no longer match the new sport
+        const validIds = new Set(this.positions.map((p) => p.id));
+        this.positionsArray.controls.forEach((ctrl) => {
+          if (ctrl.value && !validIds.has(ctrl.value)) {
+            ctrl.setValue(null);
+          }
+        });
         const cat = this.playerForm.get('category')?.value;
         if (cat && !this.categories.find((c) => c.id === cat)) {
           this.playerForm.get('category')?.setValue(null);
@@ -198,6 +254,25 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {
       this.playerForm.patchValue(this.player);
+
+      // Populate positions FormArray
+      this.positionsArray.clear();
+      (this.player.positions ?? []).forEach((pos) => {
+        this.positionsArray.push(this.fb.control<PlayerPosition | null>(pos));
+      });
+
+      // Populate parentContacts FormArray
+      this.parentContactsArray.clear();
+      (this.player.parentContacts ?? []).forEach((pc) => {
+        const group = buildParentContactGroup(this.fb);
+        group.patchValue({
+          name: pc.name ?? '',
+          email: pc.email ?? '',
+          phone: pc.phone ?? '',
+        });
+        this.parentContactsArray.push(group);
+      });
+
       // Trigger sport-based option filtering for loaded player
       const sport = this.player.sport ?? null;
       this.positions = getPositionOptionsBySport(sport);
@@ -218,12 +293,28 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     }
   }
 
+  private updateParentContactsValidation(): void {
+    if (this.isMinor()) {
+      if (this.parentContactsArray.length === 0) {
+        this.addParentContact();
+      }
+      this.setParentContactRequired(this.parentContactsArray.at(0));
+    } else {
+      this.parentContactsArray.controls.forEach((group) =>
+        this.clearParentContactRequired(group)
+      );
+    }
+  }
+
   onCancel(): void {
     this.cancel.emit();
   }
 
   onSubmit(): void {
-    if (this.playerForm.invalid) return;
+    if (this.playerForm.invalid) {
+      this.playerForm.markAllAsTouched();
+      return;
+    }
     const photoValue = this.playerForm.get('photo')?.value;
     this.formSubmitWithPhoto.emit({
       payload: this.playerForm.getRawValue() as PlayerFormValue,

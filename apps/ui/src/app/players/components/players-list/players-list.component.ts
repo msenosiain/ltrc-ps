@@ -55,7 +55,7 @@ export class PlayersListComponent implements AfterViewInit {
   readonly RoleEnum = RoleEnum;
 
   private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
-  private readonly afterCategoryColumns = ['position', 'alternatePosition'];
+  private readonly afterCategoryColumns = ['positions'];
   displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
   readonly dataSource = new PlayersDataSource(this.playersService);
@@ -123,8 +123,9 @@ export class PlayersListComponent implements AfterViewInit {
     this.router.navigate(['/dashboard/players', playerId]);
   }
 
-  getPositionLabel(position: PlayerPosition, sport?: SportEnum | null): string {
-    return this.playersService.getPositionLabel(position, sport);
+  getPositionsLabel(positions?: PlayerPosition[], sport?: SportEnum | null): string {
+    if (!positions?.length) return '';
+    return positions.map((p) => this.playersService.getPositionLabel(p, sport)).join(', ');
   }
 
   getPlayerPhotoUrl(playerId: string): string {

@@ -82,8 +82,7 @@ export class BranchListComponent {
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'name',
-    'position',
-    'alternatePosition',
+    'positions',
     'idNumber',
     'birthDate',
   ];
@@ -126,7 +125,7 @@ export class BranchListComponent {
     if (this.positionFilter) {
       result = result.filter((a) => {
         const player = a.player as any;
-        return player?.position === this.positionFilter;
+        return player?.positions?.includes(this.positionFilter);
       });
     }
 
@@ -153,10 +152,8 @@ export class BranchListComponent {
     switch (column) {
       case 'name':
         return player.name ?? '';
-      case 'position':
-        return getPositionLabel(player.position, player.sport);
-      case 'alternatePosition':
-        return getPositionLabel(player.alternatePosition, player.sport);
+      case 'positions':
+        return (player.positions ?? []).map((p: any) => getPositionLabel(p, player.sport)).join(', ');
       case 'idNumber':
         return player.idNumber ?? '';
       case 'birthDate':
@@ -241,14 +238,11 @@ export class BranchListComponent {
     return player[field] ?? '';
   }
 
-  getPlayerPosition(assignment: BranchAssignment): string {
+  getPlayerPositions(assignment: BranchAssignment): string {
     const player = assignment.player as any;
-    return getPositionLabel(player?.position, player?.sport);
-  }
-
-  getPlayerAlternatePosition(assignment: BranchAssignment): string {
-    const player = assignment.player as any;
-    return getPositionLabel(player?.alternatePosition, player?.sport);
+    return (player?.positions ?? [])
+      .map((p: any) => getPositionLabel(p, player?.sport))
+      .join(', ');
   }
 
   viewPlayer(assignment: BranchAssignment): void {

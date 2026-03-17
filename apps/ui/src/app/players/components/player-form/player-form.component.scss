@@ -176,6 +176,61 @@ $photo: $col;
   }
 }
 
+// == POSITIONS ROW (segunda fila del card deportivo)
+
+.positions-row {
+  display: flex;
+  align-items: start;
+  gap: $gap;
+  margin-top: $row-gap;
+}
+
+.positions-list {
+  display: flex;
+  gap: $gap;
+  flex-wrap: wrap;
+
+  mat-form-field {
+    width: $col;
+    box-sizing: border-box;
+  }
+}
+
+.add-position-btn {
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+// == CARD - PADRE/MADRE/TUTOR
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.parent-contact-entry {
+  & + .parent-contact-entry {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+}
+
+.parent-contact-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.parent-contact-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--mat-app-on-surface-variant, #666);
+}
+
 // == CARD - CREAR CUENTA DE USUARIO
 
 .create-user-card {
