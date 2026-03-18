@@ -19,7 +19,9 @@ import {
   HockeyBranchEnum,
   HockeyPositions,
   parseDate,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   RugbyPositions,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -104,6 +106,25 @@ export class ParentContactDto {
   @IsOptional()
   @IsString()
   phone?: string;
+}
+
+export class PlayerAvailabilityDto {
+  @IsEnum(PlayerAvailabilityEnum)
+  status!: PlayerAvailabilityEnum;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @IsDate()
+  since?: Date;
+
+  @IsOptional()
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @IsDate()
+  estimatedReturn?: Date;
 }
 
 export class CreatePlayerDto {
@@ -198,6 +219,18 @@ export class CreatePlayerDto {
   @ValidateNested({ each: true })
   @Type(() => ParentContactDto)
   readonly parentContacts?: ParentContactDto[];
+
+  @IsOptional()
+  @IsEnum(PlayerStatusEnum)
+  readonly status?: PlayerStatusEnum;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    const obj = typeof value === 'string' ? JSON.parse(value) : value;
+    return plainToInstance(PlayerAvailabilityDto, obj);
+  })
+  @ValidateNested()
+  readonly availability?: PlayerAvailabilityDto;
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)

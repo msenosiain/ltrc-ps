@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { UserProfileMenuComponent } from './common/components/user-profile-menu/user-profile-menu.component';
+import { SidenavService } from './common/services/sidenav.service';
 
 @Component({
   selector: 'ltrc-root',
@@ -9,9 +12,17 @@ import { UserProfileMenuComponent } from './common/components/user-profile-menu/
     RouterOutlet,
     RouterLink,
     MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
     UserProfileMenuComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly sidenavService = inject(SidenavService);
+
+  toggleSidenav(): void {
+    this.sidenavService.toggle();
+  }
+}

@@ -4,6 +4,8 @@ import {
   ClothingSizesEnum,
   HockeyBranchEnum,
   HockeyPositions,
+  PlayerAvailabilityEnum,
+  PlayerStatusEnum,
   RugbyPositions,
   SportEnum,
 } from '../enums';
@@ -41,12 +43,20 @@ export interface ParentContact {
   phone?: string;
 }
 
+export interface PlayerAvailability {
+  status: PlayerAvailabilityEnum;
+  reason?: string;
+  since?: Date;
+  estimatedReturn?: Date;
+}
+
 export interface PlayerFilters {
   searchTerm?: string;
   sport?: SportEnum;
   position?: PlayerPosition;
   category?: CategoryEnum;
   branch?: HockeyBranchEnum;
+  status?: PlayerStatusEnum;
 }
 
 export interface Player extends Document {
@@ -65,6 +75,8 @@ export interface Player extends Document {
   readonly clothingSizes?: ClothingSizes;
   readonly medicalData?: MedicalData;
   readonly parentContacts?: ParentContact[];
+  readonly status?: PlayerStatusEnum;
+  readonly availability?: PlayerAvailability;
   readonly photoId?: string;
   readonly userId?: string;
   readonly createdAt?: Date;

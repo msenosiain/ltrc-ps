@@ -43,8 +43,13 @@ export const routes: Routes = [
       {
         path: 'branches',
         loadChildren: () =>
-          import('./branches/branches.routes').then(
-            (m) => m.BRANCHES_ROUTES
+          import('./branches/branches.routes').then((m) => m.BRANCHES_ROUTES),
+      },
+      {
+        path: 'trainings',
+        loadChildren: () =>
+          import('./trainings/trainings.routes').then(
+            (m) => m.TRAININGS_ROUTES
           ),
       },
       { path: 'set-password', component: SetPasswordComponent },

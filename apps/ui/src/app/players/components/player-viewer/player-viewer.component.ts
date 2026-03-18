@@ -11,13 +11,20 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   Player,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   RoleEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
 import { getBranchLabel } from '../../../common/branch-options';
 import { getSportLabel } from '../../../common/sport-options';
+import {
+  getStatusLabel,
+  getAvailabilityLabel,
+  getAvailabilityColor,
+} from '../../player-status-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
@@ -105,5 +112,28 @@ export class PlayerViewerComponent implements OnInit {
 
   getSportLabel(sport?: SportEnum | null): string {
     return getSportLabel(sport);
+  }
+
+  getStatusLabel(status?: PlayerStatusEnum): string {
+    return getStatusLabel(status);
+  }
+
+  getAvailabilityLabel(status?: PlayerAvailabilityEnum): string {
+    return getAvailabilityLabel(status);
+  }
+
+  getAvailabilityColor(status?: PlayerAvailabilityEnum): string {
+    return getAvailabilityColor(status);
+  }
+
+  get isUnavailable(): boolean {
+    return (
+      !!this.player?.availability?.status &&
+      this.player.availability.status !== PlayerAvailabilityEnum.AVAILABLE
+    );
+  }
+
+  get isInactive(): boolean {
+    return this.player?.status === PlayerStatusEnum.INACTIVE;
   }
 }

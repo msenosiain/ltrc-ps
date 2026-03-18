@@ -6,10 +6,23 @@
   >
     <mat-nav-list>
       <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, { role: RoleEnum.COACH, sport: SportEnum.RUGBY }]"
+        mat-list-item
+        routerLink="/dashboard"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="onNavClick()"
+        >Inicio</a
+      >
+      <a
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
+          RoleEnum.MANAGER,
+          { role: RoleEnum.COACH, sport: SportEnum.RUGBY }
+        ]"
         mat-list-item
         routerLink="players"
         routerLinkActive="active-link"
+        (click)="onNavClick()"
         >Jugadores</a
       >
       <a
@@ -17,44 +30,68 @@
         mat-list-item
         routerLink="tournaments"
         routerLinkActive="active-link"
+        (click)="onNavClick()"
         >Torneos</a
       >
       <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.PLAYER]"
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
+          RoleEnum.MANAGER,
+          RoleEnum.COACH,
+          RoleEnum.PLAYER
+        ]"
         mat-list-item
         routerLink="matches"
         routerLinkActive="active-link"
+        (click)="onNavClick()"
         >Partidos</a
       >
       <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, { role: RoleEnum.MANAGER, sport: SportEnum.HOCKEY }, { role: RoleEnum.COACH, sport: SportEnum.HOCKEY }]"
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
+          { role: RoleEnum.MANAGER, sport: SportEnum.HOCKEY },
+          { role: RoleEnum.COACH, sport: SportEnum.HOCKEY }
+        ]"
         mat-list-item
         routerLink="branches"
         routerLinkActive="active-link"
+        (click)="onNavClick()"
         >Ramas</a
+      >
+      <a
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
+          RoleEnum.MANAGER,
+          RoleEnum.COACH,
+          RoleEnum.TRAINER,
+          RoleEnum.PLAYER
+        ]"
+        mat-list-item
+        routerLink="trainings"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+        >Entrenamientos</a
       >
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN]"
         mat-list-item
         routerLink="users"
         routerLinkActive="active-link"
+        (click)="onNavClick()"
         >Usuarios</a
       >
       @if (isPlayer() && myPlayerId()) {
-      <a mat-list-item [routerLink]="['players', myPlayerId()]" routerLinkActive="active-link">Mi Perfil</a>
+      <a
+        mat-list-item
+        [routerLink]="['players', myPlayerId()]"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+        >Mi Perfil</a
+      >
       }
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <div class="toolbar">
-      <button
-        mat-icon-button
-        (click)="sidenav.toggle()"
-        aria-label="Abrir/cerrar menú"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-    </div>
     <div class="content">
       <router-outlet></router-outlet>
 
@@ -70,10 +107,9 @@
       </div>
       } @else {
       <div class="dashboard-home">
-        <h1>Bienvenido al Panel de Control</h1>
-        <p>
-          Utilice el menú lateral para navegar por las opciones disponibles.
-        </p>
+        <div class="widget-grid">
+          <ltrc-upcoming-trainings-widget />
+        </div>
       </div>
       } }
     </div>

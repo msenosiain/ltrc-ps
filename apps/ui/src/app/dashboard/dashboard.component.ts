@@ -1,9 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  Component,
+  inject,
+  OnInit,
+  signal,
+  computed,
+  ViewChild,
+  DestroyRef,
+} from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
 import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
@@ -12,6 +20,8 @@ import { AuthService } from '../auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PlayersService } from '../players/services/players.service';
+import { SidenavService } from '../common/services/sidenav.service';
+import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -24,6 +34,7 @@ import { PlayersService } from '../players/services/players.service';
     AllowedRolesDirective,
     MatButtonModule,
     MatIconModule,
+    UpcomingTrainingsWidgetComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -34,6 +45,10 @@ export class DashboardComponent implements OnInit {
   public authService = inject(AuthService);
   public router = inject(Router);
   private readonly playersService = inject(PlayersService);
+  private readonly sidenavService = inject(SidenavService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  @ViewChild('sidenav') sidenav!: MatSidenav;
 
   private readonly currentUser = toSignal(this.authService.user$);
   readonly isPlayer = computed(
@@ -54,7 +69,17 @@ export class DashboardComponent implements OnInit {
     { initialValue: this.breakpointObserver.isMatched('(max-width: 960px)') }
   );
 
+  onNavClick(): void {
+    if (this.isSmallScreen()) {
+      this.sidenav?.close();
+    }
+  }
+
   ngOnInit(): void {
+    this.sidenavService.toggle$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.sidenav?.toggle());
+
     if (this.isPlayer()) {
       this.playersService.getMyPlayer().subscribe({
         next: (player) => {

@@ -1,4 +1,10 @@
-import { Player, DATE_FORMAT, PlayerPosition } from '@ltrc-ps/shared-api-model';
+import {
+  Player,
+  DATE_FORMAT,
+  PlayerAvailabilityEnum,
+  PlayerPosition,
+  PlayerStatusEnum,
+} from '@ltrc-ps/shared-api-model';
 import { PlayerFormValue } from './player-form.types';
 import { format } from 'date-fns';
 
@@ -18,6 +24,8 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     address: mapAddress(value),
     clothingSizes: mapClothingSizes(value),
     medicalData: mapMedicalData(value),
+    status: value.status,
+    availability: mapAvailability(value),
     parentContacts: mapParentContacts(value),
     createUser: value.createUser ?? false,
   };
@@ -39,6 +47,13 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
     category: player.category ?? null,
     branch: player.branch ?? null,
     positions: player.positions ?? [],
+
+    status: player.status ?? PlayerStatusEnum.ACTIVE,
+    availabilityStatus:
+      player.availability?.status ?? PlayerAvailabilityEnum.AVAILABLE,
+    availabilityReason: player.availability?.reason ?? '',
+    availabilitySince: player.availability?.since ?? null,
+    availabilityEstimatedReturn: player.availability?.estimatedReturn ?? null,
 
     address: {
       street: player.address?.street ?? '',
@@ -107,6 +122,25 @@ function mapClothingSizes(value: PlayerFormValue) {
     pants: value.clothingSizes.pants ?? undefined,
   };
   return Object.values(c).some((v) => v !== undefined) ? c : undefined;
+}
+
+function mapAvailability(value: PlayerFormValue) {
+  if (
+    value.availabilityStatus === PlayerAvailabilityEnum.AVAILABLE &&
+    !value.availabilityReason
+  ) {
+    return undefined;
+  }
+  return {
+    status: value.availabilityStatus,
+    reason: value.availabilityReason || undefined,
+    since: value.availabilitySince
+      ? format(value.availabilitySince, DATE_FORMAT)
+      : undefined,
+    estimatedReturn: value.availabilityEstimatedReturn
+      ? format(value.availabilityEstimatedReturn, DATE_FORMAT)
+      : undefined,
+  };
 }
 
 function mapParentContacts(value: PlayerFormValue) {

@@ -1,0 +1,25 @@
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  <a
+    mat-tab-link
+    routerLink="sessions"
+    routerLinkActive
+    #sessionsLink="routerLinkActive"
+    [active]="sessionsLink.isActive"
+  >
+    Sesiones
+  </a>
+  <a
+    *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+    mat-tab-link
+    routerLink="schedules"
+    routerLinkActive
+    #schedulesLink="routerLinkActive"
+    [active]="schedulesLink.isActive"
+  >
+    Horarios
+  </a>
+</nav>
+
+<mat-tab-nav-panel #tabPanel>
+  <router-outlet />
+</mat-tab-nav-panel>

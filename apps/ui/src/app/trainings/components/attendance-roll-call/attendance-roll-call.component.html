@@ -1,0 +1,142 @@
+<div class="roll-call">
+  <div class="roll-call-header">
+    <h2>Pasar lista</h2>
+    @if (session) {
+    <span class="session-info">
+      {{ session.date | date : 'dd/MM/yyyy' }} — {{ session.startTime }}-{{
+        session.endTime
+      }}
+    </span>
+    }
+  </div>
+
+  @if (loading) {
+  <mat-progress-bar mode="indeterminate" />
+  } @else {
+
+  <div class="roll-call-actions-top">
+    <button mat-stroked-button type="button" (click)="markAllPresent()">
+      <mat-icon>done_all</mat-icon>
+      Todos presentes
+    </button>
+  </div>
+
+  <!-- Staff section -->
+  @if (staffRows.length) {
+  <mat-card>
+    <mat-card-title>Entrenadores / Staff</mat-card-title>
+    <div class="attendance-rows">
+      @for (row of staffRows; track row.userId) {
+      <div class="attendance-row">
+        <div class="row-info">
+          <span class="row-name">{{ row.name }}</span>
+          @if (row.confirmed) {
+          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          }
+        </div>
+        <mat-button-toggle-group
+          [value]="row.status"
+          (change)="row.status = $event.value"
+        >
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
+            P
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
+            A
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
+            J
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      }
+    </div>
+  </mat-card>
+  }
+
+  <!-- Players section -->
+  <mat-card>
+    <mat-card-title>Jugadores</mat-card-title>
+    <div class="attendance-rows">
+      @for (row of playerRows; track row.playerId) {
+      <div class="attendance-row">
+        <div class="row-info">
+          <span class="row-name">{{ row.name }}</span>
+          @if (row.confirmed) {
+          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          }
+        </div>
+        <mat-button-toggle-group
+          [value]="row.status"
+          (change)="row.status = $event.value"
+        >
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
+            P
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
+            A
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
+            J
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      }
+    </div>
+  </mat-card>
+
+  <!-- Injured players section -->
+  @if (injuredRows.length) {
+  <mat-card>
+    <mat-card-title>Lesionados (diferenciado)</mat-card-title>
+    <div class="attendance-rows">
+      @for (row of injuredRows; track row.playerId) {
+      <div class="attendance-row">
+        <div class="row-info">
+          <span class="row-name">{{ row.name }}</span>
+          @if (row.confirmed) {
+          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          }
+        </div>
+        <mat-button-toggle-group
+          [value]="row.status"
+          (change)="row.status = $event.value"
+        >
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
+            P
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
+            A
+          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
+            J
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      }
+    </div>
+  </mat-card>
+  }
+
+  <!-- Actions -->
+  <div class="roll-call-actions">
+    <button mat-stroked-button type="button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="saving"
+      (click)="save()"
+    >
+      <mat-icon>save</mat-icon>
+      {{ saving ? 'Guardando...' : 'Guardar asistencia' }}
+    </button>
+  </div>
+
+  @if (saving) {
+  <mat-progress-bar mode="indeterminate" />
+  } }
+</div>

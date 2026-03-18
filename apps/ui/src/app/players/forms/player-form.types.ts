@@ -2,7 +2,9 @@ import {
   CategoryEnum,
   ClothingSizesEnum,
   HockeyBranchEnum,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
@@ -46,6 +48,12 @@ export type PlayerFormValue = {
     torgIndex: number | null;
     healthInsurance: string;
   };
+
+  status: PlayerStatusEnum;
+  availabilityStatus: PlayerAvailabilityEnum;
+  availabilityReason: string;
+  availabilitySince: Date | null;
+  availabilityEstimatedReturn: Date | null;
 
   parentContacts: ParentContactValue[];
 };

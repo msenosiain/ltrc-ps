@@ -1,0 +1,140 @@
+.session-viewer {
+  max-width: 800px;
+}
+
+.session-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &.status-scheduled {
+    background: #fff8e1;
+    color: #e65100;
+  }
+
+  &.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.status-cancelled {
+    background: #f5f5f5;
+    color: #757575;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 0.95rem;
+}
+
+.notes-section {
+  margin-bottom: 24px;
+
+  p {
+    margin: 4px 0 0;
+  }
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+
+.attendance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.attendance-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.attendance-name {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+.confirmed-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #4caf50;
+}
+
+.attendance-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+
+  &--present {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &--absent {
+    background: #fce4ec;
+    color: #b71c1c;
+  }
+
+  &--justified {
+    background: #fff8e1;
+    color: #e65100;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}

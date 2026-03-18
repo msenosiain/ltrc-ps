@@ -3,7 +3,9 @@ import {
   CategoryEnum,
   ClothingSizesEnum,
   HockeyBranchEnum,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
@@ -45,6 +47,13 @@ export class PlayerEntity extends Document {
     email?: string;
     phone?: string;
   }[];
+  status?: PlayerStatusEnum;
+  availability?: {
+    status: PlayerAvailabilityEnum;
+    reason?: string;
+    since?: Date;
+    estimatedReturn?: Date;
+  };
   photoId?: string;
   userId?: Types.ObjectId;
   createdAt: Date;

@@ -1,0 +1,29 @@
+<div class="schedule-editor">
+  <div class="editor-header">
+    <h2 class="editor-title">
+      {{ editing ? 'Editar horario' : 'Nuevo horario' }}
+    </h2>
+
+    @if (editing && schedule) {
+    <button
+      mat-stroked-button
+      color="warn"
+      type="button"
+      class="delete-btn"
+      (click)="onDelete()"
+    >
+      <mat-icon>delete</mat-icon>
+      Eliminar horario
+    </button>
+    } @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
+    }
+  </div>
+
+  <ltrc-schedule-form
+    [schedule]="schedule"
+    [submitting]="submitting"
+    (formSubmit)="onFormSubmit($event)"
+    (cancel)="onCancel()"
+  />
+</div>

@@ -1,9 +1,11 @@
-import { IsOptional, IsString, IsEnum, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsIn, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 import {
   CategoryEnum,
   HockeyBranchEnum,
   HockeyPositions,
   PlayerPosition,
+  PlayerStatusEnum,
   RugbyPositions,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -33,4 +35,13 @@ export class PlayerFiltersDto {
   @IsOptional()
   @IsEnum(HockeyBranchEnum)
   branch?: HockeyBranchEnum;
+
+  @IsOptional()
+  @IsEnum(PlayerStatusEnum)
+  status?: PlayerStatusEnum;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  availableForTraining?: boolean;
 }

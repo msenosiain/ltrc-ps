@@ -59,6 +59,7 @@ export class UserSearchComponent implements OnInit {
       .subscribe((values) =>
         this.filtersChange.emit(nullToUndefined(values) as UserFilters)
       );
+
   }
 
   clearField(field: string): void {

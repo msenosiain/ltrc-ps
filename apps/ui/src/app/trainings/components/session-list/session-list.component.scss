@@ -1,0 +1,47 @@
+@use '../../../common/styles/list-layout';
+
+.sessions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+}
+
+.sessions-table {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .session-row {
+    @include list-layout.clickable-row;
+  }
+}
+
+.session-time {
+  margin-left: 4px;
+  font-size: 0.85rem;
+  color: var(--mat-app-on-surface-variant, #666);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  &.status-scheduled {
+    background: #fff8e1;
+    color: #e65100;
+  }
+
+  &.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.status-cancelled {
+    background: #f5f5f5;
+    color: #757575;
+  }
+}

@@ -5,6 +5,8 @@ import {
   ClothingSizesEnum,
   HockeyBranchEnum,
   HockeyPositions,
+  PlayerAvailabilityEnum,
+  PlayerStatusEnum,
   RugbyPositions,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -88,6 +90,26 @@ export const PlayerSchema = new Schema<PlayerEntity>(
     clothingSizes: ClothingSizesSchema,
     medicalData: MedicalDataSchema,
     parentContacts: [ParentContactSchema],
+    status: {
+      type: String,
+      enum: Object.values(PlayerStatusEnum),
+      default: PlayerStatusEnum.ACTIVE,
+    },
+    availability: {
+      type: new Schema(
+        {
+          status: {
+            type: String,
+            enum: Object.values(PlayerAvailabilityEnum),
+            default: PlayerAvailabilityEnum.AVAILABLE,
+          },
+          reason: String,
+          since: Date,
+          estimatedReturn: Date,
+        },
+        { _id: false }
+      ),
+    },
     photoId: { type: String },
     userId: {
       type: Schema.Types.ObjectId,

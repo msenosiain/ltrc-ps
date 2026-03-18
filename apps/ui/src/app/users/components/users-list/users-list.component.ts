@@ -8,12 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { RoleEnum, SortOrder } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum, SortOrder } from '@ltrc-ps/shared-api-model';
 import { UsersService } from '../../services/users.service';
 import { UsersDataSource, UserFilters } from '../../services/users.datasource';
 import { UserSearchComponent } from '../user-search/user-search.component';
 import { getRoleLabel, getRoleClass } from '../../user-options';
 import { getCategoryLabel } from '../../../common/category-options';
+import { getSportLabel } from '../../../common/sport-options';
 import { User } from '../../User.interface';
 import { ListStateService } from '../../../common/services/list-state.service';
 
@@ -41,7 +42,7 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
   private readonly usersService = inject(UsersService);
   private readonly listState = inject(ListStateService);
 
-  readonly displayedColumns = ['name', 'roles', 'categories', 'branches', 'email', 'actions'];
+  readonly displayedColumns = ['name', 'roles', 'sports', 'categories', 'branches', 'email', 'actions'];
   readonly dataSource = new UsersDataSource(this.usersService);
   readonly savedState = this.listState.get(UsersListComponent.STATE_KEY);
 
@@ -81,6 +82,9 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
       );
       this.saveState();
     });
+
+    // Trigger initial load with saved or empty filters
+    this.dataSource.setFilters(this.currentFilters);
   }
 
   ngOnDestroy(): void {
@@ -119,6 +123,10 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
 
   getRoleClass(role: RoleEnum): string {
     return getRoleClass(role);
+  }
+
+  getSportsLabel(user: User): string {
+    return user.sports?.map((s: SportEnum) => getSportLabel(s)).join(', ') || '';
   }
 
   getCategoriesLabel(user: User): string {

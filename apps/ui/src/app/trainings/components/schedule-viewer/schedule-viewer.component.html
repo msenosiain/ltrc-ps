@@ -1,0 +1,82 @@
+<div class="schedule-viewer">
+  @if (schedule) {
+  <mat-card>
+    <mat-card-content>
+      <div class="schedule-header">
+        <h2>{{ getSportLabel() }} — {{ getCategoryLabel() }}</h2>
+        <span
+          class="active-badge"
+          [class.active]="schedule.isActive"
+          [class.inactive]="!schedule.isActive"
+        >
+          {{ schedule.isActive ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Deporte</span>
+          <span class="info-value">{{ getSportLabel() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Categoría</span>
+          <span class="info-value">{{ getCategoryLabel() }}</span>
+        </div>
+        @if (schedule.division) {
+        <div class="info-item">
+          <span class="info-label">División</span>
+          <span class="info-value">{{ schedule.division }}</span>
+        </div>
+        } @if (schedule.validFrom) {
+        <div class="info-item">
+          <span class="info-label">Válido desde</span>
+          <span class="info-value">{{
+            schedule.validFrom | date : 'dd/MM/yyyy'
+          }}</span>
+        </div>
+        } @if (schedule.validUntil) {
+        <div class="info-item">
+          <span class="info-label">Válido hasta</span>
+          <span class="info-value">{{
+            schedule.validUntil | date : 'dd/MM/yyyy'
+          }}</span>
+        </div>
+        }
+      </div>
+
+      <h3 class="section-title">Horarios</h3>
+      <div class="time-slots-list">
+        @for (slot of schedule.timeSlots; track $index) {
+        <div class="time-slot-item">
+          <span class="day-name">{{ getDayLabel(slot.day) }}</span>
+          <span class="time-range"
+            >{{ slot.startTime }} - {{ slot.endTime }}</span
+          >
+          @if (slot.location) {
+          <span class="slot-location">{{ slot.location }}</span>
+          }
+        </div>
+        }
+      </div>
+
+      <div class="actions">
+        <button mat-stroked-button (click)="backToList()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+          mat-raised-button
+          color="primary"
+          (click)="edit()"
+        >
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  } @else {
+  <p>Cargando...</p>
+  }
+</div>

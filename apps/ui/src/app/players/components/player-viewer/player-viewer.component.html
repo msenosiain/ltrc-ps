@@ -69,6 +69,20 @@
             </mat-chip>
             }
           </div>
+
+          @if (isInactive) {
+          <mat-chip class="status-chip" style="background: #9e9e9e; color: white">
+            Inactivo
+          </mat-chip>
+          }
+          @if (isUnavailable) {
+          <mat-chip class="status-chip" [style.background]="getAvailabilityColor(player.availability?.status)" style="color: white">
+            {{ getAvailabilityLabel(player.availability?.status) }}
+            @if (player.availability?.reason) {
+              &mdash; {{ player.availability!.reason }}
+            }
+          </mat-chip>
+          }
         </div>
       </div>
     </mat-card-content>

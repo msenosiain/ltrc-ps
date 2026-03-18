@@ -1,0 +1,51 @@
+import {
+  PlayerAvailabilityEnum,
+  PlayerStatusEnum,
+} from '@ltrc-ps/shared-api-model';
+
+export const playerStatusOptions: { id: PlayerStatusEnum; label: string }[] = [
+  { id: PlayerStatusEnum.ACTIVE, label: 'Activo' },
+  { id: PlayerStatusEnum.INACTIVE, label: 'Inactivo' },
+];
+
+export const playerAvailabilityOptions: {
+  id: PlayerAvailabilityEnum;
+  label: string;
+}[] = [
+  { id: PlayerAvailabilityEnum.AVAILABLE, label: 'Disponible' },
+  { id: PlayerAvailabilityEnum.INJURED, label: 'Lesionado' },
+  { id: PlayerAvailabilityEnum.CALLED_UP, label: 'Convocado' },
+  { id: PlayerAvailabilityEnum.SUSPENDED, label: 'Suspendido' },
+  { id: PlayerAvailabilityEnum.LEAVE, label: 'Licencia' },
+];
+
+export function getStatusLabel(status?: PlayerStatusEnum): string {
+  if (!status) return 'Activo';
+  return playerStatusOptions.find((o) => o.id === status)?.label ?? status;
+}
+
+export function getAvailabilityLabel(
+  status?: PlayerAvailabilityEnum
+): string {
+  if (!status) return 'Disponible';
+  return (
+    playerAvailabilityOptions.find((o) => o.id === status)?.label ?? status
+  );
+}
+
+export function getAvailabilityColor(
+  status?: PlayerAvailabilityEnum
+): string {
+  switch (status) {
+    case PlayerAvailabilityEnum.INJURED:
+      return '#e65100';
+    case PlayerAvailabilityEnum.CALLED_UP:
+      return '#1565c0';
+    case PlayerAvailabilityEnum.SUSPENDED:
+      return '#c62828';
+    case PlayerAvailabilityEnum.LEAVE:
+      return '#6a1b9a';
+    default:
+      return '#2e7d32';
+  }
+}

@@ -163,6 +163,18 @@ $photo: $col;
   }
 }
 
+.availability-grid {
+  display: grid;
+  grid-template-columns: repeat(5, $col);
+  gap: $gap;
+  align-items: start;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 .section-grid,
 .clothing-grid {
   display: grid;
@@ -319,7 +331,8 @@ $photo: $col;
     }
   }
 
-  .sport-grid {
+  .sport-grid,
+  .availability-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -417,6 +430,7 @@ $photo: $col;
   }
 
   .sport-grid,
+  .availability-grid,
   .section-grid,
   .clothing-grid {
     grid-template-columns: 1fr;

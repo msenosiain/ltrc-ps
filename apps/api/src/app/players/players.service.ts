@@ -16,6 +16,8 @@ import {
   parseDate,
   PaginatedResponse,
   Player,
+  PlayerAvailabilityEnum,
+  PlayerStatusEnum,
   RoleEnum,
   RugbyPositions,
   SportEnum,
@@ -143,14 +145,38 @@ export class PlayersService {
     const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
     const skip = (page - 1) * size;
 
-    const queryFilters = {};
+    const queryFilters: Record<string, unknown> = {};
+    const andConditions: Record<string, unknown>[] = [];
+
+    // status filter — default to active only (includes legacy docs without status field)
+    if (filters.status) {
+      if (filters.status === PlayerStatusEnum.ACTIVE) {
+        andConditions.push({
+          $or: [
+            { status: PlayerStatusEnum.ACTIVE },
+            { status: { $exists: false } },
+          ],
+        });
+      } else {
+        queryFilters['status'] = filters.status;
+      }
+    } else {
+      andConditions.push({
+        $or: [
+          { status: PlayerStatusEnum.ACTIVE },
+          { status: { $exists: false } },
+        ],
+      });
+    }
 
     // searchTerm → name o nickName
     if (filters.searchTerm) {
-      queryFilters['$or'] = [
-        { name: { $regex: new RegExp(filters.searchTerm, 'i') } },
-        { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
-      ];
+      andConditions.push({
+        $or: [
+          { name: { $regex: new RegExp(filters.searchTerm, 'i') } },
+          { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+        ],
+      });
     }
 
     // position → busca en el array positions
@@ -173,6 +199,17 @@ export class PlayersService {
       queryFilters['branch'] = filters.branch;
     }
 
+    // availableForTraining: exclude called_up, suspended, leave (keep injured + available)
+    if (filters.availableForTraining) {
+      andConditions.push({
+        $or: [
+          { 'availability.status': { $exists: false } },
+          { 'availability.status': PlayerAvailabilityEnum.AVAILABLE },
+          { 'availability.status': PlayerAvailabilityEnum.INJURED },
+        ],
+      });
+    }
+
     // Server-side restriction: limit results to user's assigned scope
     // (applies to any non-admin user with sports/categories/branches assigned)
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
@@ -181,6 +218,10 @@ export class PlayersService {
         queryFilters['category'] = { $in: caller.categories };
       if (caller.branches?.length)
         queryFilters['branch'] = { $in: caller.branches };
+    }
+
+    if (andConditions.length) {
+      queryFilters['$and'] = andConditions;
     }
 
     // Sorting

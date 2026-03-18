@@ -1,11 +1,13 @@
 import {
   Component,
+  DestroyRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -45,6 +47,7 @@ export class BranchSearchComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly filterContext = inject(UserFilterContextService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly currentYear = new Date().getFullYear();
   readonly seasonOptions = Array.from({ length: 5 }, (_, i) => this.currentYear - i);
@@ -65,7 +68,7 @@ export class BranchSearchComponent implements OnInit {
       this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
     }
 
-    this.filterContext.filterContext$.subscribe((ctx) => {
+    this.filterContext.filterContext$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((ctx) => {
       if (ctx.forcedCategory) {
         this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
         this.showCategoryFilter = false;
@@ -80,7 +83,7 @@ export class BranchSearchComponent implements OnInit {
       this.filteredBranchOptions = ctx.branchOptions;
     });
 
-    this.searchForm.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+    this.searchForm.valueChanges.pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.emitFilters();
     });
 

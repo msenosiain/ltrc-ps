@@ -1,0 +1,104 @@
+@use '../../../common/styles/form-layout';
+
+$col: 240px;
+$gap: 12px;
+
+.schedule-form-container {
+  display: block;
+  padding: 0;
+}
+
+.schedule-form-container mat-card {
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($col, 1fr));
+  gap: $gap;
+  align-items: start;
+  margin-top: 12px;
+
+  mat-form-field {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.toggle-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.time-slots {
+  margin-top: 12px;
+}
+
+.time-slot-row {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+  margin-bottom: 4px;
+}
+
+.day-field {
+  width: 180px;
+}
+
+.time-field {
+  width: 140px;
+}
+
+.location-field {
+  width: 200px;
+}
+
+.add-slot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.validity-grid {
+  display: flex;
+  gap: $gap;
+  margin-top: 12px;
+
+  mat-form-field {
+    width: $col;
+  }
+}
+
+@media (max-width: 820px) {
+  .schedule-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .schedule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .time-slot-row {
+    flex-wrap: wrap;
+  }
+
+  .day-field,
+  .time-field {
+    width: 100%;
+  }
+
+  .validity-grid {
+    flex-wrap: wrap;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}

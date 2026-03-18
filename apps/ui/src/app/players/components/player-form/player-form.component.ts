@@ -36,6 +36,7 @@ import {
   ClothingSizesEnum,
   HockeyBranchEnum,
   Player,
+  PlayerAvailabilityEnum,
   PlayerPosition,
   RoleEnum,
   SportEnum,
@@ -55,6 +56,10 @@ import { PlayerFormValue } from '../../forms/player-form.types';
 import { PlayersService } from '../../services/players.service';
 import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
 import { AuthService } from '../../../auth/auth.service';
+import {
+  playerStatusOptions,
+  playerAvailabilityOptions,
+} from '../../player-status-options';
 
 export interface PlayerFormSubmitEvent {
   payload: PlayerFormValue;
@@ -112,8 +117,18 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   readonly branchOptions = Object.values(HockeyBranchEnum);
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
+  readonly statusOptions = playerStatusOptions;
+  readonly availabilityOptions = playerAvailabilityOptions;
+
   positions: PositionOption[] = getPositionOptionsBySport(null);
   categories: CategoryOption[] = getCategoryOptionsBySport(null);
+
+  get showAvailabilityDetails(): boolean {
+    return (
+      this.playerForm.get('availabilityStatus')?.value !==
+      PlayerAvailabilityEnum.AVAILABLE
+    );
+  }
 
   get isHockey(): boolean {
     return this.playerForm.get('sport')?.value === SportEnum.HOCKEY;

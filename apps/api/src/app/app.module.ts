@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
+import { TrainingsModule } from './trainings/trainings.module';
 
 export const configSchema = Joi.object({
   API_PORT: Joi.number().integer().default(3000),
@@ -58,6 +59,7 @@ export const configSchema = Joi.object({
     TournamentsModule,
     SquadsModule,
     BranchAssignmentsModule,
+    TrainingsModule,
     HealthModule,
   ],
 })

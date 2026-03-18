@@ -269,6 +269,59 @@
     </div>
   </mat-card>
 
+  <!-- ESTADO Y DISPONIBILIDAD -->
+  <mat-card>
+    <mat-card-title>Estado y disponibilidad</mat-card-title>
+    <div class="card-grid availability-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          @for (opt of statusOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Disponibilidad</mat-label>
+        <mat-select formControlName="availabilityStatus">
+          @for (opt of availabilityOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (showAvailabilityDetails) {
+      <mat-form-field appearance="outline">
+        <mat-label>Motivo</mat-label>
+        <input matInput formControlName="availabilityReason" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input
+          matInput
+          [matDatepicker]="sincePicker"
+          formControlName="availabilitySince"
+        />
+        <mat-datepicker-toggle matSuffix [for]="sincePicker" />
+        <mat-datepicker #sincePicker />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Retorno estimado</mat-label>
+        <input
+          matInput
+          [matDatepicker]="returnPicker"
+          formControlName="availabilityEstimatedReturn"
+        />
+        <mat-datepicker-toggle matSuffix [for]="returnPicker" />
+        <mat-datepicker #returnPicker />
+      </mat-form-field>
+      }
+    </div>
+  </mat-card>
+
   <!-- DATOS MÉDICOS -->
   <mat-card>
     <mat-card-title>Datos médicos</mat-card-title>

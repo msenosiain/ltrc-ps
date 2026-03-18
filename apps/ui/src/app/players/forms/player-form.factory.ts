@@ -3,7 +3,9 @@ import {
   CategoryEnum,
   ClothingSizesEnum,
   HockeyBranchEnum,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
@@ -67,6 +69,14 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
       torgIndex: fb.control<number | null>(null),
       healthInsurance: fb.nonNullable.control(''),
     }),
+
+    status: fb.nonNullable.control<PlayerStatusEnum>(PlayerStatusEnum.ACTIVE),
+    availabilityStatus: fb.nonNullable.control<PlayerAvailabilityEnum>(
+      PlayerAvailabilityEnum.AVAILABLE
+    ),
+    availabilityReason: fb.nonNullable.control(''),
+    availabilitySince: fb.control<Date | null>(null),
+    availabilityEstimatedReturn: fb.control<Date | null>(null),
 
     parentContacts: fb.array<FormGroup>([]),
   });

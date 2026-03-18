@@ -1,0 +1,163 @@
+<form
+  [formGroup]="scheduleForm"
+  (ngSubmit)="onSubmit()"
+  class="schedule-form-container"
+>
+  <!-- DATOS GENERALES -->
+  <mat-card>
+    <mat-card-title>Datos del horario</mat-card-title>
+    <div class="schedule-grid">
+      @if (showSportField) {
+      <mat-form-field appearance="outline">
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport">
+          @for (s of sportOptions; track s.id) {
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+        @if (scheduleForm.get('sport')?.invalid) {
+        <mat-error>El deporte es obligatorio</mat-error>
+        }
+      </mat-form-field>
+      }
+
+      @if (showCategoryField) {
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category">
+          @for (cat of categoryOptions; track cat.id) {
+          <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+        @if (scheduleForm.get('category')?.invalid) {
+        <mat-error>La categoría es obligatoria</mat-error>
+        }
+      </mat-form-field>
+      }
+
+      @if (isHockey) {
+      <mat-form-field appearance="outline">
+        <mat-label>Rama</mat-label>
+        <input
+          matInput
+          formControlName="division"
+          placeholder="Ej: Primera, Intermedia..."
+        />
+      </mat-form-field>
+      }
+
+      <div class="toggle-field">
+        <mat-slide-toggle formControlName="isActive">Activo</mat-slide-toggle>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- HORARIOS -->
+  <mat-card>
+    <mat-card-title>Horarios de entrenamiento</mat-card-title>
+    <div class="time-slots" formArrayName="timeSlots">
+      @for (slot of timeSlotsArray.controls; track $index; let i = $index) {
+      <div class="time-slot-row" [formGroupName]="i">
+        <mat-form-field appearance="outline" class="day-field">
+          <mat-label>Día</mat-label>
+          <mat-select formControlName="day">
+            @for (d of dayOptions; track d.id) {
+            <mat-option [value]="d.id">{{ d.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="time-field">
+          <mat-label>Desde</mat-label>
+          <input matInput type="time" formControlName="startTime" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="time-field">
+          <mat-label>Hasta</mat-label>
+          <input matInput type="time" formControlName="endTime" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="location-field">
+          <mat-label>Ubicación</mat-label>
+          <input
+            matInput
+            formControlName="location"
+            placeholder="Ej: Cancha principal"
+          />
+        </mat-form-field>
+
+        <button
+          mat-icon-button
+          type="button"
+          color="warn"
+          (click)="removeTimeSlot(i)"
+          [disabled]="timeSlotsArray.length <= 1"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      }
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="addTimeSlot()"
+        class="add-slot-btn"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar día
+      </button>
+    </div>
+  </mat-card>
+
+  <!-- VIGENCIA -->
+  <mat-card>
+    <mat-card-title>Vigencia</mat-card-title>
+    <div class="validity-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Válido desde</mat-label>
+        <input
+          matInput
+          [matDatepicker]="fromPicker"
+          formControlName="validFrom"
+          placeholder="DD/MM/AAAA"
+        />
+        <mat-datepicker-toggle matSuffix [for]="fromPicker" />
+        <mat-datepicker #fromPicker />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Válido hasta</mat-label>
+        <input
+          matInput
+          [matDatepicker]="untilPicker"
+          formControlName="validUntil"
+          placeholder="DD/MM/AAAA"
+        />
+        <mat-datepicker-toggle matSuffix [for]="untilPicker" />
+        <mat-datepicker #untilPicker />
+      </mat-form-field>
+    </div>
+  </mat-card>
+
+  <!-- ACCIONES -->
+  <div class="form-actions">
+    <button mat-stroked-button type="button" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Cancelar
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="submitting || scheduleForm.invalid"
+    >
+      <mat-icon>{{ schedule ? 'save' : 'add' }}</mat-icon>
+      {{ schedule ? 'Actualizar horario' : 'Crear horario' }}
+    </button>
+  </div>
+
+  @if (submitting) {
+  <mat-progress-bar mode="indeterminate" />
+  }
+</form>

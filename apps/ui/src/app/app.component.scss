@@ -24,6 +24,12 @@
   width: 100%;
 }
 
+.logo-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .logo-section {
   display: flex;
   align-items: center;
@@ -34,4 +40,10 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
+}
+
+@media (max-width: 960px) {
+  .title {
+    display: none;
+  }
 }

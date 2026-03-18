@@ -1,8 +1,17 @@
 <mat-toolbar color="primary">
   <div class="toolbar-content">
-    <div class="logo-section" routerLink="/">
-      <img src="logo-ltrc.png" alt="Logo" class="logo" />
-      <span class="title">Los Tordos Rugby Club</span>
+    <div class="logo-left">
+      <button
+        mat-icon-button
+        (click)="toggleSidenav()"
+        aria-label="Abrir/cerrar menú"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+      <div class="logo-section" routerLink="/">
+        <img src="logo-ltrc.png" alt="Logo" class="logo" />
+        <span class="title">Los Tordos Rugby Club</span>
+      </div>
     </div>
 
     <ltrc-user-profile-menu />

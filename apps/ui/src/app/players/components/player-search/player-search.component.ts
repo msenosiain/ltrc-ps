@@ -14,6 +14,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import {
@@ -33,6 +34,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
+import { playerStatusOptions } from '../../player-status-options';
 
 @Component({
   selector: 'ltrc-player-search',
@@ -61,12 +63,14 @@ export class PlayerSearchComponent implements OnInit {
     position?: PlayerPosition;
     category?: CategoryEnum;
     branch?: HockeyBranchEnum;
+    status?: PlayerStatusEnum;
   }>();
 
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
   positionOptions: PositionOption[] = getPositionOptionsBySport();
   readonly branchOptions = Object.values(HockeyBranchEnum);
+  readonly statusOptions = playerStatusOptions;
 
   showSportFilter = true;
   showCategoryFilter = true;
@@ -80,6 +84,7 @@ export class PlayerSearchComponent implements OnInit {
     position: [undefined as PlayerPosition | undefined],
     category: [undefined as CategoryEnum | undefined],
     branch: [undefined as HockeyBranchEnum | undefined],
+    status: [undefined as PlayerStatusEnum | undefined],
   });
 
   ngOnInit(): void {

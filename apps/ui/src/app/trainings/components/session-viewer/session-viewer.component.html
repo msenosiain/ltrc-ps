@@ -1,0 +1,118 @@
+<div class="session-viewer">
+  @if (session) {
+  <mat-card>
+    <mat-card-content>
+      <div class="session-header">
+        <h2>Entrenamiento — {{ session.date | date : 'dd/MM/yyyy' }}</h2>
+        <span class="status-badge status-{{ session.status }}">
+          {{ getStatusLabel() }}
+        </span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Horario</span>
+          <span class="info-value"
+            >{{ session.startTime }} - {{ session.endTime }}</span
+          >
+        </div>
+        <div class="info-item">
+          <span class="info-label">Deporte</span>
+          <span class="info-value">{{ getSportLabel() }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Categoría</span>
+          <span class="info-value">{{ getCategoryLabel() }}</span>
+        </div>
+        @if (session.division) {
+        <div class="info-item">
+          <span class="info-label">División</span>
+          <span class="info-value">{{ session.division }}</span>
+        </div>
+        } @if (session.location) {
+        <div class="info-item">
+          <span class="info-label">Ubicación</span>
+          <span class="info-value">{{ session.location }}</span>
+        </div>
+        }
+        <div class="info-item">
+          <span class="info-label">Confirmados</span>
+          <span class="info-value">{{ confirmedCount }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Presentes</span>
+          <span class="info-value">{{ presentCount }}</span>
+        </div>
+      </div>
+
+      @if (session.notes) {
+      <div class="notes-section">
+        <span class="info-label">Notas</span>
+        <p>{{ session.notes }}</p>
+      </div>
+      }
+
+      <!-- Staff attendance -->
+      @if (staffAttendance.length) {
+      <h3 class="section-title">Entrenadores / Staff</h3>
+      <div class="attendance-list">
+        @for (entry of staffAttendance; track $index) {
+        <div class="attendance-item">
+          <span class="attendance-name">{{ getPlayerName(entry) }}</span>
+          @if (entry.confirmed) {
+          <mat-icon class="confirmed-icon">check_circle</mat-icon>
+          } @if (entry.status) {
+          <span class="attendance-status attendance-status--{{ entry.status }}">
+            {{ getAttendanceStatusLabel(entry) }}
+          </span>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Player attendance -->
+      @if (playerAttendance.length) {
+      <h3 class="section-title">Jugadores</h3>
+      <div class="attendance-list">
+        @for (entry of playerAttendance; track $index) {
+        <div class="attendance-item">
+          <span class="attendance-name">{{ getPlayerName(entry) }}</span>
+          @if (entry.confirmed) {
+          <mat-icon class="confirmed-icon">check_circle</mat-icon>
+          } @if (entry.status) {
+          <span class="attendance-status attendance-status--{{ entry.status }}">
+            {{ getAttendanceStatusLabel(entry) }}
+          </span>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <div class="actions">
+        <button
+          *ltrcAllowedRoles="[
+            RoleEnum.ADMIN,
+            RoleEnum.MANAGER,
+            RoleEnum.COACH,
+            RoleEnum.TRAINER
+          ]"
+          mat-raised-button
+          color="primary"
+          (click)="goToAttendance()"
+        >
+          <mat-icon>how_to_reg</mat-icon>
+          Pasar lista
+        </button>
+        <button mat-stroked-button (click)="backToList()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  } @else {
+  <p>Cargando...</p>
+  }
+</div>

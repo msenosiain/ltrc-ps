@@ -53,6 +53,14 @@
       </td>
     </ng-container>
 
+    <!-- Deportes -->
+    <ng-container matColumnDef="sports">
+      <th mat-header-cell *matHeaderCellDef>Deportes</th>
+      <td mat-cell *matCellDef="let user">
+        {{ getSportsLabel(user) }}
+      </td>
+    </ng-container>
+
     <!-- Categorías -->
     <ng-container matColumnDef="categories">
       <th mat-header-cell *matHeaderCellDef>Categorías</th>
