@@ -34,7 +34,7 @@ describe('SquadsController', () => {
   it('create() should create a squad', async () => {
     const dto = { name: 'Equipo Titular', players: [] };
     expect(await controller.create(dto)).toEqual(mockSquad);
-    expect(mockService.create).toHaveBeenCalledWith(dto);
+    expect(mockService.create).toHaveBeenCalledWith(dto, undefined);
   });
 
   it('getOne() should return a squad', async () => {
@@ -54,7 +54,7 @@ describe('SquadsController', () => {
     );
     expect(mockService.update).toHaveBeenCalledWith('squad-1', {
       name: 'Suplentes',
-    });
+    }, undefined);
   });
 
   it('delete() should delete a squad', async () => {

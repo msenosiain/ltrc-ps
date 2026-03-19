@@ -190,6 +190,23 @@
   color: var(--mat-app-on-surface, rgba(0, 0, 0, 0.87));
 }
 
+.tournament-link {
+  cursor: pointer;
+  color: var(--mat-app-primary, #1976d2);
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  .attachment-indicator {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-left: 2px;
+  }
+}
+
 .viewer-actions {
   display: flex;
   justify-content: flex-end;

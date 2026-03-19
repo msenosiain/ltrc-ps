@@ -41,8 +41,9 @@ export class TrainingSchedulesService {
     private readonly sessionModel: Model<TrainingSessionEntity>
   ) {}
 
-  async create(dto: CreateTrainingScheduleDto) {
-    return this.scheduleModel.create(dto as any);
+  async create(dto: CreateTrainingScheduleDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
+    return this.scheduleModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
   }
 
   async findPaginated(
@@ -91,10 +92,11 @@ export class TrainingSchedulesService {
     return schedule;
   }
 
-  async update(id: string, dto: UpdateTrainingScheduleDto) {
+  async update(id: string, dto: UpdateTrainingScheduleDto, caller?: User) {
     const schedule = await this.scheduleModel.findById(id);
     if (!schedule) throw new NotFoundException('Training schedule not found');
     Object.assign(schedule, dto);
+    if (caller) schedule.updatedBy = (caller as any)._id;
     return schedule.save();
   }
 

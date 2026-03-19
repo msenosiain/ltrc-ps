@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import {
   CategoryEnum,
   DayOfWeekEnum,
@@ -19,6 +19,8 @@ export class TrainingScheduleEntity extends Document {
   isActive: boolean;
   validFrom?: Date;
   validUntil?: Date;
+  createdBy?: Types.ObjectId;
+  updatedBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

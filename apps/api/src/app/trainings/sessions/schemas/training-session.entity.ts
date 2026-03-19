@@ -1,4 +1,4 @@
-import { Document, PopulatedDoc } from 'mongoose';
+import { Document, PopulatedDoc, Types } from 'mongoose';
 import {
   AttendanceStatusEnum,
   CategoryEnum,
@@ -31,6 +31,8 @@ export class TrainingSessionEntity extends Document {
     markedBy?: string;
   }[];
   notes?: string;
+  createdBy?: Types.ObjectId;
+  updatedBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

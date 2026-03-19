@@ -19,7 +19,6 @@ import { Transform, Type } from 'class-transformer';
 import {
   CategoryEnum,
   MatchStatusEnum,
-  MatchTypeEnum,
   parseDate,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
@@ -68,30 +67,26 @@ export class CreateMatchDto {
   @IsDate({ message: '$property must be a valid date (dd/MM/yyyy)' })
   readonly date!: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  readonly opponent!: string;
+  readonly opponent?: string;
 
   @IsNotEmpty()
   @IsString()
   readonly venue!: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {
     if (value === 'true') return true;
     if (value === 'false') return false;
     return value;
   })
-  readonly isHome!: boolean;
+  readonly isHome?: boolean;
 
   @IsOptional()
   @IsEnum(MatchStatusEnum)
   readonly status?: MatchStatusEnum;
-
-  @IsNotEmpty()
-  @IsEnum(MatchTypeEnum)
-  readonly type!: MatchTypeEnum;
 
   @IsOptional()
   @IsEnum(SportEnum)

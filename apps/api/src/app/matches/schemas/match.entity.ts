@@ -1,8 +1,7 @@
-import { Document, PopulatedDoc } from 'mongoose';
+import { Document, PopulatedDoc, Types } from 'mongoose';
 import {
   CategoryEnum,
   MatchStatusEnum,
-  MatchTypeEnum,
   SportEnum,
   VideoClip,
 } from '@ltrc-ps/shared-api-model';
@@ -13,11 +12,10 @@ export class MatchEntity extends Document {
   id: string;
   date: Date;
   time?: string;
-  opponent: string;
+  opponent?: string;
   venue: string;
-  isHome: boolean;
+  isHome?: boolean;
   status: MatchStatusEnum;
-  type: MatchTypeEnum;
   sport?: SportEnum;
   category?: CategoryEnum;
   division?: string;
@@ -32,6 +30,8 @@ export class MatchEntity extends Document {
     awayScore: number;
   };
   notes?: string;
+  createdBy?: Types.ObjectId;
+  updatedBy?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }

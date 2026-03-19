@@ -4,6 +4,7 @@ import { TournamentsController } from './tournaments.controller';
 import { TournamentsService } from './tournaments.service';
 import { TournamentEntity } from './schemas/tournament.entity';
 import { TournamentSchema } from './schemas/tournament.schema';
+import { GridFsModule } from '../shared/gridfs/gridfs.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TournamentSchema } from './schemas/tournament.schema';
         collection: 'tournaments',
       },
     ]),
+    GridFsModule,
   ],
   controllers: [TournamentsController],
   providers: [TournamentsService],

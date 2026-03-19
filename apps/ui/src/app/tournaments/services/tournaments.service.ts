@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   CategoryEnum,
+  MatchTypeEnum,
   PaginatedResponse,
   PaginationQuery,
   SportEnum,
@@ -16,6 +17,7 @@ export interface TournamentFormValue {
   description?: string;
   sport?: SportEnum | null;
   categories?: CategoryEnum[];
+  type?: MatchTypeEnum | null;
 }
 
 @Injectable({
@@ -62,5 +64,27 @@ export class TournamentsService {
 
   deleteTournament(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.tournamentsApiUrl}/${id}`);
+  }
+
+  uploadAttachment(tournamentId: string, file: File): Observable<Tournament> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.httpClient.post<Tournament>(
+      `${this.tournamentsApiUrl}/${tournamentId}/attachments`,
+      formData
+    );
+  }
+
+  getAttachmentUrl(tournamentId: string, attachmentId: string): string {
+    return `${this.tournamentsApiUrl}/${tournamentId}/attachments/${attachmentId}`;
+  }
+
+  deleteAttachment(
+    tournamentId: string,
+    attachmentId: string
+  ): Observable<Tournament> {
+    return this.httpClient.delete<Tournament>(
+      `${this.tournamentsApiUrl}/${tournamentId}/attachments/${attachmentId}`
+    );
   }
 }

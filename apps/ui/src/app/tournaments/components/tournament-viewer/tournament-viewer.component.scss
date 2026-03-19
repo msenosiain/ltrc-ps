@@ -58,6 +58,28 @@
   }
 }
 
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mat-app-on-surface-variant, #666);
+  margin: 0 0 8px;
+}
+
+.attachment-item {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-app-hover-state-layer-color, rgba(0, 0, 0, 0.04));
+  }
+}
+
+.attachment-meta {
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
 .viewer-actions {
   display: flex;
   justify-content: flex-end;

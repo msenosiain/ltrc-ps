@@ -13,9 +13,13 @@
             getSportLabel(tournament.sport)
           }}</mat-chip>
         </mat-chip-set>
+        } @if (tournament.type) {
+        <mat-chip-set>
+          <mat-chip>{{ getTypeLabel(tournament.type) }}</mat-chip>
+        </mat-chip-set>
         } @if (tournament.categories?.length) {
         <mat-chip-set>
-          @for (cat of tournament.categories; track cat) {
+          @for (cat of sortedCategories(); track cat) {
           <mat-chip>{{ getCategoryLabel(cat) }}</mat-chip>
           }
         </mat-chip-set>
@@ -45,6 +49,25 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  @if (tournament.attachments?.length) {
+  <mat-card>
+    <mat-card-content>
+      <p class="section-title">Archivos adjuntos</p>
+      <mat-list>
+        @for (att of tournament.attachments; track att.id) {
+        <mat-list-item class="attachment-item" (click)="downloadAttachment(att)">
+          <mat-icon matListItemIcon>{{ getAttachmentIcon(att.mimetype) }}</mat-icon>
+          <span matListItemTitle>{{ att.filename }}</span>
+          <span matListItemLine class="attachment-meta">
+            {{ att.uploadedAt | date : 'dd/MM/yyyy' }}
+          </span>
+        </mat-list-item>
+        }
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+  }
 
   <div class="viewer-actions">
     <button mat-stroked-button type="button" (click)="backToList()">

@@ -5,7 +5,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { Transform } from 'class-transformer';
+import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 
 export class CreateTournamentDto {
   @IsNotEmpty()
@@ -22,10 +23,16 @@ export class CreateTournamentDto {
 
   @IsOptional()
   @IsEnum(SportEnum)
+  @Transform(({ value }) => value ?? undefined)
   readonly sport?: SportEnum;
 
   @IsOptional()
   @IsArray()
   @IsEnum(CategoryEnum, { each: true })
   readonly categories?: CategoryEnum[];
+
+  @IsOptional()
+  @IsEnum(MatchTypeEnum)
+  @Transform(({ value }) => value ?? undefined)
+  readonly type?: MatchTypeEnum;
 }

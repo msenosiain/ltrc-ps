@@ -22,7 +22,6 @@ import { MatchSearchComponent } from '../match-search/match-search.component';
 import {
   Match,
   MatchStatusEnum,
-  MatchTypeEnum,
   RoleEnum,
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
@@ -139,10 +138,6 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   getStatusLabel(status: MatchStatusEnum): string {
     return this.matchesService.getStatusLabel(status);
-  }
-
-  getTypeLabel(type: MatchTypeEnum): string {
-    return this.matchesService.getTypeLabel(type);
   }
 
   getResultLabel(match: Match): string {

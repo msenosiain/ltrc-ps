@@ -12,10 +12,9 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
 
   return {
     date: format(date, h || m ? `${DATE_FORMAT} HH:mm` : DATE_FORMAT),
-    opponent: value.opponent,
+    opponent: value.opponent || undefined,
     venue: value.venue,
     isHome: value.isHome,
-    type: value.type!,
     status: value.status,
     sport: value.sport ?? undefined,
     category: value.category ?? undefined,

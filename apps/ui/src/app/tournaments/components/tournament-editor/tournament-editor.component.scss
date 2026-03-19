@@ -35,3 +35,45 @@
     margin-top: 8px;
   }
 }
+
+.attachments-section {
+  margin-top: 16px;
+
+  mat-divider {
+    margin-bottom: 16px;
+  }
+}
+
+.attachments-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  .section-title {
+    flex: 1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--mat-app-on-surface-variant, #666);
+    margin: 0;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.attachment-meta {
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
+.no-attachments {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 8px 0 0;
+}

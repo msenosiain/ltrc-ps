@@ -23,13 +23,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { CategoryEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
 import { TournamentFormValue } from '../../services/tournaments.service';
 import { SportOption, sportOptions } from '../../../common/sport-options';
 import {
   CategoryOption,
   getCategoryOptionsBySport,
 } from '../../../common/category-options';
+import { matchTypeOptions, MatchOption } from '../../tournament-options';
 
 @Component({
   standalone: true,
@@ -58,6 +59,7 @@ export class TournamentFormComponent implements OnInit, OnChanges {
   @Output() readonly cancel = new EventEmitter<void>();
 
   readonly sportOptions: SportOption[] = sportOptions;
+  readonly typeOptions: MatchOption<MatchTypeEnum>[] = matchTypeOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
 
   tournamentForm: FormGroup = this.fb.group({
@@ -66,6 +68,7 @@ export class TournamentFormComponent implements OnInit, OnChanges {
     description: [''],
     sport: [null as SportEnum | null],
     categories: [[] as CategoryEnum[]],
+    type: [null as MatchTypeEnum | null],
   });
 
   ngOnInit(): void {
@@ -91,6 +94,7 @@ export class TournamentFormComponent implements OnInit, OnChanges {
       this.tournamentForm.patchValue({
         ...this.tournament,
         categories: this.tournament.categories ?? [],
+        type: this.tournament.type ?? null,
       });
     }
   }

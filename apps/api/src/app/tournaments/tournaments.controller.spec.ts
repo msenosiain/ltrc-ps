@@ -39,8 +39,9 @@ describe('TournamentsController', () => {
   });
 
   it('create() should create a tournament', async () => {
+    const mockReq = { user: { _id: 'user-1' } } as any;
     expect(
-      await controller.create({ name: 'Liga Provincial', season: '2026' })
+      await controller.create({ name: 'Liga Provincial', season: '2026' }, mockReq)
     ).toEqual(mockTournament);
   });
 
@@ -56,12 +57,13 @@ describe('TournamentsController', () => {
   });
 
   it('update() should update a tournament', async () => {
+    const mockReq = { user: { _id: 'user-1' } } as any;
     expect(
-      await controller.update('tournament-1', { name: 'Copa Argentina' })
+      await controller.update('tournament-1', { name: 'Copa Argentina' }, mockReq)
     ).toEqual(mockTournament);
     expect(mockService.update).toHaveBeenCalledWith('tournament-1', {
       name: 'Copa Argentina',
-    });
+    }, mockReq.user);
   });
 
   it('delete() should delete a tournament', async () => {

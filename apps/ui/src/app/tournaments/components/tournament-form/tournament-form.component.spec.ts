@@ -47,6 +47,7 @@ describe('TournamentFormComponent', () => {
       description: '',
       sport: null,
       categories: [],
+      type: null,
     });
     component.onSubmit();
     expect(emitSpy).toHaveBeenCalledWith({
@@ -55,6 +56,7 @@ describe('TournamentFormComponent', () => {
       description: '',
       sport: null,
       categories: [],
+      type: null,
     });
   });
 

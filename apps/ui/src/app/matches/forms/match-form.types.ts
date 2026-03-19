@@ -1,7 +1,6 @@
 import {
   CategoryEnum,
   MatchStatusEnum,
-  MatchTypeEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
@@ -10,7 +9,6 @@ export interface MatchFormValue {
   opponent: string;
   venue: string;
   isHome: boolean;
-  type: MatchTypeEnum | null;
   status: MatchStatusEnum;
   sport: SportEnum | null;
   category: CategoryEnum | null;
@@ -25,7 +23,6 @@ export interface MatchFormValue {
 
 export interface MatchFilters {
   status?: MatchStatusEnum;
-  type?: MatchTypeEnum;
   sport?: SportEnum;
   category?: CategoryEnum;
   tournament?: string;

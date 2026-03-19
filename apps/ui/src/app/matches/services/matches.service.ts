@@ -9,8 +9,8 @@ import {
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
 import { mapFormToCreateMatchDto } from '../forms/match-form.mapper';
-import { matchStatusOptions, matchTypeOptions } from '../match-options';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { matchStatusOptions } from '../match-options';
+import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 @Injectable({
   providedIn: 'root',
@@ -66,10 +66,6 @@ export class MatchesService {
 
   getStatusLabel(status: MatchStatusEnum): string {
     return matchStatusOptions.find((o) => o.id === status)?.label ?? status;
-  }
-
-  getTypeLabel(type: MatchTypeEnum): string {
-    return matchTypeOptions.find((o) => o.id === type)?.label ?? type;
   }
 
   updateSquad(

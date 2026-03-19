@@ -14,13 +14,15 @@ import {
 } from '../../services/tournaments.datasource';
 import {
   CategoryEnum,
+  MatchTypeEnum,
   RoleEnum,
   SortOrder,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { sportOptions } from '../../../common/sport-options';
-import { getCategoryLabel } from '../../../common/category-options';
+import { getCategoryLabel, sortCategoriesAsc } from '../../../common/category-options';
+import { matchTypeOptions } from '../../tournament-options';
 import { TournamentSearchComponent } from '../tournament-search/tournament-search.component';
 import { ListStateService } from '../../../common/services/list-state.service';
 
@@ -53,6 +55,7 @@ export class TournamentsListComponent implements AfterViewInit, OnDestroy {
     'season',
     'sport',
     'categories',
+    'type',
     'description',
   ];
 
@@ -124,9 +127,13 @@ export class TournamentsListComponent implements AfterViewInit, OnDestroy {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';
   }
 
+  getTypeLabel(type?: MatchTypeEnum): string {
+    return matchTypeOptions.find((o) => o.id === type)?.label ?? '';
+  }
+
   getCategoriesLabel(categories?: CategoryEnum[]): string {
     if (!categories?.length) return '';
-    return categories.map((c) => getCategoryLabel(c)).join(', ');
+    return sortCategoriesAsc(categories).map((c) => getCategoryLabel(c)).join(', ');
   }
 
   goToCreate(): void {

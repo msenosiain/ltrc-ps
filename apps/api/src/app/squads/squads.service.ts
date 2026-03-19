@@ -16,7 +16,8 @@ export class SquadsService {
     private readonly squadModel: Model<SquadEntity>
   ) {}
 
-  async create(dto: CreateSquadDto) {
+  async create(dto: CreateSquadDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
     const squad = await this.squadModel.create({
       name: dto.name,
       category: dto.category,
@@ -24,6 +25,8 @@ export class SquadsService {
         shirtNumber,
         player: playerId,
       })),
+      createdBy: callerId,
+      updatedBy: callerId,
     });
     return squad!.populate(POPULATE_PLAYERS);
   }
@@ -51,7 +54,7 @@ export class SquadsService {
     return squad;
   }
 
-  async update(id: string, dto: UpdateSquadDto) {
+  async update(id: string, dto: UpdateSquadDto, caller?: User) {
     const squad = await this.squadModel.findById(id);
     if (!squad) throw new NotFoundException('Squad not found');
 
@@ -66,6 +69,7 @@ export class SquadsService {
         }))
       );
     }
+    if (caller) squad.updatedBy = (caller as any)._id;
 
     return (await squad.save()).populate(POPULATE_PLAYERS);
   }

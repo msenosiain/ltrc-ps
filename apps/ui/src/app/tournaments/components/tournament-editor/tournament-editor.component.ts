@@ -5,17 +5,22 @@ import {
   OnInit,
   DestroyRef,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
+import { concat } from 'rxjs';
 import {
   TournamentsService,
   TournamentFormValue,
 } from '../../services/tournaments.service';
-import { Tournament } from '@ltrc-ps/shared-api-model';
+import { Tournament, TournamentAttachment } from '@ltrc-ps/shared-api-model';
 import { TournamentFormComponent } from '../tournament-form/tournament-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -25,9 +30,13 @@ import { getErrorMessage } from '../../../common/utils/error-message';
   selector: 'ltrc-tournament-editor',
   standalone: true,
   imports: [
+    DatePipe,
     MatProgressBarModule,
     MatButtonModule,
     MatIconModule,
+    MatCardModule,
+    MatDividerModule,
+    MatListModule,
     TournamentFormComponent,
   ],
   templateUrl: './tournament-editor.component.html',
@@ -44,6 +53,10 @@ export class TournamentEditorComponent implements OnInit {
   tournament?: Tournament;
   editing = false;
   submitting = false;
+  uploading = false;
+
+  /** Files queued for upload (used in create mode before tournament exists) */
+  pendingFiles: File[] = [];
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -79,15 +92,46 @@ export class TournamentEditorComponent implements OnInit {
       return;
     }
 
+    // Create mode: create tournament then upload pending files
     this.tournamentsService
       .createTournament(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.submitting = false;
-          this.router.navigate(['/dashboard/tournaments']);
+        next: (created) => {
+          if (this.pendingFiles.length) {
+            this.uploadPendingFiles(created.id!);
+          } else {
+            this.submitting = false;
+            this.router.navigate(['/dashboard/tournaments']);
+          }
         },
         error: onError,
+      });
+  }
+
+  private uploadPendingFiles(tournamentId: string): void {
+    const uploads = this.pendingFiles.map((f) =>
+      this.tournamentsService.uploadAttachment(tournamentId, f)
+    );
+
+    concat(...uploads)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {},
+        error: (err) => {
+          this.submitting = false;
+          this.snackBar.open(
+            getErrorMessage(err, 'Torneo creado pero falló la subida de algunos archivos'),
+            'Cerrar',
+            { duration: 5000 }
+          );
+          this.router.navigate(['/dashboard/tournaments', tournamentId, 'edit']);
+        },
+        complete: () => {
+          this.submitting = false;
+          this.pendingFiles = [];
+          this.router.navigate(['/dashboard/tournaments']);
+        },
       });
   }
 
@@ -111,6 +155,85 @@ export class TournamentEditorComponent implements OnInit {
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(() => this.router.navigate(['/dashboard/tournaments']));
       });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (this.editing && this.tournament?.id) {
+      // Edit mode: upload immediately
+      this.uploading = true;
+      this.tournamentsService
+        .uploadAttachment(this.tournament.id, file)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (tournament) => {
+            this.tournament = tournament;
+            this.uploading = false;
+          },
+          error: (err) => {
+            this.uploading = false;
+            this.snackBar.open(
+              getErrorMessage(err, 'Error al subir archivo'),
+              'Cerrar',
+              { duration: 5000 }
+            );
+          },
+        });
+    } else {
+      // Create mode: queue file for upload after create
+      this.pendingFiles.push(file);
+    }
+
+    input.value = '';
+  }
+
+  removePendingFile(index: number): void {
+    this.pendingFiles.splice(index, 1);
+  }
+
+  removeAttachment(att: TournamentAttachment): void {
+    const ref = this.dialog.open(ConfirmDialogComponent, {
+      width: '380px',
+      data: {
+        title: 'Eliminar adjunto',
+        message: `¿Eliminar "${att.filename}"?`,
+        confirmLabel: 'Eliminar',
+      },
+    });
+
+    ref
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (!confirmed) return;
+        this.tournamentsService
+          .deleteAttachment(this.tournament!.id!, att.id!)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: (tournament) => (this.tournament = tournament),
+            error: (err) =>
+              this.snackBar.open(
+                getErrorMessage(err, 'Error al eliminar adjunto'),
+                'Cerrar',
+                { duration: 5000 }
+              ),
+          });
+      });
+  }
+
+  getAttachmentIcon(mimetype: string): string {
+    if (mimetype === 'application/pdf') return 'picture_as_pdf';
+    if (mimetype.startsWith('image/')) return 'image';
+    return 'description';
+  }
+
+  getFileIcon(file: File): string {
+    if (file.type === 'application/pdf') return 'picture_as_pdf';
+    if (file.type.startsWith('image/')) return 'image';
+    return 'description';
   }
 
   @HostListener('document:keydown.escape')

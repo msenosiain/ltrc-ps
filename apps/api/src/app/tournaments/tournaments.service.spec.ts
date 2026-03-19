@@ -4,6 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { TournamentsService } from './tournaments.service';
 import { TournamentEntity } from './schemas/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { GridFsService } from '../shared/gridfs/gridfs.service';
 
 const mockTournament = {
   id: 'tournament-1',
@@ -31,6 +32,7 @@ describe('TournamentsService', () => {
       providers: [
         TournamentsService,
         { provide: getModelToken(TournamentEntity.name), useValue: mockModel },
+        { provide: GridFsService, useValue: { uploadFile: jest.fn(), deleteFile: jest.fn(), getFileStream: jest.fn() } },
       ],
     }).compile();
 
@@ -51,7 +53,7 @@ describe('TournamentsService', () => {
 
       const result = await service.create(dto);
 
-      expect(mockModel.create).toHaveBeenCalledWith(dto);
+      expect(mockModel.create).toHaveBeenCalledWith({ ...dto, createdBy: undefined, updatedBy: undefined });
       expect(result).toEqual(mockTournament);
     });
   });

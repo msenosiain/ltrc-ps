@@ -84,9 +84,6 @@ export class DashboardComponent implements OnInit {
       this.playersService.getMyPlayer().subscribe({
         next: (player) => {
           this.myPlayerId.set(player.id ?? null);
-          if (this.router.url === '/dashboard') {
-            this.router.navigate(['/dashboard/players', player.id]);
-          }
         },
         error: () => {
           /* jugador sin perfil vinculado, se queda en dashboard */

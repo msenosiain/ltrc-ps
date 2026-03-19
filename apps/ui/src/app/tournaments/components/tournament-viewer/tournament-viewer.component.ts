@@ -9,18 +9,22 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
 import {
   CategoryEnum,
+  MatchTypeEnum,
   RoleEnum,
   SportEnum,
   Tournament,
+  TournamentAttachment,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 import { DatePipe } from '@angular/common';
 import { sportOptions } from '../../../common/sport-options';
-import { getCategoryLabel } from '../../../common/category-options';
+import { getCategoryLabel, sortCategoriesAsc } from '../../../common/category-options';
+import { matchTypeOptions } from '../../tournament-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -31,6 +35,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatChipsModule,
     MatButtonModule,
     MatIconModule,
+    MatListModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -50,8 +55,30 @@ export class TournamentViewerComponent implements OnInit {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';
   }
 
+  sortedCategories(): CategoryEnum[] {
+    return sortCategoriesAsc(this.tournament?.categories ?? []);
+  }
+
   getCategoryLabel(id: CategoryEnum): string {
     return getCategoryLabel(id);
+  }
+
+  getTypeLabel(type?: MatchTypeEnum): string {
+    return matchTypeOptions.find((o) => o.id === type)?.label ?? '';
+  }
+
+  getAttachmentIcon(mimetype: string): string {
+    if (mimetype === 'application/pdf') return 'picture_as_pdf';
+    if (mimetype.startsWith('image/')) return 'image';
+    return 'description';
+  }
+
+  downloadAttachment(att: TournamentAttachment): void {
+    const url = this.tournamentsService.getAttachmentUrl(
+      this.tournament!.id!,
+      att.id!
+    );
+    window.open(url, '_blank');
   }
 
   ngOnInit(): void {

@@ -3,7 +3,6 @@ import { MatchEntity } from './match.entity';
 import {
   CategoryEnum,
   MatchStatusEnum,
-  MatchTypeEnum,
   SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
@@ -39,18 +38,13 @@ export const MatchSchema = new Schema<MatchEntity>(
   {
     date: { type: Date, required: true },
     time: { type: String },
-    opponent: { type: String, required: true },
+    opponent: { type: String },
     venue: { type: String, required: true },
-    isHome: { type: Boolean, required: true },
+    isHome: { type: Boolean, default: true },
     status: {
       type: String,
       enum: Object.values(MatchStatusEnum),
       default: MatchStatusEnum.UPCOMING,
-    },
-    type: {
-      type: String,
-      enum: Object.values(MatchTypeEnum),
-      required: true,
     },
     sport: {
       type: String,
@@ -66,6 +60,8 @@ export const MatchSchema = new Schema<MatchEntity>(
     videos: [MatchVideoSchema],
     result: MatchResultSchema,
     notes: { type: String },
+    createdBy: { type: Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

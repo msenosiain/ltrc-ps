@@ -18,14 +18,12 @@ import { MatIconModule } from '@angular/material/icon';
 import {
   CategoryEnum,
   MatchStatusEnum,
-  MatchTypeEnum,
   SportEnum,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
 import {
   getCategoryOptionsBySport,
   matchStatusOptions,
-  matchTypeOptions,
   MatchOption,
   sportOptions,
 } from '../../match-options';
@@ -60,7 +58,6 @@ export class MatchSearchComponent implements OnInit {
   @Output() readonly filtersChange = new EventEmitter<MatchFilters>();
 
   readonly statusOptions = matchStatusOptions;
-  readonly typeOptions = matchTypeOptions;
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport();
   tournaments: Tournament[] = [];
@@ -72,7 +69,6 @@ export class MatchSearchComponent implements OnInit {
 
   readonly searchForm = this.fb.group({
     status: [undefined as MatchStatusEnum | undefined],
-    type: [undefined as MatchTypeEnum | undefined],
     sport: [undefined as SportEnum | undefined],
     category: [undefined as CategoryEnum | undefined],
     tournament: [undefined as string | undefined],

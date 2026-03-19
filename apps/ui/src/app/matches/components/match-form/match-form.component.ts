@@ -32,13 +32,13 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import {
   Match,
   MatchStatusEnum,
+  MatchTypeEnum,
   SportEnum,
   Tournament,
 } from '@ltrc-ps/shared-api-model';
 import {
   getCategoryOptionsBySport,
   matchStatusOptions,
-  matchTypeOptions,
   sportOptions,
 } from '../../match-options';
 import { CategoryOption } from '../../../common/category-options';
@@ -87,13 +87,16 @@ export class MatchFormComponent implements OnInit, OnChanges {
   @Output() readonly cancel = new EventEmitter<void>();
 
   readonly statusOptions = matchStatusOptions;
-  readonly typeOptions = matchTypeOptions;
   readonly sportOptions = sportOptions;
   readonly MatchStatusEnum = MatchStatusEnum;
 
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport(null);
   tournaments: Tournament[] = [];
+  filteredTournaments: Tournament[] = [];
   matchForm: FormGroup = buildCreateMatchForm(this.fb);
+
+  /** Whether the selected tournament is an encounter */
+  isEncounter = false;
 
   /** Control de hora: standalone, no forma parte de MatchFormValue.
    *  Al cambiar, fusiona la hora en el control `date` del form. */
@@ -139,8 +142,12 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.tournamentsService
       .getTournaments({ page: 1, size: 1000 })
       .pipe(map((res) => res.items))
-      .subscribe((t) => (this.tournaments = t));
+      .subscribe((t) => {
+        this.tournaments = t;
+        this.filterTournamentsBySport(this.matchForm.get('sport')?.value);
+      });
 
+    // When sport changes: update categories and filter tournaments by sport
     this.matchForm
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -150,6 +157,20 @@ export class MatchFormComponent implements OnInit, OnChanges {
         if (cat && !this.categoryOptions.find((c) => c.id === cat)) {
           this.matchForm.get('category')?.setValue(null);
         }
+        this.filterTournamentsBySport(sport);
+        // If current tournament doesn't match new sport, clear it
+        const currentTournament = this.matchForm.get('tournament')?.value;
+        if (currentTournament && !this.filteredTournaments.find((t) => t.id === currentTournament)) {
+          this.matchForm.get('tournament')?.setValue(null);
+        }
+      });
+
+    // When tournament changes: auto-fill sport/category from tournament
+    this.matchForm
+      .get('tournament')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((tournamentId: string | null) => {
+        this.applyTournamentDefaults(tournamentId);
       });
 
     // Cuando el usuario selecciona una hora, fusionarla en el control date.
@@ -179,10 +200,13 @@ export class MatchFormComponent implements OnInit, OnChanges {
       this.timeControl.setValue(h || m ? new Date(2000, 0, 1, h, m) : null, {
         emitEvent: false,
       });
+      const tournament = this.match.tournament as Tournament | undefined;
+      this.isEncounter = tournament?.type === MatchTypeEnum.ENCOUNTER;
+      this.updateOpponentValidation();
       this.matchForm.patchValue({
         ...this.match,
         date: matchDate,
-        tournament: (this.match.tournament as Tournament)?.id ?? null,
+        tournament: tournament?.id ?? null,
       });
     }
   }
@@ -202,6 +226,45 @@ export class MatchFormComponent implements OnInit, OnChanges {
   onSubmit(): void {
     if (this.formInvalid) return;
     this.formSubmit.emit(this.matchForm.getRawValue() as MatchFormValue);
+  }
+
+  private filterTournamentsBySport(sport: SportEnum | null): void {
+    if (!sport) {
+      this.filteredTournaments = this.tournaments;
+    } else {
+      this.filteredTournaments = this.tournaments.filter(
+        (t) => !t.sport || t.sport === sport
+      );
+    }
+  }
+
+  private applyTournamentDefaults(tournamentId: string | null): void {
+    const tournament = this.tournaments.find((t) => t.id === tournamentId);
+    this.isEncounter = tournament?.type === MatchTypeEnum.ENCOUNTER;
+    this.updateOpponentValidation();
+
+    if (tournament) {
+      // Auto-fill sport from tournament if set
+      if (tournament.sport) {
+        this.matchForm.get('sport')?.setValue(tournament.sport, { emitEvent: false });
+        this.categoryOptions = getCategoryOptionsBySport(tournament.sport);
+      }
+      // Auto-fill category if tournament has exactly one
+      if (tournament.categories?.length === 1) {
+        this.matchForm.get('category')?.setValue(tournament.categories[0]);
+      }
+    }
+  }
+
+  private updateOpponentValidation(): void {
+    const opponent = this.matchForm.get('opponent')!;
+    if (this.isEncounter) {
+      opponent.clearValidators();
+      opponent.setValue('');
+    } else {
+      opponent.setValidators(Validators.required);
+    }
+    opponent.updateValueAndValidity();
   }
 
   private applyTimeToDate(time: Date | null): void {

@@ -42,6 +42,7 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Rival</th>
       <td mat-cell *matCellDef="let match">
         <div class="opponent-cell">
+          @if (match.opponent) {
           <span
             class="venue-badge"
             [class.home]="match.isHome"
@@ -50,6 +51,9 @@
             {{ match.isHome ? 'L' : 'V' }}
           </span>
           {{ match.opponent }}
+          } @else {
+          Encuentro
+          }
         </div>
       </td>
     </ng-container>

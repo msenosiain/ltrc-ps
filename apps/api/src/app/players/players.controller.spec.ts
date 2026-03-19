@@ -90,7 +90,7 @@ describe('PlayersController', () => {
     it('should update a player', async () => {
       const dto = plainToClass(CreatePlayerDto, createPlayerDtoPlain);
       const result = await controller.update('1', dto);
-      expect(service.update).toHaveBeenCalledWith('1', dto, undefined);
+      expect(service.update).toHaveBeenCalledWith('1', dto, undefined, undefined);
       expect(result).toEqual(mockPlayer);
     });
   });

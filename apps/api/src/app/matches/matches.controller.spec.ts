@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { MatchesController } from './matches.controller';
 import { MatchesService } from './matches.service';
-import { MatchTypeEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 const mockMatch = {
   id: 'match-1',
@@ -10,7 +10,6 @@ const mockMatch = {
   venue: 'Cancha Marista',
   isHome: true,
   status: MatchStatusEnum.UPCOMING,
-  type: MatchTypeEnum.LEAGUE,
   squad: [],
 };
 
@@ -48,18 +47,20 @@ describe('MatchesController', () => {
   });
 
   it('create() should create a match', async () => {
+    const mockReq = { user: { _id: 'user-1' } } as any;
     expect(
-      await controller.create({ opponent: 'Rivadavia RC' } as any)
+      await controller.create({ opponent: 'Rivadavia RC' } as any, mockReq)
     ).toEqual(mockMatch);
   });
 
   it('update() should update a match', async () => {
+    const mockReq = { user: { _id: 'user-1' } } as any;
     expect(
-      await controller.update('match-1', { opponent: 'Los Pumas' })
+      await controller.update('match-1', { opponent: 'Los Pumas' }, mockReq)
     ).toEqual(mockMatch);
     expect(mockService.update).toHaveBeenCalledWith('match-1', {
       opponent: 'Los Pumas',
-    });
+    }, mockReq.user);
   });
 
   it('updateSquad() should update match squad', async () => {

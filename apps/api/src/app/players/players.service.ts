@@ -39,7 +39,7 @@ export class PlayersService {
     private readonly usersService: UsersService
   ) {}
 
-  async create(dto: CreatePlayerDto, photo?: MulterFile) {
+  async create(dto: CreatePlayerDto, photo?: MulterFile, caller?: User) {
     let photoId: string | undefined;
 
     if (photo) {
@@ -51,11 +51,14 @@ export class PlayersService {
       );
     }
 
+    const callerId = caller ? (caller as any)._id : undefined;
     let player;
     try {
       player = await this.playerModel.create({
         ...dto,
         photoId,
+        createdBy: callerId,
+        updatedBy: callerId,
       });
     } catch (err: any) {
       if (err?.code === 11000) {
@@ -89,7 +92,7 @@ export class PlayersService {
     return player;
   }
 
-  async update(id: string, dto: UpdatePlayerDto, photo?: MulterFile) {
+  async update(id: string, dto: UpdatePlayerDto, photo?: MulterFile, caller?: User) {
     const player = await this.playerModel.findById(id);
     if (!player) throw new NotFoundException('Player not found');
 
@@ -106,6 +109,7 @@ export class PlayersService {
     }
 
     Object.assign(player, dto);
+    if (caller) player.updatedBy = (caller as any)._id;
 
     if (dto.createUser && dto.email && !player.userId) {
       const existing = await this.usersService.findOneByEmail(dto.email);

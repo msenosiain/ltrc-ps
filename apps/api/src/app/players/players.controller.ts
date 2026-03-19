@@ -71,21 +71,25 @@ export class PlayersController {
 
   @Post()
   @UseInterceptors(FileInterceptor('photo'))
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body() dto: CreatePlayerDto,
-    @UploadedFile() photo?: MulterFile
+    @UploadedFile() photo?: MulterFile,
+    @Req() req?: Request
   ) {
-    return this.playersService.create(dto, photo);
+    return this.playersService.create(dto, photo, (req as any)?.user);
   }
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('photo'))
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePlayerDto,
-    @UploadedFile() photo?: MulterFile
+    @UploadedFile() photo?: MulterFile,
+    @Req() req?: Request
   ) {
-    return this.playersService.update(id, dto, photo);
+    return this.playersService.update(id, dto, photo, (req as any)?.user);
   }
 
   @Get('field-options')

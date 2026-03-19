@@ -52,8 +52,9 @@ export class TrainingSessionsService {
     private readonly playerModel: Model<PlayerEntity>
   ) {}
 
-  async create(dto: CreateTrainingSessionDto) {
-    return this.sessionModel.create(dto as any);
+  async create(dto: CreateTrainingSessionDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
+    return this.sessionModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
   }
 
   async findPaginated(
@@ -77,9 +78,21 @@ export class TrainingSessionsService {
     }
 
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
-      if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
-      if (caller.categories?.length)
-        queryFilters['category'] = { $in: caller.categories };
+      let sports = caller.sports ?? [];
+      let categories = caller.categories ?? [];
+
+      // Fall back to linked player's sport/category
+      if (!sports.length || !categories.length) {
+        const player = await this.playerModel
+          .findOne({ userId: String(caller._id) })
+          .exec();
+        if (!sports.length && player?.sport) sports = [player.sport];
+        if (!categories.length && player?.category)
+          categories = [player.category];
+      }
+
+      if (sports.length) queryFilters['sport'] = { $in: sports };
+      if (categories.length) queryFilters['category'] = { $in: categories };
     }
 
     const sort: Record<string, 1 | -1> = {};
@@ -111,10 +124,11 @@ export class TrainingSessionsService {
     return session;
   }
 
-  async update(id: string, dto: UpdateTrainingSessionDto) {
+  async update(id: string, dto: UpdateTrainingSessionDto, caller?: User) {
     const session = await this.sessionModel.findById(id);
     if (!session) throw new NotFoundException('Training session not found');
     Object.assign(session, dto);
+    if (caller) session.updatedBy = (caller as any)._id;
     return session.save();
   }
 
@@ -137,12 +151,28 @@ export class TrainingSessionsService {
     const to = new Date(from);
     to.setDate(to.getDate() + days);
 
+    // Find player linked to user (if any — for filtering & self-confirmation)
+    const player = await this.playerModel
+      .findOne({ userId: String(caller._id) })
+      .exec();
+
     const query: Record<string, unknown> = { isActive: true };
 
     if (!caller.roles?.includes(RoleEnum.ADMIN)) {
-      if (caller.sports?.length) query['sport'] = { $in: caller.sports };
-      if (caller.categories?.length)
-        query['category'] = { $in: caller.categories };
+      // Resolve sports/categories: prefer user-level, fall back to linked player
+      const sports = caller.sports?.length
+        ? caller.sports
+        : player?.sport
+          ? [player.sport]
+          : [];
+      const categories = caller.categories?.length
+        ? caller.categories
+        : player?.category
+          ? [player.category]
+          : [];
+
+      if (sports.length) query['sport'] = { $in: sports };
+      if (categories.length) query['category'] = { $in: categories };
     }
 
     const schedules = await this.scheduleModel.find(query).exec();
@@ -178,11 +208,6 @@ export class TrainingSessionsService {
         }
       }
     }
-
-    // Find player linked to user (if any — for self-confirmation detection)
-    const player = await this.playerModel
-      .findOne({ userId: String(caller._id) })
-      .exec();
     const userId = String(caller._id);
 
     // Merge with existing materialized sessions

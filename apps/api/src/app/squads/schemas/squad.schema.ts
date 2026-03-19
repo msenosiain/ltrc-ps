@@ -15,6 +15,8 @@ export const SquadSchema = new Schema<SquadEntity>(
     name: { type: String, required: true },
     category: { type: String },
     players: [SquadPlayerSchema],
+    createdBy: { type: Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

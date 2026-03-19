@@ -4,7 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { MatchEntity } from './schemas/match.entity';
 import { SquadsService } from '../squads/squads.service';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 const POPULATE_FIELDS = [
   'tournament',
@@ -19,7 +19,6 @@ const mockMatch = {
   venue: 'Cancha Marista',
   isHome: true,
   status: MatchStatusEnum.UPCOMING,
-  type: MatchTypeEnum.LEAGUE,
   squad: [],
   save: jest.fn(),
   deleteOne: jest.fn(),
@@ -66,7 +65,6 @@ describe('MatchesService', () => {
         opponent: 'Rivadavia RC',
         venue: 'Cancha Marista',
         isHome: true,
-        type: MatchTypeEnum.LEAGUE,
         date: new Date(),
       };
 

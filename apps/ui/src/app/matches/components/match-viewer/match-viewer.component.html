@@ -5,6 +5,7 @@
     <mat-card-content>
       <div class="match-header">
         <div class="opponent-info">
+          @if (match.opponent) {
           <span
             class="venue-badge"
             [class.home]="match.isHome"
@@ -13,10 +14,12 @@
             {{ match.isHome ? 'Local' : 'Visitante' }}
           </span>
           <h2 class="opponent-name">vs. {{ match.opponent }}</h2>
+          } @else {
+          <h2 class="opponent-name">Encuentro</h2>
+          }
         </div>
 
         <div class="chips-row">
-          <mat-chip>{{ getTypeLabel(match.type) }}</mat-chip>
           <mat-chip class="status-chip status-{{ match.status }}">
             {{ getStatusLabel(match.status) }}
           </mat-chip>
@@ -50,7 +53,12 @@
         } @if (tournamentName) {
         <div class="info-item">
           <span class="info-label">Torneo</span>
-          <span class="info-value">{{ tournamentName }}</span>
+          <span class="info-value tournament-link" (click)="goToTournament()">
+            {{ tournamentName }}
+            @if (tournamentHasAttachments) {
+            <mat-icon class="attachment-indicator">attach_file</mat-icon>
+            }
+          </span>
         </div>
         } @if (match.status === MatchStatusEnum.COMPLETED && match.result) {
         <div class="info-item">

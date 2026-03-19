@@ -11,7 +11,6 @@ import {
   CategoryEnum,
   Match,
   MatchStatusEnum,
-  MatchTypeEnum,
   RoleEnum,
   SquadEntry,
   Tournament,
@@ -73,6 +72,17 @@ export class MatchViewerComponent implements OnInit {
     return (this.match?.tournament as Tournament)?.name;
   }
 
+  get tournamentHasAttachments(): boolean {
+    return !!((this.match?.tournament as Tournament)?.attachments?.length);
+  }
+
+  goToTournament(): void {
+    const id = (this.match?.tournament as Tournament)?.id;
+    if (id) {
+      this.router.navigate(['/dashboard/tournaments', id]);
+    }
+  }
+
   get titulares(): SquadEntry[] {
     return (this.match?.squad ?? [])
       .filter((e) => e.shirtNumber <= 15)
@@ -87,10 +97,6 @@ export class MatchViewerComponent implements OnInit {
 
   getStatusLabel(status: MatchStatusEnum): string {
     return this.matchesService.getStatusLabel(status);
-  }
-
-  getTypeLabel(type: MatchTypeEnum): string {
-    return this.matchesService.getTypeLabel(type);
   }
 
   getCategoryLabel(category?: CategoryEnum): string {

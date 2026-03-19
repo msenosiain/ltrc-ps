@@ -8,72 +8,11 @@
     <mat-card-title>Datos del partido</mat-card-title>
     <div class="match-grid">
       <mat-form-field appearance="outline">
-        <mat-label>Fecha</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="date" placeholder="DD/MM/AAAA" />
-        <mat-datepicker-toggle matSuffix [for]="picker" />
-        <mat-datepicker #picker />
-        @if (matchForm.get('date')?.invalid) {
-        <mat-error>La fecha es obligatoria</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Hora</mat-label>
-        <input matInput [matTimepicker]="tp" [formControl]="timeControl" />
-        <mat-timepicker-toggle matSuffix [for]="tp" />
-        <mat-timepicker #tp [interval]="30" />
-        @if (timeControl.invalid) {
-        <mat-error>La hora es obligatoria</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Rival</mat-label>
-        <input
-          matInput
-          formControlName="opponent"
-          [matAutocomplete]="opponentAc"
-        />
-        <mat-autocomplete #opponentAc="matAutocomplete">
-          @for (opt of filteredOpponents$ | async; track opt) {
-          <mat-option [value]="opt">{{ opt }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (matchForm.get('opponent')?.invalid) {
-        <mat-error>El rival es obligatorio</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Estadio / Cancha</mat-label>
-        <input matInput formControlName="venue" [matAutocomplete]="venueAc" />
-        <mat-autocomplete #venueAc="matAutocomplete">
-          @for (opt of filteredVenues$ | async; track opt) {
-          <mat-option [value]="opt">{{ opt }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (matchForm.get('venue')?.invalid) {
-        <mat-error>La cancha es obligatoria</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Tipo</mat-label>
-        <mat-select formControlName="type">
-          @for (opt of typeOptions; track opt.id) {
-          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
-          }
-        </mat-select>
-        @if (matchForm.get('type')?.invalid) {
-        <mat-error>El tipo es obligatorio</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Estado</mat-label>
-        <mat-select formControlName="status">
-          @for (opt of statusOptions; track opt.id) {
-          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport">
+          <mat-option [value]="null">Sin especificar</mat-option>
+          @for (s of sportOptions; track s.id) {
+          <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -82,18 +21,8 @@
         <mat-label>Torneo</mat-label>
         <mat-select formControlName="tournament">
           <mat-option [value]="null">Sin torneo</mat-option>
-          @for (t of tournaments; track t.id) {
+          @for (t of filteredTournaments; track t.id) {
           <mat-option [value]="t.id">{{ t.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Deporte</mat-label>
-        <mat-select formControlName="sport">
-          <mat-option [value]="null">Sin especificar</mat-option>
-          @for (s of sportOptions; track s.id) {
-          <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -123,6 +52,66 @@
         </mat-autocomplete>
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" placeholder="DD/MM/AAAA" />
+        <mat-datepicker-toggle matSuffix [for]="picker" />
+        <mat-datepicker #picker />
+        @if (matchForm.get('date')?.invalid) {
+        <mat-error>La fecha es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hora</mat-label>
+        <input matInput [matTimepicker]="tp" [formControl]="timeControl" />
+        <mat-timepicker-toggle matSuffix [for]="tp" />
+        <mat-timepicker #tp [interval]="30" />
+        @if (timeControl.invalid) {
+        <mat-error>La hora es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estadio / Cancha</mat-label>
+        <input matInput formControlName="venue" [matAutocomplete]="venueAc" />
+        <mat-autocomplete #venueAc="matAutocomplete">
+          @for (opt of filteredVenues$ | async; track opt) {
+          <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (matchForm.get('venue')?.invalid) {
+        <mat-error>La cancha es obligatoria</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Estado</mat-label>
+        <mat-select formControlName="status">
+          @for (opt of statusOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (!isEncounter) {
+      <mat-form-field appearance="outline">
+        <mat-label>Rival</mat-label>
+        <input
+          matInput
+          formControlName="opponent"
+          [matAutocomplete]="opponentAc"
+        />
+        <mat-autocomplete #opponentAc="matAutocomplete">
+          @for (opt of filteredOpponents$ | async; track opt) {
+          <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (matchForm.get('opponent')?.invalid) {
+        <mat-error>El rival es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
       <div class="toggle-field">
         <mat-slide-toggle formControlName="isHome">Local</mat-slide-toggle>
         <span class="toggle-hint">
@@ -133,11 +122,12 @@
           }}
         </span>
       </div>
+      }
     </div>
   </mat-card>
 
-  <!-- RESULTADO (solo cuando está finalizado) -->
-  @if (statusValue === MatchStatusEnum.COMPLETED) {
+  <!-- RESULTADO (solo cuando está finalizado y no es encuentro) -->
+  @if (statusValue === MatchStatusEnum.COMPLETED && !isEncounter) {
   <mat-card formGroupName="result">
     <mat-card-title>Resultado</mat-card-title>
     <div class="result-grid">

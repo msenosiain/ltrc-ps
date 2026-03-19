@@ -6,8 +6,8 @@ import {
 
 export interface TimeSlotFormValue {
   day: DayOfWeekEnum | null;
-  startTime: string;
-  endTime: string;
+  startTime: Date | null;
+  endTime: Date | null;
   location: string;
 }
 

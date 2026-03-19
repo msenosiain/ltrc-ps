@@ -29,6 +29,8 @@ export const TrainingScheduleSchema = new Schema<TrainingScheduleEntity>(
     isActive: { type: Boolean, default: true },
     validFrom: { type: Date },
     validUntil: { type: Date },
+    createdBy: { type: Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

@@ -34,13 +34,15 @@ export class MatchesController {
   }
 
   @Post()
-  async create(@Body() dto: CreateMatchDto) {
-    return this.matchesService.create(dto);
+  @UseGuards(JwtAuthGuard)
+  async create(@Body() dto: CreateMatchDto, @Req() req: Request) {
+    return this.matchesService.create(dto, (req as any).user);
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateMatchDto) {
-    return this.matchesService.update(id, dto);
+  @UseGuards(JwtAuthGuard)
+  async update(@Param('id') id: string, @Body() dto: UpdateMatchDto, @Req() req: Request) {
+    return this.matchesService.update(id, dto, (req as any).user);
   }
 
   @Patch(':id/squad')

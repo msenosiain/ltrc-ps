@@ -12,6 +12,7 @@ import {
 import {
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
 } from '@angular/forms';
@@ -24,6 +25,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { SportEnum, TrainingSchedule } from '@ltrc-ps/shared-api-model';
 import {
   dayOfWeekOptions,
@@ -37,6 +39,7 @@ import {
   getTimeSlotsArray,
 } from '../../forms/schedule-form.factory';
 import { ScheduleFormValue } from '../../forms/schedule-form.types';
+import { timeStringToDate } from '../../forms/schedule-form.mapper';
 import {
   FilterContext,
   UserFilterContextService,
@@ -57,6 +60,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatFormFieldModule,
     MatDatepickerModule,
     MatSlideToggleModule,
+    MatTimepickerModule,
   ],
   templateUrl: './schedule-form.component.html',
   styleUrl: './schedule-form.component.scss',
@@ -88,6 +92,14 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
 
   get timeSlotsArray(): FormArray {
     return getTimeSlotsArray(this.scheduleForm);
+  }
+
+  getStartTimeControl(index: number): FormControl {
+    return (this.timeSlotsArray.at(index) as FormGroup).get('startTime') as FormControl;
+  }
+
+  getEndTimeControl(index: number): FormControl {
+    return (this.timeSlotsArray.at(index) as FormGroup).get('endTime') as FormControl;
   }
 
   ngOnInit(): void {
@@ -150,7 +162,12 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
       }
       for (const slot of this.schedule.timeSlots) {
         const group = buildTimeSlotGroup(this.fb);
-        group.patchValue(slot);
+        group.patchValue({
+          day: slot.day,
+          startTime: timeStringToDate(slot.startTime),
+          endTime: timeStringToDate(slot.endTime),
+          location: slot.location ?? '',
+        });
         this.timeSlotsArray.push(group);
       }
 

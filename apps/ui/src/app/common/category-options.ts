@@ -59,3 +59,16 @@ export function getCategoryLabel(id?: CategoryEnum | null): string {
   if (!id) return '';
   return categoryDefs.find((c) => c.id === id)?.label ?? id;
 }
+
+/**
+ * Sort categories ascending (M5, M6, …, M19, PS; 4ta, 5ta, …, 10ma, etc.).
+ * Uses reversed categoryDefs index so younger categories appear first.
+ */
+export function sortCategoriesAsc(categories: CategoryEnum[]): CategoryEnum[] {
+  const order = new Map(categoryDefs.map((c, i) => [c.id, i]));
+  return [...categories].sort((a, b) => {
+    const ia = order.get(a) ?? 999;
+    const ib = order.get(b) ?? 999;
+    return ib - ia;
+  });
+}

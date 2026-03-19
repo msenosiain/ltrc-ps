@@ -45,6 +45,8 @@ export const TrainingSessionSchema = new Schema<TrainingSessionEntity>(
     },
     attendance: [AttendanceEntrySchema],
     notes: { type: String },
+    createdBy: { type: Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

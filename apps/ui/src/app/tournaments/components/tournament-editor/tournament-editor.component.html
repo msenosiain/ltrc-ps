@@ -15,7 +15,7 @@
       <mat-icon>delete</mat-icon>
       Eliminar torneo
     </button>
-    } @if (submitting) {
+    } @if (submitting || uploading) {
     <mat-progress-bar mode="indeterminate" />
     }
   </div>
@@ -25,5 +25,72 @@
     [submitting]="submitting"
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
-  />
+  >
+    <!-- Attachments section projected inside the form card -->
+    <div class="attachments-section">
+      <mat-divider />
+      <div class="attachments-header">
+        <p class="section-title">Archivos adjuntos</p>
+        <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="uploading">
+          <mat-icon>attach_file</mat-icon>
+          Agregar
+        </button>
+        <input
+          #fileInput
+          type="file"
+          hidden
+          accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.xls,.xlsx"
+          (change)="onFileSelected($event)"
+        />
+      </div>
+
+      @if (tournament?.attachments?.length) {
+      <mat-list>
+        @for (att of tournament!.attachments; track att.id) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>{{ getAttachmentIcon(att.mimetype) }}</mat-icon>
+          <span matListItemTitle>{{ att.filename }}</span>
+          <span matListItemLine class="attachment-meta">
+            {{ att.uploadedAt | date : 'dd/MM/yyyy' }}
+          </span>
+          <button
+            matListItemMeta
+            mat-icon-button
+            color="warn"
+            (click)="removeAttachment(att)"
+            title="Eliminar"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+        }
+      </mat-list>
+      }
+
+      @if (pendingFiles.length) {
+      <mat-list>
+        @for (file of pendingFiles; track $index) {
+        <mat-list-item>
+          <mat-icon matListItemIcon>{{ getFileIcon(file) }}</mat-icon>
+          <span matListItemTitle>{{ file.name }}</span>
+          <span matListItemLine class="attachment-meta">Pendiente de subida</span>
+          <button
+            matListItemMeta
+            mat-icon-button
+            color="warn"
+            (click)="removePendingFile($index)"
+            title="Quitar"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-list-item>
+        }
+      </mat-list>
+      }
+
+      @if (!tournament?.attachments?.length && !pendingFiles.length) {
+      <p class="no-attachments">Sin archivos adjuntos.</p>
+      }
+    </div>
+  </ltrc-tournament-form>
 </div>

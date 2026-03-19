@@ -37,8 +37,8 @@ export class TrainingSchedulesController {
   @Post()
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() dto: CreateTrainingScheduleDto) {
-    return this.schedulesService.create(dto);
+  async create(@Body() dto: CreateTrainingScheduleDto, @Req() req: Request) {
+    return this.schedulesService.create(dto, (req as any).user);
   }
 
   @Get('upcoming')
@@ -72,9 +72,10 @@ export class TrainingSchedulesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
-    @Body() dto: UpdateTrainingScheduleDto
+    @Body() dto: UpdateTrainingScheduleDto,
+    @Req() req: Request
   ) {
-    return this.schedulesService.update(id, dto);
+    return this.schedulesService.update(id, dto, (req as any).user);
   }
 
   @Delete(':id')

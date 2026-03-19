@@ -8,16 +8,36 @@ import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { PaginatedResponse, RoleEnum, SortOrder } from '@ltrc-ps/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 import { PaginationDto } from '../shared/pagination.dto';
+import { GridFsService } from '../shared/gridfs/gridfs.service';
+
+const ATTACHMENTS_BUCKET = 'tournamentAttachments';
+
+const ALLOWED_MIMETYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
 
 @Injectable()
 export class TournamentsService {
   constructor(
     @InjectModel(TournamentEntity.name)
-    private readonly tournamentModel: Model<TournamentEntity>
+    private readonly tournamentModel: Model<TournamentEntity>,
+    private readonly gridFsService: GridFsService
   ) {}
 
-  async create(dto: CreateTournamentDto) {
-    return this.tournamentModel.create(dto);
+  async create(dto: CreateTournamentDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
+    return this.tournamentModel.create({
+      ...dto,
+      createdBy: callerId,
+      updatedBy: callerId,
+    });
   }
 
   async findPaginated(
@@ -63,17 +83,85 @@ export class TournamentsService {
     return tournament;
   }
 
-  async update(id: string, dto: UpdateTournamentDto) {
+  async update(id: string, dto: UpdateTournamentDto, caller?: User) {
     const tournament = await this.tournamentModel.findById(id);
     if (!tournament) throw new NotFoundException('Tournament not found');
 
     Object.assign(tournament, dto);
+    if (caller) tournament.updatedBy = (caller as any)._id;
     return tournament.save();
   }
 
   async delete(id: string) {
     const tournament = await this.tournamentModel.findById(id);
     if (!tournament) throw new NotFoundException('Tournament not found');
+
+    // Clean up GridFS files
+    for (const att of tournament.attachments ?? []) {
+      await this.gridFsService
+        .deleteFile(ATTACHMENTS_BUCKET, att.fileId)
+        .catch(() => {/* file may already be gone */});
+    }
+
     return tournament.deleteOne();
+  }
+
+  async addAttachment(
+    id: string,
+    file: { originalname: string; mimetype: string; buffer: Buffer; size: number }
+  ) {
+    const tournament = await this.tournamentModel.findById(id);
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    if (!ALLOWED_MIMETYPES.includes(file.mimetype)) {
+      throw new NotFoundException(
+        `Tipo de archivo no permitido: ${file.mimetype}`
+      );
+    }
+
+    const fileId = await this.gridFsService.uploadFile(
+      ATTACHMENTS_BUCKET,
+      file.originalname,
+      file.buffer,
+      file.mimetype
+    );
+
+    tournament.attachments.push({
+      fileId,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      uploadedAt: new Date(),
+    } as any);
+
+    await tournament.save();
+    return tournament;
+  }
+
+  async getAttachmentStream(id: string, attachmentId: string) {
+    const tournament = await this.tournamentModel.findById(id);
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    const att = (tournament.attachments as any)?.id(attachmentId);
+    if (!att) throw new NotFoundException('Attachment not found');
+
+    const stream = this.gridFsService.getFileStream(
+      ATTACHMENTS_BUCKET,
+      att.fileId
+    );
+    return { stream, filename: att.filename, mimetype: att.mimetype };
+  }
+
+  async removeAttachment(id: string, attachmentId: string) {
+    const tournament = await this.tournamentModel.findById(id);
+    if (!tournament) throw new NotFoundException('Tournament not found');
+
+    const att = (tournament.attachments as any)?.id(attachmentId);
+    if (!att) throw new NotFoundException('Attachment not found');
+
+    await this.gridFsService.deleteFile(ATTACHMENTS_BUCKET, att.fileId);
+    att.deleteOne();
+    await tournament.save();
+    return tournament;
   }
 }

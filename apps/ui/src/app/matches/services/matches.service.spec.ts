@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http/testing';
 import { MatchesService } from './matches.service';
 import { API_CONFIG_TOKEN } from '../../app.config';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -60,9 +60,4 @@ describe('MatchesService', () => {
     expect(service.getStatusLabel(MatchStatusEnum.CANCELLED)).toBe('Cancelado');
   });
 
-  it('getTypeLabel should return Spanish label', () => {
-    expect(service.getTypeLabel(MatchTypeEnum.LEAGUE)).toBe('Liga');
-    expect(service.getTypeLabel(MatchTypeEnum.FRIENDLY)).toBe('Amistoso');
-    expect(service.getTypeLabel(MatchTypeEnum.CUP)).toBe('Copa');
-  });
 });

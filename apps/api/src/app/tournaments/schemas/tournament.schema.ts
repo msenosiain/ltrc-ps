@@ -1,6 +1,29 @@
 import { Schema, Types } from 'mongoose';
 import { TournamentEntity } from './tournament.entity';
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+
+const TournamentAttachmentSchema = new Schema(
+  {
+    fileId: { type: String, required: true },
+    filename: { type: String, required: true },
+    mimetype: { type: String, required: true },
+    size: { type: Number, required: true },
+    uploadedAt: { type: Date, default: Date.now },
+  },
+  { _id: true }
+);
+
+TournamentAttachmentSchema.virtual('id').get(function () {
+  return (this._id as Types.ObjectId).toHexString();
+});
+
+TournamentAttachmentSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    delete ret._id;
+  },
+});
 
 export const TournamentSchema = new Schema<TournamentEntity>(
   {
@@ -9,6 +32,10 @@ export const TournamentSchema = new Schema<TournamentEntity>(
     description: { type: String },
     sport: { type: String, enum: Object.values(SportEnum) },
     categories: [{ type: String, enum: Object.values(CategoryEnum) }],
+    type: { type: String, enum: Object.values(MatchTypeEnum) },
+    attachments: { type: [TournamentAttachmentSchema], default: [] },
+    createdBy: { type: Types.ObjectId, ref: 'User' },
+    updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

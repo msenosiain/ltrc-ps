@@ -42,26 +42,6 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Tipo</mat-label>
-      <mat-select formControlName="type">
-        <mat-option [value]="undefined">Todos</mat-option>
-        @for (opt of typeOptions; track opt.id) {
-        <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
-        }
-      </mat-select>
-      @if (searchForm.get('type')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('type')"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      }
-    </mat-form-field>
-
     @if (showCategoryFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Categoría</mat-label>

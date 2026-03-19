@@ -31,8 +31,8 @@ export class SquadsController {
   }
 
   @Post()
-  async create(@Body() dto: CreateSquadDto) {
-    return this.squadsService.create(dto);
+  async create(@Body() dto: CreateSquadDto, @Req() req?: Request) {
+    return this.squadsService.create(dto, (req as any)?.user);
   }
 
   @Get(':id')
@@ -41,8 +41,8 @@ export class SquadsController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateSquadDto) {
-    return this.squadsService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateSquadDto, @Req() req?: Request) {
+    return this.squadsService.update(id, dto, (req as any)?.user);
   }
 
   @Delete(':id')

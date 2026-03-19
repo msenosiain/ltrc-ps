@@ -4,7 +4,7 @@ import { TournamentsService } from '../../../tournaments/services/tournaments.se
 import { MatchesService } from '../../services/matches.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { of } from 'rxjs';
-import { MatchStatusEnum, MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 describe('MatchFormComponent', () => {
   let component: MatchFormComponent;
@@ -17,7 +17,11 @@ describe('MatchFormComponent', () => {
         provideNativeDateAdapter(),
         {
           provide: TournamentsService,
-          useValue: { getTournaments: jest.fn().mockReturnValue(of([])) },
+          useValue: {
+            getTournaments: jest
+              .fn()
+              .mockReturnValue(of({ items: [], total: 0, page: 1, size: 1000 })),
+          },
         },
         {
           provide: MatchesService,
@@ -41,13 +45,12 @@ describe('MatchFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should require date, opponent, venue and type', () => {
+  it('should require date, opponent and venue', () => {
     expect(component.matchForm.valid).toBeFalsy();
     component.matchForm.patchValue({
       date: new Date(),
       opponent: 'River',
       venue: 'El Monumental',
-      type: MatchTypeEnum.LEAGUE,
     });
     expect(component.matchForm.valid).toBeTruthy();
   });
@@ -64,7 +67,6 @@ describe('MatchFormComponent', () => {
       date: new Date(),
       opponent: 'River',
       venue: 'El Monumental',
-      type: MatchTypeEnum.LEAGUE,
       status: MatchStatusEnum.UPCOMING,
       isHome: true,
     });

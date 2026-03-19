@@ -6,7 +6,8 @@
   <mat-card>
     <mat-card-title>Datos del torneo</mat-card-title>
     <div class="tournament-grid">
-      <mat-form-field appearance="outline" class="name-field">
+      <!-- Fila 1: Nombre (2 col) -->
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>Nombre</mat-label>
         <input matInput formControlName="name" />
         @if (tournamentForm.get('name')?.invalid) {
@@ -14,6 +15,23 @@
         }
       </mat-form-field>
 
+      <!-- Fila 2: Tipo + Temporada -->
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="type">
+          <mat-option [value]="null">Sin especificar</mat-option>
+          @for (opt of typeOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Temporada</mat-label>
+        <input matInput formControlName="season" placeholder="ej: 2024" />
+      </mat-form-field>
+
+      <!-- Fila 3: Deporte + Categorías -->
       <mat-form-field appearance="outline">
         <mat-label>Deporte</mat-label>
         <mat-select formControlName="sport">
@@ -33,16 +51,15 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="season-field">
-        <mat-label>Temporada</mat-label>
-        <input matInput formControlName="season" placeholder="ej: 2024" />
-      </mat-form-field>
-
+      <!-- Fila 4: Descripción (2 col, 2 filas alto) -->
       <mat-form-field appearance="outline" class="description-field">
         <mat-label>Descripción</mat-label>
-        <textarea matInput formControlName="description" rows="3"></textarea>
+        <textarea matInput formControlName="description" rows="5"></textarea>
       </mat-form-field>
     </div>
+
+    <!-- Fila 5: Adjuntos (proyectado desde editor) -->
+    <ng-content></ng-content>
   </mat-card>
 
   <div class="form-actions">

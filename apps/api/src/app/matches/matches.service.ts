@@ -24,16 +24,18 @@ export class MatchesService {
     private readonly squadsService: SquadsService
   ) {}
 
-  async create(dto: CreateMatchDto) {
+  async create(dto: CreateMatchDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.matchModel.create(dto as any);
+    return this.matchModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
   }
 
-  async update(id: string, dto: UpdateMatchDto) {
+  async update(id: string, dto: UpdateMatchDto, caller?: User) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');
 
     Object.assign(match, dto);
+    if (caller) match.updatedBy = (caller as any)._id;
     return match.save();
   }
 
@@ -67,10 +69,6 @@ export class MatchesService {
 
     if (filters.status) {
       queryFilters['status'] = filters.status;
-    }
-
-    if (filters.type) {
-      queryFilters['type'] = filters.type;
     }
 
     if (filters.tournament) {
