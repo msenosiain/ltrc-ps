@@ -91,12 +91,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     );
 
     if (!user) {
+      user = await this.usersService.findOneByEmail(email ?? '');
+    }
+
+    if (!user) {
       user = await this.usersService.create({
         email: emails?.[0]?.value,
         googleId: id as string,
         name: [name?.familyName, name?.givenName].filter(Boolean).join(' '),
       } as Partial<User>);
+    } else if (!user.googleId) {
+      (user as any).googleId = id as string;
+      await (user as any).save();
     }
+
     done(null, user);
   }
 }
