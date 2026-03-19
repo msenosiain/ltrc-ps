@@ -1,3 +1,4 @@
+
 services:
   # ── API (NestJS) ─────────────────────────────────────────────────────────────
   - type: web
@@ -41,7 +42,7 @@ services:
     name: ltrc-campo-ui
     runtime: static
     buildCommand: npm ci && npx nx build ui --configuration=production --skip-nx-cache
-    staticPublishPath: dist/apps/ui/browser
+    staticPublishPath: dist/apps/ui/es-AR
     routes:
       - type: rewrite
         source: /*
