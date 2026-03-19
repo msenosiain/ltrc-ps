@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   RoleEnum,
@@ -64,6 +65,7 @@ import { filter, switchMap } from 'rxjs/operators';
     MatSelectModule,
     MatTableModule,
     MatTabsModule,
+    MatDatepickerModule,
     MatTooltipModule,
     AllowedRolesDirective,
   ],
@@ -292,7 +294,7 @@ export class TripViewerComponent implements OnInit {
     this.tripsService
       .recordPayment(this.trip.id, this.selectedParticipantForPayment.id, {
         amount: v.amount!,
-        date: v.date instanceof Date ? v.date.toISOString().split('T')[0] : v.date!,
+        date: (v.date instanceof Date ? v.date.toISOString().split('T')[0] : v.date) as string,
         notes: v.notes || undefined,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
