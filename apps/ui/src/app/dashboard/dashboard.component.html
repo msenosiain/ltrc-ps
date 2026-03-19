@@ -4,15 +4,18 @@
     [opened]="!isSmallScreen()"
     #sidenav
   >
-    <mat-nav-list>
+    <mat-nav-list class="sidenav-nav">
       <a
         mat-list-item
         routerLink="/dashboard"
         routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }"
         (click)="onNavClick()"
-        >Inicio</a
       >
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Inicio</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
@@ -23,16 +26,22 @@
         routerLink="players"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Jugadores</a
       >
+        <mat-icon matListItemIcon>group</mat-icon>
+        <span matListItemTitle>Jugadores</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
         mat-list-item
         routerLink="tournaments"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Torneos</a
       >
+        <mat-icon matListItemIcon>emoji_events</mat-icon>
+        <span matListItemTitle>Torneos</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
@@ -44,8 +53,11 @@
         routerLink="matches"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Partidos</a
       >
+        <mat-icon matListItemIcon>sports</mat-icon>
+        <span matListItemTitle>Partidos</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
@@ -56,8 +68,11 @@
         routerLink="branches"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Ramas</a
       >
+        <mat-icon matListItemIcon>account_tree</mat-icon>
+        <span matListItemTitle>Ramas</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
@@ -70,8 +85,11 @@
         routerLink="trainings"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Entrenamientos</a
       >
+        <mat-icon matListItemIcon>sports_rugby</mat-icon>
+        <span matListItemTitle>Entrenamientos</span>
+      </a>
+
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
@@ -83,32 +101,42 @@
         routerLink="trips"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Viajes</a
       >
+        <mat-icon matListItemIcon>luggage</mat-icon>
+        <span matListItemTitle>Viajes</span>
+      </a>
+
+      <mat-divider class="sidenav-divider" />
+
       <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN]"
         mat-list-item
         routerLink="users"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Usuarios</a
       >
+        <mat-icon matListItemIcon>manage_accounts</mat-icon>
+        <span matListItemTitle>Usuarios</span>
+      </a>
+
       @if (isPlayer() && myPlayerId()) {
       <a
         mat-list-item
         [routerLink]="['players', myPlayerId()]"
         routerLinkActive="active-link"
         (click)="onNavClick()"
-        >Mi Perfil</a
       >
+        <mat-icon matListItemIcon>account_circle</mat-icon>
+        <span matListItemTitle>Mi Perfil</span>
+      </a>
       }
     </mat-nav-list>
   </mat-sidenav>
+
   <mat-sidenav-content>
     <div class="content">
       <router-outlet></router-outlet>
 
-      <!-- Welcome screen when no child route is active -->
       @if (router.url === '/dashboard') { @if (hasNoRoles()) {
       <div class="dashboard-home">
         <mat-icon class="dashboard-home__icon">hourglass_empty</mat-icon>

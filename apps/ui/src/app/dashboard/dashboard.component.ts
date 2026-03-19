@@ -18,6 +18,7 @@ import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { PlayersService } from '../players/services/players.service';
 import { SidenavService } from '../common/services/sidenav.service';
@@ -34,6 +35,7 @@ import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-m
     MatListModule,
     AllowedRolesDirective,
     MatButtonModule,
+    MatDividerModule,
     MatIconModule,
     UpcomingTrainingsWidgetComponent,
     UpcomingMatchesWidgetComponent,
