@@ -40,7 +40,6 @@ services:
   - type: web
     name: ltrc-campo-ui
     runtime: static
-    plan: starter
     buildCommand: npm ci && npx nx build ui --configuration=production
     staticPublishPath: dist/apps/ui/browser
     routes:
