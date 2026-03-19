@@ -40,11 +40,8 @@ services:
     name: ltrc-campo-ui
     runtime: static
     buildCommand: npm ci && npx nx build ui --configuration=production --skip-nx-cache
-    staticPublishPath: dist/apps/ui
+    staticPublishPath: dist/apps/ui/es-AR
     routes:
-      - type: redirect
-        source: /
-        destination: /es-AR/
       - type: rewrite
-        source: /es-AR/*
-        destination: /es-AR/index.html
+        source: /*
+        destination: /index.html

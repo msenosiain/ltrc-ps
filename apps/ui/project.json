@@ -23,6 +23,7 @@
         "inlineStyleLanguage": "scss",
         "localize": ["es-AR"],
         "main": "apps/ui/src/main.ts",
+        "baseHref": "/",
         "outputPath": "dist/apps/ui",
         "polyfills": ["zone.js"],
         "scripts": [],

@@ -15,6 +15,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { es } from 'date-fns/locale';
 import { authInterceptor } from './auth/auth.interceptor';
+import { environment } from '../environments/environment';
 
 function getEsArPaginatorIntl(): MatPaginatorIntl {
   const intl = new MatPaginatorIntl();
@@ -37,7 +38,7 @@ export interface ApiConfig {
 }
 
 export const API_CONFIG: ApiConfig = {
-  baseUrl: 'http://localhost:3000/api/v1',
+  baseUrl: environment.apiBaseUrl,
 };
 export const API_CONFIG_TOKEN = new InjectionToken<ApiConfig>(
   'API_CONFIG_TOKEN'
