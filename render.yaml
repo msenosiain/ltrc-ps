@@ -5,7 +5,7 @@ services:
     runtime: node
     region: ohio
     plan: starter
-    buildCommand: npm ci && npx nx build api --configuration=production --skip-nx-cache
+    buildCommand: NODE_ENV=development npm ci && npx nx build api --configuration=production --skip-nx-cache
     startCommand: node dist/apps/api/main.js
     healthCheckPath: /api/v1/health
     envVars:
