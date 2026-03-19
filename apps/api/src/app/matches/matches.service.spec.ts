@@ -3,12 +3,14 @@ import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { MatchEntity } from './schemas/match.entity';
+import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { SquadsService } from '../squads/squads.service';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 const POPULATE_FIELDS = [
   'tournament',
   { path: 'squad.player' },
+  { path: 'attendance.player' },
   { path: 'videos.targetPlayers' },
 ];
 
@@ -19,7 +21,10 @@ const mockMatch = {
   venue: 'Cancha Marista',
   isHome: true,
   status: MatchStatusEnum.UPCOMING,
+  category: 'plantel_superior',
+  tournament: 'tournament-1',
   squad: [],
+  attendance: [],
   save: jest.fn(),
   deleteOne: jest.fn(),
   set: jest.fn(),
@@ -31,6 +36,11 @@ const mockModel = {
   find: jest.fn(),
   findById: jest.fn(),
   countDocuments: jest.fn(),
+  distinct: jest.fn(),
+};
+
+const mockTournamentModel = {
+  find: jest.fn(),
 };
 
 const mockSquadsService = {
@@ -47,6 +57,7 @@ describe('MatchesService', () => {
       providers: [
         MatchesService,
         { provide: getModelToken(MatchEntity.name), useValue: mockModel },
+        { provide: getModelToken(TournamentEntity.name), useValue: mockTournamentModel },
         { provide: SquadsService, useValue: mockSquadsService },
       ],
     }).compile();
@@ -66,6 +77,8 @@ describe('MatchesService', () => {
         venue: 'Cancha Marista',
         isHome: true,
         date: new Date(),
+        category: 'plantel_superior',
+        tournament: 'tournament-1',
       };
 
       const result = await service.create(dto as any);
@@ -127,6 +140,38 @@ describe('MatchesService', () => {
     });
   });
 
+  describe('recordAttendance()', () => {
+    it('should record player attendance', async () => {
+      const match = {
+        ...mockMatch,
+        attendance: [],
+        save: jest.fn().mockResolvedValue(mockMatch),
+        populate: jest.fn().mockResolvedValue(mockMatch),
+      };
+      mockModel.findById.mockResolvedValueOnce(match);
+
+      await service.recordAttendance(
+        'match-1',
+        {
+          records: [
+            { playerId: 'player-1', isStaff: false, status: AttendanceStatusEnum.PRESENT },
+          ],
+        },
+        'caller-1'
+      );
+
+      expect(match.save).toHaveBeenCalled();
+      expect(match.attendance.length).toBe(1);
+    });
+
+    it('should throw NotFoundException when not found', async () => {
+      mockModel.findById.mockResolvedValueOnce(null);
+      await expect(
+        service.recordAttendance('bad-id', { records: [] }, 'caller-1')
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe('findPaginated()', () => {
     it('should return paginated matches', async () => {
       const execMock = jest.fn().mockResolvedValue([mockMatch]);
@@ -168,6 +213,36 @@ describe('MatchesService', () => {
 
       expect(mockModel.find).toHaveBeenCalledWith(
         expect.objectContaining({ status: MatchStatusEnum.UPCOMING })
+      );
+    });
+
+    it('should use two-step query for sport filter', async () => {
+      const execMock = jest.fn().mockResolvedValue([]);
+      mockModel.find.mockReturnValue({
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        exec: execMock,
+      });
+      mockModel.countDocuments.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(0),
+      });
+      mockTournamentModel.find.mockReturnValue({
+        distinct: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(['t1', 't2']),
+        }),
+      });
+
+      await service.findPaginated({
+        page: 1,
+        size: 10,
+        filters: { sport: 'rugby' as any },
+      });
+
+      expect(mockTournamentModel.find).toHaveBeenCalledWith({ sport: 'rugby' });
+      expect(mockModel.find).toHaveBeenCalledWith(
+        expect.objectContaining({ tournament: { $in: ['t1', 't2'] } })
       );
     });
   });

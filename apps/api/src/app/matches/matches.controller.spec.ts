@@ -10,7 +10,10 @@ const mockMatch = {
   venue: 'Cancha Marista',
   isHome: true,
   status: MatchStatusEnum.UPCOMING,
+  category: 'plantel_superior',
+  tournament: 'tournament-1',
   squad: [],
+  attendance: [],
 };
 
 const mockService = {
@@ -20,6 +23,7 @@ const mockService = {
   create: jest.fn().mockResolvedValue(mockMatch),
   update: jest.fn().mockResolvedValue(mockMatch),
   updateSquad: jest.fn().mockResolvedValue(mockMatch),
+  recordAttendance: jest.fn().mockResolvedValue(mockMatch),
   applySquadTemplate: jest.fn().mockResolvedValue(mockMatch),
   findOne: jest.fn().mockResolvedValue(mockMatch),
   delete: jest.fn().mockResolvedValue(mockMatch),
@@ -67,6 +71,13 @@ describe('MatchesController', () => {
     const dto = { squad: [{ shirtNumber: 1, playerId: 'p1' }] };
     expect(await controller.updateSquad('match-1', dto)).toEqual(mockMatch);
     expect(mockService.updateSquad).toHaveBeenCalledWith('match-1', dto.squad);
+  });
+
+  it('recordAttendance() should record attendance', async () => {
+    const mockReq = { user: { id: 'user-1' } } as any;
+    const dto = { records: [{ playerId: 'p1', isStaff: false, status: 'present' }] };
+    expect(await controller.recordAttendance('match-1', dto as any, mockReq)).toEqual(mockMatch);
+    expect(mockService.recordAttendance).toHaveBeenCalledWith('match-1', dto, 'user-1');
   });
 
   it('applySquadTemplate() should apply a squad template', async () => {

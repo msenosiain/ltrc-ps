@@ -171,6 +171,35 @@
   }
 }
 
+.attendance-entry {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #eee);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.attendance-status {
+  font-size: 0.78rem;
+  font-weight: 500;
+  flex-shrink: 0;
+
+  &.status-present {
+    color: #2e7d32;
+  }
+  &.status-absent {
+    color: #c62828;
+  }
+  &.status-justified {
+    color: #e65100;
+  }
+}
+
 .notes {
   margin-top: 20px;
 }

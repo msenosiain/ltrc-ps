@@ -3,10 +3,10 @@ import { MatchEntity } from './match.entity';
 import {
   CategoryEnum,
   MatchStatusEnum,
-  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
+import { AttendanceEntrySchema } from '../../shared/schemas/attendance-entry.schema';
 
 const MatchResultSchema = new Schema(
   {
@@ -46,17 +46,15 @@ export const MatchSchema = new Schema<MatchEntity>(
       enum: Object.values(MatchStatusEnum),
       default: MatchStatusEnum.UPCOMING,
     },
-    sport: {
-      type: String,
-      enum: Object.values(SportEnum),
-    },
     category: {
       type: String,
       enum: Object.values(CategoryEnum),
+      required: true,
     },
     division: { type: String },
-    tournament: { type: Types.ObjectId, ref: TournamentEntity.name },
+    tournament: { type: Types.ObjectId, ref: TournamentEntity.name, required: true },
     squad: [MatchSquadEntrySchema],
+    attendance: [AttendanceEntrySchema],
     videos: [MatchVideoSchema],
     result: MatchResultSchema,
     notes: { type: String },

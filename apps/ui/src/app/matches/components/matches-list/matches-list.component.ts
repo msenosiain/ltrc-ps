@@ -20,11 +20,13 @@ import { MatchesDataSource } from '../../services/matches.datasource';
 import { MatchFilters } from '../../forms/match-form.types';
 import { MatchSearchComponent } from '../match-search/match-search.component';
 import {
+  CategoryEnum,
   Match,
   MatchStatusEnum,
   RoleEnum,
   SortOrder,
 } from '@ltrc-ps/shared-api-model';
+import { getCategoryLabel } from '../../match-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { ListStateService } from '../../../common/services/list-state.service';
 
@@ -57,10 +59,10 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'date',
-    'opponent',
     'venue',
-    'division',
     'tournament',
+    'category',
+    'opponent',
     'status',
     'result',
   ];
@@ -138,6 +140,10 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   getStatusLabel(status: MatchStatusEnum): string {
     return this.matchesService.getStatusLabel(status);
+  }
+
+  getCategoryLabel(category?: CategoryEnum): string {
+    return getCategoryLabel(category);
   }
 
   getResultLabel(match: Match): string {

@@ -1,24 +1,13 @@
 import { Document } from 'mongoose';
 import {
-  AttendanceStatusEnum,
   CategoryEnum,
   SportEnum,
   TrainingSessionStatusEnum,
 } from '../enums';
-import { Player } from './player.interface';
+import { AttendanceEntry } from './attendance-entry.interface';
 import { TrainingSchedule } from './training-schedule.interface';
 
-export interface AttendanceEntry {
-  player?: Player; // for players
-  user?: string; // userId — for coaches/PFs/staff
-  userName?: string; // display name for staff
-  isStaff: boolean; // true = coach/PF/staff, false = player
-  confirmed: boolean;
-  confirmedAt?: Date;
-  status?: AttendanceStatusEnum;
-  markedAt?: Date;
-  markedBy?: string; // userId who marked attendance
-}
+export { AttendanceEntry };
 
 export interface TrainingSession extends Document {
   readonly id?: string;

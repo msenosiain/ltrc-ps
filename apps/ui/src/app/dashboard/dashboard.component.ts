@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { PlayersService } from '../players/services/players.service';
 import { SidenavService } from '../common/services/sidenav.service';
 import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
+import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-matches-widget/upcoming-matches-widget.component';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -35,6 +36,7 @@ import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcomi
     MatButtonModule,
     MatIconModule,
     UpcomingTrainingsWidgetComponent,
+    UpcomingMatchesWidgetComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

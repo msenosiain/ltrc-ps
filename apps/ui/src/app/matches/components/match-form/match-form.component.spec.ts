@@ -4,7 +4,7 @@ import { TournamentsService } from '../../../tournaments/services/tournaments.se
 import { MatchesService } from '../../services/matches.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { of } from 'rxjs';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
 describe('MatchFormComponent', () => {
   let component: MatchFormComponent;
@@ -45,12 +45,13 @@ describe('MatchFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should require date, opponent and venue', () => {
+  it('should require date, venue, tournament and category', () => {
     expect(component.matchForm.valid).toBeFalsy();
     component.matchForm.patchValue({
       date: new Date(),
-      opponent: 'River',
       venue: 'El Monumental',
+      tournament: '507f1f77bcf86cd799439011',
+      category: CategoryEnum.PLANTEL_SUPERIOR,
     });
     expect(component.matchForm.valid).toBeTruthy();
   });
@@ -65,8 +66,9 @@ describe('MatchFormComponent', () => {
     const spy = jest.spyOn(component.formSubmit, 'emit');
     component.matchForm.patchValue({
       date: new Date(),
-      opponent: 'River',
       venue: 'El Monumental',
+      tournament: '507f1f77bcf86cd799439011',
+      category: CategoryEnum.PLANTEL_SUPERIOR,
       status: MatchStatusEnum.UPCOMING,
       isHome: true,
     });

@@ -8,9 +8,21 @@
     <mat-card-title>Datos del partido</mat-card-title>
     <div class="match-grid">
       <mat-form-field appearance="outline">
+        <mat-label>Torneo</mat-label>
+        <mat-select formControlName="tournament">
+          @for (t of filteredTournaments; track t.id) {
+          <mat-option [value]="t.id">{{ t.name }}</mat-option>
+          }
+        </mat-select>
+        @if (matchForm.get('tournament')?.invalid) {
+        <mat-error>El torneo es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>Deporte</mat-label>
-        <mat-select formControlName="sport">
-          <mat-option [value]="null">Sin especificar</mat-option>
+        <mat-select [formControl]="sportControl">
+          <mat-option [value]="null">Todos</mat-option>
           @for (s of sportOptions; track s.id) {
           <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
@@ -18,23 +30,15 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Torneo</mat-label>
-        <mat-select formControlName="tournament">
-          <mat-option [value]="null">Sin torneo</mat-option>
-          @for (t of filteredTournaments; track t.id) {
-          <mat-option [value]="t.id">{{ t.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="category">
-          <mat-option [value]="null">Sin categoría</mat-option>
           @for (cat of categoryOptions; track cat.id) {
           <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
           }
         </mat-select>
+        @if (matchForm.get('category')?.invalid) {
+        <mat-error>La categoría es obligatoria</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -64,9 +68,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Hora</mat-label>
-        <input matInput [matTimepicker]="tp" [formControl]="timeControl" />
-        <mat-timepicker-toggle matSuffix [for]="tp" />
-        <mat-timepicker #tp [interval]="30" />
+        <input matInput type="time" [formControl]="timeControl" />
         @if (timeControl.invalid) {
         <mat-error>La hora es obligatoria</mat-error>
         }
@@ -94,7 +96,6 @@
         </mat-select>
       </mat-form-field>
 
-      @if (!isEncounter) {
       <mat-form-field appearance="outline">
         <mat-label>Rival</mat-label>
         <input
@@ -112,6 +113,7 @@
         }
       </mat-form-field>
 
+      @if (isCompetitive) {
       <div class="toggle-field">
         <mat-slide-toggle formControlName="isHome">Local</mat-slide-toggle>
         <span class="toggle-hint">
@@ -126,8 +128,8 @@
     </div>
   </mat-card>
 
-  <!-- RESULTADO (solo cuando está finalizado y no es encuentro) -->
-  @if (statusValue === MatchStatusEnum.COMPLETED && !isEncounter) {
+  <!-- RESULTADO (solo cuando está finalizado y es competitivo) -->
+  @if (statusValue === MatchStatusEnum.COMPLETED && isCompetitive) {
   <mat-card formGroupName="result">
     <mat-card-title>Resultado</mat-card-title>
     <div class="result-grid">

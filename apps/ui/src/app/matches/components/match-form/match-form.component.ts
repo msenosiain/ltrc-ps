@@ -28,13 +28,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatTimepickerModule } from '@angular/material/timepicker';
 import {
+  CategoryEnum,
   Match,
   MatchStatusEnum,
-  MatchTypeEnum,
   SportEnum,
   Tournament,
+  isCompetitiveCategory,
 } from '@ltrc-ps/shared-api-model';
 import {
   getCategoryOptionsBySport,
@@ -69,7 +69,6 @@ function filterOptions(options: string[], value: string): string[] {
     MatDatepickerModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
-    MatTimepickerModule,
   ],
   templateUrl: './match-form.component.html',
   styleUrl: './match-form.component.scss',
@@ -91,19 +90,22 @@ export class MatchFormComponent implements OnInit, OnChanges {
   readonly MatchStatusEnum = MatchStatusEnum;
 
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport(null);
-  tournaments: Tournament[] = [];
   filteredTournaments: Tournament[] = [];
+  tournaments: Tournament[] = [];
   matchForm: FormGroup = buildCreateMatchForm(this.fb);
 
-  /** Whether the selected tournament is an encounter */
-  isEncounter = false;
+  /** Whether the current category + sport combination is competitive */
+  isCompetitive = false;
+
+  /** Sport derived from the selected tournament */
+  tournamentSport: SportEnum | null = null;
+
+  /** Control de deporte: standalone, filtra torneos. Se deshabilita al elegir torneo. */
+  readonly sportControl = new FormControl<SportEnum | null>(null);
 
   /** Control de hora: standalone, no forma parte de MatchFormValue.
    *  Al cambiar, fusiona la hora en el control `date` del form. */
-  readonly timeControl = new FormControl<Date | null>(
-    null,
-    Validators.required
-  );
+  readonly timeControl = new FormControl<string>('', Validators.required);
 
   private allOpponents: string[] = [];
   private allVenues: string[] = [];
@@ -144,28 +146,24 @@ export class MatchFormComponent implements OnInit, OnChanges {
       .pipe(map((res) => res.items))
       .subscribe((t) => {
         this.tournaments = t;
-        this.filterTournamentsBySport(this.matchForm.get('sport')?.value);
+        this.filteredTournaments = t;
       });
 
-    // When sport changes: update categories and filter tournaments by sport
-    this.matchForm
-      .get('sport')!
-      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((sport: SportEnum | null) => {
-        this.categoryOptions = getCategoryOptionsBySport(sport);
-        const cat = this.matchForm.get('category')?.value;
-        if (cat && !this.categoryOptions.find((c) => c.id === cat)) {
-          this.matchForm.get('category')?.setValue(null);
-        }
-        this.filterTournamentsBySport(sport);
-        // If current tournament doesn't match new sport, clear it
+    // When sport control changes: filter tournament list
+    this.sportControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport) => {
+        this.filteredTournaments = sport
+          ? this.tournaments.filter((t) => !t.sport || t.sport === sport)
+          : this.tournaments;
+        // If current tournament no longer in filtered list, clear it
         const currentTournament = this.matchForm.get('tournament')?.value;
         if (currentTournament && !this.filteredTournaments.find((t) => t.id === currentTournament)) {
           this.matchForm.get('tournament')?.setValue(null);
         }
       });
 
-    // When tournament changes: auto-fill sport/category from tournament
+    // When tournament changes: derive sport, update categories, compute competitive
     this.matchForm
       .get('tournament')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -173,10 +171,18 @@ export class MatchFormComponent implements OnInit, OnChanges {
         this.applyTournamentDefaults(tournamentId);
       });
 
+    // When category changes: recompute competitive
+    this.matchForm
+      .get('category')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.updateCompetitive();
+      });
+
     // Cuando el usuario selecciona una hora, fusionarla en el control date.
     this.timeControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((time) => this.applyTimeToDate(time));
+      .subscribe((time) => this.applyTimeToDate(time ?? ''));
 
     // Cuando el datepicker cambia la fecha, re-aplicar la hora para no perderla.
     this.matchForm
@@ -191,23 +197,30 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['match'] && this.match) {
-      this.categoryOptions = getCategoryOptionsBySport(
-        this.match.sport ?? null
-      );
+      const tournament = this.match.tournament as Tournament | undefined;
+      this.tournamentSport = tournament?.sport ?? null;
+      this.categoryOptions = this.categoryOptionsForTournament(tournament);
+
       const matchDate = this.match.date ? new Date(this.match.date) : null;
       const h = matchDate?.getHours() ?? 0;
       const m = matchDate?.getMinutes() ?? 0;
-      this.timeControl.setValue(h || m ? new Date(2000, 0, 1, h, m) : null, {
-        emitEvent: false,
-      });
-      const tournament = this.match.tournament as Tournament | undefined;
-      this.isEncounter = tournament?.type === MatchTypeEnum.ENCOUNTER;
-      this.updateOpponentValidation();
+      const timeStr = h || m
+        ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+        : '';
+      this.timeControl.setValue(timeStr, { emitEvent: false });
+
+      this.sportControl.setValue(tournament?.sport ?? null, { emitEvent: false });
+      if (tournament) {
+        this.sportControl.disable({ emitEvent: false });
+      }
+
       this.matchForm.patchValue({
         ...this.match,
         date: matchDate,
         tournament: tournament?.id ?? null,
       });
+
+      this.updateCompetitive();
     }
   }
 
@@ -228,50 +241,71 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.formSubmit.emit(this.matchForm.getRawValue() as MatchFormValue);
   }
 
-  private filterTournamentsBySport(sport: SportEnum | null): void {
-    if (!sport) {
-      this.filteredTournaments = this.tournaments;
-    } else {
-      this.filteredTournaments = this.tournaments.filter(
-        (t) => !t.sport || t.sport === sport
-      );
+  private categoryOptionsForTournament(tournament: Tournament | undefined): CategoryOption[] {
+    if (tournament?.categories?.length) {
+      const allForSport = getCategoryOptionsBySport(tournament.sport ?? null);
+      return allForSport.filter((opt) => tournament.categories!.includes(opt.id));
     }
+    return getCategoryOptionsBySport(tournament?.sport ?? null);
   }
 
   private applyTournamentDefaults(tournamentId: string | null): void {
     const tournament = this.tournaments.find((t) => t.id === tournamentId);
-    this.isEncounter = tournament?.type === MatchTypeEnum.ENCOUNTER;
-    this.updateOpponentValidation();
+    this.tournamentSport = tournament?.sport ?? null;
+    this.categoryOptions = this.categoryOptionsForTournament(tournament);
 
     if (tournament) {
-      // Auto-fill sport from tournament if set
-      if (tournament.sport) {
-        this.matchForm.get('sport')?.setValue(tournament.sport, { emitEvent: false });
-        this.categoryOptions = getCategoryOptionsBySport(tournament.sport);
+      // Lock sport to tournament's sport
+      this.sportControl.setValue(tournament.sport ?? null, { emitEvent: false });
+      this.sportControl.disable({ emitEvent: false });
+    } else {
+      this.sportControl.enable({ emitEvent: false });
+    }
+
+    // Auto-select if only one option
+    if (this.categoryOptions.length === 1) {
+      this.matchForm.get('category')?.setValue(this.categoryOptions[0].id);
+    } else {
+      // Clear if current value is no longer valid
+      const currentCat = this.matchForm.get('category')?.value;
+      if (currentCat && !this.categoryOptions.find((c) => c.id === currentCat)) {
+        this.matchForm.get('category')?.setValue(null);
       }
-      // Auto-fill category if tournament has exactly one
-      if (tournament.categories?.length === 1) {
-        this.matchForm.get('category')?.setValue(tournament.categories[0]);
-      }
+    }
+
+    this.updateCompetitive();
+  }
+
+  private updateCompetitive(): void {
+    const category = this.matchForm.get('category')?.value as CategoryEnum | null;
+    const wasCompetitive = this.isCompetitive;
+
+    this.isCompetitive =
+      !!category &&
+      !!this.tournamentSport &&
+      isCompetitiveCategory(category, this.tournamentSport);
+
+    if (this.isCompetitive !== wasCompetitive) {
+      this.updateOpponentValidation();
     }
   }
 
   private updateOpponentValidation(): void {
     const opponent = this.matchForm.get('opponent')!;
-    if (this.isEncounter) {
-      opponent.clearValidators();
-      opponent.setValue('');
-    } else {
+    if (this.isCompetitive) {
       opponent.setValidators(Validators.required);
+    } else {
+      opponent.clearValidators();
     }
     opponent.updateValueAndValidity();
   }
 
-  private applyTimeToDate(time: Date | null): void {
+  private applyTimeToDate(time: string): void {
     const date = this.matchForm.get('date')?.value as Date | null;
-    if (!date) return;
+    if (!date || !time) return;
+    const [h, m] = time.split(':').map(Number);
     const merged = new Date(date);
-    merged.setHours(time?.getHours() ?? 0, time?.getMinutes() ?? 0, 0, 0);
+    merged.setHours(h ?? 0, m ?? 0, 0, 0);
     this.matchForm.get('date')?.setValue(merged, { emitEvent: false });
   }
 }

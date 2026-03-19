@@ -20,7 +20,6 @@ import {
   CategoryEnum,
   MatchStatusEnum,
   parseDate,
-  SportEnum,
 } from '@ltrc-ps/shared-api-model';
 
 export class VideoClipDto {
@@ -88,21 +87,17 @@ export class CreateMatchDto {
   @IsEnum(MatchStatusEnum)
   readonly status?: MatchStatusEnum;
 
-  @IsOptional()
-  @IsEnum(SportEnum)
-  readonly sport?: SportEnum;
-
-  @IsOptional()
+  @IsNotEmpty()
   @IsEnum(CategoryEnum)
-  readonly category?: CategoryEnum;
+  readonly category!: CategoryEnum;
 
   @IsOptional()
   @IsString()
   readonly division?: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsMongoId()
-  readonly tournament?: string;
+  readonly tournament!: string;
 
   @IsOptional()
   @IsArray()

@@ -58,6 +58,12 @@
   margin-left: 4px;
 }
 
+.division-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #666);
+}
+
 // Status badges
 .status-badge {
   display: inline-block;

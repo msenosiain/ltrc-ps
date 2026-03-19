@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
+  AttendanceStatusEnum,
   Match,
   PaginatedResponse,
   PaginationQuery,
@@ -82,6 +83,21 @@ export class MatchesService {
     return this.httpClient.post<Match>(
       `${this.matchesApiUrl}/${matchId}/squad/from/${squadId}`,
       {}
+    );
+  }
+
+  recordAttendance(
+    matchId: string,
+    records: {
+      playerId?: string;
+      userId?: string;
+      isStaff: boolean;
+      status: AttendanceStatusEnum;
+    }[]
+  ): Observable<Match> {
+    return this.httpClient.patch<Match>(
+      `${this.matchesApiUrl}/${matchId}/attendance`,
+      { records }
     );
   }
 }

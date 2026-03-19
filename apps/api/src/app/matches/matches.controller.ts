@@ -18,7 +18,11 @@ import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { UpdateMatchSquadDto } from './dto/update-players.dto';
+import { RecordMatchAttendanceDto } from './dto/record-match-attendance.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
 @Controller('matches')
 export class MatchesController {
@@ -48,6 +52,17 @@ export class MatchesController {
   @Patch(':id/squad')
   async updateSquad(@Param('id') id: string, @Body() dto: UpdateMatchSquadDto) {
     return this.matchesService.updateSquad(id, dto.squad);
+  }
+
+  @Patch(':id/attendance')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async recordAttendance(
+    @Param('id') id: string,
+    @Body() dto: RecordMatchAttendanceDto,
+    @Req() req: Request
+  ) {
+    return this.matchesService.recordAttendance(id, dto, (req as any).user.id);
   }
 
   @Post(':id/squad/from/:squadId')

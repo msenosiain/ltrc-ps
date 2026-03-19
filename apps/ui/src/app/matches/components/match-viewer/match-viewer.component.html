@@ -6,6 +6,7 @@
       <div class="match-header">
         <div class="opponent-info">
           @if (match.opponent) {
+          @if (isCompetitive) {
           <span
             class="venue-badge"
             [class.home]="match.isHome"
@@ -13,6 +14,7 @@
           >
             {{ match.isHome ? 'Local' : 'Visitante' }}
           </span>
+          }
           <h2 class="opponent-name">vs. {{ match.opponent }}</h2>
           } @else {
           <h2 class="opponent-name">Encuentro</h2>
@@ -40,6 +42,12 @@
           <span class="info-label">Cancha</span>
           <span class="info-value">{{ match.venue }}</span>
         </div>
+        @if (sportLabel) {
+        <div class="info-item">
+          <span class="info-label">Deporte</span>
+          <span class="info-value">{{ sportLabel }}</span>
+        </div>
+        }
         @if (match.category) {
         <div class="info-item">
           <span class="info-label">Categoría</span>
@@ -60,7 +68,7 @@
             }
           </span>
         </div>
-        } @if (match.status === MatchStatusEnum.COMPLETED && match.result) {
+        } @if (match.status === MatchStatusEnum.COMPLETED && match.result && isCompetitive) {
         <div class="info-item">
           <span class="info-label">Resultado</span>
           <span class="info-value result">
@@ -81,7 +89,8 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- PLANTEL CONVOCADO -->
+  <!-- PLANTEL CONVOCADO (competitivo) -->
+  @if (isCompetitive) {
   <mat-card class="squad-card">
     <mat-card-content>
       <p class="section-title">Plantel convocado</p>
@@ -133,6 +142,55 @@
       </div>
     </mat-card-content>
   </mat-card>
+  }
+
+  <!-- ASISTENCIA (no competitivo) -->
+  @if (!isCompetitive) {
+  <mat-card class="squad-card">
+    <mat-card-content>
+      <p class="section-title">Asistencia</p>
+
+      @if (playerAttendance.length > 0 || staffAttendance.length > 0) {
+      @if (staffAttendance.length > 0) {
+      <p class="squad-group-label">Staff</p>
+      @for (entry of staffAttendance; track entry.user) {
+      <div class="attendance-entry">
+        <span class="player-name">{{ entry.userName ?? '—' }}</span>
+        <span class="attendance-status" [class]="'status-' + entry.status">
+          {{ getAttendanceStatusLabel(entry.status) }}
+        </span>
+      </div>
+      }
+      }
+      @if (playerAttendance.length > 0) {
+      <p class="squad-group-label">Jugadores</p>
+      @for (entry of playerAttendance; track entry.player?.id) {
+      <div class="attendance-entry">
+        <span class="player-name">{{ entry.player?.name ?? '—' }}</span>
+        <span class="attendance-status" [class]="'status-' + entry.status">
+          {{ getAttendanceStatusLabel(entry.status) }}
+        </span>
+      </div>
+      }
+      }
+      } @else {
+      <p class="empty-squad">Sin asistencia registrada.</p>
+      }
+
+      <div class="squad-card-actions">
+        <button
+          *ltrcAllowedRoles="[RoleEnum.COACH, RoleEnum.ADMIN, RoleEnum.TRAINER]"
+          mat-stroked-button
+          type="button"
+          (click)="manageAttendance()"
+        >
+          <mat-icon>fact_check</mat-icon>
+          Gestionar asistencia
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
 
   <div class="viewer-actions">
     <button mat-stroked-button type="button" (click)="backToList()">

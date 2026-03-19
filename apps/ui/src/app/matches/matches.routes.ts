@@ -3,6 +3,7 @@ import { MatchesListComponent } from './components/matches-list/matches-list.com
 import { MatchViewerComponent } from './components/match-viewer/match-viewer.component';
 import { MatchEditorComponent } from './components/match-editor/match-editor.component';
 import { SquadEditorComponent } from './components/squad-editor/squad-editor.component';
+import { MatchAttendanceComponent } from './components/match-attendance/match-attendance.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-ps/shared-api-model';
 
@@ -36,6 +37,15 @@ export const MATCHES_ROUTES: Routes = [
     data: {
       title: 'Gestionar plantel',
       allowedRoles: [RoleEnum.COACH, RoleEnum.ADMIN],
+    },
+  },
+  {
+    path: ':id/attendance',
+    component: MatchAttendanceComponent,
+    canActivate: [hasRoleGuard],
+    data: {
+      title: 'Gestionar asistencia',
+      allowedRoles: [RoleEnum.COACH, RoleEnum.ADMIN, RoleEnum.TRAINER],
     },
   },
 ];

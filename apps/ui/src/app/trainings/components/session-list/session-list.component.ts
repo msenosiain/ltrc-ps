@@ -28,7 +28,6 @@ import {
   getCategoryLabel,
   getSessionStatusLabel,
 } from '../../training-options';
-import { getSportLabel } from '../../../common/sport-options';
 
 @Component({
   selector: 'ltrc-session-list',
@@ -56,7 +55,6 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
 
   readonly displayedColumns = [
     'date',
-    'sport',
     'category',
     'location',
     'attendance',
@@ -129,10 +127,6 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
 
   viewDetails(id: string): void {
     this.router.navigate(['/dashboard/trainings/sessions', id]);
-  }
-
-  getSportLabel(session: TrainingSession): string {
-    return getSportLabel(session.sport);
   }
 
   getCategoryLabel(session: TrainingSession): string {

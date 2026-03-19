@@ -1,3 +1,4 @@
+export * from './attendance-entry.interface';
 export * from './branch-assignment.interface';
 export * from './match.interface';
 export * from './paginated-response.interface';

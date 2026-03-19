@@ -76,10 +76,15 @@
       <td mat-cell *matCellDef="let match">{{ match.venue }}</td>
     </ng-container>
 
-    <!-- División -->
-    <ng-container matColumnDef="division">
-      <th mat-header-cell *matHeaderCellDef>División</th>
-      <td mat-cell *matCellDef="let match">{{ match.division || '—' }}</td>
+    <!-- Categoría -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>Categoría</th>
+      <td mat-cell *matCellDef="let match">
+        {{ getCategoryLabel(match.category) }}
+        @if (match.division) {
+        <span class="division-label">{{ match.division }}</span>
+        }
+      </td>
     </ng-container>
 
     <!-- Estado -->

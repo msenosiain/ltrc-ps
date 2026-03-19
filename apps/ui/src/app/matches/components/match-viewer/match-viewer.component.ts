@@ -8,12 +8,16 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
 import {
+  AttendanceEntry,
+  AttendanceStatusEnum,
   CategoryEnum,
   Match,
   MatchStatusEnum,
   RoleEnum,
+  SportEnum,
   SquadEntry,
   Tournament,
+  isCompetitiveCategory,
 } from '@ltrc-ps/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { getCategoryLabel as getCatLabel } from '../../match-options';
@@ -49,7 +53,9 @@ export class MatchViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   match?: Match;
+  isCompetitive = false;
   readonly MatchStatusEnum = MatchStatusEnum;
+  readonly AttendanceStatusEnum = AttendanceStatusEnum;
   readonly RoleEnum = RoleEnum;
 
   ngOnInit(): void {
@@ -63,21 +69,41 @@ export class MatchViewerComponent implements OnInit {
       .getMatchById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (match) => (this.match = match),
+        next: (match) => {
+          this.match = match;
+          const tournament = match.tournament as Tournament | undefined;
+          if (match.category && tournament?.sport) {
+            this.isCompetitive = isCompetitiveCategory(
+              match.category,
+              tournament.sport
+            );
+          }
+        },
         error: () => this.router.navigate(['/dashboard/matches']),
       });
   }
 
+  get tournament(): Tournament | undefined {
+    return this.match?.tournament as Tournament | undefined;
+  }
+
   get tournamentName(): string | undefined {
-    return (this.match?.tournament as Tournament)?.name;
+    return this.tournament?.name;
   }
 
   get tournamentHasAttachments(): boolean {
-    return !!((this.match?.tournament as Tournament)?.attachments?.length);
+    return !!(this.tournament?.attachments?.length);
+  }
+
+  get sportLabel(): string {
+    const sport = this.tournament?.sport;
+    if (sport === SportEnum.RUGBY) return 'Rugby';
+    if (sport === SportEnum.HOCKEY) return 'Hockey';
+    return '';
   }
 
   goToTournament(): void {
-    const id = (this.match?.tournament as Tournament)?.id;
+    const id = this.tournament?.id;
     if (id) {
       this.router.navigate(['/dashboard/tournaments', id]);
     }
@@ -93,6 +119,21 @@ export class MatchViewerComponent implements OnInit {
     return (this.match?.squad ?? [])
       .filter((e) => e.shirtNumber > 15)
       .sort((a, b) => a.shirtNumber - b.shirtNumber);
+  }
+
+  get playerAttendance(): AttendanceEntry[] {
+    return (this.match?.attendance ?? []).filter((a) => !a.isStaff);
+  }
+
+  get staffAttendance(): AttendanceEntry[] {
+    return (this.match?.attendance ?? []).filter((a) => a.isStaff);
+  }
+
+  getAttendanceStatusLabel(status?: AttendanceStatusEnum): string {
+    if (status === AttendanceStatusEnum.PRESENT) return 'Presente';
+    if (status === AttendanceStatusEnum.ABSENT) return 'Ausente';
+    if (status === AttendanceStatusEnum.JUSTIFIED) return 'Justificado';
+    return '—';
   }
 
   getStatusLabel(status: MatchStatusEnum): string {
@@ -111,6 +152,10 @@ export class MatchViewerComponent implements OnInit {
 
   manageSquad(): void {
     this.router.navigate(['/dashboard/matches', this.match!.id, 'squad']);
+  }
+
+  manageAttendance(): void {
+    this.router.navigate(['/dashboard/matches', this.match!.id, 'attendance']);
   }
 
   edit(): void {

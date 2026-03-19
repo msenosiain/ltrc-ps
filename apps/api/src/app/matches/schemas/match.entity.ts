@@ -1,8 +1,8 @@
 import { Document, PopulatedDoc, Types } from 'mongoose';
 import {
+  AttendanceEntry,
   CategoryEnum,
   MatchStatusEnum,
-  SportEnum,
   VideoClip,
 } from '@ltrc-ps/shared-api-model';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
@@ -16,14 +16,14 @@ export class MatchEntity extends Document {
   venue: string;
   isHome?: boolean;
   status: MatchStatusEnum;
-  sport?: SportEnum;
-  category?: CategoryEnum;
+  category: CategoryEnum;
   division?: string;
-  tournament?: PopulatedDoc<TournamentEntity & Document>;
+  tournament: PopulatedDoc<TournamentEntity & Document>;
   squad: {
     shirtNumber: number;
     player: PopulatedDoc<PlayerEntity & Document>;
   }[];
+  attendance: AttendanceEntry[];
   videos?: VideoClip[];
   result?: {
     homeScore: number;

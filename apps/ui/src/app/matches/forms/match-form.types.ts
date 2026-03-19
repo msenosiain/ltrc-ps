@@ -10,7 +10,6 @@ export interface MatchFormValue {
   venue: string;
   isHome: boolean;
   status: MatchStatusEnum;
-  sport: SportEnum | null;
   category: CategoryEnum | null;
   division: string;
   tournament: string | null;
