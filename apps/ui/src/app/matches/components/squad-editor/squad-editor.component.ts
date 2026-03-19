@@ -125,7 +125,9 @@ export class SquadEditorComponent implements OnInit {
   ]);
 
   get opponentLabel(): string {
-    return this.match ? `vs. ${this.match.opponent}` : '';
+    if (!this.match) return '';
+    const prefix = this.match.division ? `${this.match.division} ` : '';
+    return `${prefix}vs ${this.match.opponent}`;
   }
 
   get selectedSquad(): Squad | null {
@@ -193,6 +195,7 @@ export class SquadEditorComponent implements OnInit {
             size: 20,
             filters: {
               searchTerm: term,
+              ...(this.match?.tournament?.sport && { sport: this.match.tournament.sport }),
               ...(this.match?.category && { category: this.match.category }),
             },
           })

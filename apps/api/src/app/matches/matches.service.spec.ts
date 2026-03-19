@@ -4,6 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
+import { PlayerEntity } from '../players/schemas/player.entity';
 import { SquadsService } from '../squads/squads.service';
 import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
 
@@ -43,6 +44,8 @@ const mockTournamentModel = {
   find: jest.fn(),
 };
 
+const mockPlayerModel = {};
+
 const mockSquadsService = {
   getPlayers: jest.fn(),
 };
@@ -58,6 +61,7 @@ describe('MatchesService', () => {
         MatchesService,
         { provide: getModelToken(MatchEntity.name), useValue: mockModel },
         { provide: getModelToken(TournamentEntity.name), useValue: mockTournamentModel },
+        { provide: getModelToken(PlayerEntity.name), useValue: mockPlayerModel },
         { provide: SquadsService, useValue: mockSquadsService },
       ],
     }).compile();

@@ -15,7 +15,7 @@
             {{ match.isHome ? 'Local' : 'Visitante' }}
           </span>
           }
-          <h2 class="opponent-name">vs. {{ match.opponent }}</h2>
+          <h2 class="opponent-name">{{ match.division ? match.division + ' ' : '' }}vs {{ match.opponent }}</h2>
           } @else {
           <h2 class="opponent-name">Encuentro</h2>
           }
