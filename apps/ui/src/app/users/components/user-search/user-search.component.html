@@ -1,31 +1,34 @@
-<form [formGroup]="searchForm" class="user-search">
-  <mat-form-field appearance="outline">
-    <mat-label>Buscar</mat-label>
-    <input
-      matInput
-      formControlName="searchTerm"
-      placeholder="Apellido, nombre o email"
-    />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Rol</mat-label>
-    <mat-select formControlName="role">
-      <mat-option [value]="undefined">Todos</mat-option>
-      @for (option of roleOptions; track option.id) {
-      <mat-option [value]="option.id">{{ option.label }}</mat-option>
+<form [formGroup]="searchForm" class="search-form">
+  <div class="filters-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar</mat-label>
+      <input
+        matInput
+        formControlName="searchTerm"
+        placeholder="Apellido, nombre o email"
+      />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
+        <mat-icon>close</mat-icon>
+      </button>
+      } @else {
+      <mat-icon matSuffix>search</mat-icon>
       }
-    </mat-select>
-    @if (searchForm.get('role')?.value) {
-    <button
-      matSuffix
-      mat-icon-button
-      type="button"
-      (click)="clearField('role')"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
-    }
-  </mat-form-field>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="role">
+        <mat-option [value]="undefined">Todos</mat-option>
+        @for (option of roleOptions; track option.id) {
+        <mat-option [value]="option.id">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('role')?.value) {
+      <button matSuffix mat-icon-button type="button" (click)="clearField('role')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+  </div>
 </form>

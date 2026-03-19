@@ -1,6 +1,6 @@
 <form [formGroup]="searchForm" class="search-form">
   <div class="filters-container">
-    <mat-form-field appearance="outline" class="filter-field search-field">
+    <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar</mat-label>
       <input matInput formControlName="searchTerm" placeholder="Nombre o destino..." />
       @if (searchForm.get('searchTerm')?.value) {
