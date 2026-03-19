@@ -2,7 +2,7 @@ import {
   CategoryEnum,
   DayOfWeekEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export interface TimeSlotFormValue {
   day: DayOfWeekEnum | null;

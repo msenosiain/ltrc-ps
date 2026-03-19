@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BehaviorSubject } from 'rxjs';
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { UserFilterContextService } from './user-filter-context.service';
 import { AuthService } from '../../auth/auth.service';
 import { User } from '../../users/User.interface';

@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { API_CONFIG_TOKEN } from '../../../app.config';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
-import { TripStatusEnum } from '@ltrc-ps/shared-api-model';
+import { TripStatusEnum } from '@ltrc-campo/shared-api-model';
 
 const mockTripsService = {
   getTrips: jest.fn().mockReturnValue(of({ items: [], total: 0, page: 1, size: 10 })),

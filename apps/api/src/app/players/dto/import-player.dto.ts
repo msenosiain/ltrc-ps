@@ -1,4 +1,4 @@
-import { PlayerPosition } from '@ltrc-ps/shared-api-model';
+import { PlayerPosition } from '@ltrc-campo/shared-api-model';
 
 export interface ImportPlayerRow {
   name: string;

@@ -3,7 +3,7 @@ import { IsEnum, IsInt, IsMongoId, IsOptional, Min } from 'class-validator';
 import {
   CategoryEnum,
   HockeyBranchEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class BranchAssignmentFilterDto {
   @IsMongoId()

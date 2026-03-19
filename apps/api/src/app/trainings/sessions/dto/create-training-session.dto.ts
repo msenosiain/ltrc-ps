@@ -13,7 +13,7 @@ import {
   parseDate,
   SportEnum,
   TrainingSessionStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class CreateTrainingSessionDto {
   @IsOptional()

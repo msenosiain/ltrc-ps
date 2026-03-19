@@ -1,4 +1,4 @@
-import { MatchTypeEnum } from '@ltrc-ps/shared-api-model';
+import { MatchTypeEnum } from '@ltrc-campo/shared-api-model';
 
 export interface MatchOption<T> {
   id: T;

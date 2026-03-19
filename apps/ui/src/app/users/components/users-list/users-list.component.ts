@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { RoleEnum, SportEnum, SortOrder } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum, SortOrder } from '@ltrc-campo/shared-api-model';
 import { UsersService } from '../../services/users.service';
 import { UsersDataSource, UserFilters } from '../../services/users.datasource';
 import { UserSearchComponent } from '../user-search/user-search.component';

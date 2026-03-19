@@ -5,7 +5,7 @@ import { TournamentEntity } from './schemas/tournament.entity';
 import { CreateTournamentDto } from './dto/create-tournament.dto';
 import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { TournamentFilterDto } from './dto/tournament-filter.dto';
-import { PaginatedResponse, RoleEnum, SortOrder } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse, RoleEnum, SortOrder } from '@ltrc-campo/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 import { PaginationDto } from '../shared/pagination.dto';
 import { GridFsService } from '../shared/gridfs/gridfs.service';

@@ -6,7 +6,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 import type { File as MulterFile } from 'multer';
 

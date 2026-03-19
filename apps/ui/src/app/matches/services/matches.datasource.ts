@@ -6,7 +6,7 @@ import {
   Observable,
   observeOn,
 } from 'rxjs';
-import { Match, PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
+import { Match, PaginationQuery, SortOrder } from '@ltrc-campo/shared-api-model';
 import { MatchFilters } from '../forms/match-form.types';
 import { MatchesService } from './matches.service';
 

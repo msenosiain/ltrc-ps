@@ -14,7 +14,7 @@ import { map } from 'rxjs';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
-import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { MatButtonModule } from '@angular/material/button';

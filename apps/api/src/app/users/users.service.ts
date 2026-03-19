@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { PaginationDto } from '../shared/pagination.dto';
 import { UserFiltersDto } from './dto/user-filter.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PaginatedResponse } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse } from '@ltrc-campo/shared-api-model';
 
 @Injectable()
 export class UsersService {

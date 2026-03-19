@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CategoryEnum, Squad } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, Squad } from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
 export interface SquadPayloadEntry {

@@ -20,7 +20,7 @@ import {
   CategoryEnum,
   MatchStatusEnum,
   parseDate,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class VideoClipDto {
   @IsUrl()

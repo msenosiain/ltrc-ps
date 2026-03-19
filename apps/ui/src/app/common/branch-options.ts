@@ -1,4 +1,4 @@
-import { HockeyBranchEnum } from '@ltrc-ps/shared-api-model';
+import { HockeyBranchEnum } from '@ltrc-campo/shared-api-model';
 
 export interface BranchOption {
   id: HockeyBranchEnum;

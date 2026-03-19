@@ -7,7 +7,7 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TransportTypeEnum } from '@ltrc-ps/shared-api-model';
+import { TransportTypeEnum } from '@ltrc-campo/shared-api-model';
 
 export class AddTransportDto {
   @IsNotEmpty()

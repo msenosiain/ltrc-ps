@@ -7,7 +7,7 @@ import { SessionListComponent } from './components/session-list/session-list.com
 import { SessionViewerComponent } from './components/session-viewer/session-viewer.component';
 import { AttendanceRollCallComponent } from './components/attendance-roll-call/attendance-roll-call.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const TRAININGS_ROUTES: Routes = [
   {

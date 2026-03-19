@@ -10,7 +10,7 @@ import {
   PaginationQuery,
   SortOrder,
   TrainingSchedule,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { ScheduleFilters } from '../forms/schedule-form.types';
 import { TrainingSchedulesService } from './training-schedules.service';
 

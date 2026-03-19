@@ -2,7 +2,7 @@ import {
   AttendanceStatusEnum,
   DayOfWeekEnum,
   TrainingSessionStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export { sportOptions } from '../common/sport-options';
 export {

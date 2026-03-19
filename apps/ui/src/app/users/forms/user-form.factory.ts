@@ -1,5 +1,5 @@
 import { FormBuilder, Validators } from '@angular/forms';
-import { CategoryEnum, HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export function buildUserForm(fb: FormBuilder, isCreate = false) {
   return fb.group({

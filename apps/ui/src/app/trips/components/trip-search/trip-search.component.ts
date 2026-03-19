@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { SportEnum, TripStatusEnum } from '@ltrc-ps/shared-api-model';
+import { SportEnum, TripStatusEnum } from '@ltrc-campo/shared-api-model';
 import { SportOption, sportOptions } from '../../../common/sport-options';
 import { TripListFilters } from '../../services/trips.datasource';
 import { tripStatusOptions, TripOption } from '../../trip-options';

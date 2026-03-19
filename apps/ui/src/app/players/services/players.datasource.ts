@@ -11,7 +11,7 @@ import {
   Player,
   PlayerFilters,
   SortOrder,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { PlayersService } from './players.service';
 
 export class PlayersDataSource implements DataSource<Player> {

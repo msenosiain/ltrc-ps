@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@ltrc-ps/shared-api-model": ["libs/shared/api/src/index.ts"]
+      "@ltrc-campo/shared-api-model": ["libs/shared/api/src/index.ts"]
     },
     "types": ["jest", "node"]
   },

@@ -6,7 +6,7 @@ import {
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
   TripStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class PaymentEntryEntity {
   _id!: Types.ObjectId;

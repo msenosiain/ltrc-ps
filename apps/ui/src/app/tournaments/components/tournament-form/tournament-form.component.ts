@@ -23,7 +23,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { CategoryEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchTypeEnum, SportEnum, Tournament } from '@ltrc-campo/shared-api-model';
 import { TournamentFormValue } from '../../services/tournaments.service';
 import { SportOption, sportOptions } from '../../../common/sport-options';
 import {

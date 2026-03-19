@@ -13,7 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
 import { MatchFormValue } from '../../forms/match-form.types';
-import { Match } from '@ltrc-ps/shared-api-model';
+import { Match } from '@ltrc-campo/shared-api-model';
 import { MatchFormComponent } from '../match-form/match-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

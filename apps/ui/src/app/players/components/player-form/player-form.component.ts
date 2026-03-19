@@ -40,7 +40,7 @@ import {
   PlayerPosition,
   RoleEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   getCategoryOptionsBySport,

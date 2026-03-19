@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
 import { TournamentEntity } from './tournament.entity';
-import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 const TournamentAttachmentSchema = new Schema(
   {

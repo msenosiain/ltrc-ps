@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-import { Squad } from '@ltrc-ps/shared-api-model';
+import { Squad } from '@ltrc-campo/shared-api-model';
 
 export interface SaveSquadTemplateDialogData {
   squads: Squad[];

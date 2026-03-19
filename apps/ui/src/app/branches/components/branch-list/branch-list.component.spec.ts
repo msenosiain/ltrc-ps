@@ -8,7 +8,7 @@ import {
   HockeyBranchEnum,
   SportEnum,
   HockeyPositions,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { BranchAssignmentsService } from '../../services/branch-assignments.service';
 import { AuthService } from '../../../auth/auth.service';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';

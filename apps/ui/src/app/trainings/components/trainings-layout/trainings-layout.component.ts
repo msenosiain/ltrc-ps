@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 
 @Component({

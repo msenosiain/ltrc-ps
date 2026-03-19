@@ -3,8 +3,8 @@ import {
   mapPlayerToForm,
 } from './player-form.mapper';
 import { PlayerFormValue } from './player-form.types';
-import { Player } from '@ltrc-ps/shared-api-model';
-import { RugbyPositions, ClothingSizesEnum } from '@ltrc-ps/shared-api-model';
+import { Player } from '@ltrc-campo/shared-api-model';
+import { RugbyPositions, ClothingSizesEnum } from '@ltrc-campo/shared-api-model';
 
 const baseForm: PlayerFormValue = {
   name: 'Juan Perez',

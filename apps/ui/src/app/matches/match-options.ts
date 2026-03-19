@@ -1,4 +1,4 @@
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 export { sportOptions } from '../common/sport-options';
 export {

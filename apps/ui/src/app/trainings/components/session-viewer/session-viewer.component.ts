@@ -11,7 +11,7 @@ import {
   RoleEnum,
   TrainingSession,
   TrainingSessionStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import {
   getAttendanceStatusLabel,

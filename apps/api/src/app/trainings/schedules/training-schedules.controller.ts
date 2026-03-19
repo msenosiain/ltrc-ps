@@ -19,7 +19,7 @@ import { UpdateTrainingScheduleDto } from './dto/update-training-schedule.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 @Controller('training-schedules')
 export class TrainingSchedulesController {

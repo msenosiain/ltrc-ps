@@ -7,7 +7,7 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TripParticipantStatusEnum } from '@ltrc-ps/shared-api-model';
+import { TripParticipantStatusEnum } from '@ltrc-campo/shared-api-model';
 
 export class UpdateParticipantDto {
   @IsOptional()

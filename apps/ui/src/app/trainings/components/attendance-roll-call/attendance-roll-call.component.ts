@@ -22,7 +22,7 @@ import {
   PlayerStatusEnum,
   SortOrder,
   TrainingSession,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

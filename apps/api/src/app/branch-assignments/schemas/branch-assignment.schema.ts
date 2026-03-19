@@ -3,7 +3,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { BranchAssignmentEntity } from './branch-assignment.entity';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 

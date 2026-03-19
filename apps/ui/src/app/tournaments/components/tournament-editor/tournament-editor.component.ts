@@ -20,7 +20,7 @@ import {
   TournamentsService,
   TournamentFormValue,
 } from '../../services/tournaments.service';
-import { Tournament, TournamentAttachment } from '@ltrc-ps/shared-api-model';
+import { Tournament, TournamentAttachment } from '@ltrc-campo/shared-api-model';
 import { TournamentFormComponent } from '../tournament-form/tournament-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { SportEnum, TripStatusEnum } from '@ltrc-ps/shared-api-model';
+import { SportEnum, TripStatusEnum } from '@ltrc-campo/shared-api-model';
 
 export class TripFilterDto {
   @IsOptional()

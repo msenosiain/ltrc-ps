@@ -21,7 +21,7 @@ import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 @Controller('training-sessions')
 export class TrainingSessionsController {

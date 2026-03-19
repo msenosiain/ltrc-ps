@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { distinctUntilChanged, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
-import { RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { User } from '../../users/User.interface';
 
 export type RoleRule = RoleEnum | { role: RoleEnum; sport: SportEnum };

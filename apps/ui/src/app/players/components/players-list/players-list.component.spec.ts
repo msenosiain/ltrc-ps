@@ -4,7 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
 import { of } from 'rxjs';
 import { ListStateService } from '../../../common/services/list-state.service';
-import { SortOrder, SportEnum } from '@ltrc-ps/shared-api-model';
+import { SortOrder, SportEnum } from '@ltrc-campo/shared-api-model';
 
 describe('PlayersList', () => {
   let component: PlayersListComponent;

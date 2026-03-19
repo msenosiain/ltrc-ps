@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export class TrainingScheduleFiltersDto {
   @IsOptional()

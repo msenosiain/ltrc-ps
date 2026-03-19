@@ -3,7 +3,7 @@ import {
   PlayerPosition,
   RugbyPositions,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export { SportOption, sportOptions } from '../common/sport-options';
 

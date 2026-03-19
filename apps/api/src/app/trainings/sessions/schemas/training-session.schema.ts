@@ -4,7 +4,7 @@ import {
   CategoryEnum,
   SportEnum,
   TrainingSessionStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TrainingScheduleEntity } from '../../schedules/schemas/training-schedule.entity';
 import { AttendanceEntrySchema } from '../../../shared/schemas/attendance-entry.schema';
 

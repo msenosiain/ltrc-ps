@@ -1,5 +1,5 @@
 {
-  "name": "@ltrc-ps/shared-api-model",
+  "name": "@ltrc-campo/shared-api-model",
   "version": "0.0.1",
   "dependencies": {
     "tslib": "^2.3.0"

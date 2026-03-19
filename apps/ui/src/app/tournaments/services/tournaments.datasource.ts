@@ -11,7 +11,7 @@ import {
   SortOrder,
   SportEnum,
   Tournament,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TournamentsService } from './tournaments.service';
 
 export interface TournamentFilters {

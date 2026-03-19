@@ -11,7 +11,7 @@ import { Type } from 'class-transformer';
 import {
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class AddParticipantDto {
   @IsEnum(TripParticipantTypeEnum)

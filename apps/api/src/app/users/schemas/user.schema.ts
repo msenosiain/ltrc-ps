@@ -5,7 +5,7 @@ import {
   HockeyBranchEnum,
   RoleEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 @Schema()
 export class User extends Document {

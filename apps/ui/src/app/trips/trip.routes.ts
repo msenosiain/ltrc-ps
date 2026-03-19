@@ -3,7 +3,7 @@ import { TripListComponent } from './components/trip-list/trip-list.component';
 import { TripViewerComponent } from './components/trip-viewer/trip-viewer.component';
 import { TripEditorComponent } from './components/trip-editor/trip-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const TRIPS_ROUTES: Routes = [
   {

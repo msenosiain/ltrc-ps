@@ -1,5 +1,5 @@
 import { Document, PopulatedDoc, Types } from 'mongoose';
-import { CategoryEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum } from '@ltrc-campo/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 
 export class SquadEntity extends Document {

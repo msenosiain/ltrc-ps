@@ -6,7 +6,7 @@ import {
   PaginationQuery,
   TrainingSchedule,
   UpcomingTraining,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { ScheduleFormValue } from '../forms/schedule-form.types';
 import { mapFormToCreateScheduleDto } from '../forms/schedule-form.mapper';

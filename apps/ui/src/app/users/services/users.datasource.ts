@@ -6,7 +6,7 @@ import {
   Observable,
   observeOn,
 } from 'rxjs';
-import { PaginationQuery, SortOrder } from '@ltrc-ps/shared-api-model';
+import { PaginationQuery, SortOrder } from '@ltrc-campo/shared-api-model';
 import { User } from '../User.interface';
 import { UsersService } from './users.service';
 

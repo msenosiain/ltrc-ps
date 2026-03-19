@@ -10,7 +10,7 @@ import {
   TripParticipantTypeEnum,
   TripStatusEnum,
   TransportTypeEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
 export interface CreateTripPayload {

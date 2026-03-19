@@ -1,4 +1,4 @@
-import { CategoryEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export interface CategoryOption {
   id: CategoryEnum;

@@ -3,7 +3,7 @@ import { MatchEntity } from './match.entity';
 import {
   CategoryEnum,
   MatchStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
 import { AttendanceEntrySchema } from '../../shared/schemas/attendance-entry.schema';

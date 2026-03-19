@@ -43,7 +43,7 @@ import {
   Squad,
   SquadEntry,
   SquadPlayerTemplate,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { PlayersService } from '../../../players/services/players.service';
 import { MatchesService } from '../../services/matches.service';

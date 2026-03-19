@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
-import { Player } from '@ltrc-ps/shared-api-model';
+import { Player } from '@ltrc-campo/shared-api-model';
 import {
   PlayerFormComponent,
   PlayerFormSubmitEvent,

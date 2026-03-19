@@ -20,7 +20,7 @@ import {
   HockeyBranchEnum,
   RoleEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { BranchAssignmentsService } from '../../services/branch-assignments.service';
 import {
   BranchSearchComponent,

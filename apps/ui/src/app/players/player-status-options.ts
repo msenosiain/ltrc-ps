@@ -1,7 +1,7 @@
 import {
   PlayerAvailabilityEnum,
   PlayerStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export const playerStatusOptions: { id: PlayerStatusEnum; label: string }[] = [
   { id: PlayerStatusEnum.ACTIVE, label: 'Activo' },

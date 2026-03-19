@@ -4,7 +4,7 @@ import { TournamentsService } from '../../../tournaments/services/tournaments.se
 import { MatchesService } from '../../services/matches.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { of } from 'rxjs';
-import { CategoryEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 describe('MatchFormComponent', () => {
   let component: MatchFormComponent;

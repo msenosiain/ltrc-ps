@@ -16,7 +16,7 @@ import {
   PlayerPosition,
   PlayerStatusEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import {
   CategoryOption,
   categoryOptions,

@@ -9,7 +9,7 @@ import {
   TripParticipantStatusEnum,
   TransportTypeEnum,
   CategoryEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { Types } from 'mongoose';
 
 const makeParticipant = (overrides: Partial<any> = {}): any => ({

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CategoryEnum, RoleEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, RoleEnum } from '@ltrc-campo/shared-api-model';
 import { SquadEntity } from './schemas/squad.entity';
 import { CreateSquadDto } from './dto/create-squad.dto';
 import { UpdateSquadDto } from './dto/update-squad.dto';

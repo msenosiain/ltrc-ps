@@ -5,7 +5,7 @@ import { MatchEditorComponent } from './components/match-editor/match-editor.com
 import { SquadEditorComponent } from './components/squad-editor/squad-editor.component';
 import { MatchAttendanceComponent } from './components/match-attendance/match-attendance.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const MATCHES_ROUTES: Routes = [
   {

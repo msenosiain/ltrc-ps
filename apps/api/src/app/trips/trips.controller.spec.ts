@@ -6,7 +6,7 @@ import {
   TripParticipantTypeEnum,
   TripParticipantStatusEnum,
   TransportTypeEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 const mockTrip = {
   id: 'trip-1',

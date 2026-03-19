@@ -4,7 +4,7 @@
   "projectType": "library",
   "sourceRoot": "libs/shared/api/src",
   "root": "libs/shared/api",
-  "prefix": "ltrc-ps",
+  "prefix": "ltrc-campo",
   "tags": [],
   "targets": {
     "test": {

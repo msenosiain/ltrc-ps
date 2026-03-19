@@ -19,7 +19,7 @@ import {
   RoleEnum,
   SortOrder,
   TrainingSchedule,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { SchedulesDataSource } from '../../services/schedules.datasource';
 import { ScheduleFilters } from '../../forms/schedule-form.types';

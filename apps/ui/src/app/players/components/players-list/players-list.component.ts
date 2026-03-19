@@ -21,7 +21,7 @@ import {
   RoleEnum,
   SortOrder,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { categoryOptions } from '../../../common/category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';

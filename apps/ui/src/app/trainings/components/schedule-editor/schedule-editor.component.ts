@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TrainingSchedule } from '@ltrc-ps/shared-api-model';
+import { TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { ScheduleFormValue } from '../../forms/schedule-form.types';
 import { ScheduleFormComponent } from '../schedule-form/schedule-form.component';

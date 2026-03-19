@@ -38,7 +38,7 @@ apps/
   api/         # NestJS 11 with MongoDB/GridFS
   ui-e2e/      # Cypress tests
 libs/
-  shared/api/  # Shared TypeScript interfaces and enums (import via @ltrc-ps/shared-api-model)
+  shared/api/  # Shared TypeScript interfaces and enums (import via @ltrc-campo/shared-api-model)
 bruno/         # Bruno API testing collections
 docker/        # Docker Compose (MongoDB)
 ```
@@ -69,7 +69,7 @@ Key directories:
 
 ### Shared Library
 
-- Path alias: `@ltrc-ps/shared-api-model`
+- Path alias: `@ltrc-campo/shared-api-model`
 - Contains: player, match, squad, tournament interfaces + enums (positions, sizes, statuses)
 - Import from here in both UI and API for type consistency
 

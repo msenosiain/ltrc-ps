@@ -9,7 +9,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 const API_BASE = 'http://localhost:3000/api/v1';
 

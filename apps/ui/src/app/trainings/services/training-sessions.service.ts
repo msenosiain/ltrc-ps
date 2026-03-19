@@ -6,7 +6,7 @@ import {
   PaginationQuery,
   TrainingSession,
   UpcomingTraining,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
 @Injectable({

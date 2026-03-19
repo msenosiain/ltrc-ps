@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, MatchTypeEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export class CreateTournamentDto {
   @IsNotEmpty()

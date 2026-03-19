@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RoleEnum, UpcomingTraining } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, UpcomingTraining } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { getCategoryLabel, getDayLabel } from '../../training-options';
 import { getSportLabel } from '../../../common/sport-options';

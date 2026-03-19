@@ -1,4 +1,4 @@
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const roleOptions = [
   { id: RoleEnum.ADMIN, label: 'Administrador' },

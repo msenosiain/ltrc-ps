@@ -26,7 +26,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTimepickerModule } from '@angular/material/timepicker';
-import { SportEnum, TrainingSchedule } from '@ltrc-ps/shared-api-model';
+import { SportEnum, TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import {
   dayOfWeekOptions,
   getCategoryOptionsBySport,

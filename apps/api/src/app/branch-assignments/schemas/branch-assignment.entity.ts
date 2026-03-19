@@ -3,7 +3,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class BranchAssignmentEntity extends Document {
   id: string;

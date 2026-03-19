@@ -11,7 +11,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CategoryEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum } from '@ltrc-campo/shared-api-model';
 
 export class SquadEntryDto {
   @IsInt()

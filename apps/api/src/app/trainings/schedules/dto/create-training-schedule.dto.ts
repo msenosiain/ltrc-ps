@@ -15,7 +15,7 @@ import {
   DayOfWeekEnum,
   parseDate,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 export class TimeSlotDto {
   @IsEnum(DayOfWeekEnum)

@@ -9,7 +9,7 @@ import {
   Min,
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { CategoryEnum, SportEnum, TripStatusEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum, SportEnum, TripStatusEnum } from '@ltrc-campo/shared-api-model';
 
 export class CreateTripDto {
   @IsNotEmpty()

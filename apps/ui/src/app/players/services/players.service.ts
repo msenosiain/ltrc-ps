@@ -7,7 +7,7 @@ import {
   Player,
   PlayerPosition,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { getPositionLabel } from '../position-options';
 import { PlayerFormValue } from '../forms/player-form.types';

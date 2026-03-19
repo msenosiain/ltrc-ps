@@ -1,4 +1,4 @@
-import { RugbyPositions } from '@ltrc-ps/shared-api-model';
+import { RugbyPositions } from '@ltrc-campo/shared-api-model';
 
 export const createPlayerDtoPlain = {
   name: 'Firstname 3 Lastname 3',

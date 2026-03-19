@@ -1,5 +1,5 @@
 import { ListStateService, ListState } from './list-state.service';
-import { SortOrder } from '@ltrc-ps/shared-api-model';
+import { SortOrder } from '@ltrc-campo/shared-api-model';
 
 describe('ListStateService', () => {
   let service: ListStateService;

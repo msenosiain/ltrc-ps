@@ -16,7 +16,7 @@ import {
   PlayerStatusEnum,
   RoleEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
 import { getBranchLabel } from '../../../common/branch-options';
 import { getSportLabel } from '../../../common/sport-options';

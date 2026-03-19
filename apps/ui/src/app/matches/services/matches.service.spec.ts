@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http/testing';
 import { MatchesService } from './matches.service';
 import { API_CONFIG_TOKEN } from '../../app.config';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 const API_BASE = 'http://localhost:3000/api/v1';
 

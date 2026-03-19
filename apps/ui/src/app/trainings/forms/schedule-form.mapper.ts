@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { DATE_FORMAT } from '@ltrc-ps/shared-api-model';
+import { DATE_FORMAT } from '@ltrc-campo/shared-api-model';
 import { ScheduleFormValue } from './schedule-form.types';
 
 function timeToString(d: Date | null): string {

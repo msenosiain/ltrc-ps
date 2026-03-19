@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { MatchesController } from './matches.controller';
 import { MatchesService } from './matches.service';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 const mockMatch = {
   id: 'match-1',

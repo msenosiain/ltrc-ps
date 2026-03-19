@@ -1,5 +1,5 @@
 import { Schema, Types } from 'mongoose';
-import { AttendanceStatusEnum } from '@ltrc-ps/shared-api-model';
+import { AttendanceStatusEnum } from '@ltrc-campo/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 
 export const AttendanceEntrySchema = new Schema(

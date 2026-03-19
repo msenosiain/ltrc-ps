@@ -11,7 +11,7 @@ import {
   TripStatusEnum,
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 const mockTripsService = {
   getTripById: jest.fn(),

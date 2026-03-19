@@ -4,7 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../../users/User.interface';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 import { By } from '@angular/platform-browser';
 class MockAuthService {
   private userSubject = new BehaviorSubject<User | null>(null);

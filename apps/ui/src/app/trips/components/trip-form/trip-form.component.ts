@@ -29,9 +29,9 @@ import {
   SportEnum,
   Trip,
   TripStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { format } from 'date-fns';
-import { DATE_FORMAT } from '@ltrc-ps/shared-api-model';
+import { DATE_FORMAT } from '@ltrc-campo/shared-api-model';
 import { SportOption, sportOptions } from '../../../common/sport-options';
 import {
   CategoryOption,

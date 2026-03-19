@@ -7,7 +7,7 @@ import {
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
   TripStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 
 const withVirtualId = (schema: Schema) => {
   schema.virtual('id').get(function () {

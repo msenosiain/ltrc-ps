@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AttendanceStatusEnum } from '@ltrc-ps/shared-api-model';
+import { AttendanceStatusEnum } from '@ltrc-campo/shared-api-model';
 
 export class MatchAttendanceRecordDto {
   @IsOptional()

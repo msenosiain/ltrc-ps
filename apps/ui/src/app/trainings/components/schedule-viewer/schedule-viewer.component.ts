@@ -6,7 +6,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RoleEnum, TrainingSchedule } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { getCategoryLabel, getDayLabel } from '../../training-options';
 import { getSportLabel } from '../../../common/sport-options';

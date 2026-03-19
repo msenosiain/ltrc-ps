@@ -6,7 +6,7 @@ import {
   PlayerPosition,
   PlayerStatusEnum,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { PhotoValue } from '../components/player-photo-field/player-photo-field.component';
 
 export type PlayerFormValue = {

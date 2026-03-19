@@ -6,12 +6,12 @@ import {
   Match,
   PaginatedResponse,
   PaginationQuery,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
 import { mapFormToCreateMatchDto } from '../forms/match-form.mapper';
 import { matchStatusOptions } from '../match-options';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 @Injectable({
   providedIn: 'root',

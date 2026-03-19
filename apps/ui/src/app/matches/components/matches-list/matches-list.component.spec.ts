@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
 import { of } from 'rxjs';
-import { MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 describe('MatchesListComponent', () => {
   let component: MatchesListComponent;

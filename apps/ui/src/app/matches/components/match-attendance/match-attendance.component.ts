@@ -23,7 +23,7 @@ import {
   SortOrder,
   SportEnum,
   Tournament,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { MatchesService } from '../../services/matches.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

@@ -20,7 +20,7 @@ import {
   SortOrder,
   TripParticipantTypeEnum,
   TripParticipantStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 
 const POPULATE_FIELDS = [

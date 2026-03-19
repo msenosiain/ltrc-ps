@@ -11,7 +11,7 @@ import {
   SortOrder,
   TrainingSession,
   TrainingSessionFilters,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from './training-sessions.service';
 
 export class SessionsDataSource implements DataSource<TrainingSession> {

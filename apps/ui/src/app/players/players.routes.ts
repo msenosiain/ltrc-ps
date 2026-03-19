@@ -3,7 +3,7 @@ import { PlayersListComponent } from './components/players-list/players-list.com
 import { PlayerViewerComponent } from './components/player-viewer/player-viewer.component';
 import { PlayerEditorComponent } from './components/player-editor/player-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const PLAYERS_ROUTES: Routes = [
   {

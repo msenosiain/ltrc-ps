@@ -48,7 +48,7 @@ export const configSchema = Joi.object({
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>(
           'MONGODB_URI',
-          'mongodb://localhost:27017/ltrc-ps'
+          'mongodb://localhost:27017/ltrc-campo'
         ),
       }),
     }),

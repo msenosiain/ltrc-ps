@@ -18,7 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { roleOptions } from '../../user-options';
 import { buildUserForm } from '../../forms/user-form.factory';
 import { mapUserToForm } from '../../forms/user-form.mapper';

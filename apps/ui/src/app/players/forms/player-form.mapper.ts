@@ -4,7 +4,7 @@ import {
   PlayerAvailabilityEnum,
   PlayerPosition,
   PlayerStatusEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { PlayerFormValue } from './player-form.types';
 import { format } from 'date-fns';
 

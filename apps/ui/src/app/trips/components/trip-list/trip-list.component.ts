@@ -15,7 +15,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
 import { Router } from '@angular/router';
-import { RoleEnum, SortOrder, SportEnum, TripStatusEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum, SortOrder, SportEnum, TripStatusEnum } from '@ltrc-campo/shared-api-model';
 import { TripsService } from '../../services/trips.service';
 import { TripsDataSource, TripListFilters } from '../../services/trips.datasource';
 import { TripSearchComponent } from '../trip-search/trip-search.component';

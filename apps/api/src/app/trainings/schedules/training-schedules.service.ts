@@ -9,7 +9,7 @@ import {
   PaginatedResponse,
   RoleEnum,
   UpcomingTraining,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { CreateTrainingScheduleDto } from './dto/create-training-schedule.dto';
 import { UpdateTrainingScheduleDto } from './dto/update-training-schedule.dto';
 import { User } from '../../users/schemas/user.schema';

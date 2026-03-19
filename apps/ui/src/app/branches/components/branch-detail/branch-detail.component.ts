@@ -27,7 +27,7 @@ import {
   PaginationQuery,
   Player,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { BranchAssignmentsService } from '../../services/branch-assignments.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { getCategoryLabel } from '../../../common/category-options';

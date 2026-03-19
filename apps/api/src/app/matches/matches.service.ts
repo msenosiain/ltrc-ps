@@ -5,7 +5,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { PaginatedResponse, RoleEnum } from '@ltrc-ps/shared-api-model';
+import { PaginatedResponse, RoleEnum } from '@ltrc-campo/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';

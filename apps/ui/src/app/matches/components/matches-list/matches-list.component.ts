@@ -25,7 +25,7 @@ import {
   MatchStatusEnum,
   RoleEnum,
   SortOrder,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { getCategoryLabel } from '../../match-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { ListStateService } from '../../../common/services/list-state.service';

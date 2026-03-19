@@ -18,7 +18,7 @@ import {
   SquadEntry,
   Tournament,
   isCompetitiveCategory,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { getCategoryLabel as getCatLabel } from '../../match-options';
 import { MatCardModule } from '@angular/material/card';

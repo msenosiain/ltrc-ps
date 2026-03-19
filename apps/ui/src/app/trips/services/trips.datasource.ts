@@ -6,7 +6,7 @@ import {
   Observable,
   observeOn,
 } from 'rxjs';
-import { PaginationQuery, SortOrder, Trip, TripStatusEnum, SportEnum } from '@ltrc-ps/shared-api-model';
+import { PaginationQuery, SortOrder, Trip, TripStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { TripsService } from './trips.service';
 
 export interface TripListFilters {

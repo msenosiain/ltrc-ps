@@ -19,7 +19,7 @@ import {
   SportEnum,
   TrainingSessionStatusEnum,
   TrainingSessionFilters,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import {
   getCategoryOptionsBySport,
   sessionStatusOptions,

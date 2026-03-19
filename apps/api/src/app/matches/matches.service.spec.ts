@@ -6,7 +6,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { SquadsService } from '../squads/squads.service';
-import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-ps/shared-api-model';
+import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 const POPULATE_FIELDS = [
   'tournament',

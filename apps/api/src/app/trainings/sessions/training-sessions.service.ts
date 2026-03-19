@@ -15,7 +15,7 @@ import {
   TrainingSessionStatusEnum,
   UpcomingTraining,
   DayOfWeekEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { CreateTrainingSessionDto } from './dto/create-training-session.dto';
 import { UpdateTrainingSessionDto } from './dto/update-training-session.dto';
 import { RecordAttendanceDto } from './dto/record-attendance.dto';

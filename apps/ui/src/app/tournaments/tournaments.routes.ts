@@ -3,7 +3,7 @@ import { TournamentsListComponent } from './components/tournaments-list/tourname
 import { TournamentViewerComponent } from './components/tournament-viewer/tournament-viewer.component';
 import { TournamentEditorComponent } from './components/tournament-editor/tournament-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
-import { RoleEnum } from '@ltrc-ps/shared-api-model';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const TOURNAMENTS_ROUTES: Routes = [
   {

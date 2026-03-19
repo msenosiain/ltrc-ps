@@ -18,7 +18,7 @@ import {
   RoleEnum,
   SortOrder,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { sportOptions } from '../../../common/sport-options';
 import { getCategoryLabel, sortCategoriesAsc } from '../../../common/category-options';

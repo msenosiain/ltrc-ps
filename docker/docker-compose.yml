@@ -1,8 +1,8 @@
-name: ltrc-ps
+name: ltrc-campo
 services:
   mongodb:
     image: mongo:7
-    container_name: ltrc-ps-mongodb
+    container_name: ltrc-campo-mongodb
     ports:
       - '27017:27017'
     volumes:

@@ -4,7 +4,7 @@ import {
   CategoryEnum,
   MatchStatusEnum,
   VideoClip,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 

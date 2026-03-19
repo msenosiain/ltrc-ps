@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Trip } from '@ltrc-ps/shared-api-model';
+import { Trip } from '@ltrc-campo/shared-api-model';
 import { TripsService, CreateTripPayload } from '../../services/trips.service';
 import { TripFormComponent } from '../trip-form/trip-form.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';

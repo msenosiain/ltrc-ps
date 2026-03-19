@@ -31,7 +31,7 @@ import {
   TripParticipant,
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { TripsService, AddParticipantPayload } from '../../services/trips.service';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';

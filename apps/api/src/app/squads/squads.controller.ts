@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CategoryEnum } from '@ltrc-ps/shared-api-model';
+import { CategoryEnum } from '@ltrc-campo/shared-api-model';
 import { Request } from 'express';
 import { SquadsService } from './squads.service';
 import { CreateSquadDto } from './dto/create-squad.dto';

@@ -10,7 +10,7 @@ import {
   RoleEnum,
   SortOrder,
   SportEnum,
-} from '@ltrc-ps/shared-api-model';
+} from '@ltrc-campo/shared-api-model';
 import { MatchesService } from '../../services/matches.service';
 import { getCategoryLabel } from '../../match-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
