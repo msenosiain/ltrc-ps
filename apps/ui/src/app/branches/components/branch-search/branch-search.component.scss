@@ -1,13 +1,13 @@
 .search-form {
-  padding: 16px 0;
+  margin-bottom: 4px;
 }
 
 .filters-container {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
 
-  mat-form-field {
-    min-width: 150px;
-  }
+.filter-field {
+  width: 200px;
 }

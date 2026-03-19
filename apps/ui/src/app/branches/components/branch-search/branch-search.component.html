@@ -1,6 +1,6 @@
 <div class="search-form">
   <div class="filters-container" [formGroup]="searchForm">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Temporada</mat-label>
       <mat-select formControlName="season">
         @for (year of seasonOptions; track year) {
@@ -10,7 +10,7 @@
     </mat-form-field>
 
     @if (showCategoryFilter) {
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="category">
           <mat-option [value]="undefined">Todas</mat-option>
@@ -22,7 +22,7 @@
     }
 
     @if (showBranchFilter) {
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Rama</mat-label>
         <mat-select formControlName="branch">
           <mat-option [value]="undefined">Todas</mat-option>

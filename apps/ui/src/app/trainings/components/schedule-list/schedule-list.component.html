@@ -1,9 +1,5 @@
 <div class="schedules-list">
-  <div class="search-row">
-    <ltrc-schedule-search
-      [initialFilters]="savedState?.filters"
-      (filtersChange)="applyFilters($event)"
-    />
+  <div class="list-header">
     <button
       *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
       mat-flat-button
@@ -15,6 +11,11 @@
       Agregar horario
     </button>
   </div>
+
+  <ltrc-schedule-search
+    [initialFilters]="savedState?.filters"
+    (filtersChange)="applyFilters($event)"
+  />
 
   @if (dataSource.loading$ | async) {
   <mat-progress-bar mode="indeterminate" />

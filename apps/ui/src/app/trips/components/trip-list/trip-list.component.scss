@@ -1,13 +1,30 @@
 @use '../../../common/styles/list-layout';
 
+.trips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+}
+
+.trips-table {
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .trip-row {
+    @include list-layout.clickable-row;
+  }
+}
+
 .status-chip {
   padding: 2px 10px;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
 
-  &.status-draft    { background: #e0e0e0; color: #424242; }
-  &.status-open     { background: #e8f5e9; color: #2e7d32; }
-  &.status-closed   { background: #fff3e0; color: #e65100; }
+  &.status-draft     { background: #e0e0e0; color: #424242; }
+  &.status-open      { background: #e8f5e9; color: #2e7d32; }
+  &.status-closed    { background: #fff3e0; color: #e65100; }
   &.status-completed { background: #e3f2fd; color: #1565c0; }
 }

@@ -1,8 +1,4 @@
 <div class="sessions-list">
-  <div class="list-header">
-    <!-- Sessions are typically auto-created, no create button needed for most users -->
-  </div>
-
   <ltrc-session-search
     [initialFilters]="savedState?.filters"
     (filtersChange)="applyFilters($event)"

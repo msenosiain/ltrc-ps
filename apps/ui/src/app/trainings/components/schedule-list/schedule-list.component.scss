@@ -6,21 +6,6 @@
   gap: 16px;
 }
 
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  ltrc-schedule-search {
-    flex: 1;
-  }
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-}
 
 .schedules-table {
   width: 100%;
