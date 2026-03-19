@@ -1,81 +1,76 @@
-# LtrcPs
+# LTRC Campo
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+Sistema de gestión del club **Los Tordos RC** — jugadores, partidos, torneos, entrenamientos y viajes.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+**Stack:** Angular 21 · NestJS 11 · MongoDB · Nx monorepo
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+---
 
-## Finish your CI setup
+## Estructura
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/9Wz88sqd5o)
-
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve ui
+```
+apps/
+  ui/          # Angular 21 — standalone components, es-AR locale
+  api/         # NestJS 11 — REST API con JWT + Google OAuth
+  ui-e2e/      # Cypress E2E
+libs/
+  shared/api/  # Interfaces y enums compartidos (@ltrc-campo/shared-api-model)
+bruno/         # Colecciones Bruno para testing de la API
+docker/        # Docker Compose (MongoDB local)
 ```
 
-To create a production bundle:
+## Desarrollo local
 
-```sh
-npx nx build ui
+**Requisitos:** Node 20+, Docker
+
+```bash
+# Levantar MongoDB
+docker-compose -f docker/docker-compose.yml up -d
+
+# Frontend (puerto 4200)
+npm run start:ui
+
+# Backend (puerto 3000)
+npm run start:api
 ```
 
-To see all available targets to run for a project, run:
+Copiá `.env.example` a `.env` y completá las variables.
 
-```sh
-npx nx show project ui
+## Comandos útiles
+
+```bash
+# Tests
+npm test                    # Todos los unit tests
+nx test ui                  # Solo UI
+nx test api                 # Solo API
+npm run e2e                 # Cypress headless
+npm run e2e:headed          # Cypress con browser
+
+# Calidad
+npm run lint
+npm run eslint:fix
+npm run prettier:fix
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+## Deploy
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+El proyecto se despliega automáticamente en **Render** al hacer push a `main`.
 
-## Add new projects
+| Servicio | URL |
+|---|---|
+| Frontend | https://campo.lostordos.com.ar |
+| API | https://campo-be.lostordos.com.ar/api/v1 |
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+- **UI** — static site, build Angular con locale `es-AR`
+- **API** — Node.js web service, MongoDB Atlas
+- Variables sensibles (`MONGODB_URI`, JWT secrets, Google OAuth) se configuran en el dashboard de Render
 
-Use the plugin's generator to create new projects.
+## API
 
-To generate a new application, use:
+Prefijo global: `/api/v1`
 
-```sh
-npx nx g @nx/angular:app demo
-```
+Módulos: `Auth` · `Players` · `Matches` · `Tournaments` · `Squads` · `Users` · `Trainings` · `Trips` · `Branches`
 
-To generate a new library, use:
+Autenticación: JWT con refresh token rotation + Google OAuth (dominio `lostordos.com.ar`)
 
-```sh
-npx nx g @nx/angular:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/tutorials/angular-monorepo-tutorial?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Las colecciones Bruno están en `bruno/` con entornos `local` y `render`.
