@@ -1,27 +1,27 @@
 opencollection: 1.0.0
 
 info:
-  name: LTRC PS
+  name: LTRC Campo API
 config:
   proxy:
     inherit: true
     config:
       protocol: http
-      hostname: ''
-      port: ''
+      hostname: ""
+      port: ""
       auth:
-        username: ''
-        password: ''
-      bypassProxy: ''
+        username: ""
+        password: ""
+      bypassProxy: ""
 
 request:
   variables:
     - name: baseUrl
       value: http://localhost:3000/api/v1
     - name: access_token
-      value: ''
+      value: ""
     - name: refresh_token
-      value: ''
+      value: ""
 
 docs:
   content: Colección para probar endpoints de la API LTRC (compatible Postman/Bruno). Usa la variable {{baseUrl}} para la URL base.

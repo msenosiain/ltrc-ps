@@ -1,0 +1,4 @@
+name: render
+variables:
+  - name: baseUrl
+    value: https://campo-be.lostordos.com.ar/api/v1
