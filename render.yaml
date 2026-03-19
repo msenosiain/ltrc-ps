@@ -8,9 +8,6 @@ services:
     plan: starter
     buildCommand: NODE_ENV=development npm ci && npx nx build api --configuration=production --skip-nx-cache
     startCommand: node dist/apps/api/main.js
-    ignoredPaths:
-      - apps/ui/**
-      - apps/ui-e2e/**
     healthCheckPath: /api/v1/health
     envVars:
       - key: NODE_ENV
@@ -44,8 +41,6 @@ services:
     runtime: static
     buildCommand: npm ci && npx nx build ui --configuration=production --skip-nx-cache
     staticPublishPath: dist/apps/ui
-    ignoredPaths:
-      - apps/api/**
     routes:
       - type: redirect
         source: /
