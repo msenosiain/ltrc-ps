@@ -1,0 +1,15 @@
+.search-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+
+  .search-field {
+    min-width: 220px;
+    flex: 1;
+  }
+
+  mat-form-field {
+    min-width: 160px;
+  }
+}

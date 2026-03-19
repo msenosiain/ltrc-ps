@@ -1,0 +1,16 @@
+.editor-container {
+  padding: 24px;
+  max-width: 860px;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+}

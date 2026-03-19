@@ -1,0 +1,11 @@
+meta {
+  name: Transports - DELETE remove
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/trips/{{tripId}}/transports/{{transportId}}
+  body: none
+  auth: inherit
+}

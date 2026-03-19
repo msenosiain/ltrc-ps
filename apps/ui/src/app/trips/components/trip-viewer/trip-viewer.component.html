@@ -1,0 +1,352 @@
+@if (loading) {
+<mat-progress-bar mode="indeterminate" />
+}
+
+@if (trip) {
+<div class="viewer-container">
+
+  <!-- Header -->
+  <div class="viewer-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>
+        <h2 class="trip-name">{{ trip.name }}</h2>
+        <span class="trip-destination">
+          <mat-icon class="inline-icon">place</mat-icon>
+          {{ trip.destination }}
+        </span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="status-chip status-{{ trip.status }}">{{ getStatusLabel(trip.status) }}</span>
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+        mat-stroked-button
+        (click)="goToEdit()"
+      >
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+  </div>
+
+  <!-- Info general -->
+  <mat-card class="info-card">
+    <mat-card-content>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Salida</span>
+          <span class="info-value">{{ trip.departureDate | date : 'dd/MM/yyyy' }}</span>
+        </div>
+        @if (trip.returnDate) {
+        <div class="info-item">
+          <span class="info-label">Regreso</span>
+          <span class="info-value">{{ trip.returnDate | date : 'dd/MM/yyyy' }}</span>
+        </div>
+        }
+        @if (trip.registrationDeadline) {
+        <div class="info-item">
+          <span class="info-label">Límite inscripción</span>
+          <span class="info-value">{{ trip.registrationDeadline | date : 'dd/MM/yyyy' }}</span>
+        </div>
+        }
+        @if (trip.sport) {
+        <div class="info-item">
+          <span class="info-label">Deporte</span>
+          <span class="info-value">{{ getSportLabel(trip.sport) }}</span>
+        </div>
+        }
+        @if (trip.categories?.length) {
+        <div class="info-item">
+          <span class="info-label">Categorías</span>
+          <span class="info-value">{{ trip.categories!.map(getCategoryLabel).join(', ') }}</span>
+        </div>
+        }
+        <div class="info-item">
+          <span class="info-label">Costo</span>
+          <span class="info-value">{{ trip.costPerPerson | currency : 'ARS' : 'symbol' : '1.0-0' }}</span>
+        </div>
+        @if (trip.maxParticipants) {
+        <div class="info-item">
+          <span class="info-label">Cupo</span>
+          <span class="info-value">{{ confirmedCount }} / {{ trip.maxParticipants }}</span>
+        </div>
+        }
+      </div>
+      @if (trip.description) {
+      <p class="trip-description">{{ trip.description }}</p>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Tabs -->
+  <mat-tab-group class="viewer-tabs">
+
+    <!-- Tab: Participantes -->
+    <mat-tab label="Participantes ({{ trip.participants.length }})">
+      <div class="tab-content">
+
+        <!-- Resumen financiero -->
+        <div class="summary-row">
+          <div class="summary-chip">
+            <span class="summary-label">Confirmados</span>
+            <span class="summary-value">{{ confirmedCount }}</span>
+          </div>
+          <div class="summary-chip">
+            <span class="summary-label">Recaudado</span>
+            <span class="summary-value accent">
+              {{ totalCollected | currency : 'ARS' : 'symbol' : '1.0-0' }}
+            </span>
+          </div>
+          <div class="summary-chip">
+            <span class="summary-label">Pendiente</span>
+            <span class="summary-value warn">
+              {{ totalDebt | currency : 'ARS' : 'symbol' : '1.0-0' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Botón agregar -->
+        <div class="section-actions">
+          <button
+            *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
+            mat-flat-button
+            color="primary"
+            (click)="toggleAddParticipant()"
+          >
+            <mat-icon>{{ showAddParticipant ? 'close' : 'person_add' }}</mat-icon>
+            {{ showAddParticipant ? 'Cancelar' : 'Agregar participante' }}
+          </button>
+        </div>
+
+        <!-- Form agregar participante -->
+        @if (showAddParticipant) {
+        <mat-card class="add-card" [formGroup]="addParticipantForm">
+          <mat-card-content>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Tipo</mat-label>
+                <mat-select formControlName="type">
+                  @for (opt of participantTypeOptions; track opt.id) {
+                  <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="status">
+                  @for (opt of participantStatusOptions; track opt.id) {
+                  <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Costo asignado ($)</mat-label>
+                <input matInput type="number" formControlName="costAssigned" min="0" />
+              </mat-form-field>
+            </div>
+
+            @if (addParticipantForm.get('type')?.value === TripParticipantTypeEnum.PLAYER) {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>ID del jugador</mat-label>
+              <input matInput formControlName="playerId" placeholder="ObjectId del jugador" />
+            </mat-form-field>
+            }
+
+            @if (addParticipantForm.get('type')?.value === TripParticipantTypeEnum.STAFF) {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>ID del usuario (staff)</mat-label>
+              <input matInput formControlName="userId" placeholder="ObjectId del usuario" />
+            </mat-form-field>
+            }
+
+            @if (addParticipantForm.get('type')?.value === TripParticipantTypeEnum.EXTERNAL) {
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Nombre completo</mat-label>
+                <input matInput formControlName="externalName" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>DNI</mat-label>
+                <input matInput formControlName="externalDni" />
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Rol / descripción</mat-label>
+                <input matInput formControlName="externalRole" placeholder="Padre de..." />
+              </mat-form-field>
+            </div>
+            }
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Necesidades especiales</mat-label>
+              <input matInput formControlName="specialNeeds" placeholder="Alergias, silla de ruedas, etc." />
+            </mat-form-field>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-stroked-button type="button" (click)="toggleAddParticipant()">Cancelar</button>
+            <button mat-flat-button color="primary" type="button" (click)="submitAddParticipant()">
+              Agregar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+        }
+
+        <!-- Tabla participantes -->
+        @if (trip.participants.length > 0) {
+        <table mat-table [dataSource]="trip.participants" class="participants-table">
+
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Participante</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="participant-name">{{ getParticipantName(p) }}</span>
+              @if (p.externalRole) {
+              <span class="participant-role">{{ p.externalRole }}</span>
+              }
+              @if (p.specialNeeds) {
+              <mat-icon class="needs-icon" [matTooltip]="p.specialNeeds">info_outline</mat-icon>
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let p">{{ getParticipantTypeLabel(p.type) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let p">
+              <span class="status-badge status-{{ p.status }}">
+                {{ getParticipantStatusLabel(p.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cost">
+            <th mat-header-cell *matHeaderCellDef>Costo</th>
+            <td mat-cell *matCellDef="let p">
+              {{ p.costAssigned | currency : 'ARS' : 'symbol' : '1.0-0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="paid">
+            <th mat-header-cell *matHeaderCellDef>Pagado</th>
+            <td mat-cell *matCellDef="let p">
+              {{ getTotalPaid(p) | currency : 'ARS' : 'symbol' : '1.0-0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="balance">
+            <th mat-header-cell *matHeaderCellDef>Saldo</th>
+            <td mat-cell *matCellDef="let p" [class.balance-ok]="getBalance(p) <= 0" [class.balance-due]="getBalance(p) > 0">
+              {{ getBalance(p) | currency : 'ARS' : 'symbol' : '1.0-0' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let p">
+              <div class="row-actions">
+                <button
+                  *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
+                  mat-icon-button
+                  color="primary"
+                  (click)="openPaymentForm(p)"
+                  matTooltip="Registrar pago"
+                >
+                  <mat-icon>payments</mat-icon>
+                </button>
+                <button
+                  *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+                  mat-icon-button
+                  color="warn"
+                  (click)="removeParticipant(p)"
+                  matTooltip="Quitar del viaje"
+                >
+                  <mat-icon>person_remove</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="participantColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: participantColumns"></tr>
+        </table>
+        } @else {
+        <p class="empty-message">Sin participantes aún.</p>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Tab: Transportes (Fase 3) -->
+    <mat-tab label="Transportes ({{ trip.transports.length }})">
+      <div class="tab-content placeholder-tab">
+        <mat-icon class="placeholder-icon">directions_bus</mat-icon>
+        <p>Gestión de transportes — próximamente en Fase 3</p>
+      </div>
+    </mat-tab>
+
+    <!-- Tab: Documentación (Fase 5) -->
+    <mat-tab label="Documentación">
+      <div class="tab-content placeholder-tab">
+        <mat-icon class="placeholder-icon">badge</mat-icon>
+        <p>Control de documentación — próximamente</p>
+      </div>
+    </mat-tab>
+
+    <!-- Tab: Exportar (Fase 4) -->
+    <mat-tab label="Exportar">
+      <div class="tab-content placeholder-tab">
+        <mat-icon class="placeholder-icon">download</mat-icon>
+        <p>Exportar listados (Excel / PDF) — próximamente en Fase 4</p>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+
+</div>
+
+<!-- Panel de pago flotante -->
+@if (showPaymentForm && selectedParticipantForPayment) {
+<div class="payment-overlay" (click)="closePaymentForm()"></div>
+<mat-card class="payment-panel" [formGroup]="paymentForm">
+  <mat-card-header>
+    <mat-card-title>Registrar pago</mat-card-title>
+    <mat-card-subtitle>{{ getParticipantName(selectedParticipantForPayment) }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Monto ($)</mat-label>
+      <input matInput type="number" formControlName="amount" min="0.01" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="payPicker" formControlName="date" />
+      <mat-datepicker-toggle matIconSuffix [for]="payPicker" />
+      <mat-datepicker #payPicker />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Notas</mat-label>
+      <input matInput formControlName="notes" placeholder="Primera cuota, efectivo, etc." />
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-stroked-button type="button" (click)="closePaymentForm()">Cancelar</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="paymentForm.invalid"
+      (click)="submitPayment()"
+    >
+      Registrar
+    </button>
+  </mat-card-actions>
+</mat-card>
+}
+
+}

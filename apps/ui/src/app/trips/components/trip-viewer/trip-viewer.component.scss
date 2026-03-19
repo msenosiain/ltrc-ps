@@ -1,0 +1,234 @@
+.viewer-container {
+  padding: 24px;
+  max-width: 1100px;
+}
+
+.viewer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+
+  .header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+
+    .trip-name {
+      margin: 0 0 4px;
+      font-size: 1.5rem;
+    }
+
+    .trip-destination {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--mat-sys-on-surface-variant);
+      font-size: 0.9rem;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+}
+
+.inline-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.info-card {
+  margin-bottom: 20px;
+
+  .info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 12px;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .info-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .trip-description {
+    margin: 8px 0 0;
+    color: var(--mat-sys-on-surface-variant);
+    font-size: 0.9rem;
+  }
+}
+
+.status-chip {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  &.status-draft     { background: #e0e0e0; color: #424242; }
+  &.status-open      { background: #e8f5e9; color: #2e7d32; }
+  &.status-closed    { background: #fff3e0; color: #e65100; }
+  &.status-completed { background: #e3f2fd; color: #1565c0; }
+}
+
+.viewer-tabs {
+  margin-top: 8px;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+.summary-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  .summary-chip {
+    background: var(--mat-sys-surface-variant);
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+  }
+
+  .summary-label {
+    font-size: 0.72rem;
+    color: var(--mat-sys-on-surface-variant);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .summary-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    &.accent { color: #2e7d32; }
+    &.warn   { color: #c62828; }
+  }
+}
+
+.section-actions {
+  margin-bottom: 16px;
+}
+
+.add-card {
+  margin-bottom: 20px;
+  max-width: 700px;
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    mat-form-field { flex: 1; min-width: 160px; }
+  }
+
+  .full-width { width: 100%; }
+}
+
+.participants-table {
+  width: 100%;
+
+  .participant-name {
+    font-weight: 500;
+    display: block;
+  }
+
+  .participant-role {
+    font-size: 0.8rem;
+    color: var(--mat-sys-on-surface-variant);
+    display: block;
+  }
+
+  .needs-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    color: var(--mat-sys-on-surface-variant);
+    cursor: help;
+  }
+}
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+
+  &.status-interested { background: #f3e5f5; color: #6a1b9a; }
+  &.status-confirmed  { background: #e8f5e9; color: #2e7d32; }
+  &.status-cancelled  { background: #ffebee; color: #c62828; }
+}
+
+.balance-ok  { color: #2e7d32; font-weight: 500; }
+.balance-due { color: #c62828; font-weight: 500; }
+
+.row-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.empty-message {
+  color: var(--mat-sys-on-surface-variant);
+  padding: 16px 0;
+}
+
+.placeholder-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: var(--mat-sys-on-surface-variant);
+  gap: 12px;
+
+  .placeholder-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4;
+  }
+}
+
+// Panel de pago flotante
+.payment-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.payment-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 360px;
+  z-index: 101;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  .full-width { width: 100%; }
+}

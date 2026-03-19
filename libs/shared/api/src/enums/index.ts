@@ -11,3 +11,7 @@ export * from './role.enum';
 export * from './sort-order.enum';
 export * from './sport.enum';
 export * from './training-session-status.enum';
+export * from './trip-status.enum';
+export * from './trip-participant-type.enum';
+export * from './trip-participant-status.enum';
+export * from './transport-type.enum';

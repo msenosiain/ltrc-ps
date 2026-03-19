@@ -1,0 +1,26 @@
+@use '../../../../common/styles/form-layout';
+
+.trip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+}
+
+.full-width { width: 100%; }
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  mat-form-field { flex: 1; min-width: 180px; }
+  .field-grow { flex: 2; }
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+}

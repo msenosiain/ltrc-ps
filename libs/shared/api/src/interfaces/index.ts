@@ -7,3 +7,4 @@ export * from './squad.interface';
 export * from './tournament.interface';
 export * from './training-schedule.interface';
 export * from './training-session.interface';
+export * from './trip.interface';

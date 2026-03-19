@@ -73,6 +73,19 @@
         >Entrenamientos</a
       >
       <a
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
+          RoleEnum.MANAGER,
+          RoleEnum.COACH,
+          RoleEnum.PLAYER
+        ]"
+        mat-list-item
+        routerLink="trips"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+        >Viajes</a
+      >
+      <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN]"
         mat-list-item
         routerLink="users"

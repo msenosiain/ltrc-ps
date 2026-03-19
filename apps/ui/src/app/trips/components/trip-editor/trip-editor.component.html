@@ -1,0 +1,18 @@
+<div class="editor-container">
+  <div class="editor-header">
+    <h2>{{ editing ? 'Editar viaje' : 'Nuevo viaje' }}</h2>
+    @if (editing) {
+    <button mat-stroked-button color="warn" type="button" (click)="onDelete()">
+      <mat-icon>delete_outline</mat-icon>
+      Eliminar
+    </button>
+    }
+  </div>
+
+  <ltrc-trip-form
+    [trip]="trip"
+    [submitting]="submitting"
+    (formSubmit)="onFormSubmit($event)"
+    (cancel)="onCancel()"
+  />
+</div>

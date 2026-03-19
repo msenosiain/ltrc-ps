@@ -52,6 +52,11 @@ export const routes: Routes = [
             (m) => m.TRAININGS_ROUTES
           ),
       },
+      {
+        path: 'trips',
+        loadChildren: () =>
+          import('./trips/trip.routes').then((m) => m.TRIPS_ROUTES),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },
