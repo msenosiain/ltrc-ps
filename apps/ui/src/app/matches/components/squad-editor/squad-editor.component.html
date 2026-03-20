@@ -110,6 +110,20 @@
 
   <!-- ── AGREGAR JUGADOR ── -->
   <form [formGroup]="addForm" (ngSubmit)="addPlayer()" class="add-row">
+    <mat-form-field appearance="outline" class="shirt-number-field">
+      <mat-label>Camiseta</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="shirtNumber"
+        min="1"
+        max="99"
+      />
+      @if (addForm.get('shirtNumber')?.hasError('duplicate')) {
+      <mat-error>Ya existe</mat-error>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="player-search-field">
       <mat-label>Buscar jugador</mat-label>
       <input
@@ -130,20 +144,6 @@
         >
         }
       </mat-autocomplete>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="shirt-number-field">
-      <mat-label>Camiseta</mat-label>
-      <input
-        matInput
-        type="number"
-        formControlName="shirtNumber"
-        min="1"
-        max="99"
-      />
-      @if (addForm.get('shirtNumber')?.hasError('duplicate')) {
-      <mat-error>Ya existe</mat-error>
-      }
     </mat-form-field>
 
     <button
