@@ -108,7 +108,6 @@
               : '(eliminado)'
           }}
         </span>
-        <span class="position-label">{{ getPositionLabel(entry) }}</span>
       </div>
       } } @if (suplentes.length > 0) {
       <mat-divider class="group-divider" />
@@ -123,7 +122,6 @@
               : '(eliminado)'
           }}
         </span>
-        <span class="position-label">{{ getPositionLabel(entry) }}</span>
       </div>
       } } } @else {
       <p class="empty-squad">Sin convocados aún.</p>
@@ -197,6 +195,12 @@
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
+    @if (match!.squad?.length) {
+      <button mat-stroked-button type="button" (click)="downloadSquadPdf()">
+        <mat-icon>picture_as_pdf</mat-icon>
+        PDF Plantel
+      </button>
+    }
     <button
       *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
       mat-flat-button

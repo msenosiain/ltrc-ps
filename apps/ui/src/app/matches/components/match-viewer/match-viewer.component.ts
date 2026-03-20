@@ -29,6 +29,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayersService } from '../../../players/services/players.service';
+import { SquadPdfService } from '../../services/squad-pdf.service';
 
 @Component({
   selector: 'ltrc-match-viewer',
@@ -50,6 +51,7 @@ export class MatchViewerComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly matchesService = inject(MatchesService);
   private readonly playersService = inject(PlayersService);
+  private readonly squadPdf = inject(SquadPdfService);
   private readonly destroyRef = inject(DestroyRef);
 
   match?: Match;
@@ -152,6 +154,12 @@ export class MatchViewerComponent implements OnInit {
 
   manageSquad(): void {
     this.router.navigate(['/dashboard/matches', this.match!.id, 'squad']);
+  }
+
+  downloadSquadPdf(): void {
+    if (this.match) {
+      this.squadPdf.generate(this.match, this.match.squad ?? []);
+    }
   }
 
   manageAttendance(): void {

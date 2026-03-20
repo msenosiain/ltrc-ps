@@ -52,6 +52,7 @@ import {
   SaveSquadTemplateDialogComponent,
   SaveSquadTemplateDialogResult,
 } from '../save-squad-template-dialog/save-squad-template-dialog.component';
+import { SquadPdfService } from '../../services/squad-pdf.service';
 
 @Component({
   selector: 'ltrc-squad-editor',
@@ -82,6 +83,7 @@ export class SquadEditorComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly squadPdf = inject(SquadPdfService);
 
   match?: Match;
   squadRows: SquadEntry[] = [];
@@ -106,7 +108,7 @@ export class SquadEditorComponent implements OnInit {
   selectedPlayer: Player | null = null;
   private readonly searchSubject = new Subject<string>();
 
-  readonly displayedColumns = ['shirtNumber', 'player', 'position', 'actions'];
+  readonly displayedColumns = ['shirtNumber', 'player', 'actions'];
 
   readonly displayPlayerFn = (player: Player | null): string =>
     player ? player.name : '';
@@ -180,6 +182,7 @@ export class SquadEditorComponent implements OnInit {
         next: (match) => {
           this.match = match;
           this.squadRows = [...(match.squad ?? [])];
+          this.addForm.get('shirtNumber')!.setValue(this.nextShirtNumber());
           this.loadSquads();
         },
         error: () => this.router.navigate(['/dashboard/matches']),
@@ -224,6 +227,11 @@ export class SquadEditorComponent implements OnInit {
     this.selectedPlayer = event.option.value as Player;
   }
 
+  private nextShirtNumber(): number {
+    if (!this.squadRows.length) return 1;
+    return Math.max(...this.squadRows.map((e) => e.shirtNumber)) + 1;
+  }
+
   addPlayer(): void {
     const shirtNumber = this.addForm.value.shirtNumber;
     if (!this.selectedPlayer || !shirtNumber) return;
@@ -238,6 +246,7 @@ export class SquadEditorComponent implements OnInit {
     this.isDirty = true;
     this.selectedPlayer = null;
     this.addForm.reset();
+    this.addForm.get('shirtNumber')!.setValue(this.nextShirtNumber());
     this.playerSuggestions = [];
     setTimeout(() => this.playerSearchInput?.nativeElement.focus());
     this.persistSquad();
@@ -361,6 +370,12 @@ export class SquadEditorComponent implements OnInit {
       .subscribe((squads) => (this.squads = squads));
   }
 
+  downloadPdf(): void {
+    if (this.match) {
+      this.squadPdf.generate(this.match, this.squadRows);
+    }
+  }
+
   saveSquad(): void {
     this.persistSquad(() =>
       this.router.navigate(['/dashboard/matches', this.match!.id])
@@ -388,10 +403,9 @@ export class SquadEditorComponent implements OnInit {
       });
   }
 
-  getPositionLabel(player: Player): string {
-    return player.positions?.length
-      ? player.positions.map((p) => this.playersService.getPositionLabel(p)).join(', ')
-      : '—';
+  getFirstPositionLabel(player: Player): string | null {
+    if (!player.positions?.length) return null;
+    return this.playersService.getPositionLabel(player.positions[0]);
   }
 
   @HostListener('document:keydown.escape')

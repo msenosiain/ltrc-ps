@@ -9,6 +9,16 @@
     <span class="editor-match">{{ opponentLabel }}</span>
   </div>
   <button
+    mat-stroked-button
+    type="button"
+    [disabled]="!squadRows.length || saving"
+    (click)="downloadPdf()"
+    matTooltip="Descargar PDF del plantel"
+  >
+    <mat-icon>picture_as_pdf</mat-icon>
+    PDF
+  </button>
+  <button
     mat-flat-button
     color="primary"
     type="button"
@@ -139,9 +149,12 @@
         (optionSelected)="onPlayerSelected($event)"
       >
         @for (player of playerSuggestions; track player.id) {
-        <mat-option [value]="player"
-          >{{ player.name }}</mat-option
-        >
+          <mat-option [value]="player">
+            {{ player.name }}
+            @if (getFirstPositionLabel(player); as pos) {
+              <span class="player-option-position"> ({{ pos }})</span>
+            }
+          </mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
@@ -177,12 +190,6 @@
         }}
       </td>
     </ng-container>
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>Posición</th>
-      <td mat-cell *matCellDef="let entry">
-        {{ entry.player ? getPositionLabel(entry.player) : '—' }}
-      </td>
-    </ng-container>
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let entry">
@@ -215,12 +222,6 @@
             ? entry.player.name
             : '(eliminado)'
         }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="position">
-      <th mat-header-cell *matHeaderCellDef>Posición</th>
-      <td mat-cell *matCellDef="let entry">
-        {{ entry.player ? getPositionLabel(entry.player) : '—' }}
       </td>
     </ng-container>
     <ng-container matColumnDef="actions">
