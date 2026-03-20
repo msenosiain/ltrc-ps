@@ -240,11 +240,13 @@ export class SquadEditorComponent implements OnInit {
     this.addForm.reset();
     this.playerSuggestions = [];
     setTimeout(() => this.playerSearchInput?.nativeElement.focus());
+    this.persistSquad();
   }
 
   removePlayer(entry: SquadEntry): void {
     this.squadRows = this.squadRows.filter((e) => e !== entry);
     this.isDirty = true;
+    this.persistSquad();
   }
 
   applyTemplate(): void {
@@ -360,6 +362,12 @@ export class SquadEditorComponent implements OnInit {
   }
 
   saveSquad(): void {
+    this.persistSquad(() =>
+      this.router.navigate(['/dashboard/matches', this.match!.id])
+    );
+  }
+
+  private persistSquad(onSuccess?: () => void): void {
     if (!this.match) return;
     this.saving = true;
     const squad = this.squadRows.map((e) => ({
@@ -373,7 +381,8 @@ export class SquadEditorComponent implements OnInit {
       .subscribe({
         next: () => {
           this.saving = false;
-          this.router.navigate(['/dashboard/matches', this.match!.id]);
+          this.isDirty = false;
+          onSuccess?.();
         },
         error: () => (this.saving = false),
       });

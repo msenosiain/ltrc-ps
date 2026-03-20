@@ -25,7 +25,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatTimepickerModule } from '@angular/material/timepicker';
 import { SportEnum, TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import {
   dayOfWeekOptions,
@@ -39,7 +38,6 @@ import {
   getTimeSlotsArray,
 } from '../../forms/schedule-form.factory';
 import { ScheduleFormValue } from '../../forms/schedule-form.types';
-import { timeStringToDate } from '../../forms/schedule-form.mapper';
 import {
   FilterContext,
   UserFilterContextService,
@@ -60,7 +58,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatFormFieldModule,
     MatDatepickerModule,
     MatSlideToggleModule,
-    MatTimepickerModule,
   ],
   templateUrl: './schedule-form.component.html',
   styleUrl: './schedule-form.component.scss',
@@ -164,8 +161,8 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
         const group = buildTimeSlotGroup(this.fb);
         group.patchValue({
           day: slot.day,
-          startTime: timeStringToDate(slot.startTime),
-          endTime: timeStringToDate(slot.endTime),
+          startTime: slot.startTime,
+          endTime: slot.endTime,
           location: slot.location ?? '',
         });
         this.timeSlotsArray.push(group);

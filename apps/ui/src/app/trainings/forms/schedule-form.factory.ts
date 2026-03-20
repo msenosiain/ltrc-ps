@@ -8,8 +8,8 @@ import {
 export function buildTimeSlotGroup(fb: FormBuilder): FormGroup {
   return fb.group({
     day: [null as DayOfWeekEnum | null, Validators.required],
-    startTime: [null as Date | null, Validators.required],
-    endTime: [null as Date | null, Validators.required],
+    startTime: [null as string | null, Validators.required],
+    endTime: [null as string | null, Validators.required],
     location: [''],
   });
 }

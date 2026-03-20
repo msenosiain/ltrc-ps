@@ -11,6 +11,11 @@ export function parseDate(val: unknown): Date | null {
   if (val instanceof Date) return isValid(val) ? val : null;
   const str = String(val).trim();
   if (!str) return null;
+  // ISO 8601 string (e.g. from JSON serialization) — parse as UTC directly
+  if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
+    const d = new Date(str);
+    return isValid(d) ? d : null;
+  }
   const withTime = parse(str, `${DATE_FORMAT} HH:mm`, new Date());
   if (isValid(withTime)) return withTime;
   const dateOnly = parse(str, DATE_FORMAT, new Date());

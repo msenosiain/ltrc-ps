@@ -69,24 +69,18 @@
 
         <mat-form-field appearance="outline" class="time-field">
           <mat-label>Desde</mat-label>
-          <input
-            matInput
-            [matTimepicker]="startTp"
-            [formControl]="getStartTimeControl(i)"
-          />
-          <mat-timepicker-toggle matSuffix [for]="startTp" />
-          <mat-timepicker #startTp [interval]="30" />
+          <input matInput type="time" [formControl]="getStartTimeControl(i)" />
+          @if (getStartTimeControl(i).invalid) {
+            <mat-error>La hora es obligatoria</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="time-field">
           <mat-label>Hasta</mat-label>
-          <input
-            matInput
-            [matTimepicker]="endTp"
-            [formControl]="getEndTimeControl(i)"
-          />
-          <mat-timepicker-toggle matSuffix [for]="endTp" />
-          <mat-timepicker #endTp [interval]="30" />
+          <input matInput type="time" [formControl]="getEndTimeControl(i)" />
+          @if (getEndTimeControl(i).invalid) {
+            <mat-error>La hora es obligatoria</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="location-field">
