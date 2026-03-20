@@ -214,20 +214,24 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
     this.importing = true;
     this.playersService.importPlayers(file).subscribe({
-      next: ({ created, errors }) => {
+      next: ({ created, updated, errors }) => {
         this.importing = false;
+        const parts = [];
+        if (created) parts.push(`${created} creados`);
+        if (updated) parts.push(`${updated} actualizados`);
+        const summary = parts.join(', ') || '0 cambios';
         if (errors.length > 0) {
           this.dialog.open(ImportResultDialogComponent, {
             width: '500px',
             data: {
               title: 'Resultado de importación',
-              successCount: created,
-              successLabel: 'importados',
+              successCount: created + (updated ?? 0),
+              successLabel: summary,
               errors,
             } satisfies ImportResultDialogData,
           });
         } else {
-          this.snackBar.open(`${created} jugadores importados`, 'Cerrar', {
+          this.snackBar.open(summary, 'Cerrar', {
             duration: 5000,
           });
         }

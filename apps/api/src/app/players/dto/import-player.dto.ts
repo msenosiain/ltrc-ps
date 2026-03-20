@@ -26,6 +26,7 @@ export interface PadronRow {
   Nombre: string;
   'N° Doc.': string | number;
   'Fecha Nac.': unknown;
+  'Categoría'?: string;
   'Nombre Jefe'?: string;
   Email?: string;
 }

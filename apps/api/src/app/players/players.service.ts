@@ -11,6 +11,7 @@ import type { File as MulterFile } from 'multer';
 import { PaginationDto } from '../shared/pagination.dto';
 import {
   calculateCategory,
+  CategoryEnum,
   ClothingSizesEnum,
   HockeyPositions,
   parseDate,
@@ -174,11 +175,24 @@ export class PlayersService {
     }
 
     // searchTerm → name o nickName
+    // Non-letter chars (apostrophes, backticks, etc.) are ignored between letters,
+    // so "dan" matches "D'an", "D`An", etc.
     if (filters.searchTerm) {
+      const buildFuzzyPattern = (term: string) =>
+        term
+          .replace(/[^a-záéíóúüñ\s]/gi, '')
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean)
+          .map((word) => word.split('').join('[^a-záéíóúüñ]*'))
+          .join('.*');
+
+      const pattern = buildFuzzyPattern(filters.searchTerm);
+      const regex = new RegExp(pattern || filters.searchTerm, 'i');
       andConditions.push({
         $or: [
-          { name: { $regex: new RegExp(filters.searchTerm, 'i') } },
-          { nickName: { $regex: new RegExp(filters.searchTerm, 'i') } },
+          { name: { $regex: regex } },
+          { nickName: { $regex: regex } },
         ],
       });
     }
@@ -285,10 +299,11 @@ export class PlayersService {
 
   async importFromFile(
     buffer: Buffer
-  ): Promise<{ created: number; errors: { row: number; message: string }[] }> {
+  ): Promise<{ created: number; updated: number; errors: { row: number; message: string }[] }> {
     const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: true });
 
     let created = 0;
+    let updated = 0;
     const errors: { row: number; message: string }[] = [];
 
     const sportMap: Record<string, SportEnum> = {
@@ -296,17 +311,26 @@ export class PlayersService {
       rugby: SportEnum.RUGBY,
     };
 
+    // Categorías fijas del padrón (no dependen de la edad)
+    const fixedCategoryMap: Record<string, CategoryEnum> = {
+      HM: CategoryEnum.PLANTEL_SUPERIOR,
+      HMV: CategoryEnum.MASTER,
+      RM: CategoryEnum.PLANTEL_SUPERIOR,
+    };
+    // Estas se calculan por fecha de nacimiento + deporte
+    const calculateFromAge = new Set(['HCM', 'HI', 'RC', 'RI', 'RJ']);
+
     for (const sheetName of workbook.SheetNames) {
       const sport = sportMap[sheetName.toLowerCase()];
+      if (!sport) continue; // ignorar hojas que no sean hockey/rugby
+
       const sheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json<PadronRow>(sheet);
 
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const rowNum = i + 2;
-        const label = sport
-          ? `[${sheetName}] fila ${rowNum}`
-          : `fila ${rowNum}`;
+        const label = `[${sheetName}] fila ${rowNum}`;
 
         const str = (val: unknown) => (val != null ? String(val).trim() : '');
         const toTitleCase = (s: string) =>
@@ -314,74 +338,59 @@ export class PlayersService {
 
         const name = toTitleCase(str(row.Nombre));
         const idNumber = str(row['N° Doc.']).replace(/\D/g, '');
-        const email = str(row.Email).toLowerCase();
 
         if (!name) {
-          errors.push({
-            row: rowNum,
-            message: `${label}: Nombre es requerido`,
-          });
+          errors.push({ row: rowNum, message: `${label}: Nombre es requerido` });
           continue;
         }
         if (!idNumber) {
-          errors.push({
-            row: rowNum,
-            message: `${label}: N° Doc. es requerido`,
-          });
+          errors.push({ row: rowNum, message: `${label}: N° Doc. es requerido` });
           continue;
         }
 
         const birthDate = parseDate(row['Fecha Nac.']);
         if (!birthDate) {
-          errors.push({
-            row: rowNum,
-            message: `${label}: Fecha Nac. inválida`,
-          });
+          errors.push({ row: rowNum, message: `${label}: Fecha Nac. inválida` });
           continue;
         }
 
-        const birthYear = birthDate.getFullYear();
-        const category = sport
-          ? calculateCategory(birthYear, sport)
-          : undefined;
+        const categoryKey = str(row['Categoría']).toUpperCase();
+        let category: CategoryEnum | undefined;
+        if (fixedCategoryMap[categoryKey]) {
+          category = fixedCategoryMap[categoryKey];
+        } else if (calculateFromAge.has(categoryKey)) {
+          category = calculateCategory(birthDate.getFullYear(), sport);
+        } else {
+          errors.push({ row: rowNum, message: `${label}: Categoría desconocida "${categoryKey}"` });
+          continue;
+        }
 
-        const parentName = toTitleCase(str(row['Nombre Jefe']));
         const memberNumber = row.Socio ? String(row.Socio) : undefined;
 
-        const isMinor =
-          new Date().getFullYear() - birthDate.getFullYear() < 18;
-        const hasDistinctParent =
-          isMinor && parentName && parentName.toUpperCase() !== name.toUpperCase();
-
-        const parentContacts = hasDistinctParent
-          ? [{
-              name: parentName,
-              ...(email ? { email } : {}),
-            }]
-          : undefined;
-
         try {
-          await this.playerModel.create({
-            name,
-            idNumber,
-            email: email || undefined,
-            birthDate,
-            sport,
-            category,
-            memberNumber,
-            parentContacts,
+          const existing = await this.playerModel.findOne({
+            idNumber: { $regex: new RegExp(idNumber) },
           });
-          created++;
+          if (existing) {
+            await this.playerModel.findByIdAndUpdate(existing._id, {
+              name,
+              birthDate,
+              sport,
+              category,
+              ...(memberNumber ? { memberNumber } : {}),
+            });
+            updated++;
+          } else {
+            await this.playerModel.create({ name, idNumber, birthDate, sport, category, memberNumber });
+            created++;
+          }
         } catch (err) {
-          errors.push({
-            row: rowNum,
-            message: `${label}: ${(err as Error).message}`,
-          });
+          errors.push({ row: rowNum, message: `${label}: ${(err as Error).message}` });
         }
       }
     }
 
-    return { created, errors };
+    return { created, updated, errors };
   }
 
   async updateFromSurvey(buffer: Buffer): Promise<{

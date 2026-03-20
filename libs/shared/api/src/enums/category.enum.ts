@@ -28,4 +28,5 @@ export enum CategoryEnum {
   DECIMA = 'decima',
   PRE_DECIMA = 'pre_decima',
   MASTER = 'master',
+
 }
