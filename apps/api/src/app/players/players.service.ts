@@ -251,6 +251,40 @@ export class PlayersService {
       sort['name'] = 1;
     }
 
+    // When searching without explicit sort, boost results where the term matches
+    // the last word of the name (apellido) so "Martin Santiago" appears first
+    // when searching "Santiago".
+    if (filters.searchTerm && !sortBy) {
+      const termRegex = filters.searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const [items, total] = await Promise.all([
+        this.playerModel.aggregate([
+          { $match: queryFilters },
+          {
+            $addFields: {
+              _lastNameMatch: {
+                $cond: {
+                  if: {
+                    $regexMatch: {
+                      input: { $arrayElemAt: [{ $split: ['$name', ' '] }, 0] },
+                      regex: termRegex,
+                      options: 'i',
+                    },
+                  },
+                  then: 1,
+                  else: 0,
+                },
+              },
+            },
+          },
+          { $sort: { _lastNameMatch: -1, category: 1, name: 1 } },
+          { $skip: skip },
+          { $limit: size },
+        ]),
+        this.playerModel.countDocuments(queryFilters).exec(),
+      ]);
+      return { items: items as unknown as Player[], total, page, size };
+    }
+
     // Query a MongoDB
     const [items, total] = await Promise.all([
       this.playerModel
