@@ -57,12 +57,11 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'date',
+    'opponent',
     'venue',
     'tournament',
-    'category',
-    'opponent',
-    'status',
     'result',
+    'status',
   ];
   readonly dataSource = new MatchesDataSource(this.matchesService);
   readonly savedState = this.listState.get(MatchesListComponent.STATE_KEY);
