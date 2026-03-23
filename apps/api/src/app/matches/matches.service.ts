@@ -276,13 +276,59 @@ export class MatchesService {
     return this.playerModel.findOne({ userId: new Types.ObjectId(userId) }).select('_id');
   }
 
-  async getFieldOptions() {
-    const [opponents, venues, divisions] = await Promise.all([
-      this.matchModel.distinct('opponent'),
-      this.matchModel.distinct('venue'),
-      this.matchModel.distinct('division').then((vals) => vals.filter(Boolean)),
+  async getFieldOptions(caller?: User) {
+    let scopeFilter: Record<string, unknown> | undefined;
+
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      let sports = caller.sports ?? [];
+      let categories = caller.categories ?? [];
+
+      if (!sports.length || !categories.length) {
+        const player = await this.playerModel
+          .findOne({ userId: String(caller._id) })
+          .select('sport category')
+          .exec();
+        if (!sports.length && player?.sport) sports = [player.sport as any];
+        if (!categories.length && player?.category) categories = [player.category as any];
+      }
+
+      if (sports.length || categories.length) {
+        scopeFilter = {};
+        if (sports.length) {
+          const sportTournamentIds = await this.tournamentModel
+            .find({ sport: { $in: sports } })
+            .distinct('_id')
+            .exec();
+          scopeFilter['$or'] = [
+            { tournament: { $in: sportTournamentIds } },
+            { tournament: { $exists: false }, sport: { $in: sports } },
+          ];
+        }
+        if (categories.length) {
+          scopeFilter['category'] = { $in: categories };
+        }
+      }
+    }
+
+    const filter = scopeFilter ?? {};
+    const [opponents, venues, divisions, tournamentObjectIds] = await Promise.all([
+      this.matchModel.distinct('opponent', filter),
+      this.matchModel.distinct('venue', filter),
+      this.matchModel.distinct('division', filter).then((vals) => vals.filter(Boolean)),
+      scopeFilter ? this.matchModel.distinct('tournament', filter) : Promise.resolve(null),
     ]);
-    return { opponents, venues, divisions };
+
+    const result: { opponents: string[]; venues: string[]; divisions: string[]; tournamentIds?: string[] } = {
+      opponents,
+      venues,
+      divisions,
+    };
+
+    if (tournamentObjectIds !== null) {
+      result.tournamentIds = (tournamentObjectIds as any[]).map((id) => id.toString());
+    }
+
+    return result;
   }
 
   async findOne(id: string, caller?: User) {

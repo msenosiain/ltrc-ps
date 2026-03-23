@@ -63,6 +63,7 @@ export class MatchSearchComponent implements OnInit {
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport();
   tournaments: Tournament[] = [];
+  allTournaments: Tournament[] = [];
   opponents: string[] = [];
 
   showSportFilter = true;
@@ -86,11 +87,18 @@ export class MatchSearchComponent implements OnInit {
     this.tournamentsService
       .getTournaments({ page: 1, size: 1000 })
       .pipe(map((res) => res.items))
-      .subscribe((t) => (this.tournaments = t));
+      .subscribe((t) => (this.allTournaments = t));
 
     this.matchesService
       .getFieldOptions()
-      .subscribe(({ opponents }) => (this.opponents = opponents.sort()));
+      .subscribe(({ opponents, tournamentIds }) => {
+        this.opponents = opponents.sort();
+        if (tournamentIds) {
+          this.tournaments = this.allTournaments.filter((t) => tournamentIds.includes(t.id!));
+        } else {
+          this.tournaments = this.allTournaments;
+        }
+      });
 
     this.filterContext.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))

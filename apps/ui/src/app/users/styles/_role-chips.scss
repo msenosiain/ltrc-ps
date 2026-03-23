@@ -1,7 +1,8 @@
 // Base role colors (for chips, badges on light backgrounds)
 $role-admin: #a60a14;
 $role-manager: #0d47a1;
-$role-player: #1565c0;
+$role-player: #b71c1c;
+$role-analyst: #6a1b9a;
 $role-coach: #c89200;
 $role-trainer: #2e7d32;
 $role-default: #36445f;
@@ -9,7 +10,8 @@ $role-default: #36445f;
 // Light variants (for text on dark backgrounds)
 $role-admin-light: #ff6b6b;
 $role-manager-light: #64b5f6;
-$role-player-light: #64b5f6;
+$role-player-light: #ef9a9a;
+$role-analyst-light: #ce93d8;
 $role-coach-light: #ffd54f;
 $role-trainer-light: #81c784;
 $role-default-light: #b0bec5;
@@ -33,6 +35,13 @@ mat-chip {
     --mdc-chip-elevated-container-color: #{$role-player};
     --mdc-chip-label-text-color: #fff;
     --mat-chip-elevated-container-color: #{$role-player};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--analyst {
+    --mdc-chip-elevated-container-color: #{$role-analyst};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-analyst};
     --mat-chip-label-text-color: #fff;
   }
 

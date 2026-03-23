@@ -28,11 +28,13 @@ export class MatchesService {
     opponents: string[];
     venues: string[];
     divisions: string[];
+    tournamentIds?: string[];
   }> {
     return this.httpClient.get<{
       opponents: string[];
       venues: string[];
       divisions: string[];
+      tournamentIds?: string[];
     }>(`${this.matchesApiUrl}/field-options`);
   }
 

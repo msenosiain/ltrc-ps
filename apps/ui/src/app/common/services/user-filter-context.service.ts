@@ -3,6 +3,7 @@ import { Observable, map, shareReplay } from 'rxjs';
 import {
   CategoryEnum,
   HockeyBranchEnum,
+  RoleEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { AuthService } from '../../auth/auth.service';
@@ -35,11 +36,12 @@ export class UserFilterContextService {
   readonly filterContext$: Observable<FilterContext> =
     this.authService.user$.pipe(
       map((user) => {
+        const isPlayer = user?.roles?.includes(RoleEnum.PLAYER) && !user?.roles?.some(r => [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.ANALYST].includes(r));
         const userSports = user?.sports ?? [];
         const userCategories = user?.categories ?? [];
         const userBranches = user?.branches ?? [];
 
-        const showSportFilter = userSports.length !== 1;
+        const showSportFilter = !isPlayer && userSports.length !== 1;
         const forcedSport = userSports.length === 1 ? userSports[0] : undefined;
         const filteredSportOptions =
           userSports.length === 0
@@ -52,7 +54,7 @@ export class UserFilterContextService {
             ? categoryOptions
             : getCategoryOptionsBySports(userSports);
 
-        const showCategoryFilter = userCategories.length !== 1;
+        const showCategoryFilter = !isPlayer && userCategories.length !== 1;
         const forcedCategory =
           userCategories.length === 1 ? userCategories[0] : undefined;
         const filteredCategoryOptions =
