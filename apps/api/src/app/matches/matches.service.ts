@@ -233,7 +233,7 @@ export class MatchesService {
     return { items, total, page, size };
   }
 
-  async addAttachment(matchId: string, file: MulterFile) {
+  async addAttachment(matchId: string, file: MulterFile, name?: string) {
     const match = await this.matchModel.findById(matchId);
     if (!match) throw new NotFoundException('Match not found');
 
@@ -244,11 +244,12 @@ export class MatchesService {
       file.mimetype
     );
 
+    const attachment = { fileId, filename: file.originalname, mimeType: file.mimetype, ...(name ? { name } : {}) };
     match.attachments = match.attachments ?? [];
-    match.attachments.push({ fileId, filename: file.originalname, mimeType: file.mimetype });
+    match.attachments.push(attachment);
     await match.save();
 
-    return { fileId, filename: file.originalname, mimeType: file.mimetype };
+    return attachment;
   }
 
   async getAttachmentStream(matchId: string, fileId: string) {

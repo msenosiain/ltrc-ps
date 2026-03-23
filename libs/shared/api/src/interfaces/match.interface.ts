@@ -30,6 +30,7 @@ export interface MatchAttachment {
   fileId: string;
   filename: string;
   mimeType: string;
+  name?: string;
 }
 
 export interface Match extends Document {

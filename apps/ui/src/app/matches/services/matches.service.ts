@@ -96,9 +96,10 @@ export class MatchesService {
     return `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`;
   }
 
-  uploadAttachment(matchId: string, file: File): Observable<MatchAttachment> {
+  uploadAttachment(matchId: string, file: File, name?: string): Observable<MatchAttachment> {
     const form = new FormData();
     form.append('file', file);
+    if (name) form.append('name', name);
     return this.httpClient.post<MatchAttachment>(
       `${this.matchesApiUrl}/${matchId}/attachments`,
       form

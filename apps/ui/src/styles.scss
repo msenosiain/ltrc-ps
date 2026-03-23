@@ -112,6 +112,10 @@ ltrc-root {
   overflow: hidden;
 }
 
+.multiline-tooltip {
+  white-space: pre-line !important;
+}
+
 ltrc-dashboard {
   display: block;
   height: 100%;

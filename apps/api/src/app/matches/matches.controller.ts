@@ -97,8 +97,8 @@ export class MatchesController {
   @Post(':id/attachments')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async addAttachment(@Param('id') id: string, @UploadedFile() file: MulterFile) {
-    return this.matchesService.addAttachment(id, file);
+  async addAttachment(@Param('id') id: string, @UploadedFile() file: MulterFile, @Body('name') name?: string) {
+    return this.matchesService.addAttachment(id, file, name);
   }
 
   @Get(':id/attachments/:fileId')

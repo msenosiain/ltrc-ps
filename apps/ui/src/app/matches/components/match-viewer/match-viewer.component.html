@@ -203,7 +203,7 @@
           } @else {
           <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-file">
             <mat-icon>description</mat-icon>
-            <span>{{ att.filename }}</span>
+            <span>{{ att.name || att.filename }}</span>
           </a>
           }
           <button
@@ -223,17 +223,10 @@
         *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
         class="attachment-upload"
       >
-        <input
-          #attachmentInput
-          type="file"
-          accept="image/*,.pdf"
-          style="display:none"
-          (change)="onAttachmentFileSelected($event)"
-        />
         <button
           mat-stroked-button
           type="button"
-          (click)="attachmentInput.click()"
+          (click)="openUploadDialog()"
           [disabled]="uploadingAttachment"
         >
           <mat-icon>attach_file</mat-icon>

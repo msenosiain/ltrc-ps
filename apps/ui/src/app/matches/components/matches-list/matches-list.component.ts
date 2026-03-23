@@ -12,6 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
@@ -40,6 +41,7 @@ import { ListStateService } from '../../../common/services/list-state.service';
     MatIconModule,
     MatButtonModule,
     MatChipsModule,
+    MatTooltipModule,
     AsyncPipe,
     DatePipe,
     MatchSearchComponent,
@@ -63,6 +65,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     'tournament',
     'result',
     'status',
+    'attachments',
   ];
   readonly dataSource = new MatchesDataSource(this.matchesService);
   readonly savedState = this.listState.get(MatchesListComponent.STATE_KEY);
@@ -142,5 +145,11 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   isCompleted(status: MatchStatusEnum): boolean {
     return status === MatchStatusEnum.COMPLETED;
+  }
+
+  getAttachmentsTooltip(match: Match): string {
+    return (match.attachments ?? [])
+      .map((a) => `• ${a.name || a.filename}`)
+      .join('\n');
   }
 }

@@ -33,6 +33,8 @@ import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayersService } from '../../../players/services/players.service';
 import { SquadPdfService } from '../../services/squad-pdf.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UploadAttachmentDialogComponent, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
 
 @Component({
   selector: 'ltrc-match-viewer',
@@ -59,6 +61,7 @@ export class MatchViewerComponent implements OnInit {
   private readonly squadPdf = inject(SquadPdfService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
 
   match?: Match;
   isCompetitive = false;
@@ -179,23 +182,22 @@ export class MatchViewerComponent implements OnInit {
     return this.matchesService.getAttachmentUrl(this.match!.id!, fileId);
   }
 
-  onAttachmentFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    input.value = '';
-
-    this.uploadingAttachment = true;
-    this.matchesService.uploadAttachment(this.match!.id!, file).subscribe({
-      next: (att) => {
-        (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
-        this.uploadingAttachment = false;
-        this.snackBar.open('Archivo adjuntado', 'Cerrar', { duration: 3000 });
-      },
-      error: () => {
-        this.uploadingAttachment = false;
-        this.snackBar.open('Error al subir el archivo', 'Cerrar', { duration: 4000 });
-      },
+  openUploadDialog(): void {
+    const ref = this.dialog.open(UploadAttachmentDialogComponent, { width: '400px' });
+    ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
+      if (!result) return;
+      this.uploadingAttachment = true;
+      this.matchesService.uploadAttachment(this.match!.id!, result.file, result.name).subscribe({
+        next: (att) => {
+          (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
+          this.uploadingAttachment = false;
+          this.snackBar.open('Archivo adjuntado', 'Cerrar', { duration: 3000 });
+        },
+        error: () => {
+          this.uploadingAttachment = false;
+          this.snackBar.open('Error al subir el archivo', 'Cerrar', { duration: 4000 });
+        },
+      });
     });
   }
 

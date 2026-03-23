@@ -26,7 +26,7 @@ export class MatchEntity extends Document {
     player: PopulatedDoc<PlayerEntity & Document>;
   }[];
   attendance: AttendanceEntry[];
-  attachments: { fileId: string; filename: string; mimeType: string }[];
+  attachments: { fileId: string; filename: string; mimeType: string; name?: string }[];
   videos?: VideoClip[];
   result?: {
     homeScore: number;

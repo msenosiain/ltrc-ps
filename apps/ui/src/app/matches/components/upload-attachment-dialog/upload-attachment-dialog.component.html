@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Adjuntar archivo</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="upload-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre descriptivo</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Planilla, Certificado..." />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>El nombre es requerido</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="file-picker">
+      <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
+      <button mat-stroked-button type="button" (click)="fileInput.click()">
+        <mat-icon>attach_file</mat-icon>
+        {{ selectedFile ? selectedFile.name : 'Seleccionar archivo' }}
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    [disabled]="form.invalid || !selectedFile"
+    (click)="confirm()"
+  >
+    Subir
+  </button>
+</mat-dialog-actions>

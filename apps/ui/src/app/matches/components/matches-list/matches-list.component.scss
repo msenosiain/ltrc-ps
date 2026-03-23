@@ -64,6 +64,20 @@
   color: var(--mat-app-on-surface-variant, #666);
 }
 
+.mat-column-attachments {
+  width: 36px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.attachment-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--mat-app-on-surface-variant, #888);
+  vertical-align: middle;
+}
+
 // Status badges
 .status-badge {
   display: inline-block;
