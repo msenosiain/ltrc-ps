@@ -247,7 +247,6 @@ export class PlayersService {
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['category'] = 1;
       sort['name'] = 1;
     }
 
@@ -277,7 +276,7 @@ export class PlayersService {
               },
             },
           },
-          { $sort: { _lastNameMatch: -1, category: 1, name: 1 } },
+          { $sort: { _lastNameMatch: -1, name: 1 } },
           { $skip: skip },
           { $limit: size },
         ]),
