@@ -137,9 +137,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   getResultLabel(match: Match): string {
     if (!match.result) return '—';
-    const home = match.isHome ? match.result.homeScore : match.result.awayScore;
-    const away = match.isHome ? match.result.awayScore : match.result.homeScore;
-    return `${home} - ${away}`;
+    return `${match.result.homeScore} - ${match.result.awayScore}`;
   }
 
   isCompleted(status: MatchStatusEnum): boolean {
