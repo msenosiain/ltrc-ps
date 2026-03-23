@@ -84,7 +84,13 @@
       <td mat-cell *matCellDef="let player">
         {{ player.name }}
         @if (player.availability?.status === PlayerAvailabilityEnum.INJURED) {
-          <mat-icon class="injured-icon" title="Lesionado">local_hospital</mat-icon>
+          <mat-icon class="availability-icon availability-icon--injured" title="Lesionado">local_hospital</mat-icon>
+        }
+        @if (player.availability?.status === PlayerAvailabilityEnum.SUSPENDED) {
+          <mat-icon class="availability-icon availability-icon--suspended" title="Suspendido">block</mat-icon>
+        }
+        @if (player.availability?.status === PlayerAvailabilityEnum.CALLED_UP) {
+          <mat-icon class="availability-icon availability-icon--called-up" title="Convocado">military_tech</mat-icon>
         }
       </td>
     </ng-container>

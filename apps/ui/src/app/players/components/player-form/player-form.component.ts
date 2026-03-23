@@ -53,6 +53,7 @@ import {
 } from '../../position-options';
 import { buildCreatePlayerForm, buildParentContactGroup } from '../../forms/player-form.factory';
 import { PlayerFormValue } from '../../forms/player-form.types';
+import { mapPlayerToForm } from '../../forms/player-form.mapper';
 import { PlayersService } from '../../services/players.service';
 import { PlayerPhotoFieldComponent } from '../player-photo-field/player-photo-field.component';
 import { AuthService } from '../../../auth/auth.service';
@@ -268,7 +269,8 @@ export class PlayerFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['player'] && this.player) {
-      this.playerForm.patchValue(this.player);
+      const mapped = mapPlayerToForm(this.player);
+      this.playerForm.patchValue(mapped);
 
       // Populate positions FormArray
       this.positionsArray.clear();

@@ -38,14 +38,14 @@ export function getAvailabilityColor(
 ): string {
   switch (status) {
     case PlayerAvailabilityEnum.INJURED:
-      return '#e65100';
-    case PlayerAvailabilityEnum.CALLED_UP:
-      return '#1565c0';
+      return '#e53935';   // rojo
     case PlayerAvailabilityEnum.SUSPENDED:
-      return '#c62828';
+      return '#f57c00';   // naranja
+    case PlayerAvailabilityEnum.CALLED_UP:
+      return '#5c35bb';   // violeta
     case PlayerAvailabilityEnum.LEAVE:
-      return '#6a1b9a';
+      return '#6a1b9a';   // violeta oscuro
     default:
-      return '#2e7d32';
+      return '#2e7d32';   // verde (disponible)
   }
 }
