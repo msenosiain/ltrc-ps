@@ -134,6 +134,10 @@ export class MatchesService {
       queryFilters['status'] = filters.status;
     }
 
+    if (filters.opponent) {
+      queryFilters['opponent'] = filters.opponent;
+    }
+
     if (filters.tournament) {
       queryFilters['tournament'] = filters.tournament;
     }

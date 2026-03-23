@@ -33,4 +33,8 @@ export class MatchFiltersDto {
   @IsOptional()
   @IsMongoId()
   playerId?: string;
+
+  @IsOptional()
+  @IsString()
+  opponent?: string;
 }

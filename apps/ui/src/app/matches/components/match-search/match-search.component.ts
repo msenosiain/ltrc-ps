@@ -30,6 +30,7 @@ import {
 import { MatchFilters } from '../../forms/match-form.types';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
+import { MatchesService } from '../../services/matches.service';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 import { SportOption } from '../../../common/sport-options';
 
@@ -51,6 +52,7 @@ export class MatchSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   private readonly tournamentsService = inject(TournamentsService);
+  private readonly matchesService = inject(MatchesService);
   private readonly filterContext = inject(UserFilterContextService);
 
   @Input() initialFilters?: Record<string, unknown>;
@@ -61,6 +63,7 @@ export class MatchSearchComponent implements OnInit {
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: MatchOption<CategoryEnum>[] = getCategoryOptionsBySport();
   tournaments: Tournament[] = [];
+  opponents: string[] = [];
 
   showSportFilter = true;
   showCategoryFilter = true;
@@ -71,6 +74,7 @@ export class MatchSearchComponent implements OnInit {
     status: [undefined as MatchStatusEnum | undefined],
     sport: [undefined as SportEnum | undefined],
     category: [undefined as CategoryEnum | undefined],
+    opponent: [undefined as string | undefined],
     tournament: [undefined as string | undefined],
   });
 
@@ -83,6 +87,10 @@ export class MatchSearchComponent implements OnInit {
       .getTournaments({ page: 1, size: 1000 })
       .pipe(map((res) => res.items))
       .subscribe((t) => (this.tournaments = t));
+
+    this.matchesService
+      .getFieldOptions()
+      .subscribe(({ opponents }) => (this.opponents = opponents.sort()));
 
     this.filterContext.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))

@@ -65,6 +65,26 @@
     }
 
     <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Rival</mat-label>
+      <mat-select formControlName="opponent">
+        <mat-option [value]="undefined">Todos</mat-option>
+        @for (o of opponents; track o) {
+        <mat-option [value]="o">{{ o }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('opponent')?.value) {
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="clearField('opponent')"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Torneo</mat-label>
       <mat-select formControlName="tournament">
         <mat-option [value]="undefined">Todos</mat-option>
