@@ -4,17 +4,22 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
+import { MatchesService } from '../../../matches/services/matches.service';
+import { AuthService } from '../../../auth/auth.service';
 import {
   CategoryEnum,
   HockeyBranchEnum,
+  Match,
   Player,
   PlayerAvailabilityEnum,
   PlayerPosition,
   PlayerStatusEnum,
   RoleEnum,
+  SortOrder,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { categoryOptions } from '../../../common/category-options';
@@ -25,10 +30,12 @@ import {
   getAvailabilityLabel,
   getAvailabilityColor,
 } from '../../player-status-options';
+import { getCategoryLabel as getMatchCategoryLabel } from '../../../matches/match-options';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -42,6 +49,7 @@ import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.di
     MatChipsModule,
     MatButtonModule,
     MatIconModule,
+    MatProgressBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -52,10 +60,15 @@ export class PlayerViewerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly playersService = inject(PlayersService);
+  private readonly matchesService = inject(MatchesService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
 
   RoleEnum = RoleEnum;
   player?: Player;
+  matchHistory: Match[] = [];
+  matchHistoryLoading = false;
+  isOwnProfile = signal(false);
 
   ngOnInit(): void {
     const playerId = this.route.snapshot.paramMap.get('id');
@@ -69,13 +82,54 @@ export class PlayerViewerComponent implements OnInit {
       .getPlayerById(playerId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (player) => (this.player = player),
+        next: (player) => {
+          this.player = player;
+          this.loadMatchHistory(playerId);
+          this.checkOwnProfile(player);
+        },
         error: () => this.router.navigate(['/players']),
       });
   }
 
+  private checkOwnProfile(player: Player): void {
+    this.authService.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
+      if (!user) return;
+      const isPlayer = user.roles?.includes(RoleEnum.PLAYER) ?? false;
+      if (!isPlayer) return;
+      this.playersService.getMyPlayer().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (myPlayer) => this.isOwnProfile.set(myPlayer.id === player.id),
+        error: () => {},
+      });
+    });
+  }
+
+  private loadMatchHistory(playerId: string): void {
+    this.matchHistoryLoading = true;
+    this.matchesService.getMatches({
+      page: 1,
+      size: 10,
+      filters: { playerId },
+      sortBy: 'date',
+      sortOrder: SortOrder.DESC,
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res) => {
+        this.matchHistory = res.items;
+        this.matchHistoryLoading = false;
+      },
+      error: () => { this.matchHistoryLoading = false; },
+    });
+  }
+
   edit(): void {
     this.router.navigate(['/dashboard/players', this.player!.id, 'edit']);
+  }
+
+  editMyProfile(): void {
+    this.router.navigate(['/dashboard/players/me/edit']);
+  }
+
+  getMatchCategoryLabel(match: Match): string {
+    return getMatchCategoryLabel(match.category);
   }
 
   @HostListener('document:keydown.escape')

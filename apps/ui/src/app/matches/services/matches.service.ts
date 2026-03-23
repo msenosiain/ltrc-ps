@@ -33,6 +33,18 @@ export class MatchesService {
     }>(`${this.matchesApiUrl}/field-options`);
   }
 
+  getMySquadMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {
+    let params = new HttpParams();
+    if (query.page) params = params.set('page', query.page);
+    if (query.size) params = params.set('size', query.size);
+    if (query.filters && Object.keys(query.filters).length > 0)
+      params = params.set('filters', JSON.stringify(query.filters));
+    if (query.sortBy) params = params.set('sortBy', query.sortBy);
+    if (query.sortOrder) params = params.set('sortOrder', query.sortOrder);
+
+    return this.httpClient.get<PaginatedResponse<Match>>(`${this.matchesApiUrl}/my-squad`, { params });
+  }
+
   getMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {
     let params = new HttpParams();
     if (query.page) params = params.set('page', query.page);

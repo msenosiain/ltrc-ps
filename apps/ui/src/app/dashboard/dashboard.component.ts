@@ -24,6 +24,7 @@ import { PlayersService } from '../players/services/players.service';
 import { SidenavService } from '../common/services/sidenav.service';
 import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
 import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-matches-widget/upcoming-matches-widget.component';
+import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widget/my-matches-widget.component';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -39,6 +40,7 @@ import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-m
     MatIconModule,
     UpcomingTrainingsWidgetComponent,
     UpcomingMatchesWidgetComponent,
+    MyMatchesWidgetComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { PlayersListComponent } from './components/players-list/players-list.component';
 import { PlayerViewerComponent } from './components/player-viewer/player-viewer.component';
 import { PlayerEditorComponent } from './components/player-editor/player-editor.component';
+import { MyProfileEditorComponent } from './components/my-profile-editor/my-profile-editor.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
@@ -10,6 +11,11 @@ export const PLAYERS_ROUTES: Routes = [
     path: '',
     component: PlayersListComponent,
     data: { title: 'Plantel - Los Tordos' },
+  },
+  {
+    path: 'me/edit',
+    component: MyProfileEditorComponent,
+    data: { title: 'Editar mi perfil' },
   },
   {
     path: 'create',

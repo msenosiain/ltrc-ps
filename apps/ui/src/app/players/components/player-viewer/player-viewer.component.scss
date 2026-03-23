@@ -167,6 +167,55 @@ $avatar-size: 160px;
   }
 }
 
+.no-history {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.match-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.match-history-row {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.match-history-date {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mat-app-on-surface-variant, #888);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.match-history-info {
+  font-size: 0.85rem;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.match-history-result {
+  font-weight: 700;
+  font-size: 0.82rem;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
 .contact-divider {
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.08);

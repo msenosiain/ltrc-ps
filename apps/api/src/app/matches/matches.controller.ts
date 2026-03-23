@@ -73,6 +73,16 @@ export class MatchesController {
     return this.matchesService.applySquadTemplate(id, squadId);
   }
 
+  @Get('my-squad')
+  @UseGuards(JwtAuthGuard)
+  async getMySquadMatches(@Query() pagination: PaginationDto<MatchFiltersDto>, @Req() req: Request) {
+    const user = (req as any).user;
+    const player = await this.matchesService.findPlayerByUserId((user as any)._id?.toString());
+    if (!player) return { items: [], total: 0, page: pagination.page ?? 1, size: pagination.size ?? 10 };
+    const filters = { ...(pagination.filters ?? {}), playerId: (player as any)._id?.toString() };
+    return this.matchesService.findPaginated({ ...pagination, filters }, (req as any).user);
+  }
+
   @Get('field-options')
   async getFieldOptions() {
     return this.matchesService.getFieldOptions();

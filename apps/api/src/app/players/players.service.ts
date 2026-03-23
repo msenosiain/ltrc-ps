@@ -282,6 +282,20 @@ export class PlayersService {
     return this.playerModel.findOne({ userId: new Types.ObjectId(userId) });
   }
 
+  async updateSelf(userId: string, dto: { address?: { phoneNumber?: string }; clothingSizes?: { jersey?: ClothingSizesEnum; shorts?: ClothingSizesEnum; sweater?: ClothingSizesEnum; pants?: ClothingSizesEnum } }) {
+    const player = await this.playerModel.findOne({ userId: new Types.ObjectId(userId) });
+    if (!player) throw new NotFoundException('No player linked to this user');
+
+    if (dto.address !== undefined) {
+      player.address = { ...(player.address ?? { phoneNumber: '' }), ...dto.address };
+    }
+    if (dto.clothingSizes !== undefined) {
+      player.clothingSizes = { ...(player.clothingSizes ?? {}), ...dto.clothingSizes };
+    }
+
+    return player.save();
+  }
+
   async getPhotoStream(photoId: string) {
     return this.gridFsService.getFileStream('playersPhotos', photoId);
   }

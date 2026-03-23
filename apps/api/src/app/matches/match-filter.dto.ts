@@ -29,4 +29,8 @@ export class MatchFiltersDto {
   @IsOptional()
   @IsString()
   toDate?: string;
+
+  @IsOptional()
+  @IsMongoId()
+  playerId?: string;
 }

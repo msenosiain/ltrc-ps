@@ -226,12 +226,47 @@
   </mat-card>
   }
 
+  <!-- HISTORIAL DE PARTIDOS -->
+  <mat-card class="section-card">
+    <mat-card-content>
+      <p class="section-title">Historial de partidos</p>
+      @if (matchHistoryLoading) {
+      <mat-progress-bar mode="indeterminate" />
+      } @else if (matchHistory.length === 0) {
+      <p class="no-history">Sin partidos registrados.</p>
+      } @else {
+      <div class="match-history">
+        @for (m of matchHistory; track m.id) {
+        <div class="match-history-row">
+          <span class="match-history-date">{{ m.date | date: 'dd/MM/yyyy' }}</span>
+          <span class="match-history-info">
+            {{ m.tournament?.name }} · {{ getMatchCategoryLabel(m) }}
+            @if (m.opponent) { vs {{ m.opponent }} }
+            @if (m.result?.homeScore != null && m.result?.awayScore != null) {
+              <span class="match-history-result">
+                {{ m.isHome ? m.result!.homeScore + '-' + m.result!.awayScore : m.result!.awayScore + '-' + m.result!.homeScore }}
+              </span>
+            }
+          </span>
+        </div>
+        }
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
   <!-- ACCIONES -->
   <div class="viewer-actions">
     <button mat-stroked-button type="button" (click)="backToList()">
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
+    @if (isOwnProfile()) {
+    <button mat-flat-button color="primary" type="button" (click)="editMyProfile()">
+      <mat-icon>edit</mat-icon>
+      Editar mi perfil
+    </button>
+    }
     <button
       *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
       mat-flat-button

@@ -151,6 +151,9 @@
         <div class="widget-grid">
           <ltrc-upcoming-matches-widget />
           <ltrc-upcoming-trainings-widget />
+          @if (isPlayer()) {
+          <ltrc-my-matches-widget />
+          }
         </div>
       </div>
       } }

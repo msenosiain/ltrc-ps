@@ -1,0 +1,36 @@
+<div class="upcoming-widget">
+  <h3 class="widget-title">Mis próximos partidos</h3>
+
+  @if (loading) {
+  <mat-progress-bar mode="indeterminate" />
+  } @else if (grouped.length === 0) {
+  <p class="no-matches">No estás convocado a partidos próximos.</p>
+  } @else { @for (group of grouped; track group.date) {
+  <div class="date-group">
+    <div class="date-header">
+      <span class="day-label">{{ group.dayLabel }}</span>
+      <span class="date-value">{{ group.date }}</span>
+    </div>
+
+    @for (match of group.matches; track match.id) {
+    <div class="match-row" (click)="goToMatch(match.id!)" tabindex="0" (keydown.enter)="goToMatch(match.id!)">
+      <div class="match-info">
+        <span class="match-time">{{ hasTime(match.date) ? (match.date | date : 'HH:mm') : 'Sin hora' }}</span>
+        <span class="match-meta">
+          {{ match.tournament.name }} · {{ getCategoryLabel(match) }}
+          @if (match.division) { · {{ match.division }} }
+          @if (match.opponent) {
+            ·
+            <span class="home-away-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
+              {{ match.isHome ? 'L' : 'V' }}
+            </span>
+            {{ match.opponent }}
+          }
+          @if (match.venue) { · {{ match.venue }} }
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+  } }
+</div>

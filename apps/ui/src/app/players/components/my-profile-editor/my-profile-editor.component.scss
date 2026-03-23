@@ -1,0 +1,31 @@
+.profile-editor {
+  max-width: 600px;
+  padding: 24px 16px;
+
+  &__title {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 0 0 24px;
+  }
+
+  &__card {
+    margin-bottom: 20px;
+  }
+
+  &__field {
+    width: 100%;
+  }
+
+  &__sizes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 16px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 8px;
+  }
+}

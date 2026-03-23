@@ -27,4 +27,5 @@ export interface MatchFilters {
   tournament?: string;
   fromDate?: string;
   toDate?: string;
+  playerId?: string;
 }

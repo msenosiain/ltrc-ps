@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
@@ -167,6 +167,10 @@ export class MatchesService {
       queryFilters['date'] = dateFilter;
     }
 
+    if (filters.playerId) {
+      queryFilters['squad.player'] = filters.playerId;
+    }
+
     // Server-side restriction: limit results to user's assigned scope
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       let sports = caller.sports ?? [];
@@ -222,6 +226,10 @@ export class MatchesService {
     ]);
 
     return { items, total, page, size };
+  }
+
+  async findPlayerByUserId(userId: string) {
+    return this.playerModel.findOne({ userId: new Types.ObjectId(userId) }).select('_id');
   }
 
   async getFieldOptions() {

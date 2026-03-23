@@ -1,0 +1,75 @@
+<div class="profile-editor">
+  <h2 class="profile-editor__title">Editar mi perfil</h2>
+
+  @if (loading) {
+  <mat-progress-bar mode="indeterminate" />
+  } @else {
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <mat-card class="profile-editor__card">
+      <mat-card-header>
+        <mat-card-title>Contacto</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="profile-editor__field">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="Ej: 2914123456" />
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="profile-editor__card">
+      <mat-card-header>
+        <mat-card-title>Talles de indumentaria</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="profile-editor__sizes">
+        <mat-form-field appearance="outline">
+          <mat-label>Camiseta</mat-label>
+          <mat-select formControlName="jersey">
+            <mat-option [value]="null">—</mat-option>
+            @for (size of sizeOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Short / Falda</mat-label>
+          <mat-select formControlName="shorts">
+            <mat-option [value]="null">—</mat-option>
+            @for (size of sizeOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Buzo</mat-label>
+          <mat-select formControlName="sweater">
+            <mat-option [value]="null">—</mat-option>
+            @for (size of sizeOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Pantalón</mat-label>
+          <mat-select formControlName="pants">
+            <mat-option [value]="null">—</mat-option>
+            @for (size of sizeOptions; track size) {
+            <mat-option [value]="size">{{ size }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="profile-editor__actions">
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving">
+        @if (saving) { Guardando... } @else { Guardar }
+      </button>
+    </div>
+  </form>
+  }
+</div>

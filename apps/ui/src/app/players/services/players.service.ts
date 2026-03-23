@@ -145,6 +145,10 @@ export class PlayersService {
     return this.httpClient.get<Player>(`${this.playersApiUrl}/me`);
   }
 
+  updateMyProfile(dto: { address?: { phoneNumber?: string }; clothingSizes?: Record<string, string> }): Observable<Player> {
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/me`, dto);
+  }
+
   // DELETE ─────────────────────────────────────────────────
 
   deletePlayer(id: string): Observable<void> {

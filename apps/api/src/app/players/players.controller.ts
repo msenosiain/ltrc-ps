@@ -24,6 +24,7 @@ import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerFiltersDto } from './player-filter.dto';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
+import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/schemas/user.schema';
 
@@ -67,6 +68,14 @@ export class PlayersController {
     const player = await this.playersService.findByUserId(userId);
     if (!player) throw new NotFoundException('No player linked to this user');
     return player;
+  }
+
+  @Patch('me')
+  @UseGuards(JwtAuthGuard)
+  async updateMyProfile(@Body() dto: UpdateMyProfileDto, @Req() req: Request) {
+    const user = (req as any).user as User;
+    const userId = (user as any)._id?.toString();
+    return this.playersService.updateSelf(userId, dto);
   }
 
   @Post()
