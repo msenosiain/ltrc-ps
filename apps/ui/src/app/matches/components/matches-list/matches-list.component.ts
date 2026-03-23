@@ -58,6 +58,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   readonly displayedColumns = [
     'date',
     'opponent',
+    'category',
     'venue',
     'tournament',
     'result',
