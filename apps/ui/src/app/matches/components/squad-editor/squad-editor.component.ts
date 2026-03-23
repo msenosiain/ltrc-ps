@@ -40,9 +40,11 @@ import {
 import {
   Match,
   Player,
+  SportEnum,
   Squad,
   SquadEntry,
   SquadPlayerTemplate,
+  Tournament,
 } from '@ltrc-campo/shared-api-model';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { PlayersService } from '../../../players/services/players.service';
@@ -113,7 +115,7 @@ export class SquadEditorComponent implements OnInit {
   readonly displayPlayerFn = (player: Player | null): string =>
     player ? player.name : '';
 
-  readonly formationGroups: number[][][] = [
+  private readonly rugbyFormationGroups: number[][][] = [
     [
       [1, 2, 3],
       [4, 5],
@@ -122,9 +124,35 @@ export class SquadEditorComponent implements OnInit {
     [[9, 10, 12, 13]],
     [[11, 15, 14]],
   ];
-  private readonly formationShirts = new Set([
+  private readonly rugbyFormationShirts = new Set([
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
   ]);
+
+  private readonly hockeyFormationGroups: number[][][] = [
+    [[1]],
+    [[2, 3, 4, 5]],
+    [[6, 7, 8]],
+    [[9, 10, 11]],
+  ];
+  private readonly hockeyFormationShirts = new Set([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+  ]);
+
+  get matchSport(): SportEnum | null {
+    return (this.match?.tournament as Tournament | undefined)?.sport ?? this.match?.sport ?? null;
+  }
+
+  get formationGroups(): number[][][] {
+    return this.matchSport === SportEnum.HOCKEY
+      ? this.hockeyFormationGroups
+      : this.rugbyFormationGroups;
+  }
+
+  private get formationShirts(): Set<number> {
+    return this.matchSport === SportEnum.HOCKEY
+      ? this.hockeyFormationShirts
+      : this.rugbyFormationShirts;
+  }
 
   get opponentLabel(): string {
     if (!this.match) return '';
@@ -167,6 +195,7 @@ export class SquadEditorComponent implements OnInit {
       .filter((p) => !this.formationShirts.has(p.shirtNumber))
       .sort((a, b) => a.shirtNumber - b.shirtNumber);
   }
+
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
