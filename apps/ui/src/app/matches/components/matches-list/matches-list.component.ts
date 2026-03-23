@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -53,7 +52,6 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   private static readonly STATE_KEY = 'matches';
   private readonly router = inject(Router);
   private readonly matchesService = inject(MatchesService);
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly listState = inject(ListStateService);
 
   readonly RoleEnum = RoleEnum;
@@ -76,7 +74,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     const s = this.savedState;
-    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy ?? 'date', s?.sortOrder ?? SortOrder.ASC);
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy || 'date', (s?.sortOrder || SortOrder.ASC) as SortOrder);
   }
 
   ngAfterViewInit(): void {
@@ -86,10 +84,6 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
-    this.sort.active = s?.sortBy || 'date';
-    this.sort.direction = (s?.sortOrder || SortOrder.ASC) as '' | 'asc' | 'desc';
-    this.cdr.detectChanges();
-
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
       this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);

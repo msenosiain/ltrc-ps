@@ -71,7 +71,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     const s = this.savedState;
-    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy, s?.sortOrder);
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy || 'name', (s?.sortOrder || 'asc') as SortOrder);
   }
 
   ngAfterViewInit(): void {
@@ -81,11 +81,6 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
-
-    if (s?.sortBy) {
-      this.sort.active = s.sortBy;
-      this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
-    }
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;

@@ -56,8 +56,8 @@
     mat-table
     [dataSource]="dataSource"
     matSort
-    matSortActive="category"
-    matSortDirection="asc"
+    [matSortActive]="savedState?.sortBy || 'name'"
+    [matSortDirection]="savedState?.sortOrder || 'asc'"
     class="players-table mat-elevation-z2"
   >
     <!-- Foto -->
