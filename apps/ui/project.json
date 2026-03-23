@@ -33,14 +33,21 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1mb",
-              "maximumError": "2mb"
+              "maximumWarning": "1.5mb",
+              "maximumError": "2.5mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kb",
-              "maximumError": "8kb"
+              "maximumWarning": "8kb",
+              "maximumError": "12kb"
             }
+          ],
+          "allowedCommonJsDependencies": [
+            "canvg",
+            "jspdf",
+            "html2canvas",
+            "raf",
+            "rgbcolor"
           ],
           "fileReplacements": [
             {

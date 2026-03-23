@@ -32,10 +32,13 @@ export class MyMatchesWidgetComponent implements OnInit {
   loading = true;
 
   ngOnInit(): void {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     this.matchesService.getMySquadMatches({
       page: 1,
       size: 20,
-      filters: { status: MatchStatusEnum.UPCOMING },
+      filters: { status: MatchStatusEnum.UPCOMING, fromDate: today.toISOString() },
       sortBy: 'date',
       sortOrder: SortOrder.ASC,
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

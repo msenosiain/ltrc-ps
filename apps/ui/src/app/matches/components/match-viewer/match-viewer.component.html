@@ -190,12 +190,75 @@
   </mat-card>
   }
 
+  <!-- ADJUNTOS -->
+  <mat-card class="attachments-card">
+    <mat-card-content>
+      <p class="section-title">Planilla y adjuntos</p>
+
+      @if (uploadingAttachment) {
+      <mat-progress-bar mode="indeterminate" class="upload-progress" />
+      }
+
+      @if (!match.attachments?.length && !uploadingAttachment) {
+      <p class="empty-attachments">Sin archivos adjuntos.</p>
+      }
+
+      <div class="attachments-grid">
+        @for (att of match.attachments; track att.fileId) {
+        <div class="attachment-item">
+          @if (isImage(att)) {
+          <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-preview">
+            <img [src]="getAttachmentUrl(att.fileId)" [alt]="att.filename" />
+          </a>
+          } @else {
+          <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-file">
+            <mat-icon>description</mat-icon>
+            <span>{{ att.filename }}</span>
+          </a>
+          }
+          <button
+            *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+            mat-icon-button
+            class="attachment-delete"
+            (click)="deleteAttachment(att.fileId)"
+            title="Eliminar"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+
+      <div
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+        class="attachment-upload"
+      >
+        <input
+          #attachmentInput
+          type="file"
+          accept="image/*,.pdf"
+          style="display:none"
+          (change)="onAttachmentFileSelected($event)"
+        />
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="attachmentInput.click()"
+          [disabled]="uploadingAttachment"
+        >
+          <mat-icon>attach_file</mat-icon>
+          Adjuntar archivo
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <div class="viewer-actions">
     <button mat-stroked-button type="button" (click)="backToList()">
       <mat-icon>arrow_back</mat-icon>
       Volver
     </button>
-    @if (match!.squad?.length) {
+    @if (match!.squad.length) {
       <button mat-stroked-button type="button" (click)="downloadSquadPdf()">
         <mat-icon>picture_as_pdf</mat-icon>
         PDF Plantel

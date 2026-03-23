@@ -236,6 +236,94 @@
   }
 }
 
+.empty-attachments {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 0 0 12px;
+}
+
+.upload-progress {
+  margin-bottom: 12px;
+}
+
+.attachments-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.attachment-item {
+  position: relative;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .attachment-preview {
+    display: block;
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .attachment-file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 120px;
+    height: 120px;
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 8px;
+
+    mat-icon {
+      font-size: 40px;
+      height: 40px;
+      width: 40px;
+      color: #9e9e9e;
+    }
+
+    span {
+      word-break: break-all;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+  }
+
+  .attachment-delete {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.85);
+
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      color: #f44336;
+    }
+  }
+}
+
+.attachment-upload {
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
 .viewer-actions {
   display: flex;
   justify-content: flex-end;

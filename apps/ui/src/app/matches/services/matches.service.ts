@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import {
   AttendanceStatusEnum,
   Match,
+  MatchAttachment,
   PaginatedResponse,
   PaginationQuery,
 } from '@ltrc-campo/shared-api-model';
@@ -88,6 +89,25 @@ export class MatchesService {
     return this.httpClient.patch<Match>(
       `${this.matchesApiUrl}/${matchId}/squad`,
       { squad }
+    );
+  }
+
+  getAttachmentUrl(matchId: string, fileId: string): string {
+    return `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`;
+  }
+
+  uploadAttachment(matchId: string, file: File): Observable<MatchAttachment> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.httpClient.post<MatchAttachment>(
+      `${this.matchesApiUrl}/${matchId}/attachments`,
+      form
+    );
+  }
+
+  deleteAttachment(matchId: string, fileId: string): Observable<void> {
+    return this.httpClient.delete<void>(
+      `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`
     );
   }
 

@@ -17,7 +17,7 @@
       <div class="match-info">
         <span class="match-time">{{ hasTime(match.date) ? (match.date | date : 'HH:mm') : 'Sin hora' }}</span>
         <span class="match-meta">
-          {{ match.tournament.name }} · {{ getCategoryLabel(match) }}
+          {{ match.tournament?.name ?? 'Amistoso' }} · {{ getCategoryLabel(match) }}
           @if (match.division) { · {{ match.division }} }
           @if (match.opponent) {
             ·

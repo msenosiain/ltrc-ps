@@ -12,6 +12,7 @@ import {
   AttendanceStatusEnum,
   CategoryEnum,
   Match,
+  MatchAttachment,
   MatchStatusEnum,
   RoleEnum,
   SportEnum,
@@ -26,6 +27,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayersService } from '../../../players/services/players.service';
@@ -40,6 +43,8 @@ import { SquadPdfService } from '../../services/squad-pdf.service';
     MatIconModule,
     MatChipsModule,
     MatDividerModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -52,10 +57,12 @@ export class MatchViewerComponent implements OnInit {
   private readonly matchesService = inject(MatchesService);
   private readonly playersService = inject(PlayersService);
   private readonly squadPdf = inject(SquadPdfService);
+  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
   match?: Match;
   isCompetitive = false;
+  uploadingAttachment = false;
   readonly MatchStatusEnum = MatchStatusEnum;
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
   readonly RoleEnum = RoleEnum;
@@ -164,6 +171,46 @@ export class MatchViewerComponent implements OnInit {
 
   manageAttendance(): void {
     this.router.navigate(['/dashboard/matches', this.match!.id, 'attendance']);
+  }
+
+  isImage(att: MatchAttachment): boolean {
+    return att.mimeType.startsWith('image/');
+  }
+
+  getAttachmentUrl(fileId: string): string {
+    return this.matchesService.getAttachmentUrl(this.match!.id!, fileId);
+  }
+
+  onAttachmentFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+
+    this.uploadingAttachment = true;
+    this.matchesService.uploadAttachment(this.match!.id!, file).subscribe({
+      next: (att) => {
+        (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
+        this.uploadingAttachment = false;
+        this.snackBar.open('Archivo adjuntado', 'Cerrar', { duration: 3000 });
+      },
+      error: () => {
+        this.uploadingAttachment = false;
+        this.snackBar.open('Error al subir el archivo', 'Cerrar', { duration: 4000 });
+      },
+    });
+  }
+
+  deleteAttachment(fileId: string): void {
+    this.matchesService.deleteAttachment(this.match!.id!, fileId).subscribe({
+      next: () => {
+        (this.match as any).attachments = this.match!.attachments!.filter((a) => a.fileId !== fileId);
+        this.snackBar.open('Archivo eliminado', 'Cerrar', { duration: 3000 });
+      },
+      error: () => {
+        this.snackBar.open('Error al eliminar el archivo', 'Cerrar', { duration: 4000 });
+      },
+    });
   }
 
   edit(): void {

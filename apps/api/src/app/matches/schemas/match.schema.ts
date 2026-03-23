@@ -3,6 +3,7 @@ import { MatchEntity } from './match.entity';
 import {
   CategoryEnum,
   MatchStatusEnum,
+  SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
@@ -51,10 +52,17 @@ export const MatchSchema = new Schema<MatchEntity>(
       enum: Object.values(CategoryEnum),
       required: true,
     },
+    sport: { type: String, enum: Object.values(SportEnum) },
     division: { type: String },
-    tournament: { type: Types.ObjectId, ref: TournamentEntity.name, required: true },
+    tournament: { type: Types.ObjectId, ref: TournamentEntity.name, required: false },
     squad: [MatchSquadEntrySchema],
     attendance: [AttendanceEntrySchema],
+    attachments: [
+      new Schema(
+        { fileId: { type: String, required: true }, filename: { type: String, required: true }, mimeType: { type: String, required: true } },
+        { _id: false }
+      ),
+    ],
     videos: [MatchVideoSchema],
     result: MatchResultSchema,
     notes: { type: String },

@@ -53,12 +53,16 @@ export class UpcomingMatchesWidgetComponent implements OnInit {
         const isPlayer = user?.roles?.includes(RoleEnum.PLAYER) ?? false;
         const hasScope = !!(user?.sports?.length || user?.categories?.length);
 
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const fromDate = today.toISOString();
+
         // Players without scope in JWT → derive from linked player record
         if (isPlayer && !hasScope) {
           return this.playersService.getMyPlayer().pipe(
             catchError(() => of(null)),
             map((player) => {
-              const filters: MatchFilters = { status: MatchStatusEnum.UPCOMING };
+              const filters: MatchFilters = { status: MatchStatusEnum.UPCOMING, fromDate };
               if (player?.sport) filters.sport = player.sport as SportEnum;
               if (player?.category) filters.category = player.category as CategoryEnum;
               return filters;
@@ -70,7 +74,7 @@ export class UpcomingMatchesWidgetComponent implements OnInit {
         return this.filterContextService.filterContext$.pipe(
           take(1),
           map((ctx) => {
-            const filters: MatchFilters = { status: MatchStatusEnum.UPCOMING };
+            const filters: MatchFilters = { status: MatchStatusEnum.UPCOMING, fromDate };
             if (ctx.forcedSport) filters.sport = ctx.forcedSport;
             if (ctx.forcedCategory) filters.category = ctx.forcedCategory;
             return filters;

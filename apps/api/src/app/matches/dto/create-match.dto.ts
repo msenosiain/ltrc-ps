@@ -19,6 +19,7 @@ import { Transform, Type } from 'class-transformer';
 import {
   CategoryEnum,
   MatchStatusEnum,
+  SportEnum,
   parseDate,
 } from '@ltrc-campo/shared-api-model';
 
@@ -87,6 +88,10 @@ export class CreateMatchDto {
   @IsEnum(MatchStatusEnum)
   readonly status?: MatchStatusEnum;
 
+  @IsOptional()
+  @IsEnum(SportEnum)
+  readonly sport?: SportEnum;
+
   @IsNotEmpty()
   @IsEnum(CategoryEnum)
   readonly category!: CategoryEnum;
@@ -95,9 +100,9 @@ export class CreateMatchDto {
   @IsString()
   readonly division?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
-  readonly tournament!: string;
+  readonly tournament?: string;
 
   @IsOptional()
   @IsArray()

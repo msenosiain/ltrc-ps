@@ -9,6 +9,7 @@ import { TournamentSchema } from '../tournaments/schemas/tournament.schema';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PlayerSchema } from '../players/schemas/player.schema';
 import { SquadsModule } from '../squads/squads.module';
+import { GridFsModule } from '../shared/gridfs/gridfs.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SquadsModule } from '../squads/squads.module';
       { name: PlayerEntity.name, schema: PlayerSchema },
     ]),
     SquadsModule,
+    GridFsModule,
   ],
   controllers: [MatchesController],
   providers: [MatchesService],

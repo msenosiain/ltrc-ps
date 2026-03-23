@@ -4,12 +4,14 @@ import {
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 
+
 export interface MatchFormValue {
   date: Date | null;
   opponent: string;
   venue: string;
   isHome: boolean;
   status: MatchStatusEnum;
+  sport: SportEnum | null;
   category: CategoryEnum | null;
   division: string;
   tournament: string | null;

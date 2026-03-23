@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import type { File as MulterFile } from 'multer';
+import { GridFsService } from '../shared/gridfs/gridfs.service';
 import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
@@ -29,7 +31,8 @@ export class MatchesService {
     private readonly tournamentModel: Model<TournamentEntity>,
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
-    private readonly squadsService: SquadsService
+    private readonly squadsService: SquadsService,
+    private readonly gridFsService: GridFsService
   ) {}
 
   async create(dto: CreateMatchDto, caller?: User) {
@@ -135,24 +138,24 @@ export class MatchesService {
       queryFilters['tournament'] = filters.tournament;
     }
 
-    // Sport filter: two-step query via tournament lookup
+    // Sport filter: two-step query via tournament lookup, also include friendly matches with direct sport field
     if (filters.sport) {
       const tournamentIds = await this.tournamentModel
         .find({ sport: filters.sport })
         .distinct('_id')
         .exec();
-      // Combine with existing tournament filter if present
       if (filters.tournament) {
-        // Only keep the specific tournament if it matches the sport
         const matches = tournamentIds.some(
           (id) => id.toString() === filters.tournament
         );
         if (!matches) {
-          // No results possible
           return { items: [], total: 0, page, size };
         }
       } else {
-        queryFilters['tournament'] = { $in: tournamentIds };
+        queryFilters['$or'] = [
+          { tournament: { $in: tournamentIds } },
+          { tournament: { $exists: false }, sport: filters.sport },
+        ];
       }
     }
 
@@ -191,16 +194,12 @@ export class MatchesService {
           .find({ sport: { $in: sports } })
           .distinct('_id')
           .exec();
-        const existing = queryFilters['tournament'];
-        if (existing && typeof existing === 'object' && '$in' in (existing as any)) {
-          const existingIds = new Set(
-            ((existing as any).$in as any[]).map((id: any) => id.toString())
-          );
-          queryFilters['tournament'] = {
-            $in: sportTournamentIds.filter((id) => existingIds.has(id.toString())),
-          };
-        } else if (!existing) {
-          queryFilters['tournament'] = { $in: sportTournamentIds };
+        const existing = queryFilters['$or'];
+        if (!existing) {
+          queryFilters['$or'] = [
+            { tournament: { $in: sportTournamentIds } },
+            { tournament: { $exists: false }, sport: { $in: sports } },
+          ];
         }
       }
       if (categories.length)
@@ -226,6 +225,43 @@ export class MatchesService {
     ]);
 
     return { items, total, page, size };
+  }
+
+  async addAttachment(matchId: string, file: MulterFile) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+
+    const fileId = await this.gridFsService.uploadFile(
+      'matchAttachments',
+      file.originalname,
+      file.buffer,
+      file.mimetype
+    );
+
+    match.attachments = match.attachments ?? [];
+    match.attachments.push({ fileId, filename: file.originalname, mimeType: file.mimetype });
+    await match.save();
+
+    return { fileId, filename: file.originalname, mimeType: file.mimetype };
+  }
+
+  async getAttachmentStream(matchId: string, fileId: string) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+    const att = match.attachments?.find((a) => a.fileId === fileId);
+    if (!att) throw new NotFoundException('Attachment not found');
+    return { stream: this.gridFsService.getFileStream('matchAttachments', fileId), mimeType: att.mimeType };
+  }
+
+  async deleteAttachment(matchId: string, fileId: string) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+    const idx = match.attachments?.findIndex((a) => a.fileId === fileId) ?? -1;
+    if (idx === -1) throw new NotFoundException('Attachment not found');
+
+    await this.gridFsService.deleteFile('matchAttachments', fileId);
+    match.attachments.splice(idx, 1);
+    await match.save();
   }
 
   async findPlayerByUserId(userId: string) {

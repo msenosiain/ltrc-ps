@@ -8,9 +8,15 @@ import {
   Param,
   Query,
   Req,
+  Res,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  NotFoundException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { File as MulterFile } from 'multer';
+import { Request, Response } from 'express';
 
 import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
@@ -86,6 +92,30 @@ export class MatchesController {
   @Get('field-options')
   async getFieldOptions() {
     return this.matchesService.getFieldOptions();
+  }
+
+  @Post(':id/attachments')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async addAttachment(@Param('id') id: string, @UploadedFile() file: MulterFile) {
+    return this.matchesService.addAttachment(id, file);
+  }
+
+  @Get(':id/attachments/:fileId')
+  async getAttachment(
+    @Param('id') id: string,
+    @Param('fileId') fileId: string,
+    @Res() res: Response
+  ) {
+    const { stream, mimeType } = await this.matchesService.getAttachmentStream(id, fileId);
+    res.setHeader('Content-Type', mimeType);
+    stream.pipe(res);
+  }
+
+  @Delete(':id/attachments/:fileId')
+  @UseGuards(JwtAuthGuard)
+  async deleteAttachment(@Param('id') id: string, @Param('fileId') fileId: string) {
+    return this.matchesService.deleteAttachment(id, fileId);
   }
 
   @Get(':id')

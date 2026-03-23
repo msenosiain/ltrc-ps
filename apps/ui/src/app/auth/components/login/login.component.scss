@@ -66,6 +66,8 @@ button {
   gap: 10px;
 
   img {
-    width: 18px;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
 }

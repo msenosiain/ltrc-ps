@@ -100,9 +100,6 @@ export class MatchFormComponent implements OnInit, OnChanges {
   /** Sport derived from the selected tournament */
   tournamentSport: SportEnum | null = null;
 
-  /** Control de deporte: standalone, filtra torneos. Se deshabilita al elegir torneo. */
-  readonly sportControl = new FormControl<SportEnum | null>(null);
-
   /** Control de hora: standalone, no forma parte de MatchFormValue.
    *  Al cambiar, fusiona la hora en el control `date` del form. */
   readonly timeControl = new FormControl<string>('', Validators.required);
@@ -149,8 +146,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
         this.filteredTournaments = t;
       });
 
-    // When sport control changes: filter tournament list
-    this.sportControl.valueChanges
+    // When sport control changes: filter tournament list, recompute competitive
+    this.matchForm.get('sport')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport) => {
         this.filteredTournaments = sport
@@ -161,6 +158,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
         if (currentTournament && !this.filteredTournaments.find((t) => t.id === currentTournament)) {
           this.matchForm.get('tournament')?.setValue(null);
         }
+        this.updateSportValidation();
+        this.updateCompetitive();
       });
 
     // When tournament changes: derive sport, update categories, compute competitive
@@ -209,16 +208,18 @@ export class MatchFormComponent implements OnInit, OnChanges {
         : '';
       this.timeControl.setValue(timeStr, { emitEvent: false });
 
-      this.sportControl.setValue(tournament?.sport ?? null, { emitEvent: false });
-      if (tournament) {
-        this.sportControl.disable({ emitEvent: false });
-      }
-
       this.matchForm.patchValue({
         ...this.match,
         date: matchDate,
+        sport: tournament?.sport ?? (this.match as any).sport ?? null,
         tournament: tournament?.id ?? null,
       });
+
+      if (tournament) {
+        this.matchForm.get('sport')!.disable({ emitEvent: false });
+      } else {
+        this.matchForm.get('sport')!.enable({ emitEvent: false });
+      }
 
       this.updateCompetitive();
     }
@@ -249,18 +250,29 @@ export class MatchFormComponent implements OnInit, OnChanges {
     return getCategoryOptionsBySport(tournament?.sport ?? null);
   }
 
+  private updateSportValidation(): void {
+    const tournament = this.matchForm.get('tournament')?.value;
+    const sportCtrl = this.matchForm.get('sport')!;
+    if (!tournament) {
+      sportCtrl.setValidators(Validators.required);
+    } else {
+      sportCtrl.clearValidators();
+    }
+    sportCtrl.updateValueAndValidity({ emitEvent: false });
+  }
+
   private applyTournamentDefaults(tournamentId: string | null): void {
     const tournament = this.tournaments.find((t) => t.id === tournamentId);
     this.tournamentSport = tournament?.sport ?? null;
     this.categoryOptions = this.categoryOptionsForTournament(tournament);
 
     if (tournament) {
-      // Lock sport to tournament's sport
-      this.sportControl.setValue(tournament.sport ?? null, { emitEvent: false });
-      this.sportControl.disable({ emitEvent: false });
+      this.matchForm.get('sport')!.setValue(tournament.sport ?? null, { emitEvent: false });
+      this.matchForm.get('sport')!.disable({ emitEvent: false });
     } else {
-      this.sportControl.enable({ emitEvent: false });
+      this.matchForm.get('sport')!.enable({ emitEvent: false });
     }
+    this.updateSportValidation();
 
     // Auto-select if only one option
     if (this.categoryOptions.length === 1) {
@@ -278,12 +290,13 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   private updateCompetitive(): void {
     const category = this.matchForm.get('category')?.value as CategoryEnum | null;
+    const sport = this.tournamentSport ?? (this.matchForm.get('sport')?.value as SportEnum | null);
     const wasCompetitive = this.isCompetitive;
 
     this.isCompetitive =
       !!category &&
-      !!this.tournamentSport &&
-      isCompetitiveCategory(category, this.tournamentSport);
+      !!sport &&
+      isCompetitiveCategory(category, sport);
 
     if (this.isCompetitive !== wasCompetitive) {
       this.updateOpponentValidation();
