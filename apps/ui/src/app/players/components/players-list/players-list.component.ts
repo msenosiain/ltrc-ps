@@ -69,6 +69,19 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   private currentFilters: Record<string, unknown> = this.savedState?.filters ?? {};
 
+  constructor() {
+    // Configure datasource immediately so the first load (triggered by
+    // PlayerSearchComponent.ngOnInit before our ngAfterViewInit runs) uses
+    // the saved pageSize instead of the default 10.
+    const s = this.savedState;
+    this.dataSource.configure(
+      s?.pageIndex ?? 0,
+      s?.pageSize ?? 10,
+      s?.sortBy,
+      s?.sortOrder
+    );
+  }
+
   ngAfterViewInit(): void {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
@@ -81,8 +94,6 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
       this.sort.active = s.sortBy;
       this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
     }
-
-    this.dataSource.configure(pageIndex, pageSize, s?.sortBy, s?.sortOrder);
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
