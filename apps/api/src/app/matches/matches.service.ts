@@ -209,8 +209,10 @@ export class MatchesService {
     const sort: Record<string, 1 | -1> = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+      sort['category'] = 1;
     } else {
       sort['date'] = 1;
+      sort['category'] = 1;
     }
 
     const [items, total] = await Promise.all([
