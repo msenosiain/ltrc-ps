@@ -42,9 +42,9 @@ export class MatchesDataSource implements DataSource<Match> {
     this.sortOrder = sortOrder;
   }
 
-  setFilters(filters: MatchFilters): void {
+  setFilters(filters: MatchFilters, pageIndex = 0): void {
     this.filters = filters;
-    this.pageIndex = 0;
+    this.pageIndex = pageIndex;
     this.load();
   }
 

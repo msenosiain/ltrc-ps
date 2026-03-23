@@ -47,9 +47,9 @@ export class UsersDataSource implements DataSource<User> {
     this.sortOrder = sortOrder;
   }
 
-  setFilters(filters: UserFilters): void {
+  setFilters(filters: UserFilters, pageIndex = 0): void {
     this.filters = filters;
-    this.pageIndex = 0;
+    this.pageIndex = pageIndex;
     this.load();
   }
 

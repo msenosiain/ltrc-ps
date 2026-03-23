@@ -46,9 +46,9 @@ export class PlayersDataSource implements DataSource<Player> {
     this.sortOrder = sortOrder;
   }
 
-  setFilters(filters: PlayerFilters): void {
+  setFilters(filters: PlayerFilters, pageIndex = 0): void {
     this.filters = filters;
-    this.pageIndex = 0;
+    this.pageIndex = pageIndex;
     this.load();
   }
 

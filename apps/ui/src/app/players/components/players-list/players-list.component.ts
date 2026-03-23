@@ -70,16 +70,8 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
   private currentFilters: Record<string, unknown> = this.savedState?.filters ?? {};
 
   constructor() {
-    // Configure datasource immediately so the first load (triggered by
-    // PlayerSearchComponent.ngOnInit before our ngAfterViewInit runs) uses
-    // the saved pageSize instead of the default 10.
     const s = this.savedState;
-    this.dataSource.configure(
-      s?.pageIndex ?? 0,
-      s?.pageSize ?? 10,
-      s?.sortBy,
-      s?.sortOrder
-    );
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy, s?.sortOrder);
   }
 
   ngAfterViewInit(): void {
@@ -97,20 +89,17 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.dataSource.setSorting(
-        this.sort.active,
-        this.sort.direction as SortOrder
-      );
+      this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);
       this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(
-        this.paginator.pageIndex,
-        this.paginator.pageSize
-      );
+      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
       this.saveState();
     });
+
+    this.updateColumns((this.currentFilters as any).sport);
+    this.dataSource.setFilters(this.currentFilters as any, pageIndex);
   }
 
   ngOnDestroy(): void {
@@ -124,9 +113,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
     category?: CategoryEnum;
   }): void {
     this.currentFilters = filters;
-    if (this.paginator) {
-      this.paginator.pageIndex = 0;
-    }
+    if (this.paginator) this.paginator.pageIndex = 0;
     this.updateColumns(filters.sport);
     this.dataSource.setFilters(filters);
     this.saveState();

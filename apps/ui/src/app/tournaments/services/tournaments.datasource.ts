@@ -51,9 +51,9 @@ export class TournamentsDataSource implements DataSource<Tournament> {
     this.sortOrder = sortOrder;
   }
 
-  setFilters(filters: TournamentFilters): void {
+  setFilters(filters: TournamentFilters, pageIndex = 0): void {
     this.filters = filters;
-    this.pageIndex = 0;
+    this.pageIndex = pageIndex;
     this.load();
   }
 

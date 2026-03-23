@@ -51,6 +51,11 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
 
   private currentFilters: UserFilters = this.savedState?.filters ?? {};
 
+  constructor() {
+    const s = this.savedState;
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy, s?.sortOrder);
+  }
+
   ngAfterViewInit(): void {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
@@ -64,27 +69,18 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
       this.sort.direction = (s.sortOrder as '' | 'asc' | 'desc') || '';
     }
 
-    this.dataSource.configure(pageIndex, pageSize, s?.sortBy, s?.sortOrder);
-
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.dataSource.setSorting(
-        this.sort.active,
-        this.sort.direction as SortOrder
-      );
+      this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);
       this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(
-        this.paginator.pageIndex,
-        this.paginator.pageSize
-      );
+      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
       this.saveState();
     });
 
-    // Trigger initial load with saved or empty filters
-    this.dataSource.setFilters(this.currentFilters);
+    this.dataSource.setFilters(this.currentFilters, pageIndex);
   }
 
   ngOnDestroy(): void {
@@ -93,7 +89,7 @@ export class UsersListComponent implements AfterViewInit, OnDestroy {
 
   applyFilters(filters: UserFilters): void {
     this.currentFilters = filters;
-    this.paginator.pageIndex = 0;
+    if (this.paginator) this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
     this.saveState();
   }

@@ -108,7 +108,6 @@ export class MatchSearchComponent implements OnInit {
             .setValue(ctx.forcedCategory, { emitEvent: false });
         }
 
-        this.emitFilters();
       });
 
     this.searchForm

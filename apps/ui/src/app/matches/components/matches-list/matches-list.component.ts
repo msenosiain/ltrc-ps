@@ -74,37 +74,34 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   private currentFilters: MatchFilters = this.savedState?.filters ?? {};
 
+  constructor() {
+    const s = this.savedState;
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy ?? 'date', s?.sortOrder ?? SortOrder.ASC);
+  }
+
   ngAfterViewInit(): void {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
     const pageSize = s?.pageSize ?? 10;
-    const sortBy = s?.sortBy || 'date';
-    const sortOrder = s?.sortOrder || SortOrder.ASC;
 
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
-    this.sort.active = sortBy;
-    this.sort.direction = sortOrder as '' | 'asc' | 'desc';
-
-    this.dataSource.configure(pageIndex, pageSize, sortBy, sortOrder);
+    this.sort.active = s?.sortBy || 'date';
+    this.sort.direction = (s?.sortOrder || SortOrder.ASC) as '' | 'asc' | 'desc';
     this.cdr.detectChanges();
 
     this.sort.sortChange.subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.dataSource.setSorting(
-        this.sort.active,
-        this.sort.direction as SortOrder
-      );
+      this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);
       this.saveState();
     });
 
     this.paginator.page.subscribe(() => {
-      this.dataSource.setPage(
-        this.paginator.pageIndex,
-        this.paginator.pageSize
-      );
+      this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
       this.saveState();
     });
+
+    this.dataSource.setFilters(this.currentFilters, pageIndex);
   }
 
   ngOnDestroy(): void {
@@ -113,9 +110,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   applyFilters(filters: MatchFilters): void {
     this.currentFilters = filters;
-    if (this.paginator) {
-      this.paginator.pageIndex = 0;
-    }
+    if (this.paginator) this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
     this.saveState();
   }

@@ -118,7 +118,6 @@ export class PlayerSearchComponent implements OnInit {
             .setValue(ctx.forcedCategory, { emitEvent: false });
         }
 
-        this.emitFilters();
       });
 
     this.searchForm
