@@ -13,11 +13,15 @@ export interface MatchResult {
   awayScore: number;
 }
 
+export type VideoVisibility = 'all' | 'staff' | 'players';
+
 export interface VideoClip {
+  videoId?: string;
   url: string;
   name: string;
   description?: string;
-  /** Si está vacío o ausente, el video es visible para todos los jugadores del partido */
+  visibility: VideoVisibility;
+  /** Solo relevante cuando visibility === 'players'. Staff siempre ve todos los videos. */
   targetPlayers?: Player[];
 }
 

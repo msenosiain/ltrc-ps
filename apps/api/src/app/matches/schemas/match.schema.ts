@@ -27,9 +27,11 @@ const MatchSquadEntrySchema = new Schema(
 
 const MatchVideoSchema = new Schema(
   {
+    videoId: { type: String, required: true },
     url: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String },
+    visibility: { type: String, enum: ['all', 'staff', 'players'], required: true, default: 'all' },
     targetPlayers: [{ type: Types.ObjectId, ref: PlayerEntity.name }],
   },
   { _id: false }

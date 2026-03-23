@@ -12,6 +12,7 @@ import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { RecordMatchAttendanceDto } from './dto/record-match-attendance.dto';
+import { ManageVideoDto } from './dto/manage-video.dto';
 import { SquadsService } from '../squads/squads.service';
 import { User } from '../users/schemas/user.schema';
 
@@ -284,10 +285,79 @@ export class MatchesService {
     return { opponents, venues, divisions };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, caller?: User) {
     const match = await this.matchModel.findById(id).populate(POPULATE_FIELDS);
     if (!match) throw new NotFoundException('Match not found');
+
+    if (match.videos?.length && caller) {
+      const staffRoles: RoleEnum[] = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.ANALYST, RoleEnum.COACH, RoleEnum.TRAINER];
+      const isStaff = caller.roles?.some((r) => staffRoles.includes(r as RoleEnum));
+
+      if (!isStaff) {
+        const player = await this.playerModel.findOne({ userId: (caller as any)._id });
+        const playerId = player?._id?.toString();
+        match.set('videos', (match.videos ?? []).filter((v) => {
+          if (v.visibility === 'all') return true;
+          if (v.visibility === 'players' && playerId) {
+            return (v.targetPlayers as any[])?.some(
+              (p) => (p._id ?? p).toString() === playerId
+            );
+          }
+          return false;
+        }));
+      }
+    }
+
     return this.stripOrphanedSquad(match);
+  }
+
+  async addVideo(matchId: string, dto: ManageVideoDto) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+
+    const videoId = new Types.ObjectId().toHexString();
+    const video = {
+      videoId,
+      url: dto.url,
+      name: dto.name,
+      description: dto.description,
+      visibility: dto.visibility,
+      targetPlayers: dto.targetPlayers?.map((id) => new Types.ObjectId(id)) ?? [],
+    };
+    match.videos = match.videos ?? [];
+    match.videos.push(video as any);
+    await match.save();
+    return video;
+  }
+
+  async updateVideo(matchId: string, videoId: string, dto: ManageVideoDto) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+
+    const idx = (match.videos ?? []).findIndex((v) => v.videoId === videoId);
+    if (idx === -1) throw new NotFoundException('Video not found');
+
+    match.videos![idx] = {
+      videoId,
+      url: dto.url,
+      name: dto.name,
+      description: dto.description,
+      visibility: dto.visibility,
+      targetPlayers: dto.targetPlayers?.map((id) => new Types.ObjectId(id)) ?? [],
+    } as any;
+    await match.save();
+    return match.videos![idx];
+  }
+
+  async deleteVideo(matchId: string, videoId: string) {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+
+    const idx = (match.videos ?? []).findIndex((v) => v.videoId === videoId);
+    if (idx === -1) throw new NotFoundException('Video not found');
+
+    match.videos!.splice(idx, 1);
+    await match.save();
   }
 
   private stripOrphanedSquad(match: MatchEntity) {

@@ -25,6 +25,7 @@ import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { UpdateMatchSquadDto } from './dto/update-players.dto';
 import { RecordMatchAttendanceDto } from './dto/record-match-attendance.dto';
+import { ManageVideoDto } from './dto/manage-video.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -118,9 +119,31 @@ export class MatchesController {
     return this.matchesService.deleteAttachment(id, fileId);
   }
 
+  @Post(':id/videos')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.ANALYST)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async addVideo(@Param('id') id: string, @Body() dto: ManageVideoDto) {
+    return this.matchesService.addVideo(id, dto);
+  }
+
+  @Patch(':id/videos/:videoId')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.ANALYST)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateVideo(@Param('id') id: string, @Param('videoId') videoId: string, @Body() dto: ManageVideoDto) {
+    return this.matchesService.updateVideo(id, videoId, dto);
+  }
+
+  @Delete(':id/videos/:videoId')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.ANALYST)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deleteVideo(@Param('id') id: string, @Param('videoId') videoId: string) {
+    return this.matchesService.deleteVideo(id, videoId);
+  }
+
   @Get(':id')
-  async getOne(@Param('id') id: string) {
-    return this.matchesService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  async getOne(@Param('id') id: string, @Req() req: Request) {
+    return this.matchesService.findOne(id, (req as any).user);
   }
 
   @Delete(':id')

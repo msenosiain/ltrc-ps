@@ -4,6 +4,72 @@
   gap: 12px;
 }
 
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.videos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.video-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #e0e0e0);
+
+  &:last-child { border-bottom: none; }
+}
+
+.video-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.video-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover { text-decoration: underline; }
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+.video-description {
+  font-size: 0.82rem;
+  color: var(--mat-app-on-surface-variant, #666);
+  margin-left: 26px;
+}
+
+.video-actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.visibility-badge {
+  font-size: 0.72rem;
+  padding: 1px 7px;
+  border-radius: 10px;
+  margin-left: 26px;
+  width: fit-content;
+
+  &.visibility-all    { background: #e8f5e9; color: #2e7d32; }
+  &.visibility-staff  { background: #e3f2fd; color: #1565c0; }
+  &.visibility-players { background: #fff3e0; color: #e65100; }
+}
+
 .match-header {
   display: flex;
   align-items: flex-start;

@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar video' : 'Agregar video' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="video-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>URL del video</mat-label>
+      <input matInput formControlName="url" placeholder="https://..." />
+      @if (form.get('url')?.hasError('required')) {
+        <mat-error>La URL es requerida</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="name" placeholder="Ej: Resumen del partido" />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>El nombre es requerido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput formControlName="description" rows="2"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Visibilidad</mat-label>
+      <mat-select formControlName="visibility">
+        @for (opt of visibilityOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (showPlayerSelect) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Jugadores que pueden verlo</mat-label>
+      <mat-select formControlName="targetPlayers" multiple>
+        @for (entry of data.squad; track entry.player.id) {
+          <mat-option [value]="entry.player.id">
+            {{ entry.shirtNumber }}. {{ entry.player.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="cancel()">Cancelar</button>
+  <button
+    mat-flat-button
+    color="primary"
+    type="button"
+    [disabled]="form.invalid"
+    (click)="confirm()"
+  >
+    {{ isEdit ? 'Guardar' : 'Agregar' }}
+  </button>
+</mat-dialog-actions>

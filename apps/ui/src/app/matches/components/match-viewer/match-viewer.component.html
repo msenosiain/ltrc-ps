@@ -236,6 +236,59 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- ── VIDEOS ── -->
+  <mat-card class="videos-card">
+    <mat-card-content>
+      <div class="section-header">
+        <p class="section-title">Videos</p>
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ANALYST, RoleEnum.MANAGER, RoleEnum.ADMIN]"
+          mat-icon-button
+          type="button"
+          (click)="openVideoDialog()"
+          matTooltip="Agregar video"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      @if (!match!.videos?.length) {
+        <p class="empty-message">Sin videos cargados.</p>
+      }
+
+      <div class="videos-list">
+        @for (video of match!.videos; track video.videoId) {
+        <div class="video-item">
+          <div class="video-info">
+            <a [href]="video.url" target="_blank" rel="noopener" class="video-link">
+              <mat-icon>play_circle_outline</mat-icon>
+              <span class="video-name">{{ video.name }}</span>
+            </a>
+            @if (video.description) {
+              <span class="video-description">{{ video.description }}</span>
+            }
+            <span
+              *ltrcAllowedRoles="[RoleEnum.ANALYST, RoleEnum.MANAGER, RoleEnum.ADMIN]"
+              class="visibility-badge visibility-{{ video.visibility }}"
+            >{{ getVisibilityLabel(video) }}</span>
+          </div>
+          <div
+            *ltrcAllowedRoles="[RoleEnum.ANALYST, RoleEnum.MANAGER, RoleEnum.ADMIN]"
+            class="video-actions"
+          >
+            <button mat-icon-button type="button" (click)="openVideoDialog(video)" title="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="deleteVideo(video.videoId!)" title="Eliminar" color="warn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <div class="viewer-actions">
     <button mat-stroked-button type="button" (click)="backToList()">
       <mat-icon>arrow_back</mat-icon>

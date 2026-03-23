@@ -7,6 +7,8 @@ import {
   MatchAttachment,
   PaginatedResponse,
   PaginationQuery,
+  VideoClip,
+  VideoVisibility,
 } from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
@@ -94,6 +96,18 @@ export class MatchesService {
 
   getAttachmentUrl(matchId: string, fileId: string): string {
     return `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`;
+  }
+
+  addVideo(matchId: string, dto: { url: string; name: string; description?: string; visibility: VideoVisibility; targetPlayers?: string[] }): Observable<VideoClip> {
+    return this.httpClient.post<VideoClip>(`${this.matchesApiUrl}/${matchId}/videos`, dto);
+  }
+
+  updateVideo(matchId: string, videoId: string, dto: { url: string; name: string; description?: string; visibility: VideoVisibility; targetPlayers?: string[] }): Observable<VideoClip> {
+    return this.httpClient.patch<VideoClip>(`${this.matchesApiUrl}/${matchId}/videos/${videoId}`, dto);
+  }
+
+  deleteVideo(matchId: string, videoId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.matchesApiUrl}/${matchId}/videos/${videoId}`);
   }
 
   uploadAttachment(matchId: string, file: File, name?: string): Observable<MatchAttachment> {
