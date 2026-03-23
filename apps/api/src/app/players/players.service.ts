@@ -261,6 +261,7 @@ export class PlayersService {
           { $match: queryFilters },
           {
             $addFields: {
+              id: { $toString: '$_id' },
               _lastNameMatch: {
                 $cond: {
                   if: {
