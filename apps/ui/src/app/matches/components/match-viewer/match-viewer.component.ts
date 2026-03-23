@@ -81,11 +81,9 @@ export class MatchViewerComponent implements OnInit {
         next: (match) => {
           this.match = match;
           const tournament = match.tournament as Tournament | undefined;
-          if (match.category && tournament?.sport) {
-            this.isCompetitive = isCompetitiveCategory(
-              match.category,
-              tournament.sport
-            );
+          const sport = tournament?.sport ?? match.sport;
+          if (match.category && sport) {
+            this.isCompetitive = isCompetitiveCategory(match.category, sport);
           }
         },
         error: () => this.router.navigate(['/dashboard/matches']),
@@ -105,7 +103,7 @@ export class MatchViewerComponent implements OnInit {
   }
 
   get sportLabel(): string {
-    const sport = this.tournament?.sport;
+    const sport = this.tournament?.sport ?? this.match?.sport;
     if (sport === SportEnum.RUGBY) return 'Rugby';
     if (sport === SportEnum.HOCKEY) return 'Hockey';
     return '';

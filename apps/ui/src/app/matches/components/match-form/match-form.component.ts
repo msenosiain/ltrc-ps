@@ -156,7 +156,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
         // If current tournament no longer in filtered list, clear it
         const currentTournament = this.matchForm.get('tournament')?.value;
         if (currentTournament && !this.filteredTournaments.find((t) => t.id === currentTournament)) {
-          this.matchForm.get('tournament')?.setValue(null);
+          this.matchForm.get('tournament')?.setValue('');
         }
         this.updateSportValidation();
         this.updateCompetitive();
@@ -212,7 +212,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
         ...this.match,
         date: matchDate,
         sport: tournament?.sport ?? (this.match as any).sport ?? null,
-        tournament: tournament?.id ?? null,
+        tournament: tournament?.id ?? '',
       });
 
       if (tournament) {

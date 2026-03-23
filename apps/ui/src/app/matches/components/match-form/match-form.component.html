@@ -23,7 +23,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Torneo <span class="optional-label">(opcional)</span></mat-label>
         <mat-select formControlName="tournament">
-          <mat-option [value]="null">Amistoso (sin torneo)</mat-option>
+          <mat-option value="">Amistoso (sin torneo)</mat-option>
           @for (t of filteredTournaments; track t.id) {
           <mat-option [value]="t.id">{{ t.name }}</mat-option>
           }
