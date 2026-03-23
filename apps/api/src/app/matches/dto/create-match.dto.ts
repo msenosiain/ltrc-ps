@@ -44,7 +44,7 @@ export class VideoClipDto {
 export class SquadEntryDto {
   @IsInt()
   @Min(1)
-  @Max(26)
+  @Max(99)
   shirtNumber!: number;
 
   @IsMongoId()

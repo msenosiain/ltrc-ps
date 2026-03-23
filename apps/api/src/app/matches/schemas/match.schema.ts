@@ -19,7 +19,7 @@ const MatchResultSchema = new Schema(
 
 const MatchSquadEntrySchema = new Schema(
   {
-    shirtNumber: { type: Number, required: true, min: 1, max: 26 },
+    shirtNumber: { type: Number, required: true, min: 1, max: 99 },
     player: { type: Types.ObjectId, ref: PlayerEntity.name, required: true },
   },
   { _id: false }
