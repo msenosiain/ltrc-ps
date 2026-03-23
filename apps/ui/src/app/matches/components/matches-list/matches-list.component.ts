@@ -57,8 +57,8 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = [
     'date',
-    'opponent',
     'category',
+    'opponent',
     'venue',
     'tournament',
     'result',
