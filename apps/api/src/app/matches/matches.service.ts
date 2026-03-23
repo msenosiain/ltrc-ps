@@ -211,7 +211,7 @@ export class MatchesService {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
       sort['category'] = 1;
     } else {
-      sort['date'] = 1;
+      sort['date'] = -1;
       sort['category'] = 1;
     }
 

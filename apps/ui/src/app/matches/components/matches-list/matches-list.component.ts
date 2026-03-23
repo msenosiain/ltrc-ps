@@ -74,7 +74,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
 
   constructor() {
     const s = this.savedState;
-    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy || 'date', (s?.sortOrder || SortOrder.ASC) as SortOrder);
+    this.dataSource.configure(s?.pageIndex ?? 0, s?.pageSize ?? 10, s?.sortBy || 'date', (s?.sortOrder || SortOrder.DESC) as SortOrder);
   }
 
   ngAfterViewInit(): void {
