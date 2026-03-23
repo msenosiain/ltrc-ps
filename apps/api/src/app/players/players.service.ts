@@ -153,7 +153,7 @@ export class PlayersService {
     const queryFilters: Record<string, unknown> = {};
     const andConditions: Record<string, unknown>[] = [];
 
-    // status filter — default to active only (includes legacy docs without status field)
+    // status filter — when specified, filter by status (ACTIVE includes legacy docs without field)
     if (filters.status) {
       if (filters.status === PlayerStatusEnum.ACTIVE) {
         andConditions.push({
@@ -165,14 +165,8 @@ export class PlayersService {
       } else {
         queryFilters['status'] = filters.status;
       }
-    } else {
-      andConditions.push({
-        $or: [
-          { status: PlayerStatusEnum.ACTIVE },
-          { status: { $exists: false } },
-        ],
-      });
     }
+    // no filter: show all players regardless of status
 
     // searchTerm → name o nickName
     // Non-letter chars (apostrophes, backticks, etc.) are ignored between letters,

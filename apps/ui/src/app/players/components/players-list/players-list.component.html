@@ -81,7 +81,12 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Apellido y Nombre
       </th>
-      <td mat-cell *matCellDef="let player">{{ player.name }}</td>
+      <td mat-cell *matCellDef="let player">
+        {{ player.name }}
+        @if (player.availability?.status === PlayerAvailabilityEnum.INJURED) {
+          <mat-icon class="injured-icon" title="Lesionado">local_hospital</mat-icon>
+        }
+      </td>
     </ng-container>
 
     <!-- Apodo -->
@@ -118,6 +123,7 @@
       *matRowDef="let row; columns: displayedColumns"
       (click)="viewPlayerDetails(row.id)"
       class="player-row"
+      [class.player-row--inactive]="row.status === PlayerStatusEnum.INACTIVE"
     ></tr>
   </table>
 

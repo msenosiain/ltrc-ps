@@ -42,4 +42,20 @@
   .player-row {
     @include list-layout.clickable-row;
   }
+
+  // jugadores inactivos: fila apagada
+  .player-row--inactive td {
+    opacity: 0.45;
+    color: var(--mat-app-on-surface-variant, #888);
+  }
+}
+
+.injured-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #e53935;
+  vertical-align: middle;
+  margin-left: 4px;
+  line-height: 1;
 }

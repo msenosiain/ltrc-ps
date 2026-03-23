@@ -17,7 +17,9 @@ import {
 import {
   CategoryEnum,
   HockeyBranchEnum,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   RoleEnum,
   SortOrder,
   SportEnum,
@@ -56,6 +58,8 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   importing = false;
   readonly RoleEnum = RoleEnum;
+  readonly PlayerStatusEnum = PlayerStatusEnum;
+  readonly PlayerAvailabilityEnum = PlayerAvailabilityEnum;
 
   private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
   private readonly afterCategoryColumns = ['positions'];
