@@ -170,7 +170,11 @@
     </button>
   </form>
 
+  @if (searchingPlayers) {
+  <mat-progress-bar mode="indeterminate" class="search-progress" />
+  } @else {
   <mat-divider class="section-divider" />
+  }
 
   <!-- ── PLANTEL ACTUAL ── -->
   @if (titulares.length > 0) {

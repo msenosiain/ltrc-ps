@@ -107,6 +107,7 @@ export class SquadEditorComponent implements OnInit {
   playerSearchInput!: ElementRef<HTMLInputElement>;
 
   playerSuggestions: Player[] = [];
+  searchingPlayers = false;
   selectedPlayer: Player | null = null;
   private readonly searchSubject = new Subject<string>();
 
@@ -221,8 +222,9 @@ export class SquadEditorComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        switchMap((term) =>
-          this.playersService.getPlayers({
+        switchMap((term) => {
+          this.searchingPlayers = true;
+          return this.playersService.getPlayers({
             page: 1,
             size: 20,
             filters: {
@@ -230,11 +232,12 @@ export class SquadEditorComponent implements OnInit {
               ...((this.match?.tournament?.sport ?? this.match?.sport) && { sport: this.match!.tournament?.sport ?? this.match!.sport }),
               ...(this.match?.category && { category: this.match.category }),
             },
-          })
-        ),
+          });
+        }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((result) => {
+        this.searchingPlayers = false;
         const existingIds = new Set(this.squadRows.map((e) => e.player?.id));
         this.playerSuggestions = result.items.filter(
           (p) => !existingIds.has(p.id)
