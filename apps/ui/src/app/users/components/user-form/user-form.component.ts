@@ -56,7 +56,7 @@ export class UserFormComponent implements OnInit, OnChanges {
   @Output() readonly formSubmit = new EventEmitter<UserFormValue>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER];
+  private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER, RoleEnum.COORDINATOR];
 
   readonly roleOptions = roleOptions;
   readonly sportOptions = sportOptions;

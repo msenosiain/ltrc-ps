@@ -3,6 +3,7 @@ import { RoleEnum } from '@ltrc-campo/shared-api-model';
 export const roleOptions = [
   { id: RoleEnum.ADMIN, label: 'Administrador' },
   { id: RoleEnum.MANAGER, label: 'Manager' },
+  { id: RoleEnum.COORDINATOR, label: 'Coordinador' },
   { id: RoleEnum.ANALYST, label: 'Analista' },
   { id: RoleEnum.KINE, label: 'Kinesiólogo' },
   { id: RoleEnum.PLAYER, label: 'Jugador' },
@@ -28,6 +29,8 @@ export function getRoleClass(role: RoleEnum): string {
       return 'role-chip--player';
     case RoleEnum.COACH:
       return 'role-chip--coach';
+    case RoleEnum.COORDINATOR:
+      return 'role-chip--coordinator';
     case RoleEnum.TRAINER:
       return 'role-chip--trainer';
     default:
