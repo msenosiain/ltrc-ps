@@ -42,10 +42,12 @@ export class ScheduleEditorComponent implements OnInit {
   schedule?: TrainingSchedule;
   editing = false;
   submitting = false;
+  clearCategory = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
+    this.clearCategory = this.route.snapshot.queryParamMap.get('newDuplicate') === '1';
 
     if (id) {
       this.schedulesService

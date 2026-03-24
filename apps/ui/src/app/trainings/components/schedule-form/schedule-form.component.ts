@@ -89,6 +89,7 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
 
   @Input() schedule?: TrainingSchedule;
   @Input() submitting = false;
+  @Input() clearCategory = false;
 
   @Output() readonly formSubmit = new EventEmitter<ScheduleFormValue>();
   @Output() readonly cancel = new EventEmitter<void>();
@@ -195,7 +196,7 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
 
       this.scheduleForm.patchValue({
         sport: this.schedule.sport,
-        category: this.schedule.category,
+        category: this.clearCategory ? null : this.schedule.category,
         division: this.schedule.division ?? '',
         isActive: this.schedule.isActive,
         validFrom: this.schedule.validFrom

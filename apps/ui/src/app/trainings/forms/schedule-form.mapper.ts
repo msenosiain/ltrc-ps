@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
-import { DATE_FORMAT } from '@ltrc-campo/shared-api-model';
 import { ScheduleFormValue } from './schedule-form.types';
+
+const API_DATE_FORMAT = 'yyyy-MM-dd';
 
 export function mapFormToCreateScheduleDto(value: ScheduleFormValue) {
   return {
@@ -9,10 +10,10 @@ export function mapFormToCreateScheduleDto(value: ScheduleFormValue) {
     division: value.division || undefined,
     isActive: value.isActive,
     validFrom: value.validFrom
-      ? format(value.validFrom, DATE_FORMAT)
+      ? format(value.validFrom, API_DATE_FORMAT)
       : undefined,
     validUntil: value.validUntil
-      ? format(value.validUntil, DATE_FORMAT)
+      ? format(value.validUntil, API_DATE_FORMAT)
       : undefined,
     timeSlots: value.timeSlots
       .filter((s) => s.day && s.startTime && s.endTime)
