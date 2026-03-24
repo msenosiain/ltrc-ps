@@ -89,7 +89,15 @@
             matInput
             formControlName="location"
             placeholder="Ej: Cancha principal"
+            [matAutocomplete]="locationAuto"
+            (input)="locationInput$.next($any($event.target).value)"
+            (focus)="locationInput$.next(getSlotLocationValue(i))"
           />
+          <mat-autocomplete #locationAuto="matAutocomplete">
+            @for (loc of filteredLocations$ | async; track loc) {
+            <mat-option [value]="loc">{{ loc }}</mat-option>
+            }
+          </mat-autocomplete>
         </mat-form-field>
 
         <button

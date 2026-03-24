@@ -25,7 +25,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { AsyncPipe } from '@angular/common';
+import { map } from 'rxjs/operators';
+import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { SportEnum, TrainingSchedule } from '@ltrc-campo/shared-api-model';
+import { TrainingSchedulesService } from '../../services/training-schedules.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   dayOfWeekOptions,
   getCategoryOptionsBySport,
@@ -58,6 +63,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatFormFieldModule,
     MatDatepickerModule,
     MatSlideToggleModule,
+    MatAutocompleteModule,
+    AsyncPipe,
   ],
   templateUrl: './schedule-form.component.html',
   styleUrl: './schedule-form.component.scss',
@@ -66,6 +73,19 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly userFilterContext = inject(UserFilterContextService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly schedulesService = inject(TrainingSchedulesService);
+
+  private readonly allLocations$ = new BehaviorSubject<string[]>([]);
+  readonly locationInput$ = new BehaviorSubject<string>('');
+  filteredLocations$: Observable<string[]> = combineLatest([
+    this.allLocations$,
+    this.locationInput$,
+  ]).pipe(
+    map(([locs, input]) => {
+      const lower = input.toLowerCase();
+      return locs.filter((l) => l.toLowerCase().includes(lower));
+    })
+  );
 
   @Input() schedule?: TrainingSchedule;
   @Input() submitting = false;
@@ -100,6 +120,11 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.schedulesService
+      .getFieldOptions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((opts) => this.allLocations$.next(opts.locations ?? []));
+
     // Apply user filter context: limit options and pre-fill forced values
     this.userFilterContext.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -181,6 +206,10 @@ export class ScheduleFormComponent implements OnInit, OnChanges {
           : null,
       });
     }
+  }
+
+  getSlotLocationValue(index: number): string {
+    return (this.timeSlotsArray.at(index) as FormGroup).get('location')?.value ?? '';
   }
 
   addTimeSlot(): void {
