@@ -24,7 +24,7 @@ export class TrainingSchedulesService {
   async create(dto: CreateTrainingScheduleDto, caller?: User) {
     const callerId = caller ? (caller as any)._id : undefined;
     const schedule = await this.scheduleModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
-    // Generate sessions for the next 60 days after creation
+    // Generate sessions for the next 30 days after creation
     await this.sessionsService.generateForSchedule(schedule.id);
     return schedule;
   }

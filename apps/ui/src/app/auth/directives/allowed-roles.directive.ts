@@ -5,9 +5,12 @@ import {
   OnInit,
   TemplateRef,
   ViewContainerRef,
+  inject,
 } from '@angular/core';
-import { distinctUntilChanged, map, Subscription, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Subscription, tap } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth.service';
+import { ViewAsRoleService } from '../services/view-as-role.service';
 import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { User } from '../../users/User.interface';
 
@@ -20,16 +23,23 @@ export class AllowedRolesDirective implements OnInit, OnDestroy {
   @Input('ltrcAllowedRoles') allowedRoles?: RoleRule[];
   private sub?: Subscription;
 
-  constructor(
-    private authService: AuthService,
-    private viewContainerRef: ViewContainerRef,
-    private templateRef: TemplateRef<unknown>
-  ) {}
+  private readonly authService = inject(AuthService);
+  private readonly viewAsService = inject(ViewAsRoleService);
+  private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly templateRef = inject(TemplateRef<unknown>);
 
   ngOnInit(): void {
-    this.sub = this.authService.user$
+    const viewAsRole$ = toObservable(this.viewAsService.viewAsRole);
+
+    this.sub = combineLatest([this.authService.user$, viewAsRole$])
       .pipe(
-        map((user) => Boolean(user && this.matchesAnyRule(user))),
+        map(([user, viewAsRole]) => {
+          if (!user) return false;
+          const effectiveUser = viewAsRole
+            ? { ...user, roles: [viewAsRole], sports: Object.values(SportEnum), categories: [] }
+            : user;
+          return this.matchesAnyRule(effectiveUser as User);
+        }),
         distinctUntilChanged(),
         tap((allowed) =>
           allowed

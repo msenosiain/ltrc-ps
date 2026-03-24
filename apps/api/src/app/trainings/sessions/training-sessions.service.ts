@@ -221,7 +221,7 @@ export class TrainingSessionsService {
 
     const from = fromDateStr ?? new Date().toISOString().slice(0, 10);
     const toDate = new Date((toDateStr ?? from) + 'T12:00:00Z');
-    if (!toDateStr) toDate.setDate(toDate.getDate() + 60);
+    if (!toDateStr) toDate.setDate(toDate.getDate() + 30);
     const to = toDate.toISOString().slice(0, 10);
 
     for (const slot of schedule.timeSlots) {

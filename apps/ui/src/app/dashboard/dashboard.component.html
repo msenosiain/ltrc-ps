@@ -134,6 +134,23 @@
         <span matListItemTitle>Usuarios</span>
       </a>
 
+      @if (isAdmin()) {
+      <div class="view-as-section">
+        <span class="view-as-label">Ver como</span>
+        <mat-select
+          [value]="viewAsService.viewAsRole()"
+          (valueChange)="onViewAsChange($event)"
+          placeholder="Rol real"
+          class="view-as-select"
+        >
+          <mat-option [value]="null">Rol real</mat-option>
+          @for (opt of viewAsRoleOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+      </div>
+      }
+
       @if (isPlayer() && myPlayerId()) {
       <a
         mat-list-item
@@ -150,6 +167,15 @@
 
   <mat-sidenav-content>
     <div class="content">
+      @if (viewAsService.viewAsRole()) {
+      <div class="view-as-banner">
+        <mat-icon>visibility</mat-icon>
+        Modo vista: <strong>{{ viewAsService.viewAsRole() }}</strong>
+        <button mat-icon-button (click)="onViewAsChange(null)" matTooltip="Salir del modo vista">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      }
       <router-outlet></router-outlet>
 
       @if (router.url === '/dashboard') { @if (hasNoRoles()) {

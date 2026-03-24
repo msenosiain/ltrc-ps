@@ -58,6 +58,26 @@ mat-sidenav {
   margin: 8px 0;
 }
 
+.view-as-section {
+  padding: 8px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.view-as-label {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.view-as-select {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
 // ── Content ───────────────────────────────────────────────────────────────────
 
 .content {
@@ -77,6 +97,30 @@ mat-sidenav {
     margin-bottom: 16px;
     color: #333;
     text-align: center;
+  }
+}
+
+.view-as-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  color: #e65100;
+  font-size: 0.875rem;
+
+  mat-icon:first-child {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  button {
+    margin-left: auto;
+    color: #e65100;
   }
 }
 
