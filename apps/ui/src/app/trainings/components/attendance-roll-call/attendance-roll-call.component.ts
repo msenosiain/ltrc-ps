@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -26,6 +27,7 @@ import {
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
 interface AttendanceRow {
@@ -47,6 +49,7 @@ interface AttendanceRow {
     MatIconModule,
     MatButtonToggleModule,
     MatProgressBarModule,
+    MatExpansionModule,
     DatePipe,
     FormsModule,
   ],
@@ -84,77 +87,63 @@ export class AttendanceRollCallComponent implements OnInit {
       .subscribe({
         next: (session) => {
           this.session = session;
-          this.loadPlayersForSession(session);
-          this.loadStaffForSession(id);
+          forkJoin({
+            players: this.playersService.getPlayers({
+              page: 1,
+              size: 200,
+              filters: { sport: session.sport, category: session.category, availableForTraining: true } as any,
+              sortBy: 'name',
+              sortOrder: SortOrder.ASC,
+            }),
+            staff: this.sessionsService.getStaffForSession(id),
+          })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: ({ players, staff }) => {
+                this.buildRows(session, players.items, staff);
+                this.loading = false;
+              },
+              error: () => {
+                this.buildRows(session, [], []);
+                this.loading = false;
+              },
+            });
         },
         error: () => this.router.navigate(['/dashboard/trainings/sessions']),
       });
   }
 
-  private loadStaffForSession(sessionId: string): void {
-    this.sessionsService
-      .getStaffForSession(sessionId)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (staffUsers) => {
-          const existingIds = new Set(this.staffRows.map((r) => r.userId));
-          for (const u of staffUsers) {
-            if (!existingIds.has(u.id)) {
-              this.staffRows.push({
-                userId: u.id,
-                userName: u.name,
-                name: u.name,
-                isStaff: true,
-                confirmed: false,
-                status: null,
-              });
-            }
-          }
-        },
-      });
-  }
-
-  private loadPlayersForSession(session: TrainingSession): void {
-    // Load all players for this sport/category
-    this.playersService
-      .getPlayers({
-        page: 1,
-        size: 200,
-        filters: {
-          sport: session.sport,
-          category: session.category,
-          availableForTraining: true,
-        } as any,
-        sortBy: 'name',
-        sortOrder: SortOrder.ASC,
-      })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.buildRows(session, res.items);
-          this.loading = false;
-        },
-        error: () => {
-          this.buildRows(session, []);
-          this.loading = false;
-        },
-      });
-  }
-
-  private buildRows(session: TrainingSession, allPlayers: Player[]): void {
+  private buildRows(session: TrainingSession, allPlayers: Player[], staffUsers: { id: string; name: string; roles: string[] }[] = []): void {
     const attendance = session.attendance ?? [];
 
-    // Staff rows from existing attendance
-    this.staffRows = attendance
-      .filter((a) => a.isStaff)
-      .map((a) => ({
-        userId: a.user as string,
-        userName: a.userName,
-        name: a.userName ?? '—',
+    // Staff rows: merge staff list with existing attendance
+    const attendanceByStaff = new Map(
+      attendance.filter((a) => a.isStaff).map((a) => [a.user as string, a])
+    );
+    this.staffRows = staffUsers.map((u) => {
+      const existing = attendanceByStaff.get(u.id);
+      return {
+        userId: u.id,
+        userName: u.name,
+        name: u.name,
         isStaff: true,
-        confirmed: a.confirmed,
-        status: (a.status as AttendanceStatusEnum) ?? null,
-      }));
+        confirmed: existing?.confirmed ?? false,
+        status: (existing?.status as AttendanceStatusEnum) ?? null,
+      };
+    });
+    // Add any staff in attendance not in the staff list
+    for (const [uid, entry] of attendanceByStaff) {
+      if (!this.staffRows.some((r) => r.userId === uid)) {
+        this.staffRows.push({
+          userId: uid,
+          userName: entry.userName,
+          name: entry.userName ?? '—',
+          isStaff: true,
+          confirmed: entry.confirmed,
+          status: (entry.status as AttendanceStatusEnum) ?? null,
+        });
+      }
+    }
 
     // Split available vs injured (API already excluded inactive + called_up/suspended/leave)
     const injured = allPlayers.filter(
