@@ -44,6 +44,7 @@
           ],
           "allowedCommonJsDependencies": [
             "canvg",
+            "core-js",
             "jspdf",
             "html2canvas",
             "raf",
