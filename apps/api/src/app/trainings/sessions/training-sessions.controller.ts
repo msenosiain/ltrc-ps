@@ -45,10 +45,11 @@ export class TrainingSessionsController {
 
   @Get('upcoming')
   @UseGuards(JwtAuthGuard)
-  async getUpcoming(@Query('days') days?: string, @Req() req?: Request) {
+  async getUpcoming(@Query('days') days?: string, @Query('today') today?: string, @Req() req?: Request) {
     return this.sessionsService.getUpcomingForUser(
       (req as any).user,
-      days ? parseInt(days, 10) : 7
+      days ? parseInt(days, 10) : 7,
+      today,
     );
   }
 

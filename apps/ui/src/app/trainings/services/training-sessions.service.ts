@@ -39,7 +39,9 @@ export class TrainingSessionsService {
   }
 
   getUpcomingForCurrentUser(days = 7): Observable<UpcomingTraining[]> {
-    const params = new HttpParams().set('days', days);
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const params = new HttpParams().set('days', days).set('today', today);
     return this.httpClient.get<UpcomingTraining[]>(`${this.apiUrl}/upcoming`, {
       params,
     });

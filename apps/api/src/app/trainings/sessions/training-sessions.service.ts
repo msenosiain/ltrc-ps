@@ -148,10 +148,17 @@ export class TrainingSessionsService {
    */
   async getUpcomingForUser(
     caller: User,
-    days = 7
+    days = 7,
+    todayStr?: string,
   ): Promise<UpcomingTraining[]> {
-    const from = new Date();
-    from.setHours(0, 0, 0, 0);
+    let from: Date;
+    if (todayStr) {
+      const [y, m, d] = todayStr.split('-').map(Number);
+      from = new Date(y, m - 1, d, 0, 0, 0, 0);
+    } else {
+      from = new Date();
+      from.setHours(0, 0, 0, 0);
+    }
     const to = new Date(from);
     to.setDate(to.getDate() + days);
 
