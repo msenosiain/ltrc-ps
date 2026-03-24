@@ -59,6 +59,7 @@ export class TournamentsService {
       query['$or'] = [{ name: regex }, { season: regex }];
     }
     if (filters.sport) query['sport'] = filters.sport;
+    if (filters.categories?.length) query['categories'] = { $in: filters.categories };
 
     // Server-side restriction: limit results to user's assigned scope
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {

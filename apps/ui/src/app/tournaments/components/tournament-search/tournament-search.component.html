@@ -22,6 +22,20 @@
     </mat-form-field>
     }
 
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Categorías</mat-label>
+      <mat-select formControlName="categories" multiple>
+        @for (c of categoryOptions; track c.id) {
+        <mat-option [value]="c.id">{{ c.label }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('categories')?.value?.length) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('categories')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Nombre o temporada</mat-label>
       <input
