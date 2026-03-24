@@ -121,14 +121,21 @@ export class BranchAssignmentsService {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json<BranchImportRow>(sheet);
 
-    let created = 0;
-    let updated = 0;
     const errors: { row: number; message: string }[] = [];
+
+    // 1. Parse and validate all rows without touching the DB
+    interface ParsedRow {
+      rowNum: number;
+      dni: string;
+      category: CategoryEnum;
+      branch: HockeyBranchEnum;
+      label: string;
+    }
+    const parsed: ParsedRow[] = [];
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const rowNum = i + 2;
-
       const dni = String(row.DNI ?? '').replace(/\D/g, '');
       const nombre = String(row['Apellido Nombre'] ?? '').trim();
       const division = String(row['División'] ?? '').trim().toUpperCase();
@@ -139,67 +146,90 @@ export class BranchAssignmentsService {
         errors.push({ row: rowNum, message: `${label}: DNI es requerido` });
         continue;
       }
-
       const category = DIVISION_TO_CATEGORY[division];
       if (!category) {
-        errors.push({
-          row: rowNum,
-          message: `${label}: División desconocida: ${division}`,
-        });
+        errors.push({ row: rowNum, message: `${label}: División desconocida: ${division}` });
         continue;
       }
-
       if (!Object.values(HockeyBranchEnum).includes(bloque as HockeyBranchEnum)) {
-        errors.push({
-          row: rowNum,
-          message: `${label}: Bloque desconocido: ${bloque}`,
-        });
+        errors.push({ row: rowNum, message: `${label}: Bloque desconocido: ${bloque}` });
         continue;
       }
-      const branch = bloque as HockeyBranchEnum;
+      parsed.push({ rowNum, dni, category, branch: bloque as HockeyBranchEnum, label });
+    }
 
-      // Find player by DNI
-      const player = await this.playerModel.findOne({ idNumber: dni });
+    if (parsed.length === 0) return { created: 0, updated: 0, errors };
+
+    // 2. Fetch all referenced players in one query
+    const dnis = [...new Set(parsed.map((r) => r.dni))];
+    const players = await this.playerModel
+      .find({ idNumber: { $in: dnis } })
+      .select('_id idNumber')
+      .lean();
+    const playerByDni = new Map(players.map((p) => [p.idNumber, p]));
+
+    // 3. Fetch all existing assignments for this season in one query
+    const playerIds = players.map((p) => p._id);
+    const existingAssignments = await this.assignmentModel
+      .find({ player: { $in: playerIds }, season })
+      .select('player')
+      .lean();
+    const existingPlayerIds = new Set(existingAssignments.map((a) => a.player.toString()));
+
+    // 4. Build bulk operations
+    const assignmentOps: Parameters<typeof this.assignmentModel.bulkWrite>[0] = [];
+    const playerOps: Parameters<typeof this.playerModel.bulkWrite>[0] = [];
+    const currentYear = new Date().getFullYear();
+    let created = 0;
+    let updated = 0;
+
+    for (const r of parsed) {
+      const player = playerByDni.get(r.dni);
       if (!player) {
-        errors.push({
-          row: rowNum,
-          message: `${label}: Jugadora no encontrada`,
-        });
+        errors.push({ row: r.rowNum, message: `${r.label}: Jugadora no encontrada` });
         continue;
       }
 
-      try {
-        const existing = await this.assignmentModel.findOne({
-          player: player._id,
-          season,
+      const playerId = (player._id as { toString(): string }).toString();
+
+      if (existingPlayerIds.has(playerId)) {
+        assignmentOps.push({
+          updateOne: {
+            filter: { player: player._id, season },
+            update: { $set: { branch: r.branch, category: r.category } },
+          },
         });
+        updated++;
+      } else {
+        assignmentOps.push({
+          insertOne: {
+            document: {
+              player: player._id,
+              branch: r.branch,
+              category: r.category,
+              season,
+              sport: SportEnum.HOCKEY,
+              assignedBy: assignedById || undefined,
+              assignedAt: new Date(),
+            } as any,
+          },
+        });
+        created++;
+      }
 
-        if (existing) {
-          existing.branch = branch;
-          existing.category = category;
-          await existing.save();
-          updated++;
-        } else {
-          await this.assignmentModel.create({
-            player: player._id,
-            branch,
-            category,
-            season,
-            sport: SportEnum.HOCKEY,
-            assignedBy: assignedById || undefined,
-            assignedAt: new Date(),
-          });
-          created++;
-        }
-
-        await this.syncPlayerBranch(player._id.toString(), season);
-      } catch (err) {
-        errors.push({
-          row: rowNum,
-          message: `DNI ${dni}: ${(err as Error).message}`,
+      if (season === currentYear) {
+        playerOps.push({
+          updateOne: {
+            filter: { _id: player._id },
+            update: { $set: { branch: r.branch } },
+          },
         });
       }
     }
+
+    // 5. Execute bulk writes
+    if (assignmentOps.length > 0) await this.assignmentModel.bulkWrite(assignmentOps);
+    if (playerOps.length > 0) await this.playerModel.bulkWrite(playerOps);
 
     return { created, updated, errors };
   }
