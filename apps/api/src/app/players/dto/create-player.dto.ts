@@ -51,7 +51,7 @@ export class AddressDto {
   @IsString()
   postalCode?: string;
 
-  @IsNumberString()
+  @IsString()
   phoneNumber!: string;
 }
 
