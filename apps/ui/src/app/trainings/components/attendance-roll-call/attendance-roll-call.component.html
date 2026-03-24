@@ -30,9 +30,9 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
-          }
+          <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
+            <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
         </div>
         <mat-button-toggle-group
           [value]="row.status"
@@ -62,9 +62,9 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
-          }
+          <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
+            <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
         </div>
         <mat-button-toggle-group
           [value]="row.status"
@@ -94,9 +94,9 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
-          }
+          <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
+            <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </button>
         </div>
         <mat-button-toggle-group
           [value]="row.status"

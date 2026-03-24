@@ -94,6 +94,12 @@ export class TrainingSessionsController {
     return this.sessionsService.cancelConfirmation(id, (req as any).user);
   }
 
+  @Get(':id/staff-options')
+  @UseGuards(JwtAuthGuard)
+  async getStaffForSession(@Param('id') id: string) {
+    return this.sessionsService.getStaffForSession(id);
+  }
+
   @Patch(':id/attendance')
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)

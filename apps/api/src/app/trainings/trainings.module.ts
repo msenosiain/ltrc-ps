@@ -10,6 +10,8 @@ import { TrainingSessionsController } from './sessions/training-sessions.control
 import { TrainingSessionsService } from './sessions/training-sessions.service';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PlayerSchema } from '../players/schemas/player.schema';
+import { User } from '../users/schemas/user.schema';
+import { UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -28,6 +30,11 @@ import { PlayerSchema } from '../players/schemas/player.schema';
         name: PlayerEntity.name,
         schema: PlayerSchema,
         collection: 'players',
+      },
+      {
+        name: User.name,
+        schema: UserSchema,
+        collection: 'users',
       },
     ]),
   ],

@@ -31,6 +31,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
 interface AttendanceRow {
   playerId?: string;
   userId?: string;
+  userName?: string;
   name: string;
   isStaff: boolean;
   confirmed: boolean;
@@ -84,8 +85,32 @@ export class AttendanceRollCallComponent implements OnInit {
         next: (session) => {
           this.session = session;
           this.loadPlayersForSession(session);
+          this.loadStaffForSession(id);
         },
         error: () => this.router.navigate(['/dashboard/trainings/sessions']),
+      });
+  }
+
+  private loadStaffForSession(sessionId: string): void {
+    this.sessionsService
+      .getStaffForSession(sessionId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (staffUsers) => {
+          const existingIds = new Set(this.staffRows.map((r) => r.userId));
+          for (const u of staffUsers) {
+            if (!existingIds.has(u.id)) {
+              this.staffRows.push({
+                userId: u.id,
+                userName: u.name,
+                name: u.name,
+                isStaff: true,
+                confirmed: false,
+                status: null,
+              });
+            }
+          }
+        },
       });
   }
 
@@ -124,6 +149,7 @@ export class AttendanceRollCallComponent implements OnInit {
       .filter((a) => a.isStaff)
       .map((a) => ({
         userId: a.user as string,
+        userName: a.userName,
         name: a.userName ?? '—',
         isStaff: true,
         confirmed: a.confirmed,
@@ -201,18 +227,21 @@ export class AttendanceRollCallComponent implements OnInit {
 
     const records = [
       ...this.staffRows
-        .filter((r) => r.status)
+        .filter((r) => r.status || r.confirmed !== undefined)
         .map((r) => ({
           userId: r.userId,
+          userName: r.userName,
           isStaff: true,
-          status: r.status!,
+          ...(r.status ? { status: r.status } : {}),
+          confirmed: r.confirmed,
         })),
       ...[...this.playerRows, ...this.injuredRows]
-        .filter((r) => r.status)
+        .filter((r) => r.status || r.confirmed !== undefined)
         .map((r) => ({
           playerId: r.playerId,
           isStaff: false,
-          status: r.status!,
+          ...(r.status ? { status: r.status } : {}),
+          confirmed: r.confirmed,
         })),
     ];
 

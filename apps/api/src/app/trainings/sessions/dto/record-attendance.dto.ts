@@ -19,11 +19,20 @@ export class AttendanceRecordDto {
   @IsString()
   readonly userId?: string;
 
+  @IsOptional()
+  @IsString()
+  readonly userName?: string;
+
   @IsBoolean()
   readonly isStaff!: boolean;
 
+  @IsOptional()
   @IsEnum(AttendanceStatusEnum)
-  readonly status!: AttendanceStatusEnum;
+  readonly status?: AttendanceStatusEnum;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly confirmed?: boolean;
 }
 
 export class RecordAttendanceDto {

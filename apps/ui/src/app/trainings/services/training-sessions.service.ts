@@ -63,13 +63,21 @@ export class TrainingSessionsService {
     );
   }
 
+  getStaffForSession(sessionId: string): Observable<{ id: string; name: string; roles: string[] }[]> {
+    return this.httpClient.get<{ id: string; name: string; roles: string[] }[]>(
+      `${this.apiUrl}/${sessionId}/staff-options`
+    );
+  }
+
   recordAttendance(
     sessionId: string,
     records: {
       playerId?: string;
       userId?: string;
+      userName?: string;
       isStaff: boolean;
-      status: string;
+      status?: string;
+      confirmed?: boolean;
     }[]
   ): Observable<TrainingSession> {
     return this.httpClient.patch<TrainingSession>(

@@ -22,6 +22,8 @@ import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { User } from '../../users/schemas/user.schema';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 
+const STAFF_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER, RoleEnum.ANALYST];
+
 const POPULATE_FIELDS = ['schedule', { path: 'attendance.player' }];
 
 function toLocalDateString(d: Date): string {
@@ -49,7 +51,9 @@ export class TrainingSessionsService {
     @InjectModel(TrainingScheduleEntity.name)
     private readonly scheduleModel: Model<TrainingScheduleEntity>,
     @InjectModel(PlayerEntity.name)
-    private readonly playerModel: Model<PlayerEntity>
+    private readonly playerModel: Model<PlayerEntity>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>
   ) {}
 
   async create(dto: CreateTrainingSessionDto, caller?: User) {
@@ -369,6 +373,7 @@ export class TrainingSessionsService {
         if (!existing) {
           existing = {
             user: record.userId,
+            userName: record.userName,
             isStaff: true,
             confirmed: false,
           };
@@ -391,14 +396,39 @@ export class TrainingSessionsService {
       }
 
       if (existing) {
-        existing.status = record.status;
-        existing.markedAt = now;
-        existing.markedBy = callerId;
+        if (record.status) {
+          existing.status = record.status;
+          existing.markedAt = now;
+          existing.markedBy = callerId;
+        }
+        if (record.confirmed !== undefined) {
+          existing.confirmed = record.confirmed;
+          existing.confirmedAt = record.confirmed ? now : undefined;
+        }
       }
     }
 
     await session.save();
     return session.populate(POPULATE_FIELDS);
+  }
+
+  /**
+   * Returns staff users (coach/trainer/manager/analyst) relevant to this session's sport+category.
+   */
+  async getStaffForSession(sessionId: string): Promise<{ id: string; name: string; roles: string[] }[]> {
+    const session = await this.sessionModel.findById(sessionId);
+    if (!session) throw new NotFoundException('Training session not found');
+
+    const query: Record<string, any> = { roles: { $in: STAFF_ROLES } };
+    // Include users with no sports restriction OR who have this session's sport
+    query['$or'] = [
+      { sports: { $exists: false } },
+      { sports: { $size: 0 } },
+      { sports: session.sport },
+    ];
+
+    const users = await this.userModel.find(query).select('_id name roles').exec();
+    return users.map((u) => ({ id: (u as any)._id.toString(), name: u.name, roles: u.roles ?? [] }));
   }
 
   /**
