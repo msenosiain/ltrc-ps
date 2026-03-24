@@ -1,6 +1,11 @@
 <div class="exercise-list">
   <div class="exercise-list__header">
-    <h2 class="exercise-list__title">Ejercicios</h2>
+    <div class="exercise-list__header-left">
+      <button mat-icon-button (click)="goBack()" title="Volver a Rutinas">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="exercise-list__title">Ejercicios</h2>
+    </div>
     <button
       *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
       mat-raised-button

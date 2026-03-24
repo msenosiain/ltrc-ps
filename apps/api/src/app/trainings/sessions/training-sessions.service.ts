@@ -249,7 +249,7 @@ export class TrainingSessionsService {
                 attendance: [],
               },
             },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
           );
         }
         current = nextDay(current);

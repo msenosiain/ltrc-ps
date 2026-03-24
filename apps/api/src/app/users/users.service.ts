@@ -77,7 +77,7 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdateUserDto): Promise<User | null> {
-    return this.userModel.findByIdAndUpdate(id, dto, { new: true }).exec();
+    return this.userModel.findByIdAndUpdate(id, dto, { returnDocument: 'after' }).exec();
   }
 
   async delete(id: string): Promise<User | null> {
@@ -86,7 +86,7 @@ export class UsersService {
 
   async resetPassword(id: string): Promise<User | null> {
     return this.userModel
-      .findByIdAndUpdate(id, { $unset: { password: 1 } }, { new: true })
+      .findByIdAndUpdate(id, { $unset: { password: 1 } }, { returnDocument: 'after' })
       .exec();
   }
 }

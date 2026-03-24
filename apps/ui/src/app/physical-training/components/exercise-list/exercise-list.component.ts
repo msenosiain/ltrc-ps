@@ -101,6 +101,10 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
     this.router.navigate(['/dashboard/physical/exercises', id]);
   }
 
+  goBack(): void {
+    this.router.navigate(['/dashboard/physical/routines']);
+  }
+
   createExercise(): void {
     this.router.navigate(['/dashboard/physical/exercises/new']);
   }

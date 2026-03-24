@@ -8,6 +8,12 @@
     margin-bottom: 1rem;
   }
 
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   &__title {
     margin: 0;
   }
