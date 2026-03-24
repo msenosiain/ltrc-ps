@@ -35,28 +35,13 @@
   margin-right: 4px;
 }
 
-.view-as-menu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  min-height: 48px;
-
-  mat-icon {
-    color: rgba(0, 0, 0, 0.54);
-    flex-shrink: 0;
-  }
-}
-
-.view-as-menu-label {
-  font-size: 0.875rem;
-  white-space: nowrap;
-  color: rgba(0, 0, 0, 0.87);
-}
-
-.view-as-menu-select {
-  font-size: 0.875rem;
-  min-width: 180px;
+.view-as-active-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffb74d;
+  margin-left: 8px;
 }
 
 .user-role {

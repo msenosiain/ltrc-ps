@@ -13,20 +13,29 @@
 </div>
 <mat-menu #userMenu="matMenu">
   @if (isAdmin()) {
-  <div class="view-as-menu-item" (click)="$event.stopPropagation()">
+  <button mat-menu-item [matMenuTriggerFor]="viewAsMenu">
     <mat-icon>visibility</mat-icon>
-    <span class="view-as-menu-label">Ver como</span>
-    <mat-select
-      [value]="viewAsService.viewAsRole()"
-      (valueChange)="viewAsService.set($event)"
-      class="view-as-menu-select"
-    >
-      <mat-option [value]="null">Rol real</mat-option>
-      @for (opt of viewAsRoleOptions; track opt.id) {
-      <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+    <span>Ver como</span>
+    @if (viewAsService.viewAsRole()) {
+    <span class="view-as-active-dot"></span>
+    }
+  </button>
+  <mat-menu #viewAsMenu="matMenu">
+    <button mat-menu-item (click)="viewAsService.set(null)">
+      <mat-icon>person</mat-icon>
+      <span>Rol real</span>
+    </button>
+    @for (opt of viewAsRoleOptions; track opt.id) {
+    <button mat-menu-item (click)="viewAsService.set(opt.id)">
+      @if (viewAsService.viewAsRole() === opt.id) {
+      <mat-icon>check</mat-icon>
+      } @else {
+      <mat-icon></mat-icon>
       }
-    </mat-select>
-  </div>
+      <span>{{ opt.label }}</span>
+    </button>
+    }
+  </mat-menu>
   <mat-divider />
   }
   @if (canSetPassword()) {

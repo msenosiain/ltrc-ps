@@ -13,7 +13,7 @@ import { RoleEnum } from '@ltrc-campo/shared-api-model';
 @Component({
   selector: 'ltrc-user-profile-menu',
   standalone: true,
-  imports: [RouterLink, MatIconModule, MatMenuModule, MatDividerModule, MatSelectModule],
+  imports: [RouterLink, MatIconModule, MatMenuModule, MatDividerModule],
   templateUrl: './user-profile-menu.component.html',
   styleUrl: './user-profile-menu.component.scss',
 })
