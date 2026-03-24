@@ -22,7 +22,7 @@
         </span>
         <span class="match-opponent">
           @if (match.opponent) {
-            <span class="home-away-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
+            <span class="venue-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
               {{ match.isHome ? 'L' : 'V' }}
             </span>
             {{ match.opponent }}
