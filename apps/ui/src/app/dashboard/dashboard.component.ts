@@ -96,6 +96,10 @@ export class DashboardComponent implements OnInit {
     { initialValue: this.breakpointObserver.isMatched('(max-width: 960px)') }
   );
 
+  onViewAsChange(role: RoleEnum | null): void {
+    this.viewAsService.set(role);
+  }
+
   onNavClick(): void {
     if (this.isSmallScreen()) {
       this.sidenav?.close();
