@@ -78,6 +78,13 @@ export class TrainingSessionsService {
     );
   }
 
+  updateSession(
+    id: string,
+    data: { startTime?: string; endTime?: string; location?: string; notes?: string; status?: string }
+  ): Observable<TrainingSession> {
+    return this.httpClient.patch<TrainingSession>(`${this.apiUrl}/${id}`, data);
+  }
+
   deleteSession(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }

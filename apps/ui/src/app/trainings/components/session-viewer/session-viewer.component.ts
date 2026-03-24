@@ -24,8 +24,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SessionEditDialogComponent, SessionEditDialogResult } from '../session-edit-dialog/session-edit-dialog.component';
 
 @Component({
   selector: 'ltrc-session-viewer',
@@ -35,6 +38,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    MatSnackBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -46,9 +50,12 @@ export class SessionViewerComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly sessionsService = inject(TrainingSessionsService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   session?: TrainingSession;
   readonly RoleEnum = RoleEnum;
+  readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -113,6 +120,23 @@ export class SessionViewerComponent implements OnInit {
       this.session!.id,
       'attendance',
     ]);
+  }
+
+  openEditDialog(): void {
+    const ref = this.dialog.open(SessionEditDialogComponent, {
+      width: '400px',
+      data: { session: this.session },
+    });
+    ref.afterClosed().subscribe((result: SessionEditDialogResult | undefined) => {
+      if (!result) return;
+      this.sessionsService.updateSession(this.session!.id!, result).subscribe({
+        next: (updated) => {
+          this.session = { ...this.session!, ...updated };
+          this.snackBar.open('Sesión actualizada', 'Cerrar', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+      });
+    });
   }
 
   @HostListener('document:keydown.escape')

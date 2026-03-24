@@ -91,24 +91,30 @@
       }
 
       <div class="actions">
+        <button mat-stroked-button (click)="backToList()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
         <button
-          *ltrcAllowedRoles="[
-            RoleEnum.ADMIN,
-            RoleEnum.MANAGER,
-            RoleEnum.COACH,
-            RoleEnum.TRAINER
-          ]"
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
+          mat-stroked-button
+          (click)="openEditDialog()"
+        >
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+        @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
           mat-raised-button
           color="primary"
+          [disabled]="session.status === TrainingSessionStatusEnum.COMPLETED"
           (click)="goToAttendance()"
         >
           <mat-icon>how_to_reg</mat-icon>
           Pasar lista
         </button>
-        <button mat-stroked-button (click)="backToList()">
-          <mat-icon>arrow_back</mat-icon>
-          Volver
-        </button>
+        }
       </div>
     </mat-card-content>
   </mat-card>
