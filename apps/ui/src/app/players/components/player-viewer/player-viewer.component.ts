@@ -36,10 +36,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
+import { AvailabilityDialogComponent, AvailabilityDialogResult } from '../availability-dialog/availability-dialog.component';
 
 @Component({
   selector: 'ltrc-player-viewer',
@@ -50,6 +52,7 @@ import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.di
     MatButtonModule,
     MatIconModule,
     MatProgressBarModule,
+    MatSnackBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -63,6 +66,8 @@ export class PlayerViewerComponent implements OnInit {
   private readonly matchesService = inject(MatchesService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   RoleEnum = RoleEnum;
   player?: Player;
@@ -117,6 +122,23 @@ export class PlayerViewerComponent implements OnInit {
         this.matchHistoryLoading = false;
       },
       error: () => { this.matchHistoryLoading = false; },
+    });
+  }
+
+  openAvailabilityDialog(): void {
+    const ref = this.dialog.open(AvailabilityDialogComponent, {
+      width: '440px',
+      data: { player: this.player },
+    });
+    ref.afterClosed().subscribe((result: AvailabilityDialogResult | undefined) => {
+      if (!result) return;
+      this.playersService.updateAvailability(this.player!.id!, result).subscribe({
+        next: (updated) => {
+          this.player = updated;
+          this.snackBar.open('Disponibilidad actualizada', 'Cerrar', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+      });
     });
   }
 

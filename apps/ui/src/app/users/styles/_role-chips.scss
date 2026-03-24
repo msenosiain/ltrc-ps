@@ -3,6 +3,7 @@ $role-admin: #a60a14;
 $role-manager: #0d47a1;
 $role-player: #b71c1c;
 $role-analyst: #6a1b9a;
+$role-kine: #00695c;
 $role-coach: #c89200;
 $role-trainer: #2e7d32;
 $role-default: #36445f;
@@ -12,6 +13,7 @@ $role-admin-light: #ff6b6b;
 $role-manager-light: #64b5f6;
 $role-player-light: #ef9a9a;
 $role-analyst-light: #ce93d8;
+$role-kine-light: #80cbc4;
 $role-coach-light: #ffd54f;
 $role-trainer-light: #81c784;
 $role-default-light: #b0bec5;
@@ -42,6 +44,13 @@ mat-chip {
     --mdc-chip-elevated-container-color: #{$role-analyst};
     --mdc-chip-label-text-color: #fff;
     --mat-chip-elevated-container-color: #{$role-analyst};
+    --mat-chip-label-text-color: #fff;
+  }
+
+  &.role-chip--kine {
+    --mdc-chip-elevated-container-color: #{$role-kine};
+    --mdc-chip-label-text-color: #fff;
+    --mat-chip-elevated-container-color: #{$role-kine};
     --mat-chip-label-text-color: #fff;
   }
 

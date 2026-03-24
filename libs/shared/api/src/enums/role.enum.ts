@@ -4,5 +4,6 @@ export enum RoleEnum {
   COACH = 'coach',
   TRAINER = 'trainer',
   ANALYST = 'analyst',
+  KINE = 'kine',
   PLAYER = 'player',
 }

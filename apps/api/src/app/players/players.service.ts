@@ -328,6 +328,23 @@ export class PlayersService {
     return this.gridFsService.getFileStream('playersPhotos', photoId);
   }
 
+  async updateAvailability(
+    id: string,
+    dto: { status: PlayerAvailabilityEnum; reason?: string; since?: string; estimatedReturn?: string }
+  ) {
+    const player = await this.playerModel.findById(id);
+    if (!player) throw new NotFoundException('Player not found');
+
+    player.availability = {
+      status: dto.status,
+      reason: dto.reason,
+      since: dto.since ? parseDate(dto.since) : undefined,
+      estimatedReturn: dto.estimatedReturn ? parseDate(dto.estimatedReturn) : undefined,
+    } as any;
+
+    return player.save();
+  }
+
   async delete(id: string) {
     const player = await this.playerModel.findById(id);
     if (!player) throw new NotFoundException('Player not found');

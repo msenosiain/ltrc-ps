@@ -26,6 +26,9 @@ import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 
 @Controller('players')
@@ -119,6 +122,13 @@ export class PlayersController {
     const stream = await this.playersService.getPhotoStream(player.photoId);
     res.setHeader('Content-Type', 'image/jpeg');
     stream.pipe(res);
+  }
+
+  @Patch(':id/availability')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.KINE, RoleEnum.TRAINER, RoleEnum.COACH)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateAvailability(@Param('id') id: string, @Body() dto: any) {
+    return this.playersService.updateAvailability(id, dto);
   }
 
   @Delete(':id')

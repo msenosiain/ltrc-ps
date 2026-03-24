@@ -268,6 +268,15 @@
     </button>
     }
     <button
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.KINE, RoleEnum.TRAINER, RoleEnum.COACH]"
+      mat-stroked-button
+      type="button"
+      (click)="openAvailabilityDialog()"
+    >
+      <mat-icon>health_and_safety</mat-icon>
+      Disponibilidad
+    </button>
+    <button
       *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
       mat-flat-button
       color="primary"

@@ -1,0 +1,20 @@
+.availability-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 360px;
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dates-row {
+  display: flex;
+  gap: 16px;
+
+  mat-form-field {
+    flex: 1;
+  }
+}

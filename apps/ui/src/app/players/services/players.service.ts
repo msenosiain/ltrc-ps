@@ -149,6 +149,13 @@ export class PlayersService {
     return this.httpClient.patch<Player>(`${this.playersApiUrl}/me`, dto);
   }
 
+  updateAvailability(
+    id: string,
+    dto: { status: string; reason?: string; since?: string; estimatedReturn?: string }
+  ): Observable<Player> {
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}/availability`, dto);
+  }
+
   // DELETE ─────────────────────────────────────────────────
 
   deletePlayer(id: string): Observable<void> {

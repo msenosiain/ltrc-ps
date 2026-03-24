@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Disponibilidad — {{ data.player.name }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="availability-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="status">
+        @for (opt of availabilityOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (showDetails) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Motivo</mat-label>
+      <input matInput formControlName="reason" placeholder="Ej: Desgarro isquiotibial" />
+    </mat-form-field>
+
+    <div class="dates-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" formControlName="since" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Retorno estimado</mat-label>
+        <input matInput type="date" formControlName="estimatedReturn" />
+      </mat-form-field>
+    </div>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()">Guardar</button>
+</mat-dialog-actions>
