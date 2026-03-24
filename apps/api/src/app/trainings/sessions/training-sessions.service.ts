@@ -420,11 +420,22 @@ export class TrainingSessionsService {
     if (!session) throw new NotFoundException('Training session not found');
 
     const query: Record<string, any> = { roles: { $in: STAFF_ROLES } };
-    // Include users with no sports restriction OR who have this session's sport
-    query['$or'] = [
-      { sports: { $exists: false } },
-      { sports: { $size: 0 } },
-      { sports: session.sport },
+    // Include users with no sport/category restriction OR who match this session's sport+category
+    query['$and'] = [
+      {
+        $or: [
+          { sports: { $exists: false } },
+          { sports: { $size: 0 } },
+          { sports: session.sport },
+        ],
+      },
+      {
+        $or: [
+          { categories: { $exists: false } },
+          { categories: { $size: 0 } },
+          { categories: session.category },
+        ],
+      },
     ];
 
     const users = await this.userModel.find(query).select('_id name roles').exec();
