@@ -383,6 +383,10 @@
 }
 
 .attachment-upload {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+
   button {
     display: inline-flex;
     align-items: center;
