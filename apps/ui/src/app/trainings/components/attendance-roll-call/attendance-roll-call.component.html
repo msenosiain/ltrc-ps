@@ -29,10 +29,10 @@
       @for (row of staffRows; track row.userId) {
       <div class="attendance-row">
         <div class="row-info">
-          <span class="row-name">{{ row.name }}</span>
           <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
             <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
           </button>
+          <span class="row-name">{{ row.name }}</span>
         </div>
         <mat-button-toggle-group
           [value]="row.status"
@@ -61,10 +61,10 @@
       @for (row of playerRows; track row.playerId) {
       <div class="attendance-row">
         <div class="row-info">
-          <span class="row-name">{{ row.name }}</span>
           <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
             <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
           </button>
+          <span class="row-name">{{ row.name }}</span>
         </div>
         <mat-button-toggle-group
           [value]="row.status"
@@ -93,10 +93,10 @@
       @for (row of injuredRows; track row.playerId) {
       <div class="attendance-row">
         <div class="row-info">
-          <span class="row-name">{{ row.name }}</span>
           <button mat-icon-button type="button" class="confirm-toggle" [class.confirmed]="row.confirmed" (click)="row.confirmed = !row.confirmed" [title]="row.confirmed ? 'Desconfirmar' : 'Confirmar'">
             <mat-icon>{{ row.confirmed ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
           </button>
+          <span class="row-name">{{ row.name }}</span>
         </div>
         <mat-button-toggle-group
           [value]="row.status"
