@@ -17,7 +17,7 @@
       <mat-card-content>
 
         <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Nombre *</mat-label>
+          <mat-label>Nombre</mat-label>
           <input matInput formControlName="name" placeholder="Ej. Fuerza Plantel Superior" />
           @if (form.get('name')?.hasError('required')) {
             <mat-error>El nombre es requerido</mat-error>
@@ -53,7 +53,7 @@
 
         <div class="routine-form__row">
           <mat-form-field appearance="outline" class="routine-form__field">
-            <mat-label>Válido desde *</mat-label>
+            <mat-label>Válido desde</mat-label>
             <input matInput formControlName="validFrom" placeholder="2025-01-01" />
             @if (form.get('validFrom')?.hasError('required')) {
               <mat-error>Fecha requerida (YYYY-MM-DD)</mat-error>
@@ -61,7 +61,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="routine-form__field">
-            <mat-label>Válido hasta *</mat-label>
+            <mat-label>Válido hasta</mat-label>
             <input matInput formControlName="validUntil" placeholder="2025-12-31" />
             @if (form.get('validUntil')?.hasError('required')) {
               <mat-error>Fecha requerida (YYYY-MM-DD)</mat-error>

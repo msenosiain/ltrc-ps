@@ -56,7 +56,7 @@ class RoutinesDataSource implements DataSource<Routine> {
   total = 0;
 
   private pageIndex = 0;
-  private pageSize = 10;
+  private pageSize = 25;
   private filters: Record<string, unknown> = {};
 
   constructor(private service: RoutinesService) {}

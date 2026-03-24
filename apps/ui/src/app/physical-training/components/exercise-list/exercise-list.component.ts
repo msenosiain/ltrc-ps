@@ -69,7 +69,7 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
-    this.dataSource.configure(0, 10, 'name', SortOrder.ASC);
+    this.dataSource.configure(0, 25, 'name', SortOrder.ASC);
     this.dataSource.load();
     this.cdr.detectChanges();
 

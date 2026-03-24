@@ -23,7 +23,7 @@ export class PlayersDataSource implements DataSource<Player> {
 
   private filters: PlayerFilters = {};
   private pageIndex = 0;
-  private pageSize = 10;
+  private pageSize = 50;
   private sortBy?: string;
   private sortOrder?: SortOrder;
 

@@ -70,7 +70,7 @@ export class TripListComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
-    const pageSize = s?.pageSize ?? 10;
+    const pageSize = s?.pageSize ?? 25;
 
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
@@ -128,7 +128,7 @@ export class TripListComponent implements AfterViewInit, OnDestroy {
     this.listState.save(TripListComponent.STATE_KEY, {
       filters: this.currentFilters,
       pageIndex: this.paginator?.pageIndex ?? 0,
-      pageSize: this.paginator?.pageSize ?? 10,
+      pageSize: this.paginator?.pageSize ?? 25,
       sortBy: this.sort?.active,
       sortOrder: this.sort?.direction as SortOrder,
     });

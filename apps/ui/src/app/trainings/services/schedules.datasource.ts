@@ -23,7 +23,7 @@ export class SchedulesDataSource implements DataSource<TrainingSchedule> {
 
   private filters: ScheduleFilters = {};
   private pageIndex = 0;
-  private pageSize = 10;
+  private pageSize = 25;
   private sortBy?: string;
   private sortOrder?: SortOrder;
 

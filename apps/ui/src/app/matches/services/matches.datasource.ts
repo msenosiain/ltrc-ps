@@ -19,7 +19,7 @@ export class MatchesDataSource implements DataSource<Match> {
 
   private filters: MatchFilters = {};
   private pageIndex = 0;
-  private pageSize = 10;
+  private pageSize = 25;
   private sortBy?: string;
   private sortOrder?: SortOrder;
 

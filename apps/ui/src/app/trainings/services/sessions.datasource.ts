@@ -23,7 +23,7 @@ export class SessionsDataSource implements DataSource<TrainingSession> {
 
   private filters: TrainingSessionFilters = {};
   private pageIndex = 0;
-  private pageSize = 10;
+  private pageSize = 25;
   private sortBy?: string;
   private sortOrder?: SortOrder;
 

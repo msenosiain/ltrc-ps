@@ -135,8 +135,8 @@
 
   <mat-paginator
     [length]="dataSource.total"
-    [pageSize]="savedState?.pageSize ?? 10"
-    [pageSizeOptions]="[5, 10, 20]"
+    [pageSize]="savedState?.pageSize ?? 50"
+    [pageSizeOptions]="[25, 50, 100]"
     showFirstLastButtons
   />
 </div>
