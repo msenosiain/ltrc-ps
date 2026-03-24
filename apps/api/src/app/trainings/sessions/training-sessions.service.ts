@@ -236,9 +236,10 @@ export class TrainingSessionsService {
             continue;
           }
           await this.sessionModel.findOneAndUpdate(
-            { schedule: schedule._id, date: current, startTime: slot.startTime },
+            { schedule: schedule._id, date: current },
             {
               $setOnInsert: {
+                startTime: slot.startTime,
                 endTime: slot.endTime,
                 sport: schedule.sport,
                 category: schedule.category,
