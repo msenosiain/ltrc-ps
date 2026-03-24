@@ -9,7 +9,7 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="exercise-form__form">
     <mat-form-field appearance="outline" class="exercise-form__field">
-      <mat-label>Nombre *</mat-label>
+      <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" placeholder="Ej. Sentadilla con barra" />
       @if (form.get('name')?.hasError('required')) {
         <mat-error>El nombre es requerido</mat-error>
@@ -17,7 +17,7 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="exercise-form__field">
-      <mat-label>Categoría *</mat-label>
+      <mat-label>Categoría</mat-label>
       <mat-select formControlName="category">
         @for (opt of categoryOptions; track opt.value) {
           <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
