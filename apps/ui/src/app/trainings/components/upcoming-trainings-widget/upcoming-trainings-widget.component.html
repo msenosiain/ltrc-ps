@@ -14,7 +14,7 @@
       <span class="date-value">{{ group.date }}</span>
     </div>
 
-    @for (t of group.trainings; track t.scheduleId + t.startTime) {
+    @for (t of group.trainings; track t.sessionId) {
     <div class="training-card">
       <div class="training-info">
         <span class="training-time">{{ t.startTime }} - {{ t.endTime }}</span>
@@ -41,7 +41,7 @@
         </button>
         }
 
-        @if (isStaff && t.sessionId) {
+        @if (isStaff) {
         <button mat-icon-button (click)="goToAttendance(t)" title="Pasar lista">
           <mat-icon>how_to_reg</mat-icon>
         </button>
@@ -50,7 +50,6 @@
         <button
           mat-icon-button
           title="Editar sesión"
-          [disabled]="materializingId === t.scheduleId + t.date"
           (click)="editSession(t)"
         >
           <mat-icon>edit</mat-icon>

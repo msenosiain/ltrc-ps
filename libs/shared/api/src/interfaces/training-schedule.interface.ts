@@ -15,8 +15,9 @@ export interface TrainingSchedule extends Document {
   readonly division?: string;
   readonly timeSlots: TimeSlot[];
   readonly isActive: boolean;
-  readonly validFrom?: Date;
-  readonly validUntil?: Date;
+  readonly validFrom?: string;
+  readonly validUntil?: string;
+  readonly generatedUntil?: string;
   readonly createdAt?: Date;
   readonly updatedAt?: Date;
 }

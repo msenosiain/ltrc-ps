@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TrainingScheduleEntity } from './schedules/schemas/training-schedule.entity';
 import { TrainingScheduleSchema } from './schedules/schemas/training-schedule.schema';
 import { TrainingSessionEntity } from './sessions/schemas/training-session.entity';
@@ -8,6 +9,7 @@ import { TrainingSchedulesController } from './schedules/training-schedules.cont
 import { TrainingSchedulesService } from './schedules/training-schedules.service';
 import { TrainingSessionsController } from './sessions/training-sessions.controller';
 import { TrainingSessionsService } from './sessions/training-sessions.service';
+import { TrainingsSchedulerService } from './trainings-scheduler.service';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PlayerSchema } from '../players/schemas/player.schema';
 import { User } from '../users/schemas/user.schema';
@@ -15,6 +17,7 @@ import { UserSchema } from '../users/schemas/user.schema';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MongooseModule.forFeature([
       {
         name: TrainingScheduleEntity.name,
@@ -39,7 +42,7 @@ import { UserSchema } from '../users/schemas/user.schema';
     ]),
   ],
   controllers: [TrainingSchedulesController, TrainingSessionsController],
-  providers: [TrainingSchedulesService, TrainingSessionsService],
+  providers: [TrainingSchedulesService, TrainingSessionsService, TrainingsSchedulerService],
   exports: [TrainingSchedulesService, TrainingSessionsService],
 })
 export class TrainingsModule {}

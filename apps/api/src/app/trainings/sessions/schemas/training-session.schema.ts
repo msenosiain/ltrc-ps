@@ -11,7 +11,7 @@ import { AttendanceEntrySchema } from '../../../shared/schemas/attendance-entry.
 export const TrainingSessionSchema = new Schema<TrainingSessionEntity>(
   {
     schedule: { type: Types.ObjectId, ref: TrainingScheduleEntity.name },
-    date: { type: Date, required: true },
+    date: { type: String, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     sport: { type: String, enum: Object.values(SportEnum), required: true },

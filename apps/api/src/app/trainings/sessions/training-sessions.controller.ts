@@ -16,7 +16,6 @@ import { PaginationDto } from '../../shared/pagination.dto';
 import { TrainingSessionFiltersDto } from './training-session-filter.dto';
 import { CreateTrainingSessionDto } from './dto/create-training-session.dto';
 import { UpdateTrainingSessionDto } from './dto/update-training-session.dto';
-import { ConfirmAttendanceDto } from './dto/confirm-attendance.dto';
 import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -34,13 +33,6 @@ export class TrainingSessionsController {
     @Req() req: Request
   ) {
     return this.sessionsService.findPaginated(pagination, (req as any).user);
-  }
-
-  @Post('materialize')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async materialize(@Body() body: { scheduleId: string; date: string }) {
-    return this.sessionsService.materialize(body.scheduleId, body.date);
   }
 
   @Get('upcoming')
@@ -84,16 +76,9 @@ export class TrainingSessionsController {
   @UseGuards(JwtAuthGuard)
   async confirmAttendance(
     @Param('id') id: string,
-    @Body() dto: ConfirmAttendanceDto,
     @Req() req: Request
   ) {
-    const sessionId = id === 'virtual' ? undefined : id;
-    return this.sessionsService.confirmAttendance(
-      sessionId,
-      dto.scheduleId,
-      dto.date,
-      (req as any).user
-    );
+    return this.sessionsService.confirmAttendance(id, (req as any).user);
   }
 
   @Delete(':id/confirm')

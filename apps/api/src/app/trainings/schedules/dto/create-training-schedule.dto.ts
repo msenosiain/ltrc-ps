@@ -1,7 +1,6 @@
 import {
   IsArray,
   IsBoolean,
-  IsDate,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -9,11 +8,10 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
   CategoryEnum,
   DayOfWeekEnum,
-  parseDate,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 
@@ -57,12 +55,12 @@ export class CreateTrainingScheduleDto {
   readonly isActive?: boolean;
 
   @IsOptional()
-  @Transform(({ value }) => parseDate(value))
-  @IsDate()
-  readonly validFrom?: Date;
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'validFrom must be in YYYY-MM-DD format' })
+  readonly validFrom?: string;
 
   @IsOptional()
-  @Transform(({ value }) => parseDate(value))
-  @IsDate()
-  readonly validUntil?: Date;
+  @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'validUntil must be in YYYY-MM-DD format' })
+  readonly validUntil?: string;
 }

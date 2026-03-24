@@ -17,8 +17,9 @@ export class TrainingScheduleEntity extends Document {
     location?: string;
   }[];
   isActive: boolean;
-  validFrom?: Date;
-  validUntil?: Date;
+  validFrom?: string;
+  validUntil?: string;
+  generatedUntil?: string;
   createdBy?: Types.ObjectId;
   updatedBy?: Types.ObjectId;
   createdAt: Date;

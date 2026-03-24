@@ -4,9 +4,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RoleEnum, TrainingSession, UpcomingTraining } from '@ltrc-campo/shared-api-model';
+import { RoleEnum, UpcomingTraining } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
-import { getCategoryLabel, getDayLabel } from '../../training-options';
+import { getCategoryLabel } from '../../training-options';
 import { getSportLabel } from '../../../common/sport-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../auth/auth.service';
@@ -43,7 +43,6 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
   isStaff = false;
   canConfirm = false;
   canEdit = false;
-  materializingId: string | null = null;
 
   ngOnInit(): void {
     const fieldRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
@@ -100,19 +99,20 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
     ];
 
     return Array.from(map.entries()).map(([date, items]) => {
-      const d = new Date(date + 'T12:00:00');
-      const today = new Date();
-      today.setHours(12, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      const d = new Date(date + 'T12:00:00Z');
+      const todayUTC = new Date();
+      const todayStr = todayUTC.toISOString().slice(0, 10);
+      const tomorrowDate = new Date(todayStr + 'T12:00:00Z');
+      tomorrowDate.setUTCDate(tomorrowDate.getUTCDate() + 1);
+      const tomorrowStr = tomorrowDate.toISOString().slice(0, 10);
 
       let dayLabel: string;
-      if (d.toDateString() === today.toDateString()) {
+      if (date === todayStr) {
         dayLabel = 'Hoy';
-      } else if (d.toDateString() === tomorrow.toDateString()) {
+      } else if (date === tomorrowStr) {
         dayLabel = 'Mañana';
       } else {
-        dayLabel = dayNames[d.getDay()];
+        dayLabel = dayNames[d.getUTCDay()];
       }
 
       return { date, dayLabel, trainings: items };
@@ -120,7 +120,7 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
   }
 
   toggleConfirm(training: UpcomingTraining): void {
-    if (training.confirmed && training.sessionId) {
+    if (training.confirmed) {
       this.sessionsService
         .cancelConfirmation(training.sessionId)
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -138,17 +138,12 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
         });
     } else {
       this.sessionsService
-        .confirmAttendance(
-          training.sessionId,
-          training.scheduleId,
-          training.date
-        )
+        .confirmAttendance(training.sessionId)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
-          next: (session) => {
+          next: () => {
             training.confirmed = true;
             training.confirmations++;
-            training.sessionId = session.id;
           },
           error: (err) =>
             this.snackBar.open(
@@ -161,46 +156,22 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
   }
 
   editSession(training: UpcomingTraining): void {
-    if (training.sessionId) {
-      this.router.navigate(['/dashboard/trainings/sessions', training.sessionId]);
-      return;
-    }
-    const key = training.scheduleId + training.date;
-    if (this.materializingId === key) return;
-    this.materializingId = key;
-    this.sessionsService
-      .materialize(training.scheduleId!, training.date)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (session: TrainingSession) => {
-          training.sessionId = session.id;
-          this.materializingId = null;
-          this.router.navigate(['/dashboard/trainings/sessions', session.id]);
-        },
-        error: () => {
-          this.materializingId = null;
-          this.snackBar.open('Error al crear la sesión', 'Cerrar', { duration: 3000 });
-        },
-      });
+    this.router.navigate(['/dashboard/trainings/sessions', training.sessionId]);
   }
 
   goToAttendance(training: UpcomingTraining): void {
-    if (training.sessionId) {
-      this.router.navigate([
-        '/dashboard/trainings/sessions',
-        training.sessionId,
-        'attendance',
-      ]);
-    }
+    this.router.navigate([
+      '/dashboard/trainings/sessions',
+      training.sessionId,
+      'attendance',
+    ]);
   }
 
   goToSession(training: UpcomingTraining): void {
-    if (training.sessionId) {
-      this.router.navigate([
-        '/dashboard/trainings/sessions',
-        training.sessionId,
-      ]);
-    }
+    this.router.navigate([
+      '/dashboard/trainings/sessions',
+      training.sessionId,
+    ]);
   }
 
   getCategoryLabel(training: UpcomingTraining): string {

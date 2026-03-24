@@ -12,7 +12,7 @@ export { AttendanceEntry };
 export interface TrainingSession extends Document {
   readonly id?: string;
   readonly schedule?: TrainingSchedule;
-  readonly date: Date;
+  readonly date: string;
   readonly startTime: string; // HH:mm
   readonly endTime: string; // HH:mm
   readonly sport: SportEnum;
@@ -35,15 +35,15 @@ export interface TrainingSessionFilters {
 }
 
 export interface UpcomingTraining {
-  scheduleId: string;
-  sessionId?: string;
-  date: string; // ISO date
+  sessionId: string;
+  date: string; // ISO date YYYY-MM-DD
   startTime: string;
   endTime: string;
   sport: SportEnum;
   category: CategoryEnum;
   division?: string;
   location?: string;
+  status: string;
   confirmations: number;
   confirmed?: boolean; // whether current user confirmed
 }

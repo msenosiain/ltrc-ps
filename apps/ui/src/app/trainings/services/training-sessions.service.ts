@@ -47,15 +47,10 @@ export class TrainingSessionsService {
     });
   }
 
-  confirmAttendance(
-    sessionId?: string,
-    scheduleId?: string,
-    date?: string
-  ): Observable<TrainingSession> {
-    const id = sessionId ?? 'virtual';
+  confirmAttendance(sessionId: string): Observable<TrainingSession> {
     return this.httpClient.post<TrainingSession>(
-      `${this.apiUrl}/${id}/confirm`,
-      { scheduleId, date }
+      `${this.apiUrl}/${sessionId}/confirm`,
+      {}
     );
   }
 
@@ -63,10 +58,6 @@ export class TrainingSessionsService {
     return this.httpClient.delete<TrainingSession>(
       `${this.apiUrl}/${sessionId}/confirm`
     );
-  }
-
-  materialize(scheduleId: string, date: string): Observable<TrainingSession> {
-    return this.httpClient.post<TrainingSession>(`${this.apiUrl}/materialize`, { scheduleId, date });
   }
 
   getStaffForSession(sessionId: string): Observable<{ id: string; name: string; roles: string[] }[]> {

@@ -41,21 +41,6 @@ export class TrainingSchedulesController {
     return this.schedulesService.create(dto, (req as any).user);
   }
 
-  @Get('upcoming')
-  @UseGuards(JwtAuthGuard)
-  async getUpcoming(
-    @Query('from') from: string,
-    @Query('to') to: string,
-    @Query('sport') sport?: string,
-    @Query('category') category?: string,
-    @Req() req?: Request
-  ) {
-    return this.schedulesService.getUpcoming(from, to, (req as any).user, {
-      sport,
-      category,
-    });
-  }
-
   @Get('field-options')
   async getFieldOptions() {
     return this.schedulesService.getFieldOptions();

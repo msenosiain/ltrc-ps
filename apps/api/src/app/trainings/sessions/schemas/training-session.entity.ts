@@ -11,7 +11,7 @@ import { PlayerEntity } from '../../../players/schemas/player.entity';
 export class TrainingSessionEntity extends Document {
   id: string;
   schedule?: PopulatedDoc<TrainingScheduleEntity & Document>;
-  date: Date;
+  date: string;
   startTime: string;
   endTime: string;
   sport: SportEnum;

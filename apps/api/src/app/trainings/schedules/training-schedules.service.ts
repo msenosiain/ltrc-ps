@@ -5,45 +5,28 @@ import { TrainingScheduleEntity } from './schemas/training-schedule.entity';
 import { PaginationDto } from '../../shared/pagination.dto';
 import { TrainingScheduleFiltersDto } from './training-schedule-filter.dto';
 import {
-  DayOfWeekEnum,
   PaginatedResponse,
   RoleEnum,
-  UpcomingTraining,
 } from '@ltrc-campo/shared-api-model';
 import { CreateTrainingScheduleDto } from './dto/create-training-schedule.dto';
 import { UpdateTrainingScheduleDto } from './dto/update-training-schedule.dto';
 import { User } from '../../users/schemas/user.schema';
-import { TrainingSessionEntity } from '../sessions/schemas/training-session.entity';
-
-function toLocalDateString(d: Date): string {
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-const DAY_INDEX: Record<DayOfWeekEnum, number> = {
-  [DayOfWeekEnum.SUNDAY]: 0,
-  [DayOfWeekEnum.MONDAY]: 1,
-  [DayOfWeekEnum.TUESDAY]: 2,
-  [DayOfWeekEnum.WEDNESDAY]: 3,
-  [DayOfWeekEnum.THURSDAY]: 4,
-  [DayOfWeekEnum.FRIDAY]: 5,
-  [DayOfWeekEnum.SATURDAY]: 6,
-};
+import { TrainingSessionsService } from '../sessions/training-sessions.service';
 
 @Injectable()
 export class TrainingSchedulesService {
   constructor(
     @InjectModel(TrainingScheduleEntity.name)
     private readonly scheduleModel: Model<TrainingScheduleEntity>,
-    @InjectModel(TrainingSessionEntity.name)
-    private readonly sessionModel: Model<TrainingSessionEntity>
+    private readonly sessionsService: TrainingSessionsService,
   ) {}
 
   async create(dto: CreateTrainingScheduleDto, caller?: User) {
     const callerId = caller ? (caller as any)._id : undefined;
-    return this.scheduleModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
+    const schedule = await this.scheduleModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
+    // Generate sessions for the next 60 days after creation
+    await this.sessionsService.generateForSchedule(schedule.id);
+    return schedule;
   }
 
   async findPaginated(
@@ -97,7 +80,11 @@ export class TrainingSchedulesService {
     if (!schedule) throw new NotFoundException('Training schedule not found');
     Object.assign(schedule, dto);
     if (caller) schedule.updatedBy = (caller as any)._id;
-    return schedule.save();
+    const saved = await schedule.save();
+    // Regenerate future sessions from today onwards
+    const today = new Date().toISOString().slice(0, 10);
+    await this.sessionsService.generateForSchedule(saved.id, today);
+    return saved;
   }
 
   async delete(id: string) {
@@ -111,105 +98,5 @@ export class TrainingSchedulesService {
       .distinct('timeSlots.location')
       .then((vals) => vals.filter(Boolean));
     return { locations };
-  }
-
-  async getUpcoming(
-    from: string,
-    to: string,
-    caller?: User,
-    filters?: { sport?: string; category?: string }
-  ): Promise<UpcomingTraining[]> {
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
-
-    const query: Record<string, unknown> = { isActive: true };
-
-    if (filters?.sport) query['sport'] = filters.sport;
-    if (filters?.category) query['category'] = filters.category;
-
-    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
-      if (caller.sports?.length) query['sport'] = { $in: caller.sports };
-      if (caller.categories?.length)
-        query['category'] = { $in: caller.categories };
-    }
-
-    // Also respect validFrom/validUntil
-    query['$or'] = [
-      { validFrom: { $exists: false } },
-      { validFrom: null },
-      { validFrom: { $lte: toDate } },
-    ];
-
-    const schedules = await this.scheduleModel.find(query).exec();
-
-    // Generate virtual sessions from schedules
-    const upcoming: UpcomingTraining[] = [];
-
-    for (const schedule of schedules) {
-      const validUntil = schedule.validUntil;
-
-      for (const slot of schedule.timeSlots) {
-        const dayIdx = DAY_INDEX[slot.day];
-        const current = new Date(fromDate);
-
-        while (current <= toDate) {
-          if (current.getDay() === dayIdx) {
-            if (validUntil && current > validUntil) break;
-
-            upcoming.push({
-              scheduleId: schedule.id,
-              date: toLocalDateString(current),
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-              sport: schedule.sport,
-              category: schedule.category,
-              division: schedule.division,
-              location: slot.location,
-              confirmations: 0,
-            });
-          }
-          current.setDate(current.getDate() + 1);
-        }
-      }
-    }
-
-    // Find existing materialized sessions in range
-    const existingSessions = await this.sessionModel
-      .find({
-        date: { $gte: fromDate, $lte: toDate },
-        schedule: { $in: schedules.map((s) => s._id) },
-      })
-      .exec();
-
-    // Merge: attach sessionId and confirmation count to virtual sessions
-    for (const session of existingSessions) {
-      const scheduleId =
-        typeof session.schedule === 'object'
-          ? (session.schedule as any)?._id?.toHexString?.() ??
-            String(session.schedule)
-          : String(session.schedule);
-      const sessionDate = toLocalDateString(session.date);
-
-      const match = upcoming.find(
-        (u) =>
-          u.scheduleId === scheduleId &&
-          u.date === sessionDate &&
-          u.startTime === session.startTime
-      );
-      if (match) {
-        match.sessionId = session.id;
-        match.confirmations = session.attendance.filter(
-          (a) => a.confirmed
-        ).length;
-      }
-    }
-
-    // Sort by date then startTime
-    upcoming.sort((a, b) => {
-      const dateDiff = a.date.localeCompare(b.date);
-      return dateDiff !== 0 ? dateDiff : a.startTime.localeCompare(b.startTime);
-    });
-
-    return upcoming;
   }
 }
