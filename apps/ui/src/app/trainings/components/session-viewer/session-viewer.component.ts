@@ -131,7 +131,7 @@ export class SessionViewerComponent implements OnInit {
       if (!result) return;
       this.sessionsService.updateSession(this.session!.id!, result).subscribe({
         next: (updated) => {
-          this.session = { ...this.session!, ...updated };
+          this.session = updated;
           this.snackBar.open('Sesión actualizada', 'Cerrar', { duration: 3000 });
         },
         error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
