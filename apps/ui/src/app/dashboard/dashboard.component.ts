@@ -18,17 +18,15 @@ import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { ViewAsRoleService } from '../auth/services/view-as-role.service';
+import { getRoleLabel } from '../users/user-options';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlayersService } from '../players/services/players.service';
 import { SidenavService } from '../common/services/sidenav.service';
 import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
 import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-matches-widget/upcoming-matches-widget.component';
 import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widget/my-matches-widget.component';
-import { roleOptions } from '../users/user-options';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -42,8 +40,6 @@ import { roleOptions } from '../users/user-options';
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
-    MatSelectModule,
-    MatTooltipModule,
     UpcomingTrainingsWidgetComponent,
     UpcomingMatchesWidgetComponent,
     MyMatchesWidgetComponent,
@@ -85,9 +81,10 @@ export class DashboardComponent implements OnInit {
     () => this.currentUser() !== null && !this.currentUser()?.hasPassword
   );
 
-  readonly viewAsRoleOptions = roleOptions.filter(
-    (r) => r.id !== RoleEnum.ADMIN
-  );
+  readonly viewAsRoleLabel = computed(() => {
+    const role = this.viewAsService.viewAsRole();
+    return role ? getRoleLabel(role) : null;
+  });
 
   myPlayerId = signal<string | null>(null);
 
@@ -103,10 +100,6 @@ export class DashboardComponent implements OnInit {
     if (this.isSmallScreen()) {
       this.sidenav?.close();
     }
-  }
-
-  onViewAsChange(role: RoleEnum | null): void {
-    this.viewAsService.set(role);
   }
 
   ngOnInit(): void {

@@ -7,8 +7,8 @@ import {
   ViewContainerRef,
   inject,
 } from '@angular/core';
-import { combineLatest, distinctUntilChanged, map, Subscription, tap } from 'rxjs';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { combineLatest, distinctUntilChanged, map, Subscription, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
 import { ViewAsRoleService } from '../services/view-as-role.service';
 import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
@@ -21,17 +21,19 @@ export type RoleRule = RoleEnum | { role: RoleEnum; sport: SportEnum };
 })
 export class AllowedRolesDirective implements OnInit, OnDestroy {
   @Input('ltrcAllowedRoles') allowedRoles?: RoleRule[];
-  private sub?: Subscription;
 
   private readonly authService = inject(AuthService);
   private readonly viewAsService = inject(ViewAsRoleService);
   private readonly viewContainerRef = inject(ViewContainerRef);
   private readonly templateRef = inject(TemplateRef<unknown>);
 
-  ngOnInit(): void {
-    const viewAsRole$ = toObservable(this.viewAsService.viewAsRole);
+  // toObservable must be called in injection context — field initializer qualifies
+  private readonly viewAsRole$ = toObservable(this.viewAsService.viewAsRole);
 
-    this.sub = combineLatest([this.authService.user$, viewAsRole$])
+  private sub?: Subscription;
+
+  ngOnInit(): void {
+    this.sub = combineLatest([this.authService.user$, this.viewAsRole$])
       .pipe(
         map(([user, viewAsRole]) => {
           if (!user) return false;

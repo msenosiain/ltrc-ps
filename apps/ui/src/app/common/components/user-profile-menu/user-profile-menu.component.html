@@ -1,6 +1,9 @@
 @if (currentUser(); as user) {
 <div class="user-info" [matMenuTriggerFor]="userMenu">
   <div class="user-name-row">
+    @if (viewAsService.viewAsRole()) {
+    <mat-icon class="view-as-indicator" matTooltip="Modo vista activo">visibility</mat-icon>
+    }
     <span class="user-name">{{ user.name }}</span>
     <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
   </div>
@@ -9,6 +12,23 @@
   }}</span>
 </div>
 <mat-menu #userMenu="matMenu">
+  @if (isAdmin()) {
+  <div class="view-as-menu-item" (click)="$event.stopPropagation()">
+    <mat-icon>visibility</mat-icon>
+    <span class="view-as-menu-label">Ver como</span>
+    <mat-select
+      [value]="viewAsService.viewAsRole()"
+      (valueChange)="viewAsService.set($event)"
+      class="view-as-menu-select"
+    >
+      <mat-option [value]="null">Rol real</mat-option>
+      @for (opt of viewAsRoleOptions; track opt.id) {
+      <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </div>
+  <mat-divider />
+  }
   @if (canSetPassword()) {
   <button mat-menu-item routerLink="/dashboard/set-password">
     <mat-icon>lock</mat-icon>
