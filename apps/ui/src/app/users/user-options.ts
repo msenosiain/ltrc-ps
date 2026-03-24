@@ -2,13 +2,13 @@ import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const roleOptions = [
   { id: RoleEnum.ADMIN, label: 'Administrador' },
-  { id: RoleEnum.MANAGER, label: 'Manager' },
   { id: RoleEnum.COORDINATOR, label: 'Coordinador' },
+  { id: RoleEnum.COACH, label: 'Entrenador' },
+  { id: RoleEnum.MANAGER, label: 'Manager' },
+  { id: RoleEnum.TRAINER, label: 'Preparador Físico' },
   { id: RoleEnum.ANALYST, label: 'Analista' },
   { id: RoleEnum.KINE, label: 'Kinesiólogo' },
   { id: RoleEnum.PLAYER, label: 'Jugador' },
-  { id: RoleEnum.COACH, label: 'Entrenador' },
-  { id: RoleEnum.TRAINER, label: 'Preparador Físico' },
 ];
 
 export function getRoleLabel(role: RoleEnum): string {
