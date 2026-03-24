@@ -101,6 +101,13 @@ export class SessionViewerComponent implements OnInit {
     return (this.session?.attendance ?? []).filter((a) => a.confirmed).length;
   }
 
+  get dayName(): string {
+    const date = this.session?.date as unknown as string | undefined;
+    if (!date) return '';
+    const d = new Date(date + 'T12:00:00Z');
+    return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][d.getUTCDay()];
+  }
+
   get presentCount(): number {
     return (this.session?.attendance ?? []).filter(
       (a) => a.status === 'present'

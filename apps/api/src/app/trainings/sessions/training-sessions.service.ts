@@ -64,7 +64,7 @@ export class TrainingSessionsService {
     pagination: PaginationDto<TrainingSessionFiltersDto>,
     caller?: User
   ): Promise<PaginatedResponse<unknown>> {
-    const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
+    const { page, size, filters = {}, sortBy, sortOrder = 'desc' } = pagination;
     const skip = (page - 1) * size;
 
     const queryFilters: Record<string, unknown> = {};

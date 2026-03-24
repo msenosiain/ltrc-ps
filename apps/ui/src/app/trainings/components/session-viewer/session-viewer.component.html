@@ -3,7 +3,7 @@
   <mat-card>
     <mat-card-content>
       <div class="session-header">
-        <h2>Entrenamiento — {{ session.date | date : 'dd/MM/yyyy' : 'UTC' }}</h2>
+        <h2>Entrenamiento — {{ dayName }} {{ session.date | date : 'dd/MM/yyyy' : 'UTC' }}</h2>
         <span class="status-badge status-{{ session.status }}">
           {{ getStatusLabel() }}
         </span>
