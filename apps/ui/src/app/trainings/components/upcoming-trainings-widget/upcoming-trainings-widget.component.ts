@@ -166,6 +166,7 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
       return;
     }
     const key = training.scheduleId + training.date;
+    if (this.materializingId === key) return;
     this.materializingId = key;
     this.sessionsService
       .materialize(training.scheduleId!, training.date)

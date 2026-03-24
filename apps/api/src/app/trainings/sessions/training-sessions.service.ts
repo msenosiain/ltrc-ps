@@ -471,28 +471,28 @@ export class TrainingSessionsService {
       throw new BadRequestException('No matching time slot for this date');
     }
 
-    // Check if already materialized
     const dayStart = new Date(year, month - 1, day, 0, 0, 0, 0);
-    const dayEnd = new Date(year, month - 1, day, 23, 59, 59, 999);
-    const existing = await this.sessionModel.findOne({
-      schedule: schedule._id,
-      date: { $gte: dayStart, $lt: dayEnd },
-      startTime: slot.startTime,
-    });
 
-    if (existing) return existing;
+    // Atomic upsert — prevents duplicates from concurrent requests
+    const result = await this.sessionModel.findOneAndUpdate(
+      { schedule: schedule._id, date: dayStart, startTime: slot.startTime },
+      {
+        $setOnInsert: {
+          schedule: schedule._id,
+          date: dayStart,
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+          sport: schedule.sport,
+          category: schedule.category,
+          division: schedule.division,
+          location: slot.location,
+          status: TrainingSessionStatusEnum.SCHEDULED,
+          attendance: [],
+        },
+      },
+      { upsert: true, new: true }
+    );
 
-    return this.sessionModel.create({
-      schedule: schedule._id,
-      date: dayStart,
-      startTime: slot.startTime,
-      endTime: slot.endTime,
-      sport: schedule.sport,
-      category: schedule.category,
-      division: schedule.division,
-      location: slot.location,
-      status: TrainingSessionStatusEnum.SCHEDULED,
-      attendance: [],
-    });
+    return result!;
   }
 }
