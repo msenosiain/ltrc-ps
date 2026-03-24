@@ -8,6 +8,11 @@
     margin-bottom: 1rem;
   }
 
+  &__actions {
+    display: flex;
+    gap: 8px;
+  }
+
   &__title {
     margin: 0;
   }
