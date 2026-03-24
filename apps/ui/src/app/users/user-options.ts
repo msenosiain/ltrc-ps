@@ -5,9 +5,9 @@ export const roleOptions = [
   { id: RoleEnum.COORDINATOR, label: 'Coordinador' },
   { id: RoleEnum.COACH, label: 'Entrenador' },
   { id: RoleEnum.MANAGER, label: 'Manager' },
-  { id: RoleEnum.TRAINER, label: 'Preparador Físico' },
   { id: RoleEnum.ANALYST, label: 'Analista' },
   { id: RoleEnum.KINE, label: 'Kinesiólogo' },
+  { id: RoleEnum.TRAINER, label: 'Preparador Físico' },
   { id: RoleEnum.PLAYER, label: 'Jugador' },
 ];
 
