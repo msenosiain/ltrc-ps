@@ -34,7 +34,7 @@ const categoryDefs: CategoryOption[] = [
   { id: CategoryEnum.DECIMA, label: '10ma', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.PRE_DECIMA, label: 'Pre-décima', sport: SportEnum.HOCKEY },
   { id: CategoryEnum.CUARTA, label: '4ta', sport: SportEnum.HOCKEY },
-  { id: CategoryEnum.MASTER, label: 'Máster', sport: SportEnum.HOCKEY },
+  { id: CategoryEnum.MASTER, label: 'Mamis', sport: SportEnum.HOCKEY },
 ];
 
 export const categoryOptions: CategoryOption[] = categoryDefs;
