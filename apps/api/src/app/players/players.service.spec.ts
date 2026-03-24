@@ -3,6 +3,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { PlayersService } from './players.service';
 import { PlayerEntity } from './schemas/player.entity';
+import { BranchAssignmentEntity } from '../branch-assignments/schemas/branch-assignment.entity';
 import { GridFsService } from '../shared/gridfs/gridfs.service';
 import { UsersService } from '../users/users.service';
 import {
@@ -39,6 +40,11 @@ const mockUsersService = {
   create: jest.fn(),
 };
 
+const mockBranchAssignmentModel = {
+  find: jest.fn(),
+  findOne: jest.fn(),
+};
+
 describe('PlayersService', () => {
   let service: PlayersService;
 
@@ -49,6 +55,7 @@ describe('PlayersService', () => {
       providers: [
         PlayersService,
         { provide: getModelToken(PlayerEntity.name), useValue: mockModel },
+        { provide: getModelToken(BranchAssignmentEntity.name), useValue: mockBranchAssignmentModel },
         { provide: GridFsService, useValue: mockGridFs },
         { provide: UsersService, useValue: mockUsersService },
       ],

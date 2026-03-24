@@ -16,6 +16,7 @@ describe('MatchesListComponent', () => {
       .mockReturnValue(of({ total: 0, items: [], page: 1, size: 10 })),
     getStatusLabel: jest.fn().mockReturnValue('Estado'),
     getTypeLabel: jest.fn().mockReturnValue('Tipo'),
+    getFieldOptions: jest.fn().mockReturnValue(of({ opponents: [], venues: [], divisions: [] })),
   } as Partial<MatchesService>;
 
   const tournamentsServiceMock = {
@@ -65,12 +66,12 @@ describe('MatchesListComponent', () => {
     expect(component.getResultLabel(match)).toBe('2 - 1');
   });
 
-  it('getResultLabel should invert result when away', () => {
+  it('getResultLabel should show home/away scores', () => {
     const match = {
       result: { homeScore: 2, awayScore: 1 },
       isHome: false,
     } as any;
-    expect(component.getResultLabel(match)).toBe('1 - 2');
+    expect(component.getResultLabel(match)).toBe('2 - 1');
   });
 
   it('isCompleted should return true only for completed status', () => {

@@ -91,12 +91,14 @@ describe('MatchesController', () => {
   });
 
   it('getOne() should return a match', async () => {
-    expect(await controller.getOne('match-1')).toEqual(mockMatch);
+    const mockReq = { user: { _id: 'user-1' } } as any;
+    expect(await controller.getOne('match-1', mockReq)).toEqual(mockMatch);
   });
 
   it('getOne() should propagate NotFoundException', async () => {
+    const mockReq = { user: { _id: 'user-1' } } as any;
     mockService.findOne.mockRejectedValueOnce(new NotFoundException());
-    await expect(controller.getOne('bad-id')).rejects.toThrow(
+    await expect(controller.getOne('bad-id', mockReq)).rejects.toThrow(
       NotFoundException
     );
   });

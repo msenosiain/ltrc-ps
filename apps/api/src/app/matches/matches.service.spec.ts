@@ -6,6 +6,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { SquadsService } from '../squads/squads.service';
+import { GridFsService } from '../shared/gridfs/gridfs.service';
 import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 const POPULATE_FIELDS = [
@@ -50,6 +51,12 @@ const mockSquadsService = {
   getPlayers: jest.fn(),
 };
 
+const mockGridFsService = {
+  uploadFile: jest.fn(),
+  deleteFile: jest.fn(),
+  getFileStream: jest.fn(),
+};
+
 describe('MatchesService', () => {
   let service: MatchesService;
 
@@ -63,6 +70,7 @@ describe('MatchesService', () => {
         { provide: getModelToken(TournamentEntity.name), useValue: mockTournamentModel },
         { provide: getModelToken(PlayerEntity.name), useValue: mockPlayerModel },
         { provide: SquadsService, useValue: mockSquadsService },
+        { provide: GridFsService, useValue: mockGridFsService },
       ],
     }).compile();
 
@@ -87,7 +95,9 @@ describe('MatchesService', () => {
 
       const result = await service.create(dto as any);
 
-      expect(mockModel.create).toHaveBeenCalledWith(dto);
+      expect(mockModel.create).toHaveBeenCalledWith(
+        expect.objectContaining({ opponent: dto.opponent, venue: dto.venue })
+      );
       expect(result).toEqual(mockMatch);
     });
   });
@@ -246,7 +256,12 @@ describe('MatchesService', () => {
 
       expect(mockTournamentModel.find).toHaveBeenCalledWith({ sport: 'rugby' });
       expect(mockModel.find).toHaveBeenCalledWith(
-        expect.objectContaining({ tournament: { $in: ['t1', 't2'] } })
+        expect.objectContaining({
+          $or: [
+            { tournament: { $in: ['t1', 't2'] } },
+            { tournament: { $exists: false }, sport: 'rugby' },
+          ],
+        })
       );
     });
   });

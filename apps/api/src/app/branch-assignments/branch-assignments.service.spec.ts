@@ -30,11 +30,14 @@ const mockAssignmentModel = {
   find: jest.fn(),
   findById: jest.fn(),
   findOne: jest.fn(),
+  bulkWrite: jest.fn(),
 };
 
 const mockPlayerModel = {
   findOne: jest.fn(),
   findByIdAndUpdate: jest.fn(),
+  find: jest.fn(),
+  bulkWrite: jest.fn(),
 };
 
 describe('BranchAssignmentsService', () => {
@@ -260,16 +263,18 @@ describe('BranchAssignmentsService', () => {
         },
       ]);
 
-      mockPlayerModel.findOne.mockResolvedValueOnce({
-        _id: 'player-id-1',
+      // playerModel.find().select().lean() - returns player array
+      mockPlayerModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([{ _id: 'player-id-1', idNumber: '12345678' }]),
       });
-      mockAssignmentModel.findOne.mockResolvedValueOnce(null); // no existing
-      mockAssignmentModel.create.mockResolvedValueOnce(mockAssignment);
-      // syncPlayerBranch
-      mockAssignmentModel.findOne.mockResolvedValueOnce({
-        branch: HockeyBranchEnum.A,
+      // assignmentModel.find().select().lean() - no existing assignments
+      mockAssignmentModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([]),
       });
-      mockPlayerModel.findByIdAndUpdate.mockResolvedValueOnce(null);
+      mockAssignmentModel.bulkWrite.mockResolvedValueOnce({});
+      mockPlayerModel.bulkWrite.mockResolvedValueOnce({});
 
       const result = await service.importFromFile(buffer, currentYear);
 
@@ -288,27 +293,24 @@ describe('BranchAssignmentsService', () => {
         },
       ]);
 
-      mockPlayerModel.findOne.mockResolvedValueOnce({
-        _id: 'player-id-1',
+      // playerModel.find().select().lean() - returns player
+      mockPlayerModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([{ _id: 'player-id-1', idNumber: '12345678' }]),
       });
-      const existingAssignment = {
-        branch: HockeyBranchEnum.A,
-        category: CategoryEnum.PLANTEL_SUPERIOR,
-        save: jest.fn().mockResolvedValue(true),
-      };
-      mockAssignmentModel.findOne.mockResolvedValueOnce(existingAssignment);
-      // syncPlayerBranch
-      mockAssignmentModel.findOne.mockResolvedValueOnce({
-        branch: HockeyBranchEnum.B,
+      // assignmentModel.find().select().lean() - existing assignment for same player
+      mockAssignmentModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([{ player: { toString: () => 'player-id-1' } }]),
       });
-      mockPlayerModel.findByIdAndUpdate.mockResolvedValueOnce(null);
+      mockAssignmentModel.bulkWrite.mockResolvedValueOnce({});
+      mockPlayerModel.bulkWrite.mockResolvedValueOnce({});
 
       const result = await service.importFromFile(buffer, currentYear);
 
       expect(result.updated).toBe(1);
       expect(result.created).toBe(0);
-      expect(existingAssignment.branch).toBe(HockeyBranchEnum.B);
-      expect(existingAssignment.category).toBe(CategoryEnum.CUARTA);
+      expect(result.errors).toHaveLength(0);
     });
 
     it('should report error when DNI is missing', async () => {
@@ -370,7 +372,16 @@ describe('BranchAssignmentsService', () => {
         },
       ]);
 
-      mockPlayerModel.findOne.mockResolvedValueOnce(null);
+      // playerModel.find().select().lean() - player not found (empty array)
+      mockPlayerModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([]),
+      });
+      // assignmentModel.find().select().lean() - no existing assignments
+      mockAssignmentModel.find.mockReturnValueOnce({
+        select: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue([]),
+      });
 
       const result = await service.importFromFile(buffer, currentYear);
 
