@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { RoleEnum, UpcomingTraining } from '@ltrc-campo/shared-api-model';
+import { RoleEnum, TrainingSession, UpcomingTraining } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { getCategoryLabel, getDayLabel } from '../../training-options';
 import { getSportLabel } from '../../../common/sport-options';
@@ -42,6 +42,8 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
   loading = true;
   isStaff = false;
   canConfirm = false;
+  canEdit = false;
+  materializingId: string | null = null;
 
   ngOnInit(): void {
     const fieldRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
@@ -55,6 +57,7 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
             [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER].includes(r)
           );
           this.canConfirm = roles.some((r) => fieldRoles.includes(r));
+          this.canEdit = roles.some((r) => [RoleEnum.ADMIN, RoleEnum.MANAGER].includes(r));
         }
       });
 
@@ -155,6 +158,29 @@ export class UpcomingTrainingsWidgetComponent implements OnInit {
             ),
         });
     }
+  }
+
+  editSession(training: UpcomingTraining): void {
+    if (training.sessionId) {
+      this.router.navigate(['/dashboard/trainings/sessions', training.sessionId]);
+      return;
+    }
+    const key = training.scheduleId + training.date;
+    this.materializingId = key;
+    this.sessionsService
+      .materialize(training.scheduleId!, training.date)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (session: TrainingSession) => {
+          training.sessionId = session.id;
+          this.materializingId = null;
+          this.router.navigate(['/dashboard/trainings/sessions', session.id]);
+        },
+        error: () => {
+          this.materializingId = null;
+          this.snackBar.open('Error al crear la sesión', 'Cerrar', { duration: 3000 });
+        },
+      });
   }
 
   goToAttendance(training: UpcomingTraining): void {

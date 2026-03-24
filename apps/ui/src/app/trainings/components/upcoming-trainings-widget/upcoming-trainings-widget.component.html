@@ -46,6 +46,16 @@
           <mat-icon>how_to_reg</mat-icon>
         </button>
         }
+        @if (canEdit) {
+        <button
+          mat-icon-button
+          title="Editar sesión"
+          [disabled]="materializingId === t.scheduleId + t.date"
+          (click)="editSession(t)"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        }
       </div>
     </div>
     }

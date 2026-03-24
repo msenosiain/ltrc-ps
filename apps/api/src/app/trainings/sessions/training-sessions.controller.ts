@@ -36,6 +36,13 @@ export class TrainingSessionsController {
     return this.sessionsService.findPaginated(pagination, (req as any).user);
   }
 
+  @Post('materialize')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async materialize(@Body() body: { scheduleId: string; date: string }) {
+    return this.sessionsService.materialize(body.scheduleId, body.date);
+  }
+
   @Get('upcoming')
   @UseGuards(JwtAuthGuard)
   async getUpcoming(@Query('days') days?: string, @Req() req?: Request) {

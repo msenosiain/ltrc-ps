@@ -30,49 +30,8 @@ export interface SessionEditDialogResult {
     MatSelectModule,
     MatButtonModule,
   ],
-  template: `
-    <h2 mat-dialog-title>Editar sesión</h2>
-    <mat-dialog-content>
-      <form [formGroup]="form" class="form">
-        <div class="time-row">
-          <mat-form-field>
-            <mat-label>Inicio</mat-label>
-            <input matInput formControlName="startTime" placeholder="HH:mm" />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Fin</mat-label>
-            <input matInput formControlName="endTime" placeholder="HH:mm" />
-          </mat-form-field>
-        </div>
-        <mat-form-field class="full-width">
-          <mat-label>Ubicación</mat-label>
-          <input matInput formControlName="location" />
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <mat-label>Estado</mat-label>
-          <mat-select formControlName="status">
-            <mat-option value="scheduled">Programado</mat-option>
-            <mat-option value="completed">Completado</mat-option>
-            <mat-option value="cancelled">Cancelado</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field class="full-width">
-          <mat-label>Notas</mat-label>
-          <textarea matInput formControlName="notes" rows="3"></textarea>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancelar</button>
-      <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">Guardar</button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .form { display: flex; flex-direction: column; gap: 4px; min-width: 320px; padding-top: 8px; }
-    .time-row { display: flex; gap: 16px; }
-    .time-row mat-form-field { flex: 1; }
-    .full-width { width: 100%; }
-  `],
+  templateUrl: './session-edit-dialog.component.html',
+  styleUrl: './session-edit-dialog.component.scss',
 })
 export class SessionEditDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<SessionEditDialogComponent>);
@@ -80,8 +39,8 @@ export class SessionEditDialogComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly form = this.fb.group({
-    startTime: [this.data.session.startTime, [Validators.required, Validators.pattern(/^\d{2}:\d{2}$/)]],
-    endTime: [this.data.session.endTime, [Validators.required, Validators.pattern(/^\d{2}:\d{2}$/)]],
+    startTime: [this.data.session.startTime, Validators.required],
+    endTime: [this.data.session.endTime, Validators.required],
     location: [this.data.session.location ?? ''],
     status: [this.data.session.status ?? TrainingSessionStatusEnum.SCHEDULED, Validators.required],
     notes: [this.data.session.notes ?? ''],

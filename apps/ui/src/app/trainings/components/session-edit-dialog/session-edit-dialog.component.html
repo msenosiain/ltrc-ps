@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Editar sesión</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="session-edit-form">
+    <div class="time-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Inicio</mat-label>
+        <input matInput type="time" formControlName="startTime" />
+        @if (form.get('startTime')?.invalid) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fin</mat-label>
+        <input matInput type="time" formControlName="endTime" />
+        @if (form.get('endTime')?.invalid) {
+          <mat-error>Requerido</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="scheduled">Programado</mat-option>
+        <mat-option value="completed">Completado</mat-option>
+        <mat-option value="cancelled">Cancelado</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Ubicación</mat-label>
+      <input matInput formControlName="location" placeholder="Ej: Cancha principal" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Notas</mat-label>
+      <textarea matInput formControlName="notes" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">Guardar</button>
+</mat-dialog-actions>

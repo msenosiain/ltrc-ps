@@ -443,6 +443,14 @@ export class TrainingSessionsService {
   }
 
   /**
+   * Explicitly materialize a session (without adding attendance).
+   * Idempotent: returns existing session if already materialized.
+   */
+  async materialize(scheduleId: string, date: string): Promise<TrainingSessionEntity> {
+    return this.materializeSession(scheduleId, date);
+  }
+
+  /**
    * Materialize a session from a schedule for a specific date.
    */
   private async materializeSession(

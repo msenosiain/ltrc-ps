@@ -63,6 +63,10 @@ export class TrainingSessionsService {
     );
   }
 
+  materialize(scheduleId: string, date: string): Observable<TrainingSession> {
+    return this.httpClient.post<TrainingSession>(`${this.apiUrl}/materialize`, { scheduleId, date });
+  }
+
   getStaffForSession(sessionId: string): Observable<{ id: string; name: string; roles: string[] }[]> {
     return this.httpClient.get<{ id: string; name: string; roles: string[] }[]>(
       `${this.apiUrl}/${sessionId}/staff-options`
