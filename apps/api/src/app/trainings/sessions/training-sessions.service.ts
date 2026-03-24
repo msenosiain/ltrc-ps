@@ -488,14 +488,11 @@ export class TrainingSessionsService {
 
     const dayStart = new Date(year, month - 1, day, 0, 0, 0, 0);
 
-    // Atomic upsert — prevents duplicates from concurrent requests
+    // Atomic upsert — filter fields are merged automatically by MongoDB on insert
     const result = await this.sessionModel.findOneAndUpdate(
       { schedule: schedule._id, date: dayStart, startTime: slot.startTime },
       {
         $setOnInsert: {
-          schedule: schedule._id,
-          date: dayStart,
-          startTime: slot.startTime,
           endTime: slot.endTime,
           sport: schedule.sport,
           category: schedule.category,
