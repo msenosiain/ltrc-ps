@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -84,21 +85,18 @@ export class MatchSearchComponent implements OnInit {
       this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
     }
 
-    this.tournamentsService
-      .getTournaments({ page: 1, size: 1000 })
-      .pipe(map((res) => res.items))
-      .subscribe((t) => (this.allTournaments = t));
-
-    this.matchesService
-      .getFieldOptions()
-      .subscribe(({ opponents, tournamentIds }) => {
-        this.opponents = opponents.sort();
-        if (tournamentIds) {
-          this.tournaments = this.allTournaments.filter((t) => tournamentIds.includes(t.id!));
-        } else {
-          this.tournaments = this.allTournaments;
-        }
-      });
+    forkJoin({
+      allTournaments: this.tournamentsService.getTournaments({ page: 1, size: 1000 }).pipe(map((res) => res.items)),
+      fieldOptions: this.matchesService.getFieldOptions(),
+    }).subscribe(({ allTournaments, fieldOptions }) => {
+      this.allTournaments = allTournaments;
+      this.opponents = fieldOptions.opponents.sort();
+      if (fieldOptions.tournamentIds) {
+        this.tournaments = allTournaments.filter((t) => fieldOptions.tournamentIds!.includes(t.id!));
+      } else {
+        this.tournaments = allTournaments;
+      }
+    });
 
     this.filterContext.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))
