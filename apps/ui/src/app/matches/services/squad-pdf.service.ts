@@ -3,6 +3,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
 import { Match, SquadEntry } from '@ltrc-campo/shared-api-model';
+import { getCategoryLabel } from '../../common/category-options';
 
 @Injectable({ providedIn: 'root' })
 export class SquadPdfService {
@@ -76,9 +77,11 @@ export class SquadPdfService {
 
     const row = (label: string, value: string, x: number, yy: number) => {
       doc.setFont('helvetica', 'bold');
-      doc.text(`${label}:`, x, yy);
+      const labelText = `${label}: `;
+      const labelW = doc.getTextWidth(labelText);
+      doc.text(labelText, x, yy);
       doc.setFont('helvetica', 'normal');
-      doc.text(value, x + doc.getTextWidth(`${label}: `), yy);
+      doc.text(value, x + labelW, yy);
     };
 
     row('Fecha', dateStr, col1x, y);
@@ -87,7 +90,7 @@ export class SquadPdfService {
     row('Sede', match.venue ?? '—', col1x, y);
     row('Rival', rival, col2x, y);
     y += lineH;
-    row('Categoría', match.category ?? '—', col1x, y);
+    row('Categoría', getCategoryLabel(match.category) || '—', col1x, y);
     row('División', match.division ?? '—', col2x, y);
     y += lineH;
     row('Torneo', torneo, col1x, y);
