@@ -112,10 +112,11 @@ export class MatchesService {
     return this.httpClient.delete<void>(`${this.matchesApiUrl}/${matchId}/videos/${videoId}`);
   }
 
-  uploadAttachment(matchId: string, file: File, name?: string): Observable<MatchAttachment> {
+  uploadAttachment(matchId: string, file: File, name?: string, visibility = 'all'): Observable<MatchAttachment> {
     const form = new FormData();
     form.append('file', file);
     if (name) form.append('name', name);
+    form.append('visibility', visibility);
     return this.httpClient.post<MatchAttachment>(
       `${this.matchesApiUrl}/${matchId}/attachments`,
       form

@@ -32,6 +32,14 @@
           }
         </span>
       </div>
+      <div class="match-icons">
+        @if (hasVisibleAttachments(match)) {
+          <mat-icon class="match-icon" [matTooltip]="getAttachmentsTooltip(match)" matTooltipClass="multiline-tooltip">attach_file</mat-icon>
+        }
+        @if (hasVisibleVideos(match)) {
+          <mat-icon class="match-icon" [matTooltip]="getVideosTooltip(match)" matTooltipClass="multiline-tooltip">smart_display</mat-icon>
+        }
+      </div>
     </div>
     }
   </div>

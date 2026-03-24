@@ -191,7 +191,7 @@ export class MatchViewerComponent implements OnInit {
     ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
       if (!result) return;
       this.uploadingAttachment = true;
-      this.matchesService.uploadAttachment(this.match!.id!, result.file, result.name).subscribe({
+      this.matchesService.uploadAttachment(this.match!.id!, result.file, result.name, result.visibility).subscribe({
         next: (att) => {
           (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
           this.uploadingAttachment = false;
@@ -249,6 +249,12 @@ export class MatchViewerComponent implements OnInit {
   getVisibilityLabel(video: VideoClip): string {
     if (video.visibility === 'staff') return 'Solo staff';
     if (video.visibility === 'players') return 'Jugadores específicos';
+    return 'Todos';
+  }
+
+  getAttachmentVisibilityLabel(att: MatchAttachment): string {
+    if (att.visibility === 'staff') return 'Solo staff';
+    if (att.visibility === 'players') return 'Jugadores';
     return 'Todos';
   }
 

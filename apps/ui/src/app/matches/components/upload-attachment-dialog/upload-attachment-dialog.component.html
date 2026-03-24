@@ -10,6 +10,15 @@
       }
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Visibilidad</mat-label>
+      <mat-select formControlName="visibility">
+        <mat-option value="all">Todos</mat-option>
+        <mat-option value="staff">Solo staff</mat-option>
+        <mat-option value="players">Jugadores</mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <div class="file-picker">
       <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
       <button mat-stroked-button type="button" (click)="fileInput.click()">

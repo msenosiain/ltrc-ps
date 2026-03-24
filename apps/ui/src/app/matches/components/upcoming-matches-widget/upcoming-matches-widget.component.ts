@@ -1,15 +1,19 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, computed, inject, OnInit, DestroyRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   CategoryEnum,
   Match,
+  MatchAttachment,
   MatchStatusEnum,
   RoleEnum,
   SortOrder,
   SportEnum,
+  VideoClip,
 } from '@ltrc-campo/shared-api-model';
 import { MatchesService } from '../../services/matches.service';
 import { getCategoryLabel } from '../../match-options';
@@ -31,7 +35,7 @@ interface GroupedMatches {
 @Component({
   selector: 'ltrc-upcoming-matches-widget',
   standalone: true,
-  imports: [DatePipe, MatIconModule, MatProgressBarModule],
+  imports: [DatePipe, MatIconModule, MatProgressBarModule, MatTooltipModule],
   templateUrl: './upcoming-matches-widget.component.html',
   styleUrl: './upcoming-matches-widget.component.scss',
 })
@@ -42,6 +46,11 @@ export class UpcomingMatchesWidgetComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly currentUser = toSignal(this.authService.user$);
+  private readonly isPlayer = computed(
+    () => this.currentUser()?.roles?.includes(RoleEnum.PLAYER) ?? false
+  );
 
   grouped: GroupedMatches[] = [];
   loading = true;
@@ -145,5 +154,36 @@ export class UpcomingMatchesWidgetComponent implements OnInit {
 
   goToMatch(matchId: string): void {
     this.router.navigate(['/dashboard/matches', matchId]);
+  }
+
+  getAttachmentsTooltip(match: Match): string {
+    const isPlayer = this.isPlayer();
+    return (match.attachments ?? [])
+      .filter((a: MatchAttachment) => {
+        const v = a.visibility ?? 'all';
+        if (isPlayer) return v === 'all' || v === 'players';
+        return v === 'all' || v === 'staff' || v === 'players';
+      })
+      .map((a: MatchAttachment) => `• ${a.name || a.filename}`)
+      .join('\n');
+  }
+
+  hasVisibleAttachments(match: Match): boolean {
+    return this.getAttachmentsTooltip(match).length > 0;
+  }
+
+  getVideosTooltip(match: Match): string {
+    const isPlayer = this.isPlayer();
+    return (match.videos ?? [])
+      .filter((v: VideoClip) => {
+        if (isPlayer) return v.visibility === 'all' || v.visibility === 'players';
+        return true;
+      })
+      .map((v: VideoClip) => `• ${v.name}`)
+      .join('\n');
+  }
+
+  hasVisibleVideos(match: Match): boolean {
+    return this.getVideosTooltip(match).length > 0;
   }
 }

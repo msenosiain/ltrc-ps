@@ -5,10 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { VideoVisibility } from '@ltrc-campo/shared-api-model';
 
 export interface UploadAttachmentResult {
   file: File;
   name: string;
+  visibility: VideoVisibility;
 }
 
 @Component({
@@ -21,6 +24,7 @@ export interface UploadAttachmentResult {
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatSelectModule,
   ],
   templateUrl: './upload-attachment-dialog.component.html',
 })
@@ -30,6 +34,7 @@ export class UploadAttachmentDialogComponent {
 
   readonly form = this.fb.group({
     name: ['', Validators.required],
+    visibility: ['all' as VideoVisibility, Validators.required],
   });
 
   selectedFile: File | null = null;
@@ -46,7 +51,11 @@ export class UploadAttachmentDialogComponent {
 
   confirm(): void {
     if (this.form.invalid || !this.selectedFile) return;
-    this.dialogRef.close({ file: this.selectedFile, name: this.form.get('name')!.value } as UploadAttachmentResult);
+    this.dialogRef.close({
+      file: this.selectedFile,
+      name: this.form.get('name')!.value,
+      visibility: this.form.get('visibility')!.value,
+    } as UploadAttachmentResult);
   }
 
   cancel(): void {

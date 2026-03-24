@@ -206,15 +206,21 @@
             <span>{{ att.name || att.filename }}</span>
           </a>
           }
-          <button
-            *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
-            mat-icon-button
-            class="attachment-delete"
-            (click)="deleteAttachment(att.fileId)"
-            title="Eliminar"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div class="attachment-footer">
+            <span
+              *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN, RoleEnum.ANALYST]"
+              class="visibility-badge visibility-{{ att.visibility ?? 'all' }}"
+            >{{ getAttachmentVisibilityLabel(att) }}</span>
+            <button
+              *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
+              mat-icon-button
+              class="attachment-delete"
+              (click)="deleteAttachment(att.fileId)"
+              title="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </div>
         }
       </div>

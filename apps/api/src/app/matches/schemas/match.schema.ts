@@ -61,7 +61,7 @@ export const MatchSchema = new Schema<MatchEntity>(
     attendance: [AttendanceEntrySchema],
     attachments: [
       new Schema(
-        { fileId: { type: String, required: true }, filename: { type: String, required: true }, mimeType: { type: String, required: true }, name: { type: String } },
+        { fileId: { type: String, required: true }, filename: { type: String, required: true }, mimeType: { type: String, required: true }, name: { type: String }, visibility: { type: String, enum: ['all', 'staff', 'players'], default: 'all' } },
         { _id: false }
       ),
     ],

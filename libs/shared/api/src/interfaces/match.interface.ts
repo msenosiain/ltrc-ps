@@ -35,6 +35,7 @@ export interface MatchAttachment {
   filename: string;
   mimeType: string;
   name?: string;
+  visibility?: VideoVisibility;
 }
 
 export interface Match extends Document {

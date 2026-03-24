@@ -82,6 +82,22 @@
   color: var(--mat-app-on-surface-variant, #666);
 }
 
+.match-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.match-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--mat-app-on-surface-variant, #888);
+  cursor: default;
+}
+
 .venue-badge {
   display: inline-flex;
   align-items: center;
