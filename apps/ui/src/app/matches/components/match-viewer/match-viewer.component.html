@@ -239,18 +239,7 @@
   <!-- ── VIDEOS ── -->
   <mat-card class="videos-card">
     <mat-card-content>
-      <div class="section-header">
-        <p class="section-title">Videos</p>
-        <button
-          *ltrcAllowedRoles="[RoleEnum.ANALYST, RoleEnum.MANAGER, RoleEnum.ADMIN]"
-          mat-icon-button
-          type="button"
-          (click)="openVideoDialog()"
-          matTooltip="Agregar video"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+      <p class="section-title">Videos</p>
 
       @if (!match!.videos?.length) {
         <p class="empty-message">Sin videos cargados.</p>
@@ -285,6 +274,18 @@
           </div>
         </div>
         }
+      </div>
+
+      <div class="squad-card-actions">
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ANALYST, RoleEnum.MANAGER, RoleEnum.ADMIN]"
+          mat-stroked-button
+          type="button"
+          (click)="openVideoDialog()"
+        >
+          <mat-icon>videocam</mat-icon>
+          Agregar video
+        </button>
       </div>
     </mat-card-content>
   </mat-card>
