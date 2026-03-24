@@ -30,12 +30,15 @@ import { ImportPlayerRow, PadronRow, SurveyRow } from './dto/import-player.dto';
 import * as XLSX from 'xlsx';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/schemas/user.schema';
+import { BranchAssignmentEntity } from '../branch-assignments/schemas/branch-assignment.entity';
 
 @Injectable()
 export class PlayersService {
   constructor(
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
+    @InjectModel(BranchAssignmentEntity.name)
+    private readonly branchAssignmentModel: Model<BranchAssignmentEntity>,
     private readonly gridFsService: GridFsService,
     private readonly usersService: UsersService
   ) {}
@@ -129,8 +132,9 @@ export class PlayersService {
       player.userId = (user as any)._id;
     }
 
+    let saved;
     try {
-      return await player.save();
+      saved = await player.save();
     } catch (err: any) {
       if (err?.code === 11000) {
         const field = Object.keys(err.keyPattern ?? {})[0];
@@ -141,6 +145,22 @@ export class PlayersService {
       }
       throw err;
     }
+
+    if (dto.branch && saved.sport === SportEnum.HOCKEY && saved.category) {
+      const season = new Date().getFullYear();
+      await this.branchAssignmentModel.findOneAndUpdate(
+        { player: saved._id, season },
+        {
+          branch: dto.branch,
+          category: saved.category,
+          sport: SportEnum.HOCKEY,
+          assignedAt: new Date(),
+        },
+        { upsert: true }
+      );
+    }
+
+    return saved;
   }
 
   async findPaginated(
