@@ -138,6 +138,11 @@ export class TrainingSessionsService {
   async delete(id: string) {
     const session = await this.sessionModel.findById(id);
     if (!session) throw new NotFoundException('Training session not found');
+    // Soft-delete: mark as CANCELLED so the scheduler doesn't recreate it on restart
+    if (session.schedule) {
+      session.status = TrainingSessionStatusEnum.CANCELLED;
+      return session.save();
+    }
     return session.deleteOne();
   }
 
