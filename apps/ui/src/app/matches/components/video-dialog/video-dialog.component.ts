@@ -32,6 +32,7 @@ export interface VideoDialogResult {
     MatSelectModule,
   ],
   templateUrl: './video-dialog.component.html',
+  styleUrl: './video-dialog.component.scss',
 })
 export class VideoDialogComponent {
   private readonly fb = inject(FormBuilder);
