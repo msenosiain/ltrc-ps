@@ -74,7 +74,7 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
     const pageIndex = s?.pageIndex ?? 0;
     const pageSize = s?.pageSize ?? 10;
     const sortBy = s?.sortBy || 'date';
-    const sortOrder = (s?.sortOrder as SortOrder) || SortOrder.DESC;
+    const sortOrder = (s?.sortOrder as SortOrder) || SortOrder.ASC;
 
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
@@ -82,6 +82,7 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
     this.sort.direction = sortOrder as '' | 'asc' | 'desc';
 
     this.dataSource.configure(pageIndex, pageSize, sortBy, sortOrder);
+    this.dataSource.load();
     this.cdr.detectChanges();
 
     this.sort.sortChange.subscribe(() => {

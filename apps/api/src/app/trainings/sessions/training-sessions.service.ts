@@ -64,7 +64,7 @@ export class TrainingSessionsService {
     pagination: PaginationDto<TrainingSessionFiltersDto>,
     caller?: User
   ): Promise<PaginatedResponse<unknown>> {
-    const { page, size, filters = {}, sortBy, sortOrder = 'desc' } = pagination;
+    const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
     const skip = (page - 1) * size;
 
     const queryFilters: Record<string, unknown> = {};
@@ -102,7 +102,7 @@ export class TrainingSessionsService {
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
     } else {
-      sort['date'] = -1;
+      sort['date'] = 1;
     }
 
     const [items, total] = await Promise.all([

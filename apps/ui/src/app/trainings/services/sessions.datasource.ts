@@ -68,7 +68,7 @@ export class SessionsDataSource implements DataSource<TrainingSession> {
     this.load();
   }
 
-  private load(): void {
+  load(): void {
     this.loadingSubject.next(true);
 
     const query: PaginationQuery = {
