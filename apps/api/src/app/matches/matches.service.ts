@@ -149,22 +149,28 @@ export class MatchesService {
 
     // Sport filter: two-step query via tournament lookup, also include friendly matches with direct sport field
     if (filters.sport) {
-      const tournamentIds = await this.tournamentModel
-        .find({ sport: filters.sport })
-        .distinct('_id')
-        .exec();
-      if (filters.tournament) {
-        const matches = tournamentIds.some(
-          (id) => id.toString() === filters.tournament
-        );
-        if (!matches) {
-          return { items: [], total: 0, page, size };
-        }
+      const isFriendlyFilter = filters.tournament === '__none__';
+      if (isFriendlyFilter) {
+        // Already filtered to tournament=null above; just restrict sport
+        queryFilters['sport'] = filters.sport;
       } else {
-        queryFilters['$or'] = [
-          { tournament: { $in: tournamentIds } },
-          { tournament: { $exists: false }, sport: filters.sport },
-        ];
+        const tournamentIds = await this.tournamentModel
+          .find({ sport: filters.sport })
+          .distinct('_id')
+          .exec();
+        if (filters.tournament) {
+          const matches = tournamentIds.some(
+            (id) => id.toString() === filters.tournament
+          );
+          if (!matches) {
+            return { items: [], total: 0, page, size };
+          }
+        } else {
+          queryFilters['$or'] = [
+            { tournament: { $in: tournamentIds } },
+            { tournament: { $exists: false }, sport: filters.sport },
+          ];
+        }
       }
     }
 
