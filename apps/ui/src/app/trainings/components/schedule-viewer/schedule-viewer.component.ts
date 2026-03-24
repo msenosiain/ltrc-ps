@@ -72,7 +72,7 @@ export class ScheduleViewerComponent implements OnInit {
   duplicate(): void {
     if (!this.schedule) return;
     this.schedulesService
-      .duplicateSchedule(this.schedule.id)
+      .duplicateSchedule(this.schedule.id!)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((copy) => {
         this.router.navigate(['/dashboard/trainings/schedules', copy.id]);
