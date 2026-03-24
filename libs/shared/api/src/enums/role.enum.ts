@@ -1,6 +1,7 @@
 export enum RoleEnum {
   ADMIN = 'admin',
   MANAGER = 'manager',
+  COORDINATOR = 'coordinator',
   COACH = 'coach',
   TRAINER = 'trainer',
   ANALYST = 'analyst',

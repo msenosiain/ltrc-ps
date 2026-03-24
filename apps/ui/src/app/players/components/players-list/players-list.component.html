@@ -83,6 +83,9 @@
       </th>
       <td mat-cell *matCellDef="let player">
         {{ player.name }}
+        @if (player.status === PlayerStatusEnum.TRIAL) {
+          <mat-icon class="status-icon status-icon--trial" title="A prueba">person_add</mat-icon>
+        }
         @if (player.availability?.status === PlayerAvailabilityEnum.INJURED) {
           <mat-icon class="availability-icon availability-icon--injured" title="Lesionado">local_hospital</mat-icon>
         }

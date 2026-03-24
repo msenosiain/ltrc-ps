@@ -1,6 +1,7 @@
 export enum PlayerStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
+  TRIAL = 'trial',
 }
 
 export enum PlayerAvailabilityEnum {

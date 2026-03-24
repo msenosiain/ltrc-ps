@@ -6,6 +6,7 @@ import {
 export const playerStatusOptions: { id: PlayerStatusEnum; label: string }[] = [
   { id: PlayerStatusEnum.ACTIVE, label: 'Activo' },
   { id: PlayerStatusEnum.INACTIVE, label: 'Inactivo' },
+  { id: PlayerStatusEnum.TRIAL, label: 'A prueba' },
 ];
 
 export const playerAvailabilityOptions: {
