@@ -11,8 +11,8 @@ export class MatchFiltersDto {
   status?: MatchStatusEnum;
 
   @IsOptional()
-  @IsMongoId()
-  tournament?: string;
+  @IsString()
+  tournament?: string; // MongoId or '__none__' (friendly matches)
 
   @IsOptional()
   @IsEnum(SportEnum)

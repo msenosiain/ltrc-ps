@@ -140,7 +140,11 @@ export class MatchesService {
     }
 
     if (filters.tournament) {
-      queryFilters['tournament'] = filters.tournament;
+      if (filters.tournament === '__none__') {
+        queryFilters['tournament'] = { $exists: false };
+      } else {
+        queryFilters['tournament'] = filters.tournament;
+      }
     }
 
     // Sport filter: two-step query via tournament lookup, also include friendly matches with direct sport field
