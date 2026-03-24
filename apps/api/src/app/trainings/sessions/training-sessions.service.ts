@@ -104,6 +104,7 @@ export class TrainingSessionsService {
     } else {
       sort['date'] = 1;
     }
+    sort['startTime'] = 1;
 
     const [items, total] = await Promise.all([
       this.sessionModel
