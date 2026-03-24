@@ -70,6 +70,12 @@
   padding-right: 0;
 }
 
+.icons-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .attachment-icon {
   font-size: 18px;
   width: 18px;
