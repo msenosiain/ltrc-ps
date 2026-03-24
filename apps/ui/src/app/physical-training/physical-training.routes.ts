@@ -3,7 +3,7 @@ import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const PHYSICAL_TRAINING_ROUTES: Routes = [
-  { path: '', redirectTo: 'exercises', pathMatch: 'full' },
+  { path: '', redirectTo: 'routines', pathMatch: 'full' },
   {
     path: 'exercises',
     loadComponent: () =>

@@ -1,21 +1,25 @@
-<nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  <a mat-tab-link routerLink="/dashboard/physical/exercises" routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive">Ejercicios</a>
-  <a mat-tab-link routerLink="/dashboard/physical/routines" routerLinkActive #rla2="routerLinkActive" [active]="rla2.isActive">Rutinas</a>
-</nav>
-<mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
-
 <div class="routine-list">
   <div class="routine-list__header">
     <h2 class="routine-list__title">Rutinas</h2>
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
-      mat-raised-button
-      color="primary"
-      (click)="createRoutine()"
-    >
-      <mat-icon>add</mat-icon>
-      Nueva rutina
-    </button>
+    <div class="routine-list__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
+        mat-stroked-button
+        (click)="goToExercises()"
+      >
+        <mat-icon>menu_book</mat-icon>
+        Gestionar ejercicios
+      </button>
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
+        mat-raised-button
+        color="primary"
+        (click)="createRoutine()"
+      >
+        <mat-icon>add</mat-icon>
+        Nueva rutina
+      </button>
+    </div>
   </div>
 
   @if (dataSource.loading$ | async) {

@@ -15,8 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AsyncPipe } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { MatTabsModule } from '@angular/material/tabs';
+import { Router } from '@angular/router';
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import {
   BehaviorSubject,
@@ -90,8 +89,6 @@ class RoutinesDataSource implements DataSource<Routine> {
     MatButtonModule,
     AsyncPipe,
     AllowedRolesDirective,
-    MatTabsModule,
-    RouterModule,
   ],
   templateUrl: './routine-list.component.html',
   styleUrl: './routine-list.component.scss',
@@ -129,5 +126,9 @@ export class RoutineListComponent implements AfterViewInit, OnDestroy {
 
   createRoutine(): void {
     this.router.navigate(['/dashboard/physical/routines/new']);
+  }
+
+  goToExercises(): void {
+    this.router.navigate(['/dashboard/physical/exercises']);
   }
 }

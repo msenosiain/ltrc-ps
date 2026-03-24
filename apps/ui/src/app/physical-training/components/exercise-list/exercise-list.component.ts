@@ -17,9 +17,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AsyncPipe } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ExerciseCategoryEnum, RoleEnum, SortOrder } from '@ltrc-campo/shared-api-model';
 import { ExercisesService } from '../../services/exercises.service';
 import { ExercisesDataSource } from '../../services/exercises.datasource';
@@ -46,8 +45,6 @@ import { ConfirmDialogComponent } from '../../../common/components/confirm-dialo
     AsyncPipe,
     FormsModule,
     AllowedRolesDirective,
-    MatTabsModule,
-    RouterModule,
   ],
   templateUrl: './exercise-list.component.html',
   styleUrl: './exercise-list.component.scss',
