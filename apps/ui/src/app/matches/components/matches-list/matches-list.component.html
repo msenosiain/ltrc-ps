@@ -112,7 +112,7 @@
           <mat-icon class="attachment-icon" [matTooltip]="getAttachmentsTooltip(match)" matTooltipClass="multiline-tooltip">attach_file</mat-icon>
           }
           @if (match.videos?.length) {
-          <mat-icon class="attachment-icon" matTooltip="Tiene videos">smart_display</mat-icon>
+          <mat-icon class="attachment-icon" [matTooltip]="getVideosTooltip(match)" matTooltipClass="multiline-tooltip">smart_display</mat-icon>
           }
         </div>
       </td>

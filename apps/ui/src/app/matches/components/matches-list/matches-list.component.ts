@@ -152,4 +152,10 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
       .map((a) => `• ${a.name || a.filename}`)
       .join('\n');
   }
+
+  getVideosTooltip(match: Match): string {
+    return (match.videos ?? [])
+      .map((v) => `• ${v.name}`)
+      .join('\n');
+  }
 }
