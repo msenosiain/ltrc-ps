@@ -63,6 +63,8 @@ export class TournamentsService {
     // Server-side restriction: limit results to user's assigned scope
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       if (caller.sports?.length) query['sport'] = { $in: caller.sports };
+      if (caller.categories?.length)
+        query['categories'] = { $in: caller.categories };
     }
 
     const sort: Record<string, 1 | -1> = sortBy
