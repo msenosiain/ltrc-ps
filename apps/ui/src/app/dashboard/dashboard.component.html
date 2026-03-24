@@ -106,6 +106,17 @@
         <span matListItemTitle>Viajes</span>
       </a>
 
+      <a
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
+        mat-list-item
+        routerLink="physical"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>fitness_center</mat-icon>
+        <span matListItemTitle>Musculación</span>
+      </a>
+
       <mat-divider class="sidenav-divider" />
 
       <a

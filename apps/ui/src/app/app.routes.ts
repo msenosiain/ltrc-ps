@@ -57,6 +57,13 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./trips/trip.routes').then((m) => m.TRIPS_ROUTES),
       },
+      {
+        path: 'physical',
+        loadChildren: () =>
+          import('./physical-training/physical-training.routes').then(
+            (m) => m.PHYSICAL_TRAINING_ROUTES
+          ),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },

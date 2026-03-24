@@ -1,0 +1,77 @@
+<div class="routine-list">
+  <div class="routine-list__header">
+    <h2 class="routine-list__title">Rutinas</h2>
+    <button
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
+      mat-raised-button
+      color="primary"
+      (click)="createRoutine()"
+    >
+      <mat-icon>add</mat-icon>
+      Nueva rutina
+    </button>
+  </div>
+
+  @if (dataSource.loading$ | async) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    class="routine-list__table mat-elevation-z2"
+  >
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Nombre</th>
+      <td mat-cell *matCellDef="let routine">{{ routine.name }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="sport">
+      <th mat-header-cell *matHeaderCellDef>Deporte</th>
+      <td mat-cell *matCellDef="let routine">{{ routine.sport || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>Categoría</th>
+      <td mat-cell *matCellDef="let routine">{{ routine.category || '—' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="validity">
+      <th mat-header-cell *matHeaderCellDef>Vigencia</th>
+      <td mat-cell *matCellDef="let routine">
+        {{ routine.validFrom }} – {{ routine.validUntil }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Estado</th>
+      <td mat-cell *matCellDef="let routine">
+        <span class="status-badge status-badge--{{ routine.status }}">
+          {{ getStatusLabel(routine.status) }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="players">
+      <th mat-header-cell *matHeaderCellDef>Jugadores</th>
+      <td mat-cell *matCellDef="let routine">
+        {{ routine.assignedPlayers?.length || 0 }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      (click)="viewDetails(row.id)"
+      class="routine-list__row"
+    ></tr>
+  </table>
+
+  <mat-paginator
+    [length]="dataSource.total"
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  />
+</div>

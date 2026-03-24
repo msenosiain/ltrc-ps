@@ -1,0 +1,93 @@
+<div class="exercise-form">
+  <h2 class="exercise-form__title">
+    {{ editing ? 'Editar ejercicio' : 'Nuevo ejercicio' }}
+  </h2>
+
+  @if (submitting) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="exercise-form__form">
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Nombre *</mat-label>
+      <input matInput formControlName="name" placeholder="Ej. Sentadilla con barra" />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>El nombre es requerido</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Categoría *</mat-label>
+      <mat-select formControlName="category">
+        @for (opt of categoryOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.get('category')?.hasError('required')) {
+        <mat-error>La categoría es requerida</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Grupos musculares</mat-label>
+      <mat-chip-grid #muscleChipGrid>
+        @for (group of muscleGroups; track group) {
+          <mat-chip-row (removed)="removeMuscleGroup(group)">
+            {{ group }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+        <input
+          placeholder="Agregar músculo..."
+          [matChipInputFor]="muscleChipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addMuscleGroup($event)"
+        />
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Equipamiento</mat-label>
+      <mat-chip-grid #equipmentChipGrid>
+        @for (item of equipment; track item) {
+          <mat-chip-row (removed)="removeEquipment(item)">
+            {{ item }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+        <input
+          placeholder="Agregar equipamiento..."
+          [matChipInputFor]="equipmentChipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addEquipment($event)"
+        />
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>URL de video (opcional)</mat-label>
+      <input matInput formControlName="videoUrl" placeholder="https://youtube.com/..." />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Descripción (opcional)</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Instrucciones (opcional)</mat-label>
+      <textarea matInput formControlName="instructions" rows="4"></textarea>
+    </mat-form-field>
+
+    <div class="exercise-form__actions">
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
+        {{ editing ? 'Guardar cambios' : 'Crear ejercicio' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,87 @@
+<div class="exercise-viewer">
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (exercise) {
+    <div class="exercise-viewer__header">
+      <button mat-icon-button (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2 class="exercise-viewer__title">{{ exercise.name }}</h2>
+      <div class="exercise-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
+        <button mat-stroked-button (click)="onEdit()">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+        <button mat-stroked-button color="warn" (click)="onDelete()">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+    <div class="exercise-viewer__content">
+      <div class="exercise-viewer__section">
+        <span class="exercise-viewer__category">{{ getCategoryLabel(exercise.category) }}</span>
+      </div>
+
+      @if (exercise.description) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Descripción</h3>
+          <p>{{ exercise.description }}</p>
+        </div>
+      }
+
+      @if (exercise.muscleGroups?.length) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Grupos musculares</h3>
+          <mat-chip-set>
+            @for (group of exercise.muscleGroups; track group) {
+              <mat-chip>{{ group }}</mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+      }
+
+      @if (exercise.equipment?.length) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Equipamiento</h3>
+          <mat-chip-set>
+            @for (item of exercise.equipment; track item) {
+              <mat-chip>{{ item }}</mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+      }
+
+      @if (exercise.instructions) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Instrucciones</h3>
+          <p class="exercise-viewer__instructions">{{ exercise.instructions }}</p>
+        </div>
+      }
+
+      @if (videoEmbedUrl) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Video</h3>
+          <div class="exercise-viewer__video-wrapper">
+            <iframe
+              [src]="videoEmbedUrl"
+              frameborder="0"
+              allowfullscreen
+              class="exercise-viewer__video"
+            ></iframe>
+          </div>
+        </div>
+      } @else if (exercise.videoUrl) {
+        <div class="exercise-viewer__section">
+          <h3 class="exercise-viewer__section-title">Video</h3>
+          <a [href]="exercise.videoUrl" target="_blank" rel="noopener noreferrer">
+            {{ exercise.videoUrl }}
+          </a>
+        </div>
+      }
+    </div>
+  }
+</div>
