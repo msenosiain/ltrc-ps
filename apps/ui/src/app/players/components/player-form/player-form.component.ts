@@ -98,6 +98,11 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   readonly isAdmin = computed(
     () => this.currentUser()?.roles?.includes(RoleEnum.ADMIN) ?? false
   );
+  readonly isManager = computed(
+    () => this.currentUser()?.roles?.includes(RoleEnum.MANAGER) ?? false
+  );
+  private readonly managerSports = computed(() => this.currentUser()?.sports ?? []);
+  private readonly managerCategories = computed(() => this.currentUser()?.categories ?? []);
 
   private readonly playersAge = signal<number | null>(null);
   readonly isMinor = computed(() => {
@@ -114,7 +119,7 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     new EventEmitter<PlayerFormSubmitEvent>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  readonly sportOptions = sportOptions;
+  availableSportOptions = sportOptions;
   readonly branchOptions = Object.values(HockeyBranchEnum);
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
@@ -205,6 +210,29 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   filteredHealthInsurances$!: Observable<string[]>;
 
   ngOnInit(): void {
+    // Manager restriction: pre-fill and lock sport, filter categories
+    if (this.isManager() && !this.isAdmin() && !this.player) {
+      const sports = this.managerSports();
+      const allowedCategories = new Set(this.managerCategories());
+
+      if (sports.length > 0) {
+        this.availableSportOptions = sportOptions.filter((s) =>
+          sports.includes(s.id as SportEnum)
+        );
+      }
+      if (sports.length === 1) {
+        this.playerForm.get('sport')?.setValue(sports[0]);
+        this.playerForm.get('sport')?.disable();
+      }
+      // Apply initial category filter — subscription isn't active yet at this point
+      if (allowedCategories.size > 0) {
+        const sport = sports.length === 1 ? sports[0] : null;
+        this.categories = getCategoryOptionsBySport(sport).filter((c) =>
+          allowedCategories.has(c.id)
+        );
+      }
+    }
+
     this.playerForm
       .get('birthDate')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
@@ -243,7 +271,12 @@ export class PlayerFormComponent implements OnInit, OnChanges {
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {
         this.positions = getPositionOptionsBySport(sport);
-        this.categories = getCategoryOptionsBySport(sport);
+        let cats = getCategoryOptionsBySport(sport);
+        if (this.isManager() && !this.isAdmin()) {
+          const allowed = new Set(this.managerCategories());
+          if (allowed.size > 0) cats = cats.filter((c) => allowed.has(c.id));
+        }
+        this.categories = cats;
         // Clear positions if they no longer match the new sport
         const validIds = new Set(this.positions.map((p) => p.id));
         this.positionsArray.controls.forEach((ctrl) => {

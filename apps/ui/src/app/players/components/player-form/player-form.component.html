@@ -197,7 +197,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Deporte</mat-label>
         <mat-select formControlName="sport" required>
-          @for (s of sportOptions; track s.id) {
+          @for (s of availableSportOptions; track s.id) {
           <mat-option [value]="s.id">{{ s.label }}</mat-option>
           }
         </mat-select>
