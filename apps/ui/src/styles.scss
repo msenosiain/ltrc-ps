@@ -116,8 +116,8 @@ ltrc-root {
   white-space: pre-line !important;
 }
 
-/* Allow mat-select panels to grow up to ~10 options without scrollbar */
-.mat-mdc-select-panel {
+/* Allow specific mat-select panels to grow beyond default 256px */
+.select-panel--tall {
   max-height: 480px !important;
 }
 

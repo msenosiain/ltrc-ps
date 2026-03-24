@@ -40,7 +40,7 @@
 
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Roles</mat-label>
-        <mat-select formControlName="roles" multiple>
+        <mat-select formControlName="roles" multiple panelClass="select-panel--tall">
           @for (option of roleOptions; track option.id) {
           <mat-option [value]="option.id">{{ option.label }}</mat-option>
           }
