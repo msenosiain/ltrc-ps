@@ -167,7 +167,7 @@
 
       <div class="squad-card-actions">
         <button
-          *ltrcAllowedRoles="[RoleEnum.COACH, RoleEnum.ADMIN, RoleEnum.TRAINER]"
+          *ltrcAllowedRoles="[RoleEnum.COACH, RoleEnum.COORDINATOR, RoleEnum.ADMIN, RoleEnum.TRAINER]"
           mat-stroked-button
           type="button"
           (click)="manageAttendance()"
@@ -207,7 +207,7 @@
           </a>
           }
           <button
-            *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+            *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
             mat-icon-button
             class="attachment-delete"
             (click)="deleteAttachment(att.fileId)"
@@ -220,7 +220,7 @@
       </div>
 
       <div
-        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
         class="attachment-upload"
       >
         <button
@@ -302,7 +302,7 @@
       </button>
     }
     <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
       mat-flat-button
       color="primary"
       type="button"

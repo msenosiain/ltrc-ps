@@ -20,6 +20,7 @@
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,
+          RoleEnum.COORDINATOR,
           { role: RoleEnum.COACH, sport: SportEnum.RUGBY }
         ]"
         mat-list-item
@@ -32,7 +33,7 @@
       </a>
 
       <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
         mat-list-item
         routerLink="tournaments"
         routerLinkActive="active-link"
@@ -46,6 +47,7 @@
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,
+          RoleEnum.COORDINATOR,
           RoleEnum.COACH,
           RoleEnum.PLAYER
         ]"
@@ -77,6 +79,7 @@
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,
+          RoleEnum.COORDINATOR,
           RoleEnum.COACH,
           RoleEnum.TRAINER,
           RoleEnum.PLAYER
@@ -94,6 +97,7 @@
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,
+          RoleEnum.COORDINATOR,
           RoleEnum.COACH,
           RoleEnum.PLAYER
         ]"

@@ -46,7 +46,7 @@ export class TrainingSessionsController {
   }
 
   @Post()
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() dto: CreateTrainingSessionDto, @Req() req: Request) {
     return this.sessionsService.create(dto, (req as any).user);
@@ -59,7 +59,7 @@ export class TrainingSessionsController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() dto: UpdateTrainingSessionDto, @Req() req: Request) {
     return this.sessionsService.update(id, dto, (req as any).user);
@@ -94,7 +94,7 @@ export class TrainingSessionsController {
   }
 
   @Patch(':id/attendance')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async recordAttendance(
     @Param('id') id: string,
