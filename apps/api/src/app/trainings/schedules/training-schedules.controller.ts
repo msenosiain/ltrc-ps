@@ -35,10 +35,17 @@ export class TrainingSchedulesController {
   }
 
   @Post()
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() dto: CreateTrainingScheduleDto, @Req() req: Request) {
     return this.schedulesService.create(dto, (req as any).user);
+  }
+
+  @Post(':id/duplicate')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async duplicate(@Param('id') id: string, @Req() req: Request) {
+    return this.schedulesService.duplicate(id, (req as any).user);
   }
 
   @Get('field-options')
@@ -53,7 +60,7 @@ export class TrainingSchedulesController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
@@ -64,7 +71,7 @@ export class TrainingSchedulesController {
   }
 
   @Delete(':id')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Param('id') id: string) {
     return this.schedulesService.delete(id);

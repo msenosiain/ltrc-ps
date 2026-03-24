@@ -57,6 +57,10 @@ export class TrainingSchedulesService {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  duplicateSchedule(id: string): Observable<TrainingSchedule> {
+    return this.httpClient.post<TrainingSchedule>(`${this.apiUrl}/${id}/duplicate`, {});
+  }
+
   getUpcoming(from: string, to: string): Observable<UpcomingTraining[]> {
     const params = new HttpParams().set('from', from).set('to', to);
     return this.httpClient.get<UpcomingTraining[]>(`${this.apiUrl}/upcoming`, {

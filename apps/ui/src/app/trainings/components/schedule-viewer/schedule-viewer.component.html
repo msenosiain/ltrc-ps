@@ -65,7 +65,15 @@
           Volver
         </button>
         <button
-          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
+          mat-stroked-button
+          (click)="duplicate()"
+        >
+          <mat-icon>content_copy</mat-icon>
+          Duplicar
+        </button>
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
           mat-raised-button
           color="primary"
           (click)="edit()"

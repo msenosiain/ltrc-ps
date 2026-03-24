@@ -69,6 +69,16 @@ export class ScheduleViewerComponent implements OnInit {
     return getDayLabel(day as any);
   }
 
+  duplicate(): void {
+    if (!this.schedule) return;
+    this.schedulesService
+      .duplicateSchedule(this.schedule.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((copy) => {
+        this.router.navigate(['/dashboard/trainings/schedules', copy.id]);
+      });
+  }
+
   edit(): void {
     this.router.navigate([
       '/dashboard/trainings/schedules',

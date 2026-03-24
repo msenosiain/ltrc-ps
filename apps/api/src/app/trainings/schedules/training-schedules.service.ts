@@ -87,6 +87,20 @@ export class TrainingSchedulesService {
     return saved;
   }
 
+  async duplicate(id: string, caller?: User) {
+    const original = await this.scheduleModel.findById(id).lean();
+    if (!original) throw new NotFoundException('Training schedule not found');
+    const callerId = caller ? (caller as any)._id : undefined;
+    const { _id, __v, createdAt, updatedAt, ...rest } = original as any;
+    const copy = await this.scheduleModel.create({
+      ...rest,
+      isActive: false,
+      createdBy: callerId,
+      updatedBy: callerId,
+    });
+    return copy;
+  }
+
   async delete(id: string) {
     const schedule = await this.scheduleModel.findById(id);
     if (!schedule) throw new NotFoundException('Training schedule not found');
