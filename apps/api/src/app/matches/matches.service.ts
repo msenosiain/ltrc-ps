@@ -141,7 +141,7 @@ export class MatchesService {
 
     if (filters.tournament) {
       if (filters.tournament === '__none__') {
-        queryFilters['tournament'] = { $exists: false };
+        queryFilters['tournament'] = null;
       } else {
         queryFilters['tournament'] = filters.tournament;
       }

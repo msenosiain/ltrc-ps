@@ -197,10 +197,18 @@ export class TrainingSessionsService {
 
         while (current <= to) {
           if (current.getDay() === dayIdx) {
-            if (schedule.validUntil && current > schedule.validUntil) break;
-            if (schedule.validFrom && current < schedule.validFrom) {
-              current.setDate(current.getDate() + 1);
-              continue;
+            if (schedule.validUntil) {
+              const until = new Date(schedule.validUntil);
+              until.setUTCHours(0, 0, 0, 0);
+              if (current > until) break;
+            }
+            if (schedule.validFrom) {
+              const from0 = new Date(schedule.validFrom);
+              from0.setUTCHours(0, 0, 0, 0);
+              if (current < from0) {
+                current.setDate(current.getDate() + 1);
+                continue;
+              }
             }
 
             upcoming.push({
