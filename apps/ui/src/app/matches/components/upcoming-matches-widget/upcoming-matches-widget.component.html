@@ -19,14 +19,17 @@
         <span class="match-meta">
           {{ match.tournament?.name ?? 'Amistoso' }} · {{ getCategoryLabel(match) }}
           @if (match.division) { · {{ match.division }} }
+        </span>
+        <span class="match-opponent">
           @if (match.opponent) {
-            ·
             <span class="home-away-badge" [class.home]="match.isHome" [class.away]="!match.isHome">
               {{ match.isHome ? 'L' : 'V' }}
             </span>
             {{ match.opponent }}
           }
-          @if (match.venue) { · {{ match.venue }} }
+          @if (match.venue) {
+            <span class="match-venue">{{ match.venue }}</span>
+          }
         </span>
       </div>
     </div>

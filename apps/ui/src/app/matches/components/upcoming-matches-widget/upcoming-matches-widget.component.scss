@@ -66,10 +66,20 @@
 .match-meta {
   font-size: 0.75rem;
   color: var(--mat-app-on-surface-variant, #666);
+}
+
+.match-opponent {
+  font-size: 0.85rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.match-venue {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--mat-app-on-surface-variant, #666);
 }
 
 .home-away-badge {
