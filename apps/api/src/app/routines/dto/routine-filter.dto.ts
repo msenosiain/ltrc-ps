@@ -17,4 +17,8 @@ export class RoutineFilterDto {
   @IsOptional()
   @IsEnum(RoutineStatusEnum)
   status?: RoutineStatusEnum;
+
+  @IsOptional()
+  @IsString()
+  playerId?: string;
 }

@@ -1,5 +1,10 @@
 import { ExerciseCategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
+export const sportOptions = [
+  { value: SportEnum.RUGBY, label: 'Rugby' },
+  { value: SportEnum.HOCKEY, label: 'Hockey' },
+];
+
 export function getSportLabel(sport?: SportEnum | string): string {
   const labels: Record<string, string> = {
     rugby: 'Rugby',

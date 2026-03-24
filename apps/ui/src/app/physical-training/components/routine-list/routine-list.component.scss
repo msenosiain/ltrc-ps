@@ -17,6 +17,23 @@
     margin: 0;
   }
 
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+
+  &__filter-field {
+    flex: 1;
+    min-width: 140px;
+
+    &--player {
+      min-width: 200px;
+      flex: 2;
+    }
+  }
+
   &__table {
     width: 100%;
   }

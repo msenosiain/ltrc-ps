@@ -5,16 +5,19 @@ import {
   DestroyRef,
   inject,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import {
@@ -23,11 +26,27 @@ import {
   Observable,
   asyncScheduler,
   observeOn,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+  of,
 } from 'rxjs';
-import { PaginationQuery, Routine, RoleEnum, SortOrder } from '@ltrc-campo/shared-api-model';
+import {
+  PaginatedResponse,
+  PaginationQuery,
+  Player,
+  Routine,
+  RoleEnum,
+  SortOrder,
+  SportEnum,
+} from '@ltrc-campo/shared-api-model';
 import { RoutinesService } from '../../services/routines.service';
-import { getRoutineStatusLabel } from '../../physical-training-options';
+import { PlayersService } from '../../../players/services/players.service';
+import { getRoutineStatusLabel, routineStatusOptions, sportOptions } from '../../physical-training-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
 
 class RoutinesDataSource implements DataSource<Routine> {
   private itemsSubject = new BehaviorSubject<Routine[]>([]);
@@ -38,6 +57,7 @@ class RoutinesDataSource implements DataSource<Routine> {
 
   private pageIndex = 0;
   private pageSize = 10;
+  private filters: Record<string, unknown> = {};
 
   constructor(private service: RoutinesService) {}
 
@@ -56,6 +76,12 @@ class RoutinesDataSource implements DataSource<Routine> {
     this.load();
   }
 
+  setFilters(filters: Record<string, unknown>): void {
+    this.filters = filters;
+    this.pageIndex = 0;
+    this.load();
+  }
+
   load(): void {
     this.loadingSubject.next(true);
     const query: PaginationQuery = {
@@ -63,6 +89,7 @@ class RoutinesDataSource implements DataSource<Routine> {
       size: this.pageSize,
       sortBy: 'name',
       sortOrder: SortOrder.ASC,
+      filters: this.filters,
     };
     this.service
       .getRoutines(query)
@@ -84,10 +111,14 @@ class RoutinesDataSource implements DataSource<Routine> {
     MatTableModule,
     MatProgressBarModule,
     MatPaginatorModule,
-    MatSortModule,
     MatIconModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatAutocompleteModule,
     AsyncPipe,
+    FormsModule,
     AllowedRolesDirective,
   ],
   templateUrl: './routine-list.component.html',
@@ -96,14 +127,28 @@ class RoutinesDataSource implements DataSource<Routine> {
 export class RoutineListComponent implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly routinesService = inject(RoutinesService);
+  private readonly playersService = inject(PlayersService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = ['name', 'sport', 'category', 'validity', 'status', 'players'];
   readonly dataSource = new RoutinesDataSource(this.routinesService);
+  readonly sportOptions = sportOptions;
+  readonly statusOptions = routineStatusOptions;
+
+  categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
+
+  selectedSport = '';
+  selectedCategory = '';
+  selectedStatus = '';
+  playerSearch = '';
+  selectedPlayerId = '';
+  filteredPlayers: Player[] = [];
+
+  private playerSearch$ = new Subject<string>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit(): void {
     this.dataSource.load();
@@ -112,12 +157,65 @@ export class RoutineListComponent implements AfterViewInit, OnDestroy {
     this.paginator.page.subscribe(() => {
       this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
     });
+
+    this.playerSearch$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((term) =>
+          term
+            ? this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term }, sortBy: 'name', sortOrder: SortOrder.ASC })
+            : of({ items: [] as Player[], total: 0, page: 1, size: 20 } as PaginatedResponse<Player>)
+        ),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((res) => (this.filteredPlayers = res.items));
   }
 
   ngOnDestroy(): void {}
 
   getStatusLabel(status: string): string {
     return getRoutineStatusLabel(status);
+  }
+
+  onSportChange(): void {
+    this.selectedCategory = '';
+    this.categoryOptions = getCategoryOptionsBySport(this.selectedSport as SportEnum || undefined);
+    this.applyFilters();
+  }
+
+  onPlayerInput(term: string): void {
+    if (!term) {
+      this.selectedPlayerId = '';
+    }
+    this.playerSearch$.next(term);
+  }
+
+  onPlayerSelected(player: Player): void {
+    this.selectedPlayerId = player.id ?? '';
+    this.playerSearch = player.name;
+    this.applyFilters();
+  }
+
+  displayPlayer(player: Player): string {
+    return player ? player.name : '';
+  }
+
+  clearPlayerFilter(): void {
+    this.selectedPlayerId = '';
+    this.playerSearch = '';
+    this.filteredPlayers = [];
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    const filters: Record<string, unknown> = {};
+    if (this.selectedSport) filters['sport'] = this.selectedSport;
+    if (this.selectedCategory) filters['category'] = this.selectedCategory;
+    if (this.selectedStatus) filters['status'] = this.selectedStatus;
+    if (this.selectedPlayerId) filters['playerId'] = this.selectedPlayerId;
+    if (this.paginator) this.paginator.pageIndex = 0;
+    this.dataSource.setFilters(filters);
   }
 
   viewDetails(id: string): void {

@@ -33,6 +33,7 @@ export class RoutinesService {
     if (filters.sport) query['sport'] = filters.sport;
     if (filters.category) query['category'] = filters.category;
     if (filters.status) query['status'] = filters.status;
+    if (filters.playerId) query['assignedPlayers'] = filters.playerId;
 
     const sort: Record<string, 1 | -1> = sortBy
       ? { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
