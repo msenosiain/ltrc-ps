@@ -27,6 +27,7 @@ export interface UploadAttachmentResult {
     MatSelectModule,
   ],
   templateUrl: './upload-attachment-dialog.component.html',
+  styleUrl: './upload-attachment-dialog.component.scss',
 })
 export class UploadAttachmentDialogComponent {
   private readonly fb = inject(FormBuilder);
