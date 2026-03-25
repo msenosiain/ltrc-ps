@@ -94,18 +94,8 @@ export class CreateRoutineDto {
 
   @IsOptional()
   @IsArray()
-  @IsEnum(CategoryEnum, { each: true })
-  assignedCategories?: CategoryEnum[];
-
-  @IsOptional()
-  @IsArray()
   @IsString({ each: true })
   assignedBranches?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  assignedDivisions?: string[];
 
   @IsOptional()
   @IsArray()

@@ -134,10 +134,15 @@ export class RoutinesService {
           },
           {
             $or: [
-              { assignedPlayers: { $exists: false } },
               { assignedPlayers: { $size: 0 } },
               { assignedPlayers: player._id },
-              { assignedCategories: player.category },
+            ],
+          },
+          {
+            $or: [
+              { assignedBranches: { $size: 0 } },
+              { assignedBranches: { $exists: false } },
+              { assignedBranches: (player as any).branch },
             ],
           },
         ],

@@ -42,9 +42,7 @@ export const RoutineSchema = new Schema<RoutineEntity>(
     validUntil: { type: String, required: true },
     daysOfWeek: [{ type: String }],
     assignedPlayers: [{ type: Types.ObjectId, ref: 'Player' }],
-    assignedCategories: [{ type: String, enum: Object.values(CategoryEnum) }],
     assignedBranches: [{ type: String }],
-    assignedDivisions: [{ type: String }],
     blocks: [RoutineBlockSchema],
     status: {
       type: String,

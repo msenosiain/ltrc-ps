@@ -32,9 +32,7 @@ export class RoutineEntity extends Document {
   validUntil: string;
   daysOfWeek: string[];
   assignedPlayers: Types.ObjectId[];
-  assignedCategories: CategoryEnum[];
   assignedBranches: string[];
-  assignedDivisions: string[];
   blocks: RoutineBlockEntity[];
   status: RoutineStatusEnum;
   notes?: string;
