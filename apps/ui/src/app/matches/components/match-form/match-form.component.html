@@ -45,20 +45,20 @@
       @if (isHockey) {
       <mat-form-field appearance="outline">
         <mat-label>Rama</mat-label>
-        <mat-select formControlName="division">
+        <mat-select formControlName="branch">
           <mat-option [value]="null">—</mat-option>
           @for (b of branchOptions; track b) {
           <mat-option [value]="b">Rama {{ b }}</mat-option>
           }
         </mat-select>
       </mat-form-field>
-      } @else {
+      }
       <mat-form-field appearance="outline">
         <mat-label>División</mat-label>
         <input
           matInput
           formControlName="division"
-          placeholder="Ej: Primera, Segunda..."
+          placeholder="Ej: Primera, Intermedia..."
           [matAutocomplete]="divisionAc"
         />
         <mat-autocomplete #divisionAc="matAutocomplete">
@@ -67,7 +67,6 @@
           }
         </mat-autocomplete>
       </mat-form-field>
-      }
 
       <mat-form-field appearance="outline">
         <mat-label>Fecha</mat-label>

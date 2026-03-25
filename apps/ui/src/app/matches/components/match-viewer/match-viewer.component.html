@@ -15,7 +15,7 @@
             {{ match.isHome ? 'Local' : 'Visitante' }}
           </span>
           }
-          <h2 class="opponent-name">{{ match.division ? match.division + ' ' : '' }}vs {{ match.opponent }}</h2>
+          <h2 class="opponent-name">{{ match.branch ? 'Rama ' + match.branch + ' ' : '' }}{{ match.division ? match.division + ' ' : '' }}vs {{ match.opponent }}</h2>
           } @else {
           <h2 class="opponent-name">Encuentro</h2>
           }
@@ -52,6 +52,11 @@
         <div class="info-item">
           <span class="info-label">Categoría</span>
           <span class="info-value">{{ getCategoryLabel(match.category) }}</span>
+        </div>
+        } @if (match.branch) {
+        <div class="info-item">
+          <span class="info-label">Rama</span>
+          <span class="info-value">Rama {{ match.branch }}</span>
         </div>
         } @if (match.division) {
         <div class="info-item">

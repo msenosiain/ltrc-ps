@@ -18,6 +18,7 @@ import {
 import { Transform, Type } from 'class-transformer';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   MatchStatusEnum,
   SportEnum,
   parseDate,
@@ -99,6 +100,10 @@ export class CreateMatchDto {
   @IsOptional()
   @IsString()
   readonly division?: string;
+
+  @IsOptional()
+  @IsEnum(HockeyBranchEnum)
+  readonly branch?: HockeyBranchEnum;
 
   @IsOptional()
   @IsMongoId()

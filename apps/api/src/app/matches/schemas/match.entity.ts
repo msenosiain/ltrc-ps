@@ -2,6 +2,7 @@ import { Document, PopulatedDoc, Types } from 'mongoose';
 import {
   AttendanceEntry,
   CategoryEnum,
+  HockeyBranchEnum,
   MatchStatusEnum,
   SportEnum,
   VideoVisibility,
@@ -21,6 +22,7 @@ export class MatchEntity extends Document {
   sport?: SportEnum;
   category: CategoryEnum;
   division?: string;
+  branch?: HockeyBranchEnum;
   tournament?: PopulatedDoc<TournamentEntity & Document>;
   squad: {
     shirtNumber: number;

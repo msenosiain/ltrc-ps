@@ -2,6 +2,7 @@ import { Schema, Types } from 'mongoose';
 import { MatchEntity } from './match.entity';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   MatchStatusEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
@@ -56,6 +57,7 @@ export const MatchSchema = new Schema<MatchEntity>(
     },
     sport: { type: String, enum: Object.values(SportEnum) },
     division: { type: String },
+    branch: { type: String, enum: [...Object.values(HockeyBranchEnum), null] },
     tournament: { type: Types.ObjectId, ref: TournamentEntity.name, required: false },
     squad: [MatchSquadEntrySchema],
     attendance: [AttendanceEntrySchema],

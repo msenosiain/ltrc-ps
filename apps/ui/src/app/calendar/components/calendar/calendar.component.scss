@@ -1,8 +1,20 @@
 .calendar-page {
-  max-width: 700px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 600px) {
+  .days-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .calendar-nav {
@@ -84,21 +96,8 @@
   height: 20px;
   flex-shrink: 0;
 
-  &.training-rugby  { color: #b71c1c; }
-  &.training-hockey { color: #1565c0; }
-
-  &.match-rugby,
-  &.match-hockey {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 15px;
-    line-height: 1;
-  }
-
-  &.match-rugby  { color: #b71c1c; font-family: monospace; }
-  &.match-hockey { color: #1565c0; font-size: 18px; }
+  &.training-rugby, &.match-rugby   { color: #b71c1c; }
+  &.training-hockey, &.match-hockey { color: #1565c0; }
 }
 
 .event-details {

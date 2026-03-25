@@ -18,6 +18,7 @@
   <p class="empty-week">Sin actividad esta semana.</p>
   }
 
+  <div class="days-grid">
   @for (day of days(); track day.dateKey) {
   <mat-card class="day-card">
     <mat-card-content>
@@ -33,9 +34,9 @@
         } @else if (event.type === 'training' && event.sport === SportEnum.HOCKEY) {
           <mat-icon class="event-type-icon training-hockey">sports_hockey</mat-icon>
         } @else if (event.type === 'match' && event.sport === SportEnum.RUGBY) {
-          <span class="event-type-icon match-rugby">H</span>
+          <mat-icon class="event-type-icon match-rugby">sports_rugby</mat-icon>
         } @else if (event.type === 'match' && event.sport === SportEnum.HOCKEY) {
-          <span class="event-type-icon match-hockey">∩</span>
+          <mat-icon class="event-type-icon match-hockey">sports_hockey</mat-icon>
         } @else {
           <mat-icon class="event-type-icon">{{ event.type === 'match' ? 'sports' : 'fitness_center' }}</mat-icon>
         }
@@ -44,7 +45,7 @@
           <div class="event-main">
             <span class="event-time">{{ getEventTime(event) || '–' }}</span>
             <span class="event-title">{{ event.title }}</span>
-            @if (event.type === 'match' && event.isHome !== undefined) {
+            @if (event.type === 'match' && event.opponent && event.isHome !== undefined) {
               <span class="venue-badge" [class.home]="event.isHome" [class.away]="!event.isHome">
                 {{ event.isHome ? 'L' : 'V' }}
               </span>
@@ -62,4 +63,5 @@
     </mat-card-content>
   </mat-card>
   }
+  </div>
 </div>

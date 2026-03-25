@@ -1,5 +1,4 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -40,7 +39,7 @@ function toDateStr(d: Date): string {
 @Component({
   selector: 'ltrc-calendar',
   standalone: true,
-  imports: [DatePipe, MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatTooltipModule],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatTooltipModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })

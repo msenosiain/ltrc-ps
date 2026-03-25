@@ -15,6 +15,7 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
     sport: [null as SportEnum | null],
     category: [null as CategoryEnum | null, Validators.required],
     division: [''],
+    branch: [null],
     tournament: ['' as string],
     result: fb.group({
       homeScore: [null],

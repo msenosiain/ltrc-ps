@@ -1,6 +1,7 @@
 import { Document } from 'mongoose';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   MatchStatusEnum,
   SportEnum,
 } from '../enums';
@@ -51,6 +52,7 @@ export interface Match extends Document {
   readonly sport?: SportEnum;
   readonly category: CategoryEnum;
   readonly division?: string;
+  readonly branch?: HockeyBranchEnum;
   readonly tournament?: Tournament;
   readonly squad: SquadEntry[];
   readonly attendance: AttendanceEntry[];

@@ -36,6 +36,7 @@ export class CalendarService {
       sport: m.sport,
       category: m.category,
       status: m.status,
+      opponent: m.opponent,
       isHome: m.isHome,
       location: m.venue,
     }));

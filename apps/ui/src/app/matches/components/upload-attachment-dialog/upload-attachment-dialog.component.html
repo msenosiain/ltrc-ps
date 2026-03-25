@@ -33,9 +33,9 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Jugadores que pueden verlo</mat-label>
       <mat-select formControlName="targetPlayers" multiple>
-        @for (entry of data.squad; track entry.player?.id) {
-          <mat-option [value]="entry.player?.id">
-            {{ entry.shirtNumber }}. {{ entry.player?.name }}
+        @for (entry of data.squad; track entry.player.id) {
+          <mat-option [value]="entry.player.id">
+            {{ entry.shirtNumber }}. {{ entry.player.name }}
           </mat-option>
         }
       </mat-select>

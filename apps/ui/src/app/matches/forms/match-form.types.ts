@@ -1,5 +1,6 @@
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   MatchStatusEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
@@ -14,6 +15,7 @@ export interface MatchFormValue {
   sport: SportEnum | null;
   category: CategoryEnum | null;
   division: string;
+  branch: HockeyBranchEnum | null;
   tournament: string | null;
   result: {
     homeScore: number | null;

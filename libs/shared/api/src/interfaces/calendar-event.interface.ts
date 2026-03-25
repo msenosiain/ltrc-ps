@@ -10,6 +10,7 @@ export interface CalendarEvent {
   sport?: SportEnum;
   category: CategoryEnum;
   status: string;
+  opponent?: string;
   isHome?: boolean;
   location?: string;
 }
