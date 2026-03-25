@@ -95,6 +95,16 @@
       </a>
 
       <a
+        mat-list-item
+        routerLink="calendar"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>calendar_month</mat-icon>
+        <span matListItemTitle>Calendario</span>
+      </a>
+
+      <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,

@@ -10,3 +10,4 @@ export * from './training-session.interface';
 export * from './trip.interface';
 export * from './exercise.interface';
 export * from './routine.interface';
+export * from './calendar-event.interface';

@@ -1,0 +1,57 @@
+<div class="calendar-page">
+  <div class="calendar-nav">
+    <button mat-icon-button (click)="prevWeek()" title="Semana anterior">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span class="week-label">{{ weekLabel }}</span>
+    <button mat-icon-button (click)="nextWeek()" title="Semana siguiente">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button mat-stroked-button (click)="goToToday()" class="today-btn">Hoy</button>
+  </div>
+
+  @if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading() && days().length === 0) {
+  <p class="empty-week">Sin actividad esta semana.</p>
+  }
+
+  @for (day of days(); track day.dateKey) {
+  <mat-card class="day-card">
+    <mat-card-content>
+      <div class="day-header">
+        <span class="day-name">{{ day.dayName }}</span>
+        <span class="day-date">{{ day.dateLabel }}</span>
+      </div>
+
+      @for (event of day.events; track event.id) {
+      <div class="event-row" (click)="navigate(event)" tabindex="0" (keydown.enter)="navigate(event)">
+        <mat-icon class="event-type-icon" [class.match-icon]="event.type === 'match'" [class.training-icon]="event.type === 'training'">
+          {{ event.type === 'match' ? 'sports' : 'fitness_center' }}
+        </mat-icon>
+
+        <div class="event-details">
+          <div class="event-main">
+            <span class="event-time">{{ getEventTime(event) || '–' }}</span>
+            <span class="event-title">{{ event.title }}</span>
+            @if (event.type === 'match' && event.isHome !== undefined) {
+              <span class="venue-badge" [class.home]="event.isHome" [class.away]="!event.isHome">
+                {{ event.isHome ? 'L' : 'V' }}
+              </span>
+            }
+          </div>
+          <div class="event-meta">
+            <span class="category-label">{{ getCategoryLabel(event.category) }}</span>
+            @if (event.location) {
+              <span class="location-label">· {{ event.location }}</span>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+  }
+</div>

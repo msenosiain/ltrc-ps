@@ -64,6 +64,11 @@ export const routes: Routes = [
             (m) => m.PHYSICAL_TRAINING_ROUTES
           ),
       },
+      {
+        path: 'calendar',
+        loadChildren: () =>
+          import('./calendar/calendar.routes').then((m) => m.CALENDAR_ROUTES),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },
