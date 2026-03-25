@@ -40,4 +40,8 @@ export class RoutinesService {
   deleteRoutine(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  cloneRoutine(id: string): Observable<Routine> {
+    return this.httpClient.post<Routine>(`${this.apiUrl}/${id}/clone`, {});
+  }
 }

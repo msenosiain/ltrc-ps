@@ -32,6 +32,7 @@ import { Observable, startWith, map } from 'rxjs';
 import {
   CategoryEnum,
   Exercise,
+  HockeyBranchEnum,
   RoleEnum,
   RoutineStatusEnum,
   SportEnum,
@@ -88,6 +89,8 @@ export class RoutineFormComponent implements OnInit {
     { value: 'saturday', label: 'Sá' },
     { value: 'sunday', label: 'Do' },
   ];
+  readonly branchOptions = Object.values(HockeyBranchEnum);
+  readonly divisionOptions = ['Primera', 'Segunda', 'Tercera', 'Cuarta', 'Quinta'];
 
   form!: FormGroup;
   editing = false;
@@ -115,6 +118,9 @@ export class RoutineFormComponent implements OnInit {
       validUntil: [null as Date | null, Validators.required],
       daysOfWeek: [[]],
       assignedPlayers: [[]],
+      assignedCategories: [[]],
+      assignedBranches: [[]],
+      assignedDivisions: [[]],
       status: [RoutineStatusEnum.DRAFT],
       notes: [''],
       blocks: this.fb.array([]),
@@ -155,6 +161,9 @@ export class RoutineFormComponent implements OnInit {
             assignedPlayers: (routine.assignedPlayers ?? []).map((p) =>
               typeof p === 'string' ? p : (p as any).id ?? p
             ),
+            assignedCategories: routine.assignedCategories ?? [],
+            assignedBranches: routine.assignedBranches ?? [],
+            assignedDivisions: routine.assignedDivisions ?? [],
             status: routine.status,
             notes: routine.notes ?? '',
           });
@@ -313,6 +322,9 @@ export class RoutineFormComponent implements OnInit {
       validUntil: raw.validUntil ? format(raw.validUntil, 'yyyy-MM-dd') : undefined,
       daysOfWeek: raw.daysOfWeek ?? [],
       assignedPlayers: raw.assignedPlayers ?? [],
+      assignedCategories: raw.assignedCategories ?? [],
+      assignedBranches: raw.assignedBranches ?? [],
+      assignedDivisions: raw.assignedDivisions ?? [],
       status: raw.status,
       notes: raw.notes || undefined,
       blocks: (raw.blocks ?? []).map((block: any, bi: number) => ({

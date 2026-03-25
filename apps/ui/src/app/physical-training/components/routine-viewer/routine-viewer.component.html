@@ -10,6 +10,10 @@
       </button>
       <h2 class="routine-viewer__title">{{ routine.name }}</h2>
       <div class="routine-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
+        <button mat-stroked-button (click)="onClone()" [disabled]="cloning">
+          <mat-icon>content_copy</mat-icon>
+          Duplicar
+        </button>
         <button mat-stroked-button (click)="onEdit()">
           <mat-icon>edit</mat-icon>
           Editar

@@ -11,3 +11,4 @@ export * from './trip.interface';
 export * from './exercise.interface';
 export * from './routine.interface';
 export * from './calendar-event.interface';
+export * from './workout-log.interface';

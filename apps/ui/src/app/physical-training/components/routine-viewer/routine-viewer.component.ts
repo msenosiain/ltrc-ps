@@ -43,6 +43,7 @@ export class RoutineViewerComponent implements OnInit {
 
   routine?: Routine;
   loading = true;
+  cloning = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
@@ -110,6 +111,25 @@ export class RoutineViewerComponent implements OnInit {
           },
         });
     });
+  }
+
+  onClone(): void {
+    if (!this.routine?.id) return;
+    this.cloning = true;
+    this.routinesService
+      .cloneRoutine(this.routine.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (cloned) => {
+          this.cloning = false;
+          this.snackBar.open('Rutina duplicada', 'Cerrar', { duration: 3000 });
+          this.router.navigate(['/dashboard/physical/routines', cloned.id]);
+        },
+        error: () => {
+          this.cloning = false;
+          this.snackBar.open('Error al duplicar la rutina', 'Cerrar', { duration: 5000 });
+        },
+      });
   }
 
   onBack(): void {

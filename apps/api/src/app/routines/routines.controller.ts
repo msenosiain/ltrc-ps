@@ -38,12 +38,27 @@ export class RoutinesController {
     return this.routinesService.findMyRoutines(userId);
   }
 
+  @Get('today')
+  @UseGuards(JwtAuthGuard)
+  findTodayRoutine(@Req() req: Request) {
+    const userId = (req as any).user?._id?.toString();
+    return this.routinesService.findTodayRoutine(userId);
+  }
+
   @Post()
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() dto: CreateRoutineDto, @Req() req: Request) {
     const callerId = (req as any).user?._id?.toString();
     return this.routinesService.create(dto, callerId);
+  }
+
+  @Post(':id/clone')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  clone(@Param('id') id: string, @Req() req: Request) {
+    const callerId = (req as any).user?._id?.toString();
+    return this.routinesService.clone(id, callerId);
   }
 
   @Get(':id')

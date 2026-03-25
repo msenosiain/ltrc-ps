@@ -5,7 +5,7 @@ import { RoutineEntity } from './schemas/routine.entity';
 import { CreateRoutineDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
 import { RoutineFilterDto } from './dto/routine-filter.dto';
-import { PaginatedResponse } from '@ltrc-campo/shared-api-model';
+import { PaginatedResponse, RoutineStatusEnum } from '@ltrc-campo/shared-api-model';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerEntity } from '../players/schemas/player.entity';
 
@@ -96,5 +96,55 @@ export class RoutinesService {
     const routine = await this.routineModel.findById(id);
     if (!routine) throw new NotFoundException('Routine not found');
     return routine.deleteOne();
+  }
+
+  async clone(id: string, callerId?: string) {
+    const original = await this.routineModel.findById(id).lean();
+    if (!original) throw new NotFoundException('Routine not found');
+    const { _id, __v, createdAt, updatedAt, ...rest } = original as any;
+    return this.routineModel.create({
+      ...rest,
+      name: `Copia de ${rest.name}`,
+      status: RoutineStatusEnum.DRAFT,
+      createdBy: callerId,
+      updatedBy: callerId,
+    });
+  }
+
+  async findTodayRoutine(userId: string) {
+    const today = new Date().toISOString().slice(0, 10);
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const todayDayName = dayNames[new Date().getDay()];
+
+    const player = await this.playerModel.findOne({ userId }).exec();
+    if (!player) return null;
+
+    const routine = await this.routineModel
+      .findOne({
+        status: RoutineStatusEnum.ACTIVE,
+        validFrom: { $lte: today },
+        validUntil: { $gte: today },
+        $and: [
+          {
+            $or: [
+              { daysOfWeek: { $exists: false } },
+              { daysOfWeek: { $size: 0 } },
+              { daysOfWeek: todayDayName },
+            ],
+          },
+          {
+            $or: [
+              { assignedPlayers: { $exists: false } },
+              { assignedPlayers: { $size: 0 } },
+              { assignedPlayers: player._id },
+              { assignedCategories: player.category },
+            ],
+          },
+        ],
+      })
+      .populate('blocks.exercises.exercise')
+      .exec();
+
+    return routine ?? null;
   }
 }

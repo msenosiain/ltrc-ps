@@ -1,4 +1,4 @@
-import { RoutineStatusEnum } from '../enums';
+import { CategoryEnum, RoutineStatusEnum } from '../enums';
 import { Exercise } from './exercise.interface';
 
 export interface SetEntry {
@@ -31,6 +31,9 @@ export interface Routine {
   validUntil: string;
   daysOfWeek?: string[];
   assignedPlayers: (string | { id: string; name: string })[];
+  assignedCategories?: CategoryEnum[];
+  assignedBranches?: string[];
+  assignedDivisions?: string[];
   blocks: RoutineBlock[];
   status: RoutineStatusEnum;
   notes?: string;

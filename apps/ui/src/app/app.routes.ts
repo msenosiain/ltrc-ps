@@ -65,6 +65,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'my-workout',
+        loadComponent: () =>
+          import('./physical-training/components/my-workout/my-workout.component').then(
+            (m) => m.MyWorkoutComponent
+          ),
+      },
+      {
         path: 'calendar',
         loadChildren: () =>
           import('./calendar/calendar.routes').then((m) => m.CALENDAR_ROUTES),

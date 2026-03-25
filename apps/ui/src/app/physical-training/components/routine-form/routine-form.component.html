@@ -99,6 +99,33 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-label>Categorías asignadas</mat-label>
+          <mat-select formControlName="assignedCategories" multiple>
+            @for (opt of getCategoryOptions(); track opt.id) {
+              <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-label>Ramas asignadas</mat-label>
+          <mat-select formControlName="assignedBranches" multiple>
+            @for (branch of branchOptions; track branch) {
+              <mat-option [value]="branch">{{ branch }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-label>Divisiones asignadas</mat-label>
+          <mat-select formControlName="assignedDivisions" multiple>
+            @for (division of divisionOptions; track division) {
+              <mat-option [value]="division">{{ division }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="routine-form__field">
           <mat-label>Estado</mat-label>
           <mat-select formControlName="status">
             @for (opt of statusOptions; track opt.value) {

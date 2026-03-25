@@ -16,6 +16,7 @@ import { TrainingsModule } from './trainings/trainings.module';
 import { TripsModule } from './trips/trips.module';
 import { ExercisesModule } from './exercises/exercises.module';
 import { RoutinesModule } from './routines/routines.module';
+import { WorkoutLogsModule } from './workout-logs/workout-logs.module';
 import { CalendarModule } from './calendar/calendar.module';
 
 export const configSchema = Joi.object({
@@ -67,6 +68,7 @@ export const configSchema = Joi.object({
     TripsModule,
     ExercisesModule,
     RoutinesModule,
+    WorkoutLogsModule,
     CalendarModule,
     HealthModule,
   ],

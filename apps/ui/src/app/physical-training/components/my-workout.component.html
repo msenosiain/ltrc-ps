@@ -1,0 +1,95 @@
+<div class="my-workout">
+  <div class="my-workout__header">
+    <button mat-icon-button (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="my-workout__title">Mi entrenamiento de hoy</h2>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading && noRoutine && !activeLog) {
+    <div class="my-workout__empty">
+      <mat-icon class="my-workout__empty-icon">fitness_center</mat-icon>
+      <p>No tenés una rutina asignada para hoy.</p>
+    </div>
+  }
+
+  @if (!loading && todayRoutine && !activeLog) {
+    <mat-card class="my-workout__card">
+      <mat-card-header>
+        <mat-card-title>{{ todayRoutine.name }}</mat-card-title>
+        @if (todayRoutine.description) {
+          <mat-card-subtitle>{{ todayRoutine.description }}</mat-card-subtitle>
+        }
+      </mat-card-header>
+      <mat-card-content>
+        <p class="my-workout__meta">{{ todayRoutine.blocks?.length ?? 0 }} bloques de ejercicios</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="startWorkout()" [disabled]="saving">
+          <mat-icon>play_arrow</mat-icon>
+          Empezar entrenamiento
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  @if (activeLog) {
+    @if (saving) {
+      <mat-progress-bar mode="indeterminate" />
+    }
+
+    @for (block of getSortedBlocks(); track block.blockOrder) {
+      <mat-card class="my-workout__block-card">
+        <mat-card-header>
+          <mat-card-title>{{ block.blockTitle }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @for (exercise of block.exercises; track exercise.order) {
+            <div class="my-workout__exercise">
+              <h4 class="my-workout__exercise-name">{{ exercise.exerciseName }}</h4>
+              @if (exercise.notes) {
+                <p class="my-workout__exercise-notes">{{ exercise.notes }}</p>
+              }
+              <div class="my-workout__sets">
+                @for (set of exercise.sets; track $index; let si = $index) {
+                  <div class="my-workout__set-row" [class.my-workout__set-row--done]="set.completed">
+                    <span class="my-workout__set-num">{{ si + 1 }}</span>
+                    <span class="my-workout__set-planned">
+                      @if (set.plannedReps) { {{ set.plannedReps }} reps }
+                      @if (set.plannedDuration) { {{ set.plannedDuration }} }
+                      @if (set.plannedLoad) { · {{ set.plannedLoad }} }
+                    </span>
+                    <mat-form-field appearance="outline" class="my-workout__set-input">
+                      <mat-label>Reps</mat-label>
+                      <input matInput [(ngModel)]="set.actualReps" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="my-workout__set-input">
+                      <mat-label>Carga</mat-label>
+                      <input matInput [(ngModel)]="set.actualLoad" />
+                    </mat-form-field>
+                    <mat-checkbox
+                      [checked]="set.completed"
+                      (change)="toggleSet(set)"
+                      color="primary"
+                    />
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <div class="my-workout__footer-actions">
+      <button mat-raised-button color="primary" (click)="saveLog()" [disabled]="saving">
+        <mat-icon>save</mat-icon>
+        Guardar progreso
+      </button>
+    </div>
+  }
+</div>

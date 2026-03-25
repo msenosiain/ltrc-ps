@@ -68,4 +68,11 @@ export const PHYSICAL_TRAINING_ROUTES: Routes = [
         (m) => m.RoutineViewerComponent
       ),
   },
+  {
+    path: 'workout-logs',
+    loadComponent: () =>
+      import('./components/workout-log-list/workout-log-list.component').then(
+        (m) => m.WorkoutLogListComponent
+      ),
+  },
 ];
