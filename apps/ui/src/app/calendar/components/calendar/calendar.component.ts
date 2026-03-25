@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { CalendarEvent, CategoryEnum } from '@ltrc-campo/shared-api-model';
+import { CalendarEvent, CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
 import { getCategoryLabel } from '../../../common/category-options';
 
@@ -48,6 +48,8 @@ export class CalendarComponent implements OnInit {
   private readonly calendarService = inject(CalendarService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly SportEnum = SportEnum;
 
   loading = signal(false);
   weekAnchor = signal(new Date()); // any date in the displayed week

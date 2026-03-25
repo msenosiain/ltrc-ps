@@ -28,9 +28,17 @@
 
       @for (event of day.events; track event.id) {
       <div class="event-row" (click)="navigate(event)" tabindex="0" (keydown.enter)="navigate(event)">
-        <mat-icon class="event-type-icon" [class.match-icon]="event.type === 'match'" [class.training-icon]="event.type === 'training'">
-          {{ event.type === 'match' ? 'sports' : 'fitness_center' }}
-        </mat-icon>
+        @if (event.type === 'training' && event.sport === SportEnum.RUGBY) {
+          <mat-icon class="event-type-icon training-rugby">sports_rugby</mat-icon>
+        } @else if (event.type === 'training' && event.sport === SportEnum.HOCKEY) {
+          <mat-icon class="event-type-icon training-hockey">sports_hockey</mat-icon>
+        } @else if (event.type === 'match' && event.sport === SportEnum.RUGBY) {
+          <span class="event-type-icon match-rugby">H</span>
+        } @else if (event.type === 'match' && event.sport === SportEnum.HOCKEY) {
+          <span class="event-type-icon match-hockey">∩</span>
+        } @else {
+          <mat-icon class="event-type-icon">{{ event.type === 'match' ? 'sports' : 'fitness_center' }}</mat-icon>
+        }
 
         <div class="event-details">
           <div class="event-main">

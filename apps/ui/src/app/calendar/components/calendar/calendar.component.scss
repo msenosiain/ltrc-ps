@@ -84,13 +84,21 @@
   height: 20px;
   flex-shrink: 0;
 
-  &.match-icon {
-    color: var(--mat-app-primary, #1976d2);
+  &.training-rugby  { color: #b71c1c; }
+  &.training-hockey { color: #1565c0; }
+
+  &.match-rugby,
+  &.match-hockey {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 15px;
+    line-height: 1;
   }
 
-  &.training-icon {
-    color: #2e7d32;
-  }
+  &.match-rugby  { color: #b71c1c; font-family: monospace; }
+  &.match-hockey { color: #1565c0; font-size: 18px; }
 }
 
 .event-details {
