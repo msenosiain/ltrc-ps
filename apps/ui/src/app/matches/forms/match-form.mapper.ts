@@ -13,6 +13,8 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
     sport: value.sport || undefined,
     category: value.category!,
     division: value.division || undefined,
+    branch: value.branch || undefined,
+    name: value.name || undefined,
     tournament: value.tournament || undefined,
     result: hasResult
       ? {
