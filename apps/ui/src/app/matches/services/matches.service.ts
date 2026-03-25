@@ -30,13 +30,15 @@ export class MatchesService {
     divisions: string[];
     tournamentIds?: string[];
   }> {
-    const params = category ? { category } : {};
+    const url = category
+      ? `${this.matchesApiUrl}/field-options?category=${encodeURIComponent(category)}`
+      : `${this.matchesApiUrl}/field-options`;
     return this.httpClient.get<{
       opponents: string[];
       venues: string[];
       divisions: string[];
       tournamentIds?: string[];
-    }>(`${this.matchesApiUrl}/field-options`, { params });
+    }>(url);
   }
 
   getMySquadMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {
