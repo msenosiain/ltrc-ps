@@ -75,6 +75,16 @@
             Inactivo
           </mat-chip>
           }
+          @if (getTrialInfo(); as trial) {
+          <mat-chip class="status-chip trial-chip" [class.trial-expiring]="trial.daysLeft <= 3 && !trial.expired" [class.trial-expired]="trial.expired">
+            Período de prueba — vence {{ trial.endDate | date: 'dd/MM/yyyy' }}
+            @if (trial.expired) {
+              (Vencido)
+            } @else {
+              ({{ trial.daysLeft }} día{{ trial.daysLeft === 1 ? '' : 's' }})
+            }
+          </mat-chip>
+          }
           @if (isUnavailable) {
           <mat-chip class="status-chip" [style.background]="getAvailabilityColor(player.availability?.status)" style="color: white">
             {{ getAvailabilityLabel(player.availability?.status) }}

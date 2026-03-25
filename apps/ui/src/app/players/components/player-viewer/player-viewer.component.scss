@@ -167,6 +167,23 @@ $avatar-size: 160px;
   }
 }
 
+.trial-chip {
+  background: #e3f2fd;
+  color: #0277bd;
+}
+
+.trial-expiring {
+  background: #fff3e0 !important;
+  color: #f57f17 !important;
+  font-weight: 500;
+}
+
+.trial-expired {
+  background: #ffebee !important;
+  color: #c62828 !important;
+  font-weight: 500;
+}
+
 .no-history {
   color: var(--mat-app-on-surface-variant, #888);
   font-size: 0.9rem;

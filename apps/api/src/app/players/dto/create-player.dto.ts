@@ -225,6 +225,11 @@ export class CreatePlayerDto {
   readonly status?: PlayerStatusEnum;
 
   @IsOptional()
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @IsDate()
+  readonly trialStartDate?: Date;
+
+  @IsOptional()
   @Transform(({ value }) => {
     const obj = typeof value === 'string' ? JSON.parse(value) : value;
     return plainToInstance(PlayerAvailabilityDto, obj);

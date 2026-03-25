@@ -95,6 +95,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
       enum: Object.values(PlayerStatusEnum),
       default: PlayerStatusEnum.ACTIVE,
     },
+    trialStartDate: { type: Date, required: false },
     availability: {
       type: new Schema(
         {

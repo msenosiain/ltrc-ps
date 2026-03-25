@@ -86,6 +86,9 @@
         @if (player.status === PlayerStatusEnum.TRIAL) {
           <mat-icon class="status-icon status-icon--trial" title="A prueba">person_add</mat-icon>
         }
+        @if (getTrialStatus(player); as trialStatus) {
+          <mat-icon class="trial-icon trial-{{ trialStatus }}" [matTooltip]="trialStatus === 'expired' ? 'Prueba vencida' : 'Prueba por vencer'">schedule</mat-icon>
+        }
         @if (player.availability?.status === PlayerAvailabilityEnum.INJURED) {
           <mat-icon class="availability-icon availability-icon--injured" title="Lesionado">local_hospital</mat-icon>
         }

@@ -71,6 +71,7 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
     }),
 
     status: fb.nonNullable.control<PlayerStatusEnum>(PlayerStatusEnum.ACTIVE),
+    trialStartDate: fb.control<Date | null>(null),
     availabilityStatus: fb.nonNullable.control<PlayerAvailabilityEnum>(
       PlayerAvailabilityEnum.AVAILABLE
     ),

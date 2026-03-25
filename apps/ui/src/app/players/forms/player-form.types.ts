@@ -50,6 +50,7 @@ export type PlayerFormValue = {
   };
 
   status: PlayerStatusEnum;
+  trialStartDate: Date | null;
   availabilityStatus: PlayerAvailabilityEnum;
   availabilityReason: string;
   availabilitySince: Date | null;

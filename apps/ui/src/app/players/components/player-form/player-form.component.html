@@ -282,6 +282,15 @@
         </mat-select>
       </mat-form-field>
 
+      @if (playerForm.get('status')?.value === PlayerStatusEnum.TRIAL) {
+      <mat-form-field appearance="outline">
+        <mat-label>Inicio del período de prueba</mat-label>
+        <input matInput [matDatepicker]="trialPicker" formControlName="trialStartDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="trialPicker" />
+        <mat-datepicker #trialPicker />
+      </mat-form-field>
+      }
+
       <mat-form-field appearance="outline">
         <mat-label>Disponibilidad</mat-label>
         <mat-select formControlName="availabilityStatus">

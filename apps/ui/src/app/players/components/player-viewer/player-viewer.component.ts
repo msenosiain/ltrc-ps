@@ -212,4 +212,16 @@ export class PlayerViewerComponent implements OnInit {
   get isInactive(): boolean {
     return this.player?.status === PlayerStatusEnum.INACTIVE;
   }
+
+  getTrialInfo(): { endDate: Date; daysLeft: number; expired: boolean } | null {
+    const player = this.player;
+    if (player?.status !== PlayerStatusEnum.TRIAL || !player.trialStartDate) return null;
+    const start = new Date(player.trialStartDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 14);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysLeft = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return { endDate: end, daysLeft, expired: daysLeft < 0 };
+  }
 }

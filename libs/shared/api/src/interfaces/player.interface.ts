@@ -76,6 +76,7 @@ export interface Player extends Document {
   readonly medicalData?: MedicalData;
   readonly parentContacts?: ParentContact[];
   readonly status?: PlayerStatusEnum;
+  readonly trialStartDate?: Date;
   readonly availability?: PlayerAvailability;
   readonly photoId?: string;
   readonly userId?: string;

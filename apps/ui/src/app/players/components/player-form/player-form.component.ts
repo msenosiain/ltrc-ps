@@ -38,6 +38,7 @@ import {
   Player,
   PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   RoleEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
@@ -123,6 +124,7 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   readonly branchOptions = Object.values(HockeyBranchEnum);
   readonly clothingSizesOptions = Object.values(ClothingSizesEnum);
 
+  readonly PlayerStatusEnum = PlayerStatusEnum;
   readonly statusOptions = playerStatusOptions;
   readonly availabilityOptions = playerAvailabilityOptions;
 
@@ -266,6 +268,15 @@ export class PlayerFormComponent implements OnInit, OnChanges {
       .subscribe(({ healthInsurances }) => {
         this.allHealthInsurances = healthInsurances;
       });
+    this.playerForm
+      .get('status')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        if (status !== PlayerStatusEnum.TRIAL) {
+          this.playerForm.get('trialStartDate')!.setValue(null, { emitEvent: false });
+        }
+      });
+
     this.playerForm
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))

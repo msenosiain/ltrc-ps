@@ -48,6 +48,7 @@ export class PlayerEntity extends Document {
     phone?: string;
   }[];
   status?: PlayerStatusEnum;
+  trialStartDate?: Date;
   availability?: {
     status: PlayerAvailabilityEnum;
     reason?: string;

@@ -25,6 +25,7 @@ export function mapFormToCreatePlayerDto(value: PlayerFormValue) {
     clothingSizes: mapClothingSizes(value),
     medicalData: mapMedicalData(value),
     status: value.status,
+    trialStartDate: value.trialStartDate ? value.trialStartDate.toISOString() : undefined,
     availability: mapAvailability(value),
     parentContacts: mapParentContacts(value),
     createUser: value.createUser ?? false,
@@ -49,6 +50,7 @@ export function mapPlayerToForm(player: Player): PlayerFormValue {
     positions: player.positions ?? [],
 
     status: player.status ?? PlayerStatusEnum.ACTIVE,
+    trialStartDate: player.trialStartDate ? new Date(player.trialStartDate) : null,
     availabilityStatus:
       player.availability?.status ?? PlayerAvailabilityEnum.AVAILABLE,
     availabilityReason: player.availability?.reason ?? '',

@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
 import {
@@ -17,6 +18,7 @@ import {
 import {
   CategoryEnum,
   HockeyBranchEnum,
+  Player,
   PlayerAvailabilityEnum,
   PlayerPosition,
   PlayerStatusEnum,
@@ -44,6 +46,7 @@ import { ListStateService } from '../../../common/services/list-state.service';
     MatSnackBarModule,
     PlayerSearchComponent,
     AllowedRolesDirective,
+    MatTooltipModule,
   ],
   templateUrl: './players-list.component.html',
   styleUrls: ['./players-list.component.scss'],
@@ -163,6 +166,18 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   getPlayerPhotoUrl(playerId: string): string {
     return this.playersService.getPlayerPhotoUrl(playerId);
+  }
+
+  getTrialStatus(player: Player): 'expiring' | 'expired' | null {
+    if (player.status !== PlayerStatusEnum.TRIAL || !player.trialStartDate) return null;
+    const end = new Date(player.trialStartDate);
+    end.setDate(end.getDate() + 14);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysLeft = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysLeft < 0) return 'expired';
+    if (daysLeft <= 3) return 'expiring';
+    return null;
   }
 
   onSurveyFileSelected(event: Event): void {

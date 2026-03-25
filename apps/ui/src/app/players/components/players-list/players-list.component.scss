@@ -61,6 +61,23 @@
   &--trial { color: #0288d1; }
 }
 
+.trial-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-left: 4px;
+  line-height: 1;
+}
+
+.trial-expiring {
+  color: #f57f17;
+}
+
+.trial-expired {
+  color: #c62828;
+}
+
 .availability-icon {
   font-size: 16px;
   width: 16px;
