@@ -1,7 +1,12 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
-import { BlockEnum, CategoryEnum, SportEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
+import {
+  BlockEnum,
+  CategoryEnum,
+  SportEnum,
+  getBlockCategories,
+} from '@ltrc-campo/shared-api-model';
 import { PlayersService } from '../../services/players.service';
 import { AuthService } from '../../../auth/auth.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -13,11 +18,20 @@ interface CategoryStat {
   count: number;
 }
 
+interface SportGroup {
+  sport: SportEnum;
+  label: string;
+  categories: CategoryStat[];
+  subtotal: number;
+}
+
 interface BlockStat {
   block: BlockEnum;
   label: string;
-  categories: CategoryStat[];
+  sportGroups: SportGroup[];
+  showSportSubtotals: boolean;
   total: number;
+  isPlantelSuperior: boolean;
 }
 
 const BLOCK_LABELS: Record<BlockEnum, string> = {
@@ -28,10 +42,18 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
   [BlockEnum.PLANTEL_SUPERIOR]: 'Plantel Superior',
 };
 
-const PS_SPORT_LABELS: Record<string, string> = {
-  [SportEnum.RUGBY]: 'Plantel Superior Rugby',
-  [SportEnum.HOCKEY]: 'Plantel Superior Hockey',
-};
+const RUGBY_CATS = new Set<CategoryEnum>([
+  CategoryEnum.M5, CategoryEnum.M6, CategoryEnum.M7, CategoryEnum.M8,
+  CategoryEnum.M9, CategoryEnum.M10, CategoryEnum.M11, CategoryEnum.M12,
+  CategoryEnum.M13, CategoryEnum.M14, CategoryEnum.M15, CategoryEnum.M16,
+  CategoryEnum.M17, CategoryEnum.M19,
+]);
+
+const HOCKEY_CATS = new Set<CategoryEnum>([
+  CategoryEnum.PRE_DECIMA, CategoryEnum.DECIMA, CategoryEnum.NOVENA,
+  CategoryEnum.OCTAVA, CategoryEnum.SEPTIMA, CategoryEnum.SEXTA,
+  CategoryEnum.QUINTA, CategoryEnum.CUARTA, CategoryEnum.MASTER,
+]);
 
 @Component({
   selector: 'ltrc-player-stats-widget',
@@ -44,7 +66,6 @@ export class PlayerStatsWidgetComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-
   private readonly currentUser = toSignal(this.authService.user$);
 
   loading = true;
@@ -63,44 +84,62 @@ export class PlayerStatsWidgetComponent implements OnInit {
     });
   }
 
-  private buildBlocks(byCategory: Record<string, number>, allowedCategories?: CategoryEnum[]): BlockStat[] {
+  private buildBlocks(
+    byCategory: Record<string, number>,
+    allowedCategories?: CategoryEnum[]
+  ): BlockStat[] {
     const result: BlockStat[] = [];
-    for (const block of Object.values(BlockEnum)) {
-      if (block === BlockEnum.PLANTEL_SUPERIOR) {
-        // Split PS by sport
-        for (const sport of [SportEnum.RUGBY, SportEnum.HOCKEY]) {
-          const key = `plantel_superior:${sport}`;
-          const count = byCategory[key];
-          if (count === undefined) continue;
-          if (allowedCategories?.length && !allowedCategories.includes(CategoryEnum.PLANTEL_SUPERIOR)) continue;
-          result.push({
-            block,
-            label: PS_SPORT_LABELS[sport],
-            categories: [{ category: CategoryEnum.PLANTEL_SUPERIOR, label: getCategoryLabel(CategoryEnum.PLANTEL_SUPERIOR), count }],
-            total: count,
-          });
-        }
-        continue;
-      }
 
-      const cats = getBlockCategories(block)
-        .filter((cat) => {
-          if (allowedCategories?.length) return allowedCategories.includes(cat);
-          return byCategory[cat] !== undefined;
-        })
-        .map((cat) => ({
-          category: cat,
-          label: getCategoryLabel(cat),
-          count: byCategory[cat] ?? 0,
-        }));
+    // Plantel Superior — one block with Rugby / Hockey sport rows
+    const rugbyPs = byCategory['plantel_superior:rugby'];
+    const hockeyPs = byCategory['plantel_superior:hockey'];
+    if (!allowedCategories?.length || allowedCategories.includes(CategoryEnum.PLANTEL_SUPERIOR)) {
+      const sportGroups: SportGroup[] = [];
+      if (rugbyPs) sportGroups.push({ sport: SportEnum.RUGBY, label: 'Rugby', categories: [], subtotal: rugbyPs });
+      if (hockeyPs) sportGroups.push({ sport: SportEnum.HOCKEY, label: 'Hockey', categories: [], subtotal: hockeyPs });
+      if (sportGroups.length) {
+        result.push({
+          block: BlockEnum.PLANTEL_SUPERIOR,
+          label: BLOCK_LABELS[BlockEnum.PLANTEL_SUPERIOR],
+          sportGroups,
+          showSportSubtotals: false,
+          total: sportGroups.reduce((s, g) => s + g.subtotal, 0),
+          isPlantelSuperior: true,
+        });
+      }
+    }
+
+    // Other blocks
+    for (const block of [BlockEnum.INFANTILES, BlockEnum.CADETES, BlockEnum.JUVENILES, BlockEnum.MAYORES]) {
+      const cats = getBlockCategories(block).filter((cat) => {
+        if (allowedCategories?.length) return allowedCategories.includes(cat);
+        return byCategory[cat] !== undefined;
+      });
       if (!cats.length) continue;
+
+      const toStat = (c: CategoryEnum): CategoryStat => ({
+        category: c,
+        label: getCategoryLabel(c),
+        count: byCategory[c] ?? 0,
+      });
+
+      const rugbyCats = cats.filter((c) => RUGBY_CATS.has(c)).map(toStat);
+      const hockeyCats = cats.filter((c) => HOCKEY_CATS.has(c)).map(toStat);
+
+      const sportGroups: SportGroup[] = [];
+      if (rugbyCats.length) sportGroups.push({ sport: SportEnum.RUGBY, label: 'Rugby', categories: rugbyCats, subtotal: rugbyCats.reduce((s, c) => s + c.count, 0) });
+      if (hockeyCats.length) sportGroups.push({ sport: SportEnum.HOCKEY, label: 'Hockey', categories: hockeyCats, subtotal: hockeyCats.reduce((s, c) => s + c.count, 0) });
+
       result.push({
         block,
         label: BLOCK_LABELS[block],
-        categories: cats,
-        total: cats.reduce((s, c) => s + c.count, 0),
+        sportGroups,
+        showSportSubtotals: sportGroups.length > 1,
+        total: sportGroups.reduce((s, g) => s + g.subtotal, 0),
+        isPlantelSuperior: false,
       });
     }
+
     return result;
   }
 }

@@ -59,6 +59,47 @@
   font-weight: 500;
 }
 
+.sport-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 0.85rem;
+}
+
+.sport-label {
+  font-weight: 500;
+  color: var(--mat-app-on-surface-variant, #555);
+}
+
+.sport-count {
+  font-weight: 600;
+}
+
+.sport-subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 8px 4px;
+  font-size: 0.8rem;
+  border-top: 1px dashed #e0e0e0;
+  margin-top: 2px;
+  margin-bottom: 6px;
+}
+
+.sport-subtotal-label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--mat-app-on-surface-variant, #666);
+}
+
+.sport-subtotal-count {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
 .total-row {
   display: flex;
   justify-content: space-between;

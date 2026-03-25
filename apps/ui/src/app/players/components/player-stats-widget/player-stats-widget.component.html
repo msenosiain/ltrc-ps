@@ -12,11 +12,29 @@
           <span class="block-name">{{ block.label }}</span>
           <span class="block-total">{{ block.total }}</span>
         </div>
-        @for (cat of block.categories; track cat.category) {
-          <div class="category-row">
-            <span class="category-label">{{ cat.label }}</span>
-            <span class="category-count">{{ cat.count }}</span>
-          </div>
+
+        @if (block.isPlantelSuperior) {
+          @for (group of block.sportGroups; track group.sport) {
+            <div class="sport-row">
+              <span class="sport-label">{{ group.label }}</span>
+              <span class="sport-count">{{ group.subtotal }}</span>
+            </div>
+          }
+        } @else {
+          @for (group of block.sportGroups; track group.sport) {
+            @for (cat of group.categories; track cat.category) {
+              <div class="category-row">
+                <span class="category-label">{{ cat.label }}</span>
+                <span class="category-count">{{ cat.count }}</span>
+              </div>
+            }
+            @if (block.showSportSubtotals) {
+              <div class="sport-subtotal-row">
+                <span class="sport-subtotal-label">{{ group.label }}</span>
+                <span class="sport-subtotal-count">{{ group.subtotal }}</span>
+              </div>
+            }
+          }
         }
       </div>
     }
