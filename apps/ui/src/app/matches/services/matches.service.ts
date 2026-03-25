@@ -115,21 +115,22 @@ export class MatchesService {
     return this.httpClient.delete<void>(`${this.matchesApiUrl}/${matchId}/videos/${videoId}`);
   }
 
-  uploadAttachment(matchId: string, file: File, name?: string, visibility = 'all'): Observable<MatchAttachment> {
+  uploadAttachment(matchId: string, file: File, name?: string, visibility = 'all', targetPlayers?: string[]): Observable<MatchAttachment> {
     const form = new FormData();
     form.append('file', file);
     if (name) form.append('name', name);
     form.append('visibility', visibility);
+    if (targetPlayers?.length) form.append('targetPlayers', JSON.stringify(targetPlayers));
     return this.httpClient.post<MatchAttachment>(
       `${this.matchesApiUrl}/${matchId}/attachments`,
       form
     );
   }
 
-  updateAttachment(matchId: string, fileId: string, name: string, visibility: string): Observable<MatchAttachment> {
+  updateAttachment(matchId: string, fileId: string, name: string, visibility: string, targetPlayers?: string[]): Observable<MatchAttachment> {
     return this.httpClient.patch<MatchAttachment>(
       `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`,
-      { name, visibility }
+      { name, visibility, targetPlayers: targetPlayers ?? [] }
     );
   }
 
@@ -137,6 +138,14 @@ export class MatchesService {
     return this.httpClient.delete<void>(
       `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`
     );
+  }
+
+  getAttendanceStats(): Observable<{
+    byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
+  }> {
+    return this.httpClient.get<{
+      byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
+    }>(`${this.matchesApiUrl}/stats/attendance`);
   }
 
   applySquadFromTemplate(matchId: string, squadId: string): Observable<Match> {

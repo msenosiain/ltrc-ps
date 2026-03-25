@@ -7,7 +7,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { CategoryEnum, PaginatedResponse, RoleEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, MatchStatusEnum, PaginatedResponse, RoleEnum } from '@ltrc-campo/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -21,6 +21,7 @@ const POPULATE_FIELDS = [
   { path: 'squad.player' },
   { path: 'attendance.player' },
   { path: 'videos.targetPlayers' },
+  { path: 'attachments.targetPlayers' },
 ];
 
 @Injectable()
@@ -248,7 +249,7 @@ export class MatchesService {
     return { items, total, page, size };
   }
 
-  async addAttachment(matchId: string, file: MulterFile, name?: string, visibility: 'all' | 'staff' | 'players' = 'all') {
+  async addAttachment(matchId: string, file: MulterFile, name?: string, visibility: 'all' | 'staff' | 'players' = 'all', targetPlayers?: string[]) {
     const match = await this.matchModel.findById(matchId);
     if (!match) throw new NotFoundException('Match not found');
 
@@ -259,7 +260,14 @@ export class MatchesService {
       file.mimetype
     );
 
-    const attachment = { fileId, filename: file.originalname, mimeType: file.mimetype, visibility, ...(name ? { name } : {}) };
+    const attachment = {
+      fileId,
+      filename: file.originalname,
+      mimeType: file.mimetype,
+      visibility,
+      ...(name ? { name } : {}),
+      targetPlayers: targetPlayers?.map((id) => new Types.ObjectId(id)) ?? [],
+    };
     match.attachments = match.attachments ?? [];
     match.attachments.push(attachment);
     await match.save();
@@ -267,7 +275,7 @@ export class MatchesService {
     return attachment;
   }
 
-  async updateAttachment(matchId: string, fileId: string, name: string, visibility: 'all' | 'staff' | 'players') {
+  async updateAttachment(matchId: string, fileId: string, name: string, visibility: 'all' | 'staff' | 'players', targetPlayers?: string[]) {
     const match = await this.matchModel.findById(matchId);
     if (!match) throw new NotFoundException('Match not found');
 
@@ -276,6 +284,7 @@ export class MatchesService {
 
     (match.attachments![idx] as any).name = name;
     (match.attachments![idx] as any).visibility = visibility;
+    (match.attachments![idx] as any).targetPlayers = targetPlayers?.map((id) => new Types.ObjectId(id)) ?? [];
     match.markModified('attachments');
     await match.save();
 
@@ -365,22 +374,37 @@ export class MatchesService {
     const match = await this.matchModel.findById(id).populate(POPULATE_FIELDS);
     if (!match) throw new NotFoundException('Match not found');
 
-    if (match.videos?.length && caller) {
+    if (caller) {
       const staffRoles: RoleEnum[] = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.ANALYST, RoleEnum.COACH, RoleEnum.TRAINER];
       const isStaff = caller.roles?.some((r) => staffRoles.includes(r as RoleEnum));
 
       if (!isStaff) {
         const player = await this.playerModel.findOne({ userId: (caller as any)._id });
         const playerId = player?._id?.toString();
-        match.set('videos', (match.videos ?? []).filter((v) => {
-          if (v.visibility === 'all') return true;
-          if (v.visibility === 'players' && playerId) {
-            return (v.targetPlayers as any[])?.some(
-              (p) => (p._id ?? p).toString() === playerId
-            );
-          }
-          return false;
-        }));
+
+        if (match.videos?.length) {
+          match.set('videos', (match.videos ?? []).filter((v) => {
+            if (v.visibility === 'all') return true;
+            if (v.visibility === 'players' && playerId) {
+              return (v.targetPlayers as any[])?.some(
+                (p) => (p._id ?? p).toString() === playerId
+              );
+            }
+            return false;
+          }));
+        }
+
+        if (match.attachments?.length) {
+          match.set('attachments', (match.attachments ?? []).filter((a) => {
+            if (a.visibility === 'all') return true;
+            if (a.visibility === 'players' && playerId) {
+              return (a.targetPlayers as any[])?.some(
+                (p) => (p._id ?? p).toString() === playerId
+              );
+            }
+            return false;
+          }));
+        }
       }
     }
 
@@ -461,6 +485,46 @@ export class MatchesService {
     return this.stripOrphanedSquad(
       await (await match.save()).populate(POPULATE_FIELDS)
     );
+  }
+
+  async getAttendanceStats(caller?: User): Promise<{
+    byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
+  }> {
+    const since = new Date();
+    since.setDate(since.getDate() - 28);
+
+    const scopeFilter: Record<string, unknown> = {
+      status: MatchStatusEnum.COMPLETED,
+      date: { $lte: new Date(), $gte: since },
+    };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      const categories = caller.categories ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+      if (categories.length) scopeFilter['category'] = { $in: categories };
+    }
+
+    const matches = await this.matchModel.find(scopeFilter).lean();
+
+    const stats: Record<string, { matches: number; totalPresent: number; totalAttendees: number }> = {};
+    for (const m of matches) {
+      const cat = m.category as string;
+      if (!stats[cat]) stats[cat] = { matches: 0, totalPresent: 0, totalAttendees: 0 };
+      stats[cat].matches++;
+      const playerAttendance = (m.attendance ?? []).filter((a: any) => !a.isStaff);
+      stats[cat].totalAttendees += playerAttendance.length;
+      stats[cat].totalPresent += playerAttendance.filter((a: any) => a.status === 'present').length;
+    }
+
+    const byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }> = {};
+    for (const [cat, data] of Object.entries(stats)) {
+      byCategory[cat] = {
+        ...data,
+        pct: data.totalAttendees > 0 ? Math.round((data.totalPresent / data.totalAttendees) * 100) : 0,
+      };
+    }
+
+    return { byCategory };
   }
 
   async delete(id: string) {

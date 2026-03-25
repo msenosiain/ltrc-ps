@@ -99,8 +99,17 @@ export class MatchesController {
   @Post(':id/attachments')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
-  async addAttachment(@Param('id') id: string, @UploadedFile() file: MulterFile, @Body('name') name?: string, @Body('visibility') visibility?: string) {
-    return this.matchesService.addAttachment(id, file, name, visibility as any);
+  async addAttachment(
+    @Param('id') id: string,
+    @UploadedFile() file: MulterFile,
+    @Body('name') name?: string,
+    @Body('visibility') visibility?: string,
+    @Body('targetPlayers') targetPlayers?: string | string[],
+  ) {
+    const players = targetPlayers
+      ? (Array.isArray(targetPlayers) ? targetPlayers : JSON.parse(targetPlayers))
+      : undefined;
+    return this.matchesService.addAttachment(id, file, name, visibility as any, players);
   }
 
   @Get(':id/attachments/:fileId')
@@ -122,8 +131,9 @@ export class MatchesController {
     @Param('fileId') fileId: string,
     @Body('name') name: string,
     @Body('visibility') visibility: string,
+    @Body('targetPlayers') targetPlayers?: string[],
   ) {
-    return this.matchesService.updateAttachment(id, fileId, name, visibility as any);
+    return this.matchesService.updateAttachment(id, fileId, name, visibility as any, targetPlayers);
   }
 
   @Delete(':id/attachments/:fileId')
@@ -151,6 +161,12 @@ export class MatchesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteVideo(@Param('id') id: string, @Param('videoId') videoId: string) {
     return this.matchesService.deleteVideo(id, videoId);
+  }
+
+  @Get('stats/attendance')
+  @UseGuards(JwtAuthGuard)
+  async getAttendanceStats(@Req() req: Request) {
+    return this.matchesService.getAttendanceStats((req as any).user);
   }
 
   @Get(':id')

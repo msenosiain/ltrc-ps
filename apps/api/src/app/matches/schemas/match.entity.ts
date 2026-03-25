@@ -4,6 +4,7 @@ import {
   CategoryEnum,
   MatchStatusEnum,
   SportEnum,
+  VideoVisibility,
   VideoClip,
 } from '@ltrc-campo/shared-api-model';
 import { TournamentEntity } from '../../tournaments/schemas/tournament.entity';
@@ -26,7 +27,7 @@ export class MatchEntity extends Document {
     player: PopulatedDoc<PlayerEntity & Document>;
   }[];
   attendance: AttendanceEntry[];
-  attachments: { fileId: string; filename: string; mimeType: string; name?: string }[];
+  attachments: { fileId: string; filename: string; mimeType: string; name?: string; visibility?: VideoVisibility; targetPlayers?: Types.ObjectId[] }[];
   videos?: VideoClip[];
   result?: {
     homeScore: number;

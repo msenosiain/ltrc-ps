@@ -36,6 +36,8 @@ export interface MatchAttachment {
   mimeType: string;
   name?: string;
   visibility?: VideoVisibility;
+  /** Solo relevante cuando visibility === 'players'. Staff siempre ve todos los adjuntos. */
+  targetPlayers?: string[];
 }
 
 export interface Match extends Document {
