@@ -200,44 +200,36 @@
       <p class="empty-attachments">Sin archivos adjuntos.</p>
       }
 
-      <div class="attachments-grid">
+      <div class="attachments-list">
         @for (att of match.attachments; track att.fileId) {
         <div class="attachment-item">
-          @if (isImage(att)) {
-          <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-preview">
-            <img [src]="getAttachmentUrl(att.fileId)" [alt]="att.filename" />
-          </a>
-          } @else {
-          <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-file">
-            <mat-icon>description</mat-icon>
-            <span>{{ att.name || att.filename }}</span>
-          </a>
-          }
-          <div class="attachment-footer">
+          <div class="attachment-info">
+            <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-link">
+              <mat-icon>{{ isImage(att) ? 'image' : 'description' }}</mat-icon>
+              <span class="attachment-name">{{ att.name || att.filename }}</span>
+            </a>
             <span
               *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN, RoleEnum.ANALYST]"
               class="visibility-badge visibility-{{ att.visibility ?? 'all' }}"
             >{{ getAttachmentVisibilityLabel(att) }}</span>
-            <div class="attachment-actions">
-              <button
-                *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN, RoleEnum.ANALYST]"
-                mat-icon-button
-                type="button"
-                (click)="openEditAttachmentDialog(att)"
-                title="Editar"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button
-                *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
-                mat-icon-button
-                class="attachment-delete"
-                (click)="deleteAttachment(att.fileId)"
-                title="Eliminar"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
+          </div>
+          <div
+            *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN, RoleEnum.ANALYST]"
+            class="attachment-actions"
+          >
+            <button mat-icon-button type="button" (click)="openEditAttachmentDialog(att)" title="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
+              mat-icon-button
+              type="button"
+              (click)="deleteAttachment(att.fileId)"
+              title="Eliminar"
+              color="warn"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
         </div>
         }
