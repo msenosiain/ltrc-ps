@@ -29,6 +29,7 @@ import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-m
 import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widget/my-matches-widget.component';
 import { PlayerStatsWidgetComponent } from '../players/components/player-stats-widget/player-stats-widget.component';
 import { AttendanceStatsWidgetComponent } from '../trainings/components/attendance-stats-widget/attendance-stats-widget.component';
+import { MatchAttendanceStatsWidgetComponent } from '../matches/components/match-attendance-stats-widget/match-attendance-stats-widget.component';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -47,6 +48,7 @@ import { AttendanceStatsWidgetComponent } from '../trainings/components/attendan
     MyMatchesWidgetComponent,
     PlayerStatsWidgetComponent,
     AttendanceStatsWidgetComponent,
+    MatchAttendanceStatsWidgetComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
