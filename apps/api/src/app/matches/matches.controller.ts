@@ -92,8 +92,8 @@ export class MatchesController {
 
   @Get('field-options')
   @UseGuards(JwtAuthGuard)
-  async getFieldOptions(@Req() req: Request) {
-    return this.matchesService.getFieldOptions((req as any).user);
+  async getFieldOptions(@Req() req: Request, @Query('category') category?: string) {
+    return this.matchesService.getFieldOptions((req as any).user, category as any);
   }
 
   @Post(':id/attachments')

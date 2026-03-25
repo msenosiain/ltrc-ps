@@ -66,6 +66,7 @@ export class MatchSearchComponent implements OnInit {
   tournaments: Tournament[] = [];
   allTournaments: Tournament[] = [];
   opponents: string[] = [];
+  divisions: string[] = [];
 
   showSportFilter = true;
   showCategoryFilter = true;
@@ -76,6 +77,7 @@ export class MatchSearchComponent implements OnInit {
     status: [undefined as MatchStatusEnum | undefined],
     sport: [undefined as SportEnum | undefined],
     category: [undefined as CategoryEnum | undefined],
+    division: [undefined as string | undefined],
     opponent: [undefined as string | undefined],
     tournament: [undefined as string | undefined],
   });
@@ -91,6 +93,7 @@ export class MatchSearchComponent implements OnInit {
     }).subscribe(({ allTournaments, fieldOptions }) => {
       this.allTournaments = allTournaments;
       this.opponents = fieldOptions.opponents.sort();
+      this.divisions = fieldOptions.divisions.sort();
       if (fieldOptions.tournamentIds) {
         this.tournaments = allTournaments.filter((t) => fieldOptions.tournamentIds!.includes(t.id!));
       } else {
@@ -137,10 +140,19 @@ export class MatchSearchComponent implements OnInit {
           currentCategory &&
           !this.categoryOptions.some((c) => c.id === currentCategory)
         ) {
-          this.searchForm
-            .get('category')!
-            .setValue(undefined, { emitEvent: false });
+          this.searchForm.get('category')!.setValue(undefined, { emitEvent: false });
+          this.searchForm.get('division')!.setValue(undefined, { emitEvent: false });
         }
+      });
+
+    this.searchForm
+      .get('category')!
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((category) => {
+        this.searchForm.get('division')!.setValue(undefined, { emitEvent: false });
+        this.matchesService.getFieldOptions(category ?? undefined).subscribe((opts) => {
+          this.divisions = opts.divisions.sort();
+        });
       });
 
     this.searchForm.valueChanges

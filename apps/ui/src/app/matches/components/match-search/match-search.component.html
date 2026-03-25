@@ -64,6 +64,23 @@
     </mat-form-field>
     }
 
+    @if (divisions.length) {
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>División</mat-label>
+      <mat-select formControlName="division">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (d of divisions; track d) {
+        <mat-option [value]="d">{{ d }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('division')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('division')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+    }
+
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Rival</mat-label>
       <mat-select formControlName="opponent">

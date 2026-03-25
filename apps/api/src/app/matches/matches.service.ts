@@ -178,6 +178,10 @@ export class MatchesService {
       queryFilters['category'] = filters.category;
     }
 
+    if (filters.division) {
+      queryFilters['division'] = filters.division;
+    }
+
     if (filters.fromDate || filters.toDate) {
       const dateFilter: Record<string, Date> = {};
       if (filters.fromDate) dateFilter['$gte'] = new Date(filters.fromDate);
@@ -301,7 +305,7 @@ export class MatchesService {
     return this.playerModel.findOne({ userId: new Types.ObjectId(userId) }).select('_id');
   }
 
-  async getFieldOptions(caller?: User) {
+  async getFieldOptions(caller?: User, category?: CategoryEnum) {
     let scopeFilter: Record<string, unknown> | undefined;
 
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
@@ -336,10 +340,11 @@ export class MatchesService {
     }
 
     const filter = scopeFilter ?? {};
+    const divisionFilter = category ? { ...filter, category } : filter;
     const [opponents, venues, divisions, tournamentObjectIds] = await Promise.all([
       this.matchModel.distinct('opponent', filter),
       this.matchModel.distinct('venue', filter),
-      this.matchModel.distinct('division', filter).then((vals) => vals.filter(Boolean)),
+      this.matchModel.distinct('division', divisionFilter).then((vals) => vals.filter(Boolean)),
       scopeFilter ? this.matchModel.distinct('tournament', filter) : Promise.resolve(null),
     ]);
 

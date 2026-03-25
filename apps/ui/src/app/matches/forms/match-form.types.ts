@@ -26,6 +26,7 @@ export interface MatchFilters {
   status?: MatchStatusEnum;
   sport?: SportEnum;
   category?: CategoryEnum;
+  division?: string;
   tournament?: string;
   opponent?: string;
   fromDate?: string;

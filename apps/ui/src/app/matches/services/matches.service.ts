@@ -24,18 +24,19 @@ export class MatchesService {
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly matchesApiUrl = `${this.config.baseUrl}/matches`;
 
-  getFieldOptions(): Observable<{
+  getFieldOptions(category?: string): Observable<{
     opponents: string[];
     venues: string[];
     divisions: string[];
     tournamentIds?: string[];
   }> {
+    const params = category ? { category } : {};
     return this.httpClient.get<{
       opponents: string[];
       venues: string[];
       divisions: string[];
       tournamentIds?: string[];
-    }>(`${this.matchesApiUrl}/field-options`);
+    }>(`${this.matchesApiUrl}/field-options`, { params });
   }
 
   getMySquadMatches(query: PaginationQuery): Observable<PaginatedResponse<Match>> {

@@ -37,4 +37,8 @@ export class MatchFiltersDto {
   @IsOptional()
   @IsString()
   opponent?: string;
+
+  @IsOptional()
+  @IsString()
+  division?: string;
 }
