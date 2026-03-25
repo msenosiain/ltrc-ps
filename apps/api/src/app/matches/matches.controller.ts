@@ -114,6 +114,18 @@ export class MatchesController {
     stream.pipe(res);
   }
 
+  @Patch(':id/attachments/:fileId')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ANALYST)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateAttachment(
+    @Param('id') id: string,
+    @Param('fileId') fileId: string,
+    @Body('name') name: string,
+    @Body('visibility') visibility: string,
+  ) {
+    return this.matchesService.updateAttachment(id, fileId, name, visibility as any);
+  }
+
   @Delete(':id/attachments/:fileId')
   @UseGuards(JwtAuthGuard)
   async deleteAttachment(@Param('id') id: string, @Param('fileId') fileId: string) {

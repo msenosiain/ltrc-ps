@@ -263,6 +263,21 @@ export class MatchesService {
     return attachment;
   }
 
+  async updateAttachment(matchId: string, fileId: string, name: string, visibility: 'all' | 'staff' | 'players') {
+    const match = await this.matchModel.findById(matchId);
+    if (!match) throw new NotFoundException('Match not found');
+
+    const idx = (match.attachments ?? []).findIndex((a) => a.fileId === fileId);
+    if (idx === -1) throw new NotFoundException('Attachment not found');
+
+    (match.attachments![idx] as any).name = name;
+    (match.attachments![idx] as any).visibility = visibility;
+    match.markModified('attachments');
+    await match.save();
+
+    return match.attachments![idx];
+  }
+
   async getAttachmentStream(matchId: string, fileId: string) {
     const match = await this.matchModel.findById(matchId);
     if (!match) throw new NotFoundException('Match not found');

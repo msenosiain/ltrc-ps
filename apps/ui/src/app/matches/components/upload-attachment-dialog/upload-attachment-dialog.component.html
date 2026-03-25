@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Adjuntar archivo</h2>
+<h2 mat-dialog-title>{{ isEdit ? 'Editar adjunto' : 'Adjuntar archivo' }}</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form" class="upload-form">
@@ -10,6 +10,7 @@
       }
     </mat-form-field>
 
+    @if (!isEdit) {
     <div class="file-picker">
       <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
       <button mat-stroked-button type="button" (click)="fileInput.click()">
@@ -17,6 +18,7 @@
         {{ selectedFile ? selectedFile.name : 'Seleccionar archivo' }}
       </button>
     </div>
+    }
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Visibilidad</mat-label>
@@ -35,9 +37,9 @@
     mat-flat-button
     color="primary"
     type="button"
-    [disabled]="form.invalid || !selectedFile"
+    [disabled]="form.invalid || (!isEdit && !selectedFile)"
     (click)="confirm()"
   >
-    Subir
+    {{ isEdit ? 'Guardar' : 'Subir' }}
   </button>
 </mat-dialog-actions>

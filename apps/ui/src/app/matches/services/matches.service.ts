@@ -123,6 +123,13 @@ export class MatchesService {
     );
   }
 
+  updateAttachment(matchId: string, fileId: string, name: string, visibility: string): Observable<MatchAttachment> {
+    return this.httpClient.patch<MatchAttachment>(
+      `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`,
+      { name, visibility }
+    );
+  }
+
   deleteAttachment(matchId: string, fileId: string): Observable<void> {
     return this.httpClient.delete<void>(
       `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`

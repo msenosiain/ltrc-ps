@@ -36,7 +36,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayersService } from '../../../players/services/players.service';
 import { SquadPdfService } from '../../services/squad-pdf.service';
 import { MatDialog } from '@angular/material/dialog';
-import { UploadAttachmentDialogComponent, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
+import { UploadAttachmentDialogComponent, UploadAttachmentDialogData, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
 import { VideoDialogComponent, VideoDialogData, VideoDialogResult } from '../video-dialog/video-dialog.component';
 
 @Component({
@@ -187,11 +187,11 @@ export class MatchViewerComponent implements OnInit {
   }
 
   openUploadDialog(): void {
-    const ref = this.dialog.open(UploadAttachmentDialogComponent, { width: '400px' });
+    const ref = this.dialog.open(UploadAttachmentDialogComponent, { width: '400px', data: {} satisfies UploadAttachmentDialogData });
     ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
       if (!result) return;
       this.uploadingAttachment = true;
-      this.matchesService.uploadAttachment(this.match!.id!, result.file, result.name, result.visibility).subscribe({
+      this.matchesService.uploadAttachment(this.match!.id!, result.file!, result.name, result.visibility).subscribe({
         next: (att) => {
           (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
           this.uploadingAttachment = false;
@@ -201,6 +201,25 @@ export class MatchViewerComponent implements OnInit {
           this.uploadingAttachment = false;
           this.snackBar.open('Error al subir el archivo', 'Cerrar', { duration: 4000 });
         },
+      });
+    });
+  }
+
+  openEditAttachmentDialog(att: MatchAttachment): void {
+    const ref = this.dialog.open(UploadAttachmentDialogComponent, {
+      width: '400px',
+      data: { attachment: att } satisfies UploadAttachmentDialogData,
+    });
+    ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
+      if (!result) return;
+      this.matchesService.updateAttachment(this.match!.id!, att.fileId, result.name, result.visibility).subscribe({
+        next: (updated) => {
+          (this.match as any).attachments = this.match!.attachments!.map((a) =>
+            a.fileId === att.fileId ? updated : a
+          );
+          this.snackBar.open('Adjunto actualizado', 'Cerrar', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error al actualizar el adjunto', 'Cerrar', { duration: 4000 }),
       });
     });
   }

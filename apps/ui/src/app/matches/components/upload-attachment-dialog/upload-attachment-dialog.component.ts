@@ -1,15 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { VideoVisibility } from '@ltrc-campo/shared-api-model';
+import { MatchAttachment, VideoVisibility } from '@ltrc-campo/shared-api-model';
+
+export interface UploadAttachmentDialogData {
+  attachment?: MatchAttachment;
+}
 
 export interface UploadAttachmentResult {
-  file: File;
+  file?: File;
   name: string;
   visibility: VideoVisibility;
 }
@@ -32,10 +36,15 @@ export interface UploadAttachmentResult {
 export class UploadAttachmentDialogComponent {
   private readonly fb = inject(FormBuilder);
   readonly dialogRef = inject(MatDialogRef<UploadAttachmentDialogComponent>);
+  readonly data: UploadAttachmentDialogData = inject(MAT_DIALOG_DATA, { optional: true }) ?? {};
+
+  get isEdit(): boolean {
+    return !!this.data?.attachment;
+  }
 
   readonly form = this.fb.group({
-    name: ['', Validators.required],
-    visibility: ['all' as VideoVisibility, Validators.required],
+    name: [this.data?.attachment?.name ?? this.data?.attachment?.filename ?? '', Validators.required],
+    visibility: [this.data?.attachment?.visibility ?? 'all' as VideoVisibility, Validators.required],
   });
 
   selectedFile: File | null = null;
@@ -51,9 +60,10 @@ export class UploadAttachmentDialogComponent {
   }
 
   confirm(): void {
-    if (this.form.invalid || !this.selectedFile) return;
+    if (this.form.invalid) return;
+    if (!this.isEdit && !this.selectedFile) return;
     this.dialogRef.close({
-      file: this.selectedFile,
+      file: this.selectedFile ?? undefined,
       name: this.form.get('name')!.value,
       visibility: this.form.get('visibility')!.value,
     } as UploadAttachmentResult);
