@@ -85,11 +85,6 @@ export class CreateWorkoutDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  daysOfWeek?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
   assignedPlayers?: string[];
 
   @IsOptional()

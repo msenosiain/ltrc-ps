@@ -30,7 +30,6 @@ export class WorkoutEntity extends Document {
   category?: CategoryEnum;
   validFrom: string;
   validUntil: string;
-  daysOfWeek: string[];
   assignedPlayers: Types.ObjectId[];
   assignedBranches: string[];
   blocks: WorkoutBlockEntity[];

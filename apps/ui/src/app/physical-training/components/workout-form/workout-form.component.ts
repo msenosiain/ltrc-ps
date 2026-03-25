@@ -5,10 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import {
-  AbstractControl,
-  FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -20,25 +17,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AsyncPipe } from '@angular/common';
 import { format } from 'date-fns';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, startWith, map, combineLatest } from 'rxjs';
+import { combineLatest, startWith } from 'rxjs';
 import {
-  CategoryEnum,
-  Exercise,
   HockeyBranchEnum,
-  RoleEnum,
   WorkoutStatusEnum,
   SportEnum,
   SortOrder,
 } from '@ltrc-campo/shared-api-model';
-import { ExercisesService } from '../../services/exercises.service';
 import { WorkoutsService } from '../../services/workouts.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { workoutStatusOptions } from '../../physical-training-options';
@@ -57,10 +47,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatIconModule,
     MatProgressBarModule,
     MatCardModule,
-    MatCheckboxModule,
-    MatAutocompleteModule,
     MatDatepickerModule,
-    AsyncPipe,
   ],
   templateUrl: './workout-form.component.html',
   styleUrl: './workout-form.component.scss',
@@ -69,45 +56,24 @@ export class WorkoutFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly exercisesService = inject(ExercisesService);
-  private readonly routinesService = inject(WorkoutsService);
+  private readonly workoutsService = inject(WorkoutsService);
   private readonly playersService = inject(PlayersService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly RoleEnum = RoleEnum;
   readonly statusOptions = workoutStatusOptions;
   readonly sportOptions = Object.values(SportEnum).map((v) => ({
     value: v,
     label: v === SportEnum.RUGBY ? 'Rugby' : 'Hockey',
   }));
-  readonly daysOfWeek = [
-    { value: 'monday', label: 'Lu' },
-    { value: 'tuesday', label: 'Ma' },
-    { value: 'wednesday', label: 'Mi' },
-    { value: 'thursday', label: 'Ju' },
-    { value: 'friday', label: 'Vi' },
-    { value: 'saturday', label: 'Sá' },
-    { value: 'sunday', label: 'Do' },
-  ];
   readonly branchOptions = Object.values(HockeyBranchEnum);
 
   form!: FormGroup;
   editing = false;
-  routineId?: string;
+  workoutId?: string;
   submitting = false;
-  allExercises: Exercise[] = [];
   allPlayers: { id: string; name: string }[] = [];
-  filteredExercises$: Map<string, Observable<Exercise[]>> = new Map();
   validUntilMin: Date | null = null;
-
-  get blocksArray(): FormArray {
-    return this.form.get('blocks') as FormArray;
-  }
-
-  getExercisesArray(blockIndex: number): FormArray {
-    return this.blocksArray.at(blockIndex).get('exercises') as FormArray;
-  }
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -117,26 +83,15 @@ export class WorkoutFormComponent implements OnInit {
       category: [null],
       validFrom: [null as Date | null, Validators.required],
       validUntil: [null as Date | null, Validators.required],
-      daysOfWeek: [[]],
       assignedPlayers: [[]],
       assignedBranches: [[]],
       status: [WorkoutStatusEnum.DRAFT],
       notes: [''],
-      blocks: this.fb.array([]),
     });
 
-    // Load exercises for autocomplete
-    this.exercisesService
-      .getAllForAutocomplete()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => {
-        this.allExercises = res.items;
-      });
-
-    // Load players filtered by sport + category, re-run when either changes
     combineLatest([
-      this.form.get('sport')!.valueChanges.pipe(startWith(this.form.get('sport')!.value)),
-      this.form.get('category')!.valueChanges.pipe(startWith(this.form.get('category')!.value)),
+      this.form.get('sport')!.valueChanges.pipe(startWith(null)),
+      this.form.get('category')!.valueChanges.pipe(startWith(null)),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([sport, category]) => {
@@ -151,7 +106,6 @@ export class WorkoutFormComponent implements OnInit {
           });
       });
 
-    // validFrom drives validUntil minimum date
     this.form.get('validFrom')!.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((val: Date | null) => {
@@ -165,157 +119,27 @@ export class WorkoutFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editing = true;
-      this.routineId = id;
-      this.routinesService
+      this.workoutId = id;
+      this.workoutsService
         .getWorkoutById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((routine) => {
+        .subscribe((workout) => {
           this.form.patchValue({
-            name: routine.name,
-            description: routine.description ?? '',
-            sport: routine.sport ?? null,
-            category: routine.category ?? null,
-            validFrom: routine.validFrom ? new Date(routine.validFrom) : null,
-            validUntil: routine.validUntil ? new Date(routine.validUntil) : null,
-            daysOfWeek: routine.daysOfWeek ?? [],
-            assignedPlayers: (routine.assignedPlayers ?? []).map((p) =>
+            name: workout.name,
+            description: workout.description ?? '',
+            sport: workout.sport ?? null,
+            category: workout.category ?? null,
+            validFrom: workout.validFrom ? new Date(workout.validFrom) : null,
+            validUntil: workout.validUntil ? new Date(workout.validUntil) : null,
+            assignedPlayers: (workout.assignedPlayers ?? []).map((p) =>
               typeof p === 'string' ? p : (p as any).id ?? p
             ),
-            assignedBranches: routine.assignedBranches ?? [],
-            status: routine.status,
-            notes: routine.notes ?? '',
-          });
-
-          // Rebuild blocks
-          (routine.blocks ?? []).forEach((block) => {
-            const blockGroup = this.createBlock(block.title, block.order);
-            const exArray = blockGroup.get('exercises') as FormArray;
-            (block.exercises ?? []).forEach((entry) => {
-              const exerciseId =
-                typeof entry.exercise === 'string'
-                  ? entry.exercise
-                  : (entry.exercise as any)?.id ?? '';
-              const entryGroup = this.createExerciseEntry(exerciseId, entry.order);
-              entryGroup.patchValue({ rest: entry.rest ?? '', notes: entry.notes ?? '' });
-              const setsArr = entryGroup.get('sets') as FormArray;
-              setsArr.clear();
-              (entry.sets ?? []).forEach((s) =>
-                setsArr.push(this.createSetEntry(s.reps ?? '', s.duration ?? '', s.load ?? ''))
-              );
-              if (!setsArr.length) setsArr.push(this.createSetEntry());
-              exArray.push(entryGroup);
-              this.setupAutocomplete(entryGroup.get('exerciseSearch') as FormControl);
-            });
-            this.blocksArray.push(blockGroup);
+            assignedBranches: workout.assignedBranches ?? [],
+            status: workout.status,
+            notes: workout.notes ?? '',
           });
         });
     }
-  }
-
-  private createBlock(title = '', order = 0): FormGroup {
-    return this.fb.group({
-      title: [title, Validators.required],
-      order: [order],
-      exercises: this.fb.array([]),
-    });
-  }
-
-  private createExerciseEntry(exerciseId = '', order = 0): FormGroup {
-    return this.fb.group({
-      exercise: [exerciseId, Validators.required],
-      exerciseSearch: [''],
-      order: [order],
-      sets: this.fb.array([this.createSetEntry()]),
-      rest: [''],
-      notes: [''],
-    });
-  }
-
-  private createSetEntry(reps = '', duration = '', load = ''): FormGroup {
-    return this.fb.group({ reps: [reps], duration: [duration], load: [load] });
-  }
-
-  getSetsArray(entryGroup: AbstractControl): FormArray {
-    return entryGroup.get('sets') as FormArray;
-  }
-
-  addSet(entryGroup: AbstractControl): void {
-    this.getSetsArray(entryGroup).push(this.createSetEntry());
-  }
-
-  removeSet(entryGroup: AbstractControl, index: number): void {
-    this.getSetsArray(entryGroup).removeAt(index);
-  }
-
-  duplicateLastSet(entryGroup: AbstractControl): void {
-    const arr = this.getSetsArray(entryGroup);
-    const last = arr.at(arr.length - 1).value;
-    arr.push(this.createSetEntry(last.reps, last.duration, last.load));
-  }
-
-  private setupAutocomplete(searchControl: FormControl): void {
-    const key = Math.random().toString(36).slice(2);
-    (searchControl as any).__key = key;
-    const obs = searchControl.valueChanges.pipe(
-      startWith(''),
-      map((val) => {
-        const term = (typeof val === 'string' ? val : '').toLowerCase();
-        return this.allExercises.filter((e) => e.name.toLowerCase().includes(term)).slice(0, 30);
-      })
-    );
-    this.filteredExercises$.set(key, obs);
-  }
-
-  getFilteredExercises(entryGroup: AbstractControl): Observable<Exercise[]> {
-    const ctrl = entryGroup.get('exerciseSearch') as FormControl;
-    const key = (ctrl as any).__key;
-    if (!key || !this.filteredExercises$.has(key)) {
-      this.setupAutocomplete(ctrl);
-      return this.filteredExercises$.get((ctrl as any).__key)!;
-    }
-    return this.filteredExercises$.get(key)!;
-  }
-
-  onExerciseSelected(exerciseId: string, entryGroup: AbstractControl): void {
-    entryGroup.get('exercise')!.setValue(exerciseId);
-  }
-
-  displayExercise(exerciseId: string): string {
-    const found = this.allExercises.find((e) => e.id === exerciseId);
-    return found?.name ?? exerciseId ?? '';
-  }
-
-  addBlock(): void {
-    const blockGroup = this.createBlock('Bloque ' + (this.blocksArray.length + 1), this.blocksArray.length);
-    this.blocksArray.push(blockGroup);
-  }
-
-  removeBlock(index: number): void {
-    this.blocksArray.removeAt(index);
-  }
-
-  addExerciseEntry(blockIndex: number): void {
-    const exArray = this.getExercisesArray(blockIndex);
-    const entryGroup = this.createExerciseEntry('', exArray.length);
-    this.setupAutocomplete(entryGroup.get('exerciseSearch') as FormControl);
-    exArray.push(entryGroup);
-  }
-
-  removeExerciseEntry(blockIndex: number, entryIndex: number): void {
-    this.getExercisesArray(blockIndex).removeAt(entryIndex);
-  }
-
-  isDaySelected(day: string): boolean {
-    const days: string[] = this.form.get('daysOfWeek')?.value ?? [];
-    return days.includes(day);
-  }
-
-  toggleDay(day: string): void {
-    const days: string[] = [...(this.form.get('daysOfWeek')?.value ?? [])];
-    const idx = days.indexOf(day);
-    if (idx >= 0) days.splice(idx, 1);
-    else days.push(day);
-    this.form.get('daysOfWeek')?.setValue(days);
   }
 
   getCategoryOptions() {
@@ -338,54 +162,38 @@ export class WorkoutFormComponent implements OnInit {
       category: raw.category || undefined,
       validFrom: raw.validFrom ? format(raw.validFrom, 'yyyy-MM-dd') : undefined,
       validUntil: raw.validUntil ? format(raw.validUntil, 'yyyy-MM-dd') : undefined,
-      daysOfWeek: raw.daysOfWeek ?? [],
       assignedPlayers: raw.assignedPlayers ?? [],
       assignedBranches: raw.assignedBranches ?? [],
       status: raw.status,
       notes: raw.notes || undefined,
-      blocks: (raw.blocks ?? []).map((block: any, bi: number) => ({
-        title: block.title,
-        order: bi,
-        exercises: (block.exercises ?? []).map((entry: any, ei: number) => ({
-          exercise: entry.exercise,
-          order: ei,
-          sets: (entry.sets ?? []).map((s: any) => ({
-            reps: s.reps || undefined,
-            duration: s.duration || undefined,
-            load: s.load || undefined,
-          })),
-          rest: entry.rest || undefined,
-          notes: entry.notes || undefined,
-        })),
-      })),
     };
 
     const onError = (err: unknown) => {
       this.submitting = false;
-      this.snackBar.open(getErrorMessage(err, 'Error al guardar la rutina'), 'Cerrar', { duration: 5000 });
+      this.snackBar.open(getErrorMessage(err, 'Error al guardar'), 'Cerrar', { duration: 5000 });
     };
 
-    if (this.editing && this.routineId) {
-      this.routinesService
-        .updateWorkout(this.routineId, dto)
+    if (this.editing && this.workoutId) {
+      this.workoutsService
+        .updateWorkout(this.workoutId, dto)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.submitting = false;
-            this.router.navigate(['/dashboard/physical/workouts']);
+            this.router.navigate(['/dashboard/physical/workouts', this.workoutId, 'blocks']);
           },
           error: onError,
         });
       return;
     }
 
-    this.routinesService
+    this.workoutsService
       .createWorkout(dto)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (created: any) => {
           this.submitting = false;
-          this.router.navigate(['/dashboard/physical/workouts']);
+          this.router.navigate(['/dashboard/physical/workouts', created.id, 'blocks']);
         },
         error: onError,
       });

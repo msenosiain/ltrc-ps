@@ -40,7 +40,6 @@ export const WorkoutSchema = new Schema<WorkoutEntity>(
     category: { type: String, enum: Object.values(CategoryEnum) },
     validFrom: { type: String, required: true },
     validUntil: { type: String, required: true },
-    daysOfWeek: [{ type: String }],
     assignedPlayers: [{ type: Types.ObjectId, ref: 'Player' }],
     assignedBranches: [{ type: String }],
     blocks: [WorkoutBlockSchema],

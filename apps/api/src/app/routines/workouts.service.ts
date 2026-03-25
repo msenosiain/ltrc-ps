@@ -111,8 +111,6 @@ export class WorkoutsService {
 
   async findTodayWorkout(userId: string) {
     const today = new Date().toISOString().slice(0, 10);
-    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const todayDayName = dayNames[new Date().getDay()];
 
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) return null;
@@ -123,13 +121,6 @@ export class WorkoutsService {
         validFrom: { $lte: today },
         validUntil: { $gte: today },
         $and: [
-          {
-            $or: [
-              { daysOfWeek: { $exists: false } },
-              { daysOfWeek: { $size: 0 } },
-              { daysOfWeek: todayDayName },
-            ],
-          },
           {
             $or: [
               { assignedPlayers: { $size: 0 } },

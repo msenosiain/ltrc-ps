@@ -86,6 +86,10 @@ export class WorkoutViewerComponent implements OnInit {
     this.router.navigate(['/dashboard/physical/workouts', this.workout!.id, 'edit']);
   }
 
+  onEditBlocks(): void {
+    this.router.navigate(['/dashboard/physical/workouts', this.workout!.id, 'blocks']);
+  }
+
   onDelete(): void {
     const ref = this.dialog.open(ConfirmDialogComponent, {
       width: '380px',

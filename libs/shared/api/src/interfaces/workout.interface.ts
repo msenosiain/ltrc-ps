@@ -29,7 +29,6 @@ export interface Workout {
   category?: string;
   validFrom: string;
   validUntil: string;
-  daysOfWeek?: string[];
   assignedPlayers: (string | { id: string; name: string })[];
   assignedBranches?: string[];
   blocks: WorkoutBlock[];

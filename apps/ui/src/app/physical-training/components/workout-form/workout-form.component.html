@@ -8,8 +8,6 @@
   }
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="workout-form__form">
-
-    <!-- ── Sección 1: Información general ── -->
     <mat-card class="workout-form__card">
       <mat-card-header>
         <mat-card-title>Información general</mat-card-title>
@@ -81,31 +79,19 @@
             }
           </mat-form-field>
 
-          <!-- Días | Estado -->
-          <div class="workout-form__days">
-            <label class="workout-form__days-label">Días de la semana</label>
-            <div class="workout-form__days-chips">
-              @for (day of daysOfWeek; track day.value) {
-                <button
-                  type="button"
-                  class="workout-form__day-chip"
-                  [class.workout-form__day-chip--selected]="isDaySelected(day.value)"
-                  (click)="toggleDay(day.value)"
-                >
-                  {{ day.label }}
-                </button>
-              }
-            </div>
-          </div>
+          <!-- Estado (solo en edición) -->
+          @if (editing) {
+            <mat-form-field appearance="outline" class="workout-form__field">
+              <mat-label>Estado</mat-label>
+              <mat-select formControlName="status">
+                @for (opt of statusOptions; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
 
-          <mat-form-field appearance="outline" class="workout-form__field">
-            <mat-label>Estado</mat-label>
-            <mat-select formControlName="status">
-              @for (opt of statusOptions; track opt.value) {
-                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+            <div class="workout-form__field"></div>
+          }
 
           <!-- Jugadores (span 2) -->
           <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
@@ -133,132 +119,11 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- ── Sección 2: Bloques ── -->
-    <div class="workout-form__blocks-header">
-      <h3>Bloques de ejercicios</h3>
-      <button mat-stroked-button type="button" (click)="addBlock()">
-        <mat-icon>add</mat-icon>
-        Agregar bloque
-      </button>
-    </div>
-
-    <div formArrayName="blocks">
-      @for (block of blocksArray.controls; track $index; let bi = $index) {
-        <mat-card class="workout-form__card workout-form__block-card" [formGroupName]="bi">
-          <mat-card-header>
-            <mat-form-field appearance="outline" class="workout-form__block-title-field">
-              <mat-label>Título del bloque</mat-label>
-              <input matInput formControlName="title" placeholder="Ej. Calentamiento" />
-            </mat-form-field>
-            <button
-              mat-icon-button
-              type="button"
-              color="warn"
-              (click)="removeBlock(bi)"
-              class="workout-form__remove-block"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </mat-card-header>
-          <mat-card-content>
-
-            <div formArrayName="exercises">
-              @for (entry of getExercisesArray(bi).controls; track $index; let ei = $index) {
-                <div class="workout-form__exercise-entry" [formGroupName]="ei">
-
-                  <div class="workout-form__exercise-header">
-                    <mat-form-field appearance="outline" class="workout-form__exercise-field">
-                      <mat-label>Ejercicio</mat-label>
-                      <input
-                        matInput
-                        formControlName="exerciseSearch"
-                        [matAutocomplete]="autoEx"
-                        placeholder="Buscar ejercicio..."
-                      />
-                      <mat-autocomplete
-                        #autoEx="matAutocomplete"
-                        [displayWith]="displayExercise.bind(this)"
-                        (optionSelected)="onExerciseSelected($event.option.value, entry)"
-                      >
-                        @for (ex of (getFilteredExercises(entry) | async); track ex.id) {
-                          <mat-option [value]="ex.id">{{ ex.name }}</mat-option>
-                        }
-                      </mat-autocomplete>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="workout-form__small-field">
-                      <mat-label>Descanso</mat-label>
-                      <input matInput formControlName="rest" placeholder="60s" />
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="workout-form__notes-field">
-                      <mat-label>Notas</mat-label>
-                      <input matInput formControlName="notes" />
-                    </mat-form-field>
-
-                    <button
-                      mat-icon-button
-                      type="button"
-                      color="warn"
-                      (click)="removeExerciseEntry(bi, ei)"
-                      title="Eliminar ejercicio"
-                    >
-                      <mat-icon>delete_outline</mat-icon>
-                    </button>
-                  </div>
-
-                  <!-- Series -->
-                  <div class="workout-form__sets-section" formArrayName="sets">
-                    <div class="workout-form__sets-header">
-                      <span class="workout-form__sets-label">Series</span>
-                      <button mat-icon-button type="button" title="Duplicar última serie" (click)="duplicateLastSet(entry)">
-                        <mat-icon>content_copy</mat-icon>
-                      </button>
-                      <button mat-icon-button type="button" title="Agregar serie" (click)="addSet(entry)">
-                        <mat-icon>add</mat-icon>
-                      </button>
-                    </div>
-                    @for (setEntry of getSetsArray(entry).controls; track $index; let si = $index) {
-                      <div class="workout-form__set-row" [formGroupName]="si">
-                        <span class="workout-form__set-index">{{ si + 1 }}</span>
-                        <mat-form-field appearance="outline" class="workout-form__set-field">
-                          <mat-label>Reps</mat-label>
-                          <input matInput formControlName="reps" placeholder="10" />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="workout-form__set-field">
-                          <mat-label>Duración</mat-label>
-                          <input matInput formControlName="duration" placeholder='30"' />
-                        </mat-form-field>
-                        <mat-form-field appearance="outline" class="workout-form__set-field">
-                          <mat-label>Carga</mat-label>
-                          <input matInput formControlName="load" placeholder="80kg" />
-                        </mat-form-field>
-                        @if (getSetsArray(entry).length > 1) {
-                          <button mat-icon-button type="button" color="warn" (click)="removeSet(entry, si)" title="Eliminar serie">
-                            <mat-icon>remove</mat-icon>
-                          </button>
-                        }
-                      </div>
-                    }
-                  </div>
-
-                </div>
-              }
-            </div>
-
-            <button mat-stroked-button type="button" (click)="addExerciseEntry(bi)" class="workout-form__add-exercise-btn">
-              <mat-icon>add</mat-icon>
-              Agregar ejercicio
-            </button>
-          </mat-card-content>
-        </mat-card>
-      }
-    </div>
-
     <div class="workout-form__actions">
       <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
       <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
-        {{ editing ? 'Guardar cambios' : 'Crear rutina' }}
+        <mat-icon>arrow_forward</mat-icon>
+        {{ editing ? 'Guardar y editar ejercicios' : 'Siguiente: cargar ejercicios' }}
       </button>
     </div>
   </form>

@@ -53,6 +53,15 @@ export const PHYSICAL_TRAINING_ROUTES: Routes = [
     data: { allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER] },
   },
   {
+    path: 'workouts/:id/blocks',
+    loadComponent: () =>
+      import('./components/workout-blocks-editor/workout-blocks-editor.component').then(
+        (m) => m.WorkoutBlocksEditorComponent
+      ),
+    canActivate: [hasRoleGuard],
+    data: { allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER] },
+  },
+  {
     path: 'workouts/:id/edit',
     loadComponent: () =>
       import('./components/workout-form/workout-form.component').then(

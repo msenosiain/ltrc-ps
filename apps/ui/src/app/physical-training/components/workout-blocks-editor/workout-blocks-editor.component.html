@@ -1,0 +1,166 @@
+<div class="blocks-editor">
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading && workout) {
+    <div class="blocks-editor__header">
+      <div class="blocks-editor__header-info">
+        <h2 class="blocks-editor__title">{{ workout.name }}</h2>
+        <div class="blocks-editor__meta">
+          <span class="status-badge status-badge--{{ workout.status }}">{{ getStatusLabel(workout.status) }}</span>
+          @if (workout.sport) { <span class="blocks-editor__tag">{{ workout.sport }}</span> }
+          @if (workout.category) { <span class="blocks-editor__tag">{{ workout.category }}</span> }
+          <span class="blocks-editor__dates">{{ workout.validFrom }} – {{ workout.validUntil }}</span>
+        </div>
+      </div>
+      <div class="blocks-editor__header-actions">
+        <button mat-stroked-button (click)="onEditInfo()">
+          <mat-icon>edit</mat-icon>
+          Editar info
+        </button>
+        <button mat-stroked-button color="warn" (click)="onDiscard()">
+          <mat-icon>delete</mat-icon>
+          Descartar
+        </button>
+        <button mat-stroked-button (click)="onSaveDraft()" [disabled]="saving">
+          Guardar borrador
+        </button>
+        <button mat-raised-button color="primary" (click)="onPublish()" [disabled]="saving">
+          <mat-icon>publish</mat-icon>
+          Publicar
+        </button>
+      </div>
+    </div>
+
+    @if (saving) {
+      <mat-progress-bar mode="indeterminate" class="blocks-editor__save-bar" />
+    }
+
+    <div class="blocks-editor__blocks">
+      @for (block of blocks; track $index; let bi = $index) {
+        <mat-card class="blocks-editor__block-card">
+          <mat-card-header>
+            <div class="blocks-editor__block-header">
+              <input
+                class="blocks-editor__block-title-input"
+                [(ngModel)]="block.title"
+                (ngModelChange)="scheduleSave()"
+                placeholder="Título del bloque"
+              />
+              <div class="blocks-editor__block-controls">
+                <button mat-icon-button type="button" (click)="moveBlockUp(bi)" [disabled]="bi === 0" title="Subir bloque">
+                  <mat-icon>arrow_upward</mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="moveBlockDown(bi)" [disabled]="bi === blocks.length - 1" title="Bajar bloque">
+                  <mat-icon>arrow_downward</mat-icon>
+                </button>
+                <button mat-icon-button type="button" color="warn" (click)="removeBlock(bi)" title="Eliminar bloque">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-header>
+
+          <mat-card-content>
+            @for (ex of block.exercises; track $index; let ei = $index) {
+              <div class="blocks-editor__exercise">
+                <div class="blocks-editor__exercise-header">
+                  <span class="blocks-editor__exercise-name">{{ ex.exerciseName }}</span>
+                  <mat-form-field appearance="outline" class="blocks-editor__small-field">
+                    <mat-label>Descanso</mat-label>
+                    <input matInput [(ngModel)]="ex.rest" (ngModelChange)="scheduleSave()" placeholder="60s" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="blocks-editor__notes-field">
+                    <mat-label>Notas</mat-label>
+                    <input matInput [(ngModel)]="ex.notes" (ngModelChange)="scheduleSave()" />
+                  </mat-form-field>
+                  <button mat-icon-button type="button" color="warn" (click)="removeExercise(bi, ei)" title="Eliminar ejercicio">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+
+                <div class="blocks-editor__sets">
+                  <div class="blocks-editor__sets-header">
+                    <span class="blocks-editor__sets-label">Series</span>
+                    <button mat-icon-button type="button" (click)="duplicateLastSet(bi, ei)" title="Duplicar última serie">
+                      <mat-icon>content_copy</mat-icon>
+                    </button>
+                    <button mat-icon-button type="button" (click)="addSet(bi, ei)" title="Agregar serie">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                  @for (set of ex.sets; track $index; let si = $index) {
+                    <div class="blocks-editor__set-row">
+                      <span class="blocks-editor__set-index">{{ si + 1 }}</span>
+                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
+                        <mat-label>Reps</mat-label>
+                        <input matInput [(ngModel)]="set.reps" (ngModelChange)="scheduleSave()" placeholder="10" />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
+                        <mat-label>Duración</mat-label>
+                        <input matInput [(ngModel)]="set.duration" (ngModelChange)="scheduleSave()" placeholder='30"' />
+                      </mat-form-field>
+                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
+                        <mat-label>Carga</mat-label>
+                        <input matInput [(ngModel)]="set.load" (ngModelChange)="scheduleSave()" placeholder="80kg" />
+                      </mat-form-field>
+                      @if (ex.sets.length > 1) {
+                        <button mat-icon-button type="button" color="warn" (click)="removeSet(bi, ei, si)" title="Eliminar serie">
+                          <mat-icon>remove</mat-icon>
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Agregar ejercicio -->
+            <mat-form-field appearance="outline" class="blocks-editor__add-exercise-field">
+              <mat-label>Agregar ejercicio</mat-label>
+              <mat-icon matPrefix>add</mat-icon>
+              <input
+                matInput
+                [formControl]="block.searchControl"
+                [matAutocomplete]="autoEx"
+                placeholder="Buscar ejercicio..."
+              />
+              <mat-autocomplete
+                #autoEx="matAutocomplete"
+                [displayWith]="displayExercise"
+                (optionSelected)="onExerciseSelected(bi, $event.option.value)"
+              >
+                @for (ex of (block.filteredExercises$ | async); track ex.id) {
+                  <mat-option [value]="ex">{{ ex.name }}</mat-option>
+                }
+              </mat-autocomplete>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    <div class="blocks-editor__add-block">
+      <button mat-stroked-button type="button" (click)="addBlock()">
+        <mat-icon>add</mat-icon>
+        Agregar bloque
+      </button>
+    </div>
+
+    <div class="blocks-editor__footer-actions">
+      <button mat-stroked-button color="warn" (click)="onDiscard()">
+        <mat-icon>delete</mat-icon>
+        Descartar
+      </button>
+      <button mat-stroked-button (click)="onSaveDraft()" [disabled]="saving">
+        Guardar borrador
+      </button>
+      <button mat-raised-button color="primary" (click)="onPublish()" [disabled]="saving">
+        <mat-icon>publish</mat-icon>
+        Publicar
+      </button>
+    </div>
+  }
+</div>
