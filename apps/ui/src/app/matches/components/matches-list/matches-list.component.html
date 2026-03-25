@@ -108,6 +108,9 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let match">
         <div class="icons-cell">
+          @if (match.attendance?.length) {
+          <mat-icon class="attachment-icon attendance-taken-icon" matTooltip="Lista pasada">fact_check</mat-icon>
+          }
           @if (match.attachments?.length) {
           <mat-icon class="attachment-icon" [matTooltip]="getAttachmentsTooltip(match)" matTooltipClass="multiline-tooltip">attach_file</mat-icon>
           }
