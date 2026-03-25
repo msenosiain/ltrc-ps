@@ -93,7 +93,9 @@ export class MatchSearchComponent implements OnInit {
     }).subscribe(({ allTournaments, fieldOptions }) => {
       this.allTournaments = allTournaments;
       this.opponents = fieldOptions.opponents.sort();
-      this.divisions = fieldOptions.divisions.sort();
+      if (this.searchForm.get('category')?.value) {
+        this.divisions = fieldOptions.divisions.sort();
+      }
       if (fieldOptions.tournamentIds) {
         this.tournaments = allTournaments.filter((t) => fieldOptions.tournamentIds!.includes(t.id!));
       } else {
@@ -107,7 +109,6 @@ export class MatchSearchComponent implements OnInit {
         this.showSportFilter = ctx.showSportFilter;
         this.showCategoryFilter = ctx.showCategoryFilter;
         this.sportOptions = ctx.sportOptions;
-        this.categoryOptions = ctx.categoryOptions;
         this.allowedCategories = ctx.forcedCategory
           ? [ctx.forcedCategory]
           : ctx.categoryOptions.length < getCategoryOptionsBySport().length
@@ -115,35 +116,24 @@ export class MatchSearchComponent implements OnInit {
             : undefined;
 
         if (ctx.forcedSport) {
-          this.searchForm
-            .get('sport')!
-            .setValue(ctx.forcedSport, { emitEvent: false });
+          this.searchForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
         }
         if (ctx.forcedCategory) {
-          this.searchForm
-            .get('category')!
-            .setValue(ctx.forcedCategory, { emitEvent: false });
+          this.searchForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
         }
 
+        // Apply sport filter respecting current form value (or forced sport)
+        const currentSport = ctx.forcedSport ?? this.searchForm.get('sport')!.value;
+        this.applySportFilter(currentSport);
       });
 
     this.searchForm
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((sport) => {
-        const allForSport = getCategoryOptionsBySport(sport);
-        this.categoryOptions = this.allowedCategories
-          ? allForSport.filter((c) => this.allowedCategories!.includes(c.id))
-          : allForSport;
-        const currentCategory = this.searchForm.get('category')!.value;
-        if (
-          currentCategory &&
-          !this.categoryOptions.some((c) => c.id === currentCategory)
-        ) {
-          this.searchForm.get('category')!.setValue(undefined, { emitEvent: false });
-          this.searchForm.get('division')!.setValue(undefined, { emitEvent: false });
-        }
-      });
+      .subscribe((sport) => this.applySportFilter(sport));
+
+    // Apply immediately in case sport was pre-filled from initialFilters (patchValue emitEvent:false)
+    this.applySportFilter(this.searchForm.get('sport')!.value);
 
     this.searchForm
       .get('category')!
@@ -162,6 +152,18 @@ export class MatchSearchComponent implements OnInit {
 
   clearField(field: string): void {
     this.searchForm.get(field)?.setValue(undefined);
+  }
+
+  private applySportFilter(sport: SportEnum | undefined | null): void {
+    const allForSport = getCategoryOptionsBySport(sport);
+    this.categoryOptions = this.allowedCategories
+      ? allForSport.filter((c) => this.allowedCategories!.includes(c.id))
+      : allForSport;
+    const currentCategory = this.searchForm.get('category')!.value;
+    if (currentCategory && !this.categoryOptions.some((c) => c.id === currentCategory)) {
+      this.searchForm.get('category')!.setValue(undefined, { emitEvent: false });
+      this.searchForm.get('division')!.setValue(undefined, { emitEvent: false });
+    }
   }
 
   private emitFilters(): void {

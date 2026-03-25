@@ -64,7 +64,7 @@
     </mat-form-field>
     }
 
-    @if (divisions.length) {
+    @if (divisions.length && searchForm.get('category')?.value) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>División</mat-label>
       <mat-select formControlName="division">
