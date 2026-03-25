@@ -106,6 +106,8 @@ export class PlayersService {
       form.append('medicalData', JSON.stringify(dto.medicalData));
     if (dto.parentContacts != null)
       form.append('parentContacts', JSON.stringify(dto.parentContacts));
+    if (dto.status != null) form.append('status', dto.status);
+    if (dto.trialStartDate != null) form.append('trialStartDate', dto.trialStartDate);
     form.append('createUser', String(dto.createUser ?? false));
 
     return form;

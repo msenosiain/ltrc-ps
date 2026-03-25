@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
-import { BlockEnum, CategoryEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
+import { BlockEnum, CategoryEnum, SportEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { PlayersService } from '../../services/players.service';
 import { AuthService } from '../../../auth/auth.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -26,6 +26,11 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
   [BlockEnum.JUVENILES]: 'Juveniles',
   [BlockEnum.MAYORES]: 'Mayores',
   [BlockEnum.PLANTEL_SUPERIOR]: 'Plantel Superior',
+};
+
+const PS_SPORT_LABELS: Record<string, string> = {
+  [SportEnum.RUGBY]: 'Plantel Superior Rugby',
+  [SportEnum.HOCKEY]: 'Plantel Superior Hockey',
 };
 
 @Component({
@@ -61,6 +66,23 @@ export class PlayerStatsWidgetComponent implements OnInit {
   private buildBlocks(byCategory: Record<string, number>, allowedCategories?: CategoryEnum[]): BlockStat[] {
     const result: BlockStat[] = [];
     for (const block of Object.values(BlockEnum)) {
+      if (block === BlockEnum.PLANTEL_SUPERIOR) {
+        // Split PS by sport
+        for (const sport of [SportEnum.RUGBY, SportEnum.HOCKEY]) {
+          const key = `plantel_superior:${sport}`;
+          const count = byCategory[key];
+          if (count === undefined) continue;
+          if (allowedCategories?.length && !allowedCategories.includes(CategoryEnum.PLANTEL_SUPERIOR)) continue;
+          result.push({
+            block,
+            label: PS_SPORT_LABELS[sport],
+            categories: [{ category: CategoryEnum.PLANTEL_SUPERIOR, label: getCategoryLabel(CategoryEnum.PLANTEL_SUPERIOR), count }],
+            total: count,
+          });
+        }
+        continue;
+      }
+
       const cats = getBlockCategories(block)
         .filter((cat) => {
           if (allowedCategories?.length) return allowedCategories.includes(cat);
