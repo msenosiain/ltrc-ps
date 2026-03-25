@@ -8,6 +8,7 @@ import {
 export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
   return fb.group({
     date: [null, Validators.required],
+    name: [''],
     opponent: [''],
     venue: ['', Validators.required],
     isHome: [true],

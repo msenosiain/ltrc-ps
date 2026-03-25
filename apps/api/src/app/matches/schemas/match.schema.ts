@@ -42,6 +42,7 @@ export const MatchSchema = new Schema<MatchEntity>(
   {
     date: { type: Date, required: true },
     time: { type: String },
+    name: { type: String },
     opponent: { type: String },
     venue: { type: String, required: true },
     isHome: { type: Boolean, default: true },

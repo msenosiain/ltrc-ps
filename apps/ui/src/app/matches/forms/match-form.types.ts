@@ -14,6 +14,7 @@ export interface MatchFormValue {
   status: MatchStatusEnum;
   sport: SportEnum | null;
   category: CategoryEnum | null;
+  name: string;
   division: string;
   branch: HockeyBranchEnum | null;
   tournament: string | null;

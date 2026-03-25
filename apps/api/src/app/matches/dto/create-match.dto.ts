@@ -70,6 +70,10 @@ export class CreateMatchDto {
 
   @IsOptional()
   @IsString()
+  readonly name?: string;
+
+  @IsOptional()
+  @IsString()
   readonly opponent?: string;
 
   @IsNotEmpty()

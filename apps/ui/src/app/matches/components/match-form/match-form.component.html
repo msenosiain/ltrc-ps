@@ -108,6 +108,13 @@
         </mat-select>
       </mat-form-field>
 
+      @if (!isCompetitive) {
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre del encuentro <span class="optional-label">(opcional)</span></mat-label>
+        <input matInput formControlName="name" placeholder="Ej: Encuentro Intermedio, Práctica..." />
+      </mat-form-field>
+      }
+
       <mat-form-field appearance="outline">
         <mat-label>Rival</mat-label>
         <input

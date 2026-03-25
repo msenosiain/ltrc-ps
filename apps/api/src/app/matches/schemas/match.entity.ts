@@ -15,6 +15,7 @@ export class MatchEntity extends Document {
   id: string;
   date: Date;
   time?: string;
+  name?: string;
   opponent?: string;
   venue: string;
   isHome?: boolean;

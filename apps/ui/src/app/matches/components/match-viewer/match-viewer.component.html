@@ -17,7 +17,7 @@
           }
           <h2 class="opponent-name">{{ match.branch ? 'Rama ' + match.branch + ' ' : '' }}{{ match.division ? match.division + ' ' : '' }}vs {{ match.opponent }}</h2>
           } @else {
-          <h2 class="opponent-name">Encuentro</h2>
+          <h2 class="opponent-name">{{ match.name || 'Encuentro' }}</h2>
           }
         </div>
 

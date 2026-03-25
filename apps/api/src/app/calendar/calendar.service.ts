@@ -32,12 +32,14 @@ export class CalendarService {
       type: 'match' as const,
       id: m._id.toString(),
       date: (m.date as Date).toISOString(),
-      title: m.opponent ? `vs ${m.opponent}` : 'Encuentro',
+      title: m.opponent ? `vs ${m.opponent}` : (m.name || 'Encuentro'),
       sport: m.sport,
       category: m.category,
       status: m.status,
       opponent: m.opponent,
       isHome: m.isHome,
+      branch: m.branch,
+      division: m.division,
       location: m.venue,
     }));
 

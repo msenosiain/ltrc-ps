@@ -45,6 +45,7 @@ export interface Match extends Document {
   readonly id?: string;
   readonly date: Date;
   readonly time?: string;
+  readonly name?: string;
   readonly opponent?: string;
   readonly venue: string;
   readonly isHome?: boolean;

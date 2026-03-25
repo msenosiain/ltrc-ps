@@ -216,6 +216,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
         date: matchDate,
         sport: tournament?.sport ?? (this.match as any).sport ?? null,
         tournament: tournament?.id ?? '',
+        name: (this.match as any).name ?? '',
         branch: (this.match as any).branch ?? null,
       });
 
