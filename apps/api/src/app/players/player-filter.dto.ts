@@ -4,6 +4,7 @@ import {
   CategoryEnum,
   HockeyBranchEnum,
   HockeyPositions,
+  PlayerAvailabilityEnum,
   PlayerPosition,
   PlayerStatusEnum,
   RugbyPositions,
@@ -39,6 +40,10 @@ export class PlayerFiltersDto {
   @IsOptional()
   @IsEnum(PlayerStatusEnum)
   status?: PlayerStatusEnum;
+
+  @IsOptional()
+  @IsEnum(PlayerAvailabilityEnum)
+  availability?: PlayerAvailabilityEnum;
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)

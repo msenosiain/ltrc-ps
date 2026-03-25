@@ -23,7 +23,7 @@
 
   <div class="routine-list__filters">
     <mat-form-field appearance="outline" class="routine-list__filter-field">
-      <mat-label>Rama</mat-label>
+      <mat-label>Deporte</mat-label>
       <mat-select [(ngModel)]="selectedSport" (selectionChange)="onSportChange()">
         <mat-option value="">Todas</mat-option>
         @for (opt of sportOptions; track opt.value) {

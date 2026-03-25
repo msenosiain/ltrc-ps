@@ -57,6 +57,7 @@ export interface PlayerFilters {
   category?: CategoryEnum;
   branch?: HockeyBranchEnum;
   status?: PlayerStatusEnum;
+  availability?: PlayerAvailabilityEnum;
 }
 
 export interface Player extends Document {

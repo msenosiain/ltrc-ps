@@ -241,6 +241,20 @@ export class PlayersService {
       queryFilters['branch'] = filters.branch;
     }
 
+    // availability: filter by specific availability status
+    if (filters.availability) {
+      if (filters.availability === PlayerAvailabilityEnum.AVAILABLE) {
+        andConditions.push({
+          $or: [
+            { 'availability.status': { $exists: false } },
+            { 'availability.status': PlayerAvailabilityEnum.AVAILABLE },
+          ],
+        });
+      } else {
+        queryFilters['availability.status'] = filters.availability;
+      }
+    }
+
     // availableForTraining: exclude called_up, suspended, leave (keep injured + available)
     if (filters.availableForTraining) {
       andConditions.push({

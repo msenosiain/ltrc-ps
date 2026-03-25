@@ -113,6 +113,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
     sport?: SportEnum;
     position?: PlayerPosition;
     category?: CategoryEnum;
+    availability?: PlayerAvailabilityEnum;
   }): void {
     this.currentFilters = filters;
     if (this.paginator) this.paginator.pageIndex = 0;

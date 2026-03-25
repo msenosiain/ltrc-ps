@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   CategoryEnum,
   HockeyBranchEnum,
+  PlayerAvailabilityEnum,
   PlayerPosition,
   PlayerStatusEnum,
   SportEnum,
@@ -34,7 +35,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { nullToUndefined } from '../../../common/utils/null-to-undefined';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
-import { playerStatusOptions } from '../../player-status-options';
+import { playerAvailabilityOptions, playerStatusOptions } from '../../player-status-options';
 
 @Component({
   selector: 'ltrc-player-search',
@@ -64,6 +65,7 @@ export class PlayerSearchComponent implements OnInit {
     category?: CategoryEnum;
     branch?: HockeyBranchEnum;
     status?: PlayerStatusEnum;
+    availability?: PlayerAvailabilityEnum;
   }>();
 
   sportOptions: SportOption[] = sportOptions;
@@ -71,6 +73,7 @@ export class PlayerSearchComponent implements OnInit {
   positionOptions: PositionOption[] = getPositionOptionsBySport();
   readonly branchOptions = Object.values(HockeyBranchEnum);
   readonly statusOptions = playerStatusOptions;
+  readonly availabilityOptions = playerAvailabilityOptions;
 
   showSportFilter = true;
   showCategoryFilter = true;
@@ -85,6 +88,7 @@ export class PlayerSearchComponent implements OnInit {
     category: [undefined as CategoryEnum | undefined],
     branch: [undefined as HockeyBranchEnum | undefined],
     status: [undefined as PlayerStatusEnum | undefined],
+    availability: [undefined as PlayerAvailabilityEnum | undefined],
   });
 
   ngOnInit(): void {
