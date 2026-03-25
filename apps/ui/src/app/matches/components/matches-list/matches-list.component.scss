@@ -58,8 +58,13 @@
   margin-left: 4px;
 }
 
+.category-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .division-label {
-  display: block;
   font-size: 0.75rem;
   color: var(--mat-app-on-surface-variant, #666);
 }
