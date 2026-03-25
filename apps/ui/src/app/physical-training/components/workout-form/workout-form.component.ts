@@ -28,7 +28,7 @@ import { AsyncPipe } from '@angular/common';
 import { format } from 'date-fns';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Observable, startWith, map } from 'rxjs';
+import { Observable, startWith, map, combineLatest } from 'rxjs';
 import {
   CategoryEnum,
   Exercise,
@@ -36,6 +36,7 @@ import {
   RoleEnum,
   WorkoutStatusEnum,
   SportEnum,
+  SortOrder,
 } from '@ltrc-campo/shared-api-model';
 import { ExercisesService } from '../../services/exercises.service';
 import { WorkoutsService } from '../../services/workouts.service';
@@ -98,6 +99,7 @@ export class WorkoutFormComponent implements OnInit {
   allExercises: Exercise[] = [];
   allPlayers: { id: string; name: string }[] = [];
   filteredExercises$: Map<string, Observable<Exercise[]>> = new Map();
+  validUntilMin: Date | null = null;
 
   get blocksArray(): FormArray {
     return this.form.get('blocks') as FormArray;
@@ -131,12 +133,33 @@ export class WorkoutFormComponent implements OnInit {
         this.allExercises = res.items;
       });
 
-    // Load players
-    this.playersService
-      .getPlayers({ page: 1, size: 500, sortBy: 'name' })
+    // Load players filtered by sport + category, re-run when either changes
+    combineLatest([
+      this.form.get('sport')!.valueChanges.pipe(startWith(this.form.get('sport')!.value)),
+      this.form.get('category')!.valueChanges.pipe(startWith(this.form.get('category')!.value)),
+    ])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((res) => {
-        this.allPlayers = res.items.map((p) => ({ id: p.id!, name: p.name }));
+      .subscribe(([sport, category]) => {
+        const filters: Record<string, unknown> = {};
+        if (sport) filters['sport'] = sport;
+        if (category) filters['category'] = category;
+        this.playersService
+          .getPlayers({ page: 1, size: 500, sortBy: 'name', sortOrder: SortOrder.ASC, filters })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((res) => {
+            this.allPlayers = res.items.map((p) => ({ id: p.id!, name: p.name }));
+          });
+      });
+
+    // validFrom drives validUntil minimum date
+    this.form.get('validFrom')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((val: Date | null) => {
+        this.validUntilMin = val ?? null;
+        const until = this.form.get('validUntil')!.value as Date | null;
+        if (val && until && until < val) {
+          this.form.get('validUntil')!.setValue(val);
+        }
       });
 
     const id = this.route.snapshot.paramMap.get('id');

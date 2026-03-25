@@ -73,7 +73,7 @@
 
           <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Válido hasta</mat-label>
-            <input matInput [matDatepicker]="pickerUntil" formControlName="validUntil" placeholder="DD/MM/AAAA" />
+            <input matInput [matDatepicker]="pickerUntil" [min]="validUntilMin" formControlName="validUntil" placeholder="DD/MM/AAAA" />
             <mat-datepicker-toggle matSuffix [for]="pickerUntil" />
             <mat-datepicker #pickerUntil />
             @if (form.get('validUntil')?.hasError('required')) {
