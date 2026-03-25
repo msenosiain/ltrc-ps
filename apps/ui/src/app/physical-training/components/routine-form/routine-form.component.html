@@ -36,7 +36,7 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Categoría | Rama (solo Hockey) -->
+          <!-- Categoría | Estado -->
           <mat-form-field appearance="outline" class="routine-form__field">
             <mat-label>Categoría</mat-label>
             <mat-select formControlName="category">
@@ -47,16 +47,14 @@
             </mat-select>
           </mat-form-field>
 
-          @if (form.get('sport')?.value === 'hockey') {
-            <mat-form-field appearance="outline" class="routine-form__field">
-              <mat-label>Rama</mat-label>
-              <mat-select formControlName="assignedBranches" multiple>
-                @for (branch of branchOptions; track branch) {
-                  <mat-option [value]="branch">{{ branch }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          }
+          <mat-form-field appearance="outline" class="routine-form__field">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="status">
+              @for (opt of statusOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
           <!-- Válido desde | Válido hasta -->
           <mat-form-field appearance="outline" class="routine-form__field">
@@ -79,7 +77,7 @@
             }
           </mat-form-field>
 
-          <!-- Días | Estado -->
+          <!-- Días | Jugadores -->
           <div class="routine-form__days">
             <label class="routine-form__days-label">Días de la semana</label>
             <div class="routine-form__days-chips">
@@ -97,16 +95,6 @@
           </div>
 
           <mat-form-field appearance="outline" class="routine-form__field">
-            <mat-label>Estado</mat-label>
-            <mat-select formControlName="status">
-              @for (opt of statusOptions; track opt.value) {
-                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Jugadores (ancho completo) -->
-          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
             <mat-label>Jugadores asignados</mat-label>
             <mat-select formControlName="assignedPlayers" multiple>
               @for (player of allPlayers; track player.id) {
@@ -115,12 +103,25 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Descripción | Notas -->
+          <!-- Rama solo si Hockey (span 2) -->
+          @if (form.get('sport')?.value === 'hockey') {
+            <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+              <mat-label>Rama</mat-label>
+              <mat-select formControlName="assignedBranches" multiple>
+                @for (branch of branchOptions; track branch) {
+                  <mat-option [value]="branch">{{ branch }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          }
+
+          <!-- Descripción (span 2) -->
           <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
             <mat-label>Descripción</mat-label>
             <textarea matInput formControlName="description" rows="2"></textarea>
           </mat-form-field>
 
+          <!-- Notas (span 2) -->
           <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
             <mat-label>Notas</mat-label>
             <textarea matInput formControlName="notes" rows="2"></textarea>
