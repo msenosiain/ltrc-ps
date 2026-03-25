@@ -62,8 +62,14 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
   readonly displayedColumns = ['name', 'category', 'muscleGroups', 'actions'];
   readonly dataSource = new ExercisesDataSource(this.exercisesService);
 
+  readonly muscleGroupOptions = [
+    'abdominales', 'bíceps', 'core', 'cuádriceps', 'dorsales',
+    'femoral', 'glúteos', 'hombros', 'lumbares', 'pecho', 'trapecios', 'tríceps',
+  ];
+
   searchTerm = '';
   selectedCategory = '';
+  selectedMuscleGroup = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -89,6 +95,7 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
     const filters: Record<string, unknown> = {};
     if (this.searchTerm) filters['searchTerm'] = this.searchTerm;
     if (this.selectedCategory) filters['category'] = this.selectedCategory;
+    if (this.selectedMuscleGroup) filters['muscleGroup'] = this.selectedMuscleGroup;
     if (this.paginator) this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
   }
@@ -102,7 +109,7 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/dashboard/physical/routines']);
+    this.router.navigate(['/dashboard/physical/workouts']);
   }
 
   createExercise(): void {

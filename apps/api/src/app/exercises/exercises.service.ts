@@ -79,6 +79,9 @@ export class ExercisesService implements OnModuleInit {
     if (filters.category) {
       query['category'] = filters.category;
     }
+    if (filters.muscleGroup) {
+      query['muscleGroups'] = { $in: [filters.muscleGroup] };
+    }
 
     const sort: Record<string, 1 | -1> = sortBy
       ? { [sortBy]: sortOrder === 'asc' ? 1 : -1 }

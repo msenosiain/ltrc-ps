@@ -38,6 +38,16 @@
         }
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-list__muscle-filter">
+      <mat-label>Músculo</mat-label>
+      <mat-select [(ngModel)]="selectedMuscleGroup" (selectionChange)="applyFilters()">
+        <mat-option value="">Todos</mat-option>
+        @for (m of muscleGroupOptions; track m) {
+          <mat-option [value]="m">{{ m }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </div>
 
   @if (dataSource.loading$ | async) {

@@ -3,12 +3,12 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (routine) {
+  @if (workout) {
     <div class="workout-viewer__header">
       <button mat-icon-button (click)="onBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h2 class="workout-viewer__title">{{ routine.name }}</h2>
+      <h2 class="workout-viewer__title">{{ workout.name }}</h2>
       <div class="workout-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
         <button mat-stroked-button (click)="onClone()" [disabled]="cloning">
           <mat-icon>content_copy</mat-icon>
@@ -26,26 +26,26 @@
     </div>
 
     <div class="workout-viewer__info">
-      <span class="status-badge status-badge--{{ routine.status }}">
-        {{ getStatusLabel(routine.status) }}
+      <span class="status-badge status-badge--{{ workout.status }}">
+        {{ getStatusLabel(workout.status) }}
       </span>
-      @if (routine.sport) {
-        <span class="workout-viewer__tag">{{ routine.sport }}</span>
+      @if (workout.sport) {
+        <span class="workout-viewer__tag">{{ workout.sport }}</span>
       }
-      @if (routine.category) {
-        <span class="workout-viewer__tag">{{ routine.category }}</span>
+      @if (workout.category) {
+        <span class="workout-viewer__tag">{{ workout.category }}</span>
       }
       <span class="workout-viewer__validity">
-        {{ routine.validFrom }} – {{ routine.validUntil }}
+        {{ workout.validFrom }} – {{ workout.validUntil }}
       </span>
     </div>
 
-    @if (routine.description) {
-      <p class="workout-viewer__description">{{ routine.description }}</p>
+    @if (workout.description) {
+      <p class="workout-viewer__description">{{ workout.description }}</p>
     }
 
-    @if (routine.notes) {
-      <p class="workout-viewer__notes"><strong>Notas:</strong> {{ routine.notes }}</p>
+    @if (workout.notes) {
+      <p class="workout-viewer__notes"><strong>Notas:</strong> {{ workout.notes }}</p>
     }
 
     @if (getAssignedPlayers().length) {

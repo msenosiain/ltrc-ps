@@ -9,4 +9,8 @@ export class ExerciseFilterDto {
   @IsOptional()
   @IsEnum(ExerciseCategoryEnum)
   category?: ExerciseCategoryEnum;
+
+  @IsOptional()
+  @IsString()
+  muscleGroup?: string;
 }
