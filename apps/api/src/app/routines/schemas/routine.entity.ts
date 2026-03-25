@@ -2,14 +2,17 @@ import { Document, Types } from 'mongoose';
 import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
+export class SetEntryEntity {
+  reps?: string;
+  duration?: string;
+  load?: string;
+}
+
 export class RoutineExerciseEntryEntity {
   exercise: Types.ObjectId | ExerciseEntity;
   order: number;
-  sets?: number;
-  reps?: string;
-  duration?: string;
+  sets: SetEntryEntity[];
   rest?: string;
-  load?: string;
   notes?: string;
 }
 

@@ -3,15 +3,21 @@ import { RoutineEntity } from './routine.entity';
 import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
+const SetEntrySchema = new Schema(
+  {
+    reps: { type: String },
+    duration: { type: String },
+    load: { type: String },
+  },
+  { _id: false }
+);
+
 const RoutineExerciseEntrySchema = new Schema(
   {
     exercise: { type: Types.ObjectId, ref: ExerciseEntity.name, required: true },
     order: { type: Number, required: true },
-    sets: { type: Number },
-    reps: { type: String },
-    duration: { type: String },
+    sets: [SetEntrySchema],
     rest: { type: String },
-    load: { type: String },
     notes: { type: String },
   },
   { _id: false }

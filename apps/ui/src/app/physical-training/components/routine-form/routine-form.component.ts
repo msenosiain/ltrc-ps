@@ -169,13 +169,13 @@ export class RoutineFormComponent implements OnInit {
                   ? entry.exercise
                   : (entry.exercise as any)?.id ?? '';
               const entryGroup = this.createExerciseEntry(exerciseId, entry.order);
-              entryGroup.patchValue({
-                sets: entry.sets ?? null,
-                reps: entry.reps ?? '',
-                rest: entry.rest ?? '',
-                load: entry.load ?? '',
-                notes: entry.notes ?? '',
-              });
+              entryGroup.patchValue({ rest: entry.rest ?? '', notes: entry.notes ?? '' });
+              const setsArr = entryGroup.get('sets') as FormArray;
+              setsArr.clear();
+              (entry.sets ?? []).forEach((s) =>
+                setsArr.push(this.createSetEntry(s.reps ?? '', s.duration ?? '', s.load ?? ''))
+              );
+              if (!setsArr.length) setsArr.push(this.createSetEntry());
               exArray.push(entryGroup);
               this.setupAutocomplete(entryGroup.get('exerciseSearch') as FormControl);
             });
@@ -198,13 +198,32 @@ export class RoutineFormComponent implements OnInit {
       exercise: [exerciseId, Validators.required],
       exerciseSearch: [''],
       order: [order],
-      sets: [null],
-      reps: [''],
-      duration: [''],
+      sets: this.fb.array([this.createSetEntry()]),
       rest: [''],
-      load: [''],
       notes: [''],
     });
+  }
+
+  private createSetEntry(reps = '', duration = '', load = ''): FormGroup {
+    return this.fb.group({ reps: [reps], duration: [duration], load: [load] });
+  }
+
+  getSetsArray(entryGroup: AbstractControl): FormArray {
+    return entryGroup.get('sets') as FormArray;
+  }
+
+  addSet(entryGroup: AbstractControl): void {
+    this.getSetsArray(entryGroup).push(this.createSetEntry());
+  }
+
+  removeSet(entryGroup: AbstractControl, index: number): void {
+    this.getSetsArray(entryGroup).removeAt(index);
+  }
+
+  duplicateLastSet(entryGroup: AbstractControl): void {
+    const arr = this.getSetsArray(entryGroup);
+    const last = arr.at(arr.length - 1).value;
+    arr.push(this.createSetEntry(last.reps, last.duration, last.load));
   }
 
   private setupAutocomplete(searchControl: FormControl): void {
@@ -302,11 +321,12 @@ export class RoutineFormComponent implements OnInit {
         exercises: (block.exercises ?? []).map((entry: any, ei: number) => ({
           exercise: entry.exercise,
           order: ei,
-          sets: entry.sets ?? undefined,
-          reps: entry.reps || undefined,
-          duration: entry.duration || undefined,
+          sets: (entry.sets ?? []).map((s: any) => ({
+            reps: s.reps || undefined,
+            duration: s.duration || undefined,
+            load: s.load || undefined,
+          })),
           rest: entry.rest || undefined,
-          load: entry.load || undefined,
           notes: entry.notes || undefined,
         })),
       })),

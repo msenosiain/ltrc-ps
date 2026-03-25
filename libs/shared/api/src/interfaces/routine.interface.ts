@@ -1,14 +1,17 @@
 import { RoutineStatusEnum } from '../enums';
 import { Exercise } from './exercise.interface';
 
+export interface SetEntry {
+  reps?: string;
+  duration?: string;
+  load?: string;
+}
+
 export interface RoutineExerciseEntry {
   exercise: Exercise | string;
   order: number;
-  sets?: number;
-  reps?: string;
-  duration?: string;
+  sets: SetEntry[];
   rest?: string;
-  load?: string;
   notes?: string;
 }
 

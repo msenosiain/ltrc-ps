@@ -10,17 +10,7 @@ import {
 } from 'class-validator';
 import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
-export class RoutineExerciseEntryDto {
-  @IsString()
-  exercise: string;
-
-  @IsNumber()
-  order: number;
-
-  @IsOptional()
-  @IsNumber()
-  sets?: number;
-
+export class SetEntryDto {
   @IsOptional()
   @IsString()
   reps?: string;
@@ -31,11 +21,24 @@ export class RoutineExerciseEntryDto {
 
   @IsOptional()
   @IsString()
-  rest?: string;
+  load?: string;
+}
+
+export class RoutineExerciseEntryDto {
+  @IsString()
+  exercise: string;
+
+  @IsNumber()
+  order: number;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetEntryDto)
+  sets: SetEntryDto[];
 
   @IsOptional()
   @IsString()
-  load?: string;
+  rest?: string;
 
   @IsOptional()
   @IsString()
