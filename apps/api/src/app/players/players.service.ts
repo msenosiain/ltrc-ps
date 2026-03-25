@@ -112,7 +112,17 @@ export class PlayersService {
       );
     }
 
-    Object.assign(player, dto);
+    const cleanDto = Object.fromEntries(
+      Object.entries(dto).filter(([, v]) => v !== undefined)
+    );
+    Object.assign(player, cleanDto);
+    if (dto.trialStartDate !== undefined && dto.trialStartDate !== null) {
+      player.trialStartDate =
+        dto.trialStartDate instanceof Date
+          ? dto.trialStartDate
+          : new Date(dto.trialStartDate as unknown as string);
+      player.markModified('trialStartDate');
+    }
     if (caller) player.updatedBy = (caller as any)._id;
 
     if (dto.createUser && dto.email && !player.userId) {
@@ -384,12 +394,17 @@ export class PlayersService {
     }
     const results = await this.playerModel.aggregate([
       { $match: queryFilters },
-      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $group: { _id: { category: '$category', sport: '$sport' }, count: { $sum: 1 } } },
     ]);
     const byCategory: Record<string, number> = {};
     let total = 0;
     for (const r of results) {
-      byCategory[r._id] = r.count;
+      const { category, sport } = r._id;
+      // For PLANTEL_SUPERIOR, split by sport so the widget can show them separately
+      const key = category === 'plantel_superior' && sport
+        ? `plantel_superior:${sport}`
+        : category;
+      byCategory[key] = (byCategory[key] ?? 0) + r.count;
       total += r.count;
     }
     return { byCategory, total };

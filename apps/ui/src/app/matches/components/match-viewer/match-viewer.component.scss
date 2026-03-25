@@ -205,8 +205,10 @@
 }
 
 .player-name {
-  flex: 1;
   font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .position-label {
@@ -235,6 +237,22 @@
     align-items: center;
     gap: 6px;
   }
+}
+
+.trial-status-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1565c0;
+  flex-shrink: 0;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .attendance-entry {
@@ -380,6 +398,8 @@
     button {
       width: 28px;
       height: 28px;
+      --mdc-icon-button-state-layer-size: 28px;
+      padding: 0;
 
       mat-icon {
         font-size: 16px;

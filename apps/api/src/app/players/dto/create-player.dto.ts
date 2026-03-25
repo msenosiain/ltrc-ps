@@ -225,8 +225,11 @@ export class CreatePlayerDto {
   readonly status?: PlayerStatusEnum;
 
   @IsOptional()
-  @Transform(({ value }) => (value ? new Date(value) : undefined))
-  @IsDate()
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    const d = value instanceof Date ? value : new Date(value);
+    return isNaN(d.getTime()) ? undefined : d;
+  })
   readonly trialStartDate?: Date;
 
   @IsOptional()

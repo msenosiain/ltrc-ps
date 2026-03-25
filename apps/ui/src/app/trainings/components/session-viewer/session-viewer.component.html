@@ -1,20 +1,21 @@
 <div class="session-viewer">
   @if (session) {
+
   <mat-card>
     <mat-card-content>
       <div class="session-header">
-        <h2>Entrenamiento — {{ dayName }} {{ session.date | date : 'dd/MM/yyyy' : 'UTC' }}</h2>
-        <span class="status-badge status-{{ session.status }}">
-          {{ getStatusLabel() }}
-        </span>
+        <h2 class="session-title">{{ dayName }} {{ session.date | date : 'dd/MM/yyyy' : 'UTC' }}</h2>
+        <div class="chips-row">
+          <mat-chip class="status-chip status-{{ session.status }}">
+            {{ getStatusLabel() }}
+          </mat-chip>
+        </div>
       </div>
 
       <div class="info-grid">
         <div class="info-item">
           <span class="info-label">Horario</span>
-          <span class="info-value"
-            >{{ session.startTime }} - {{ session.endTime }}</span
-          >
+          <span class="info-value">{{ session.startTime }} – {{ session.endTime }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Deporte</span>
@@ -29,7 +30,8 @@
           <span class="info-label">División</span>
           <span class="info-value">{{ session.division }}</span>
         </div>
-        } @if (session.location) {
+        }
+        @if (session.location) {
         <div class="info-item">
           <span class="info-label">Ubicación</span>
           <span class="info-value">{{ session.location }}</span>
@@ -46,79 +48,82 @@
       </div>
 
       @if (session.notes) {
-      <div class="notes-section">
-        <span class="info-label">Notas</span>
-        <p>{{ session.notes }}</p>
+      <div class="notes">
+        <p class="section-title">Notas</p>
+        <p class="notes-text">{{ session.notes }}</p>
       </div>
       }
-
-      <!-- Staff attendance -->
-      @if (staffAttendance.length) {
-      <h3 class="section-title">Entrenadores / Staff</h3>
-      <div class="attendance-list">
-        @for (entry of staffAttendance; track $index) {
-        <div class="attendance-item">
-          <span class="attendance-name">{{ getPlayerName(entry) }}</span>
-          @if (entry.confirmed) {
-          <mat-icon class="confirmed-icon">check_circle</mat-icon>
-          } @if (entry.status) {
-          <span class="attendance-status attendance-status--{{ entry.status }}">
-            {{ getAttendanceStatusLabel(entry) }}
-          </span>
-          }
-        </div>
-        }
-      </div>
-      }
-
-      <!-- Player attendance -->
-      @if (playerAttendance.length) {
-      <h3 class="section-title">Jugadores</h3>
-      <div class="attendance-list">
-        @for (entry of playerAttendance; track $index) {
-        <div class="attendance-item">
-          <span class="attendance-name">{{ getPlayerName(entry) }}</span>
-          @if (entry.confirmed) {
-          <mat-icon class="confirmed-icon">check_circle</mat-icon>
-          } @if (entry.status) {
-          <span class="attendance-status attendance-status--{{ entry.status }}">
-            {{ getAttendanceStatusLabel(entry) }}
-          </span>
-          }
-        </div>
-        }
-      </div>
-      }
-
-      <div class="actions">
-        <button mat-stroked-button (click)="backToList()">
-          <mat-icon>arrow_back</mat-icon>
-          Volver
-        </button>
-        <button
-          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
-          mat-stroked-button
-          (click)="openEditDialog()"
-        >
-          <mat-icon>edit</mat-icon>
-          Editar
-        </button>
-        @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
-        <button
-          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
-          mat-raised-button
-          color="primary"
-          [disabled]="session.status === TrainingSessionStatusEnum.COMPLETED"
-          (click)="goToAttendance()"
-        >
-          <mat-icon>how_to_reg</mat-icon>
-          Pasar lista
-        </button>
-        }
-      </div>
     </mat-card-content>
   </mat-card>
-  } @else {
-  <p>Cargando...</p>
+
+  <!-- ASISTENCIA -->
+  @if (session.attendance?.length) {
+  <mat-card>
+    <mat-card-content>
+      <p class="section-title">Asistencia</p>
+
+      @if (staffAttendance.length) {
+      <p class="squad-group-label">Entrenadores / Staff</p>
+      @for (entry of staffAttendance; track $index) {
+      <div class="attendance-entry">
+        <div class="player-info">
+          <span class="player-name">{{ getPlayerName(entry) }}</span>
+        </div>
+        <span class="attendance-status" [class]="'status-' + entry.status">
+          {{ getAttendanceStatusLabel(entry) }}
+        </span>
+      </div>
+      }
+      }
+
+      @if (playerAttendance.length) {
+      <p class="squad-group-label">Jugadores</p>
+      @for (entry of playerAttendance; track $index) {
+      <div class="attendance-entry">
+        <div class="player-info">
+          <span class="player-name">{{ getPlayerName(entry) }}</span>
+          @if (entry.player?.status === PlayerStatusEnum.TRIAL) {
+          <mat-icon class="trial-status-icon" matTooltip="A prueba">person_add</mat-icon>
+          }
+        </div>
+        <span class="attendance-status" [class]="'status-' + entry.status">
+          {{ getAttendanceStatusLabel(entry) }}
+        </span>
+      </div>
+      }
+      }
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <div class="viewer-actions">
+    <button mat-stroked-button type="button" (click)="backToList()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+    <button
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
+      mat-stroked-button
+      type="button"
+      (click)="openEditDialog()"
+    >
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
+    <button
+      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="session.status === TrainingSessionStatusEnum.COMPLETED"
+      (click)="goToAttendance()"
+    >
+      <mat-icon>how_to_reg</mat-icon>
+      Pasar lista
+    </button>
+    }
+  </div>
+
   }
 </div>

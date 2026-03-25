@@ -70,6 +70,7 @@ export class PlayerViewerComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
 
   RoleEnum = RoleEnum;
+  readonly PlayerStatusEnum = PlayerStatusEnum;
   player?: Player;
   matchHistory: Match[] = [];
   matchHistoryLoading = false;

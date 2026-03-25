@@ -89,7 +89,8 @@
     </mat-card-content>
   </mat-card>
 
-  <!-- PLANTEL CONVOCADO -->
+  <!-- PLANTEL CONVOCADO (no infantiles) -->
+  @if (!isInfantiles) {
   <mat-card class="squad-card">
     <mat-card-content>
       <p class="section-title">Plantel convocado</p>
@@ -131,9 +132,10 @@
       </div>
     </mat-card-content>
   </mat-card>
+  }
 
-  <!-- ASISTENCIA (no competitivo) -->
-  @if (!isCompetitive) {
+  <!-- ASISTENCIA (solo infantiles) -->
+  @if (isInfantiles) {
   <mat-card class="squad-card">
     <mat-card-content>
       <p class="section-title">Asistencia</p>
@@ -154,7 +156,12 @@
       <p class="squad-group-label">Jugadores</p>
       @for (entry of playerAttendance; track entry.player?.id) {
       <div class="attendance-entry">
-        <span class="player-name">{{ entry.player?.name ?? '—' }}</span>
+        <div class="player-info">
+          <span class="player-name">{{ entry.player?.name ?? '—' }}</span>
+          @if (entry.player?.status === PlayerStatusEnum.TRIAL) {
+          <mat-icon class="trial-status-icon" matTooltip="A prueba">person_add</mat-icon>
+          }
+        </div>
         <span class="attendance-status" [class]="'status-' + entry.status">
           {{ getAttendanceStatusLabel(entry.status) }}
         </span>

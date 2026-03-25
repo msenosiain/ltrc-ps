@@ -8,6 +8,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AttendanceEntry,
+  PlayerStatusEnum,
   RoleEnum,
   TrainingSession,
   TrainingSessionStatusEnum,
@@ -25,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -39,6 +41,7 @@ import { SessionEditDialogComponent, SessionEditDialogResult } from '../session-
     MatIconModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatTooltipModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -56,6 +59,7 @@ export class SessionViewerComponent implements OnInit {
   session?: TrainingSession;
   readonly RoleEnum = RoleEnum;
   readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
+  readonly PlayerStatusEnum = PlayerStatusEnum;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

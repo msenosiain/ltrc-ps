@@ -58,6 +58,12 @@ mat-card {
   &:last-child {
     border-bottom: none;
   }
+
+  mat-button-toggle-group {
+    flex-shrink: 0;
+    align-self: center;
+    --mat-standard-button-toggle-height: 32px;
+  }
 }
 
 .row-info {
@@ -90,6 +96,24 @@ mat-card {
   &.confirmed mat-icon {
     color: #4caf50;
   }
+}
+
+.trial-status-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1565c0;
+  flex-shrink: 0;
+}
+
+.trial-days {
+  font-size: 0.72rem;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &.trial-ok       { color: #1565c0; }
+  &.trial-expiring { color: #e65100; }
+  &.trial-expired  { color: #c62828; }
 }
 
 .roll-call-actions {

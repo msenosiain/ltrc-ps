@@ -1,136 +1,149 @@
 .session-viewer {
-  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .session-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 16px;
-
-  h2 {
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 500;
-  }
 }
 
-.status-badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
+.session-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
 
+.chips-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-chip {
   &.status-scheduled {
+    --mdc-chip-label-text-color: #e65100;
     background: #fff8e1;
-    color: #e65100;
   }
-
   &.status-completed {
+    --mdc-chip-label-text-color: #2e7d32;
     background: #e8f5e9;
-    color: #2e7d32;
   }
-
   &.status-cancelled {
+    --mdc-chip-label-text-color: #757575;
     background: #f5f5f5;
-    color: #757575;
   }
 }
 
 .info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
 
-.info-label {
-  font-size: 0.75rem;
-  color: var(--mat-app-on-surface-variant, #666);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.info-value {
-  font-size: 0.95rem;
-}
-
-.notes-section {
-  margin-bottom: 24px;
-
-  p {
-    margin: 4px 0 0;
+  .info-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--mat-app-on-surface-variant, #888);
+    font-weight: 500;
   }
+
+  .info-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--mat-app-on-surface, rgba(0, 0, 0, 0.87));
+  }
+}
+
+.notes {
+  margin-top: 20px;
 }
 
 .section-title {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mat-app-primary, #1976d2);
   margin: 0 0 8px;
 }
 
-.attendance-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 24px;
+.notes-text {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--mat-app-on-surface, rgba(0, 0, 0, 0.87));
 }
 
-.attendance-item {
+.squad-group-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mat-app-on-surface-variant, #888);
+  margin: 8px 0 6px;
+}
+
+.attendance-entry {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: #f5f5f5;
-  border-radius: 8px;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #eee);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
 }
 
-.attendance-name {
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex: 1;
-  font-size: 0.9rem;
+  min-width: 0;
 }
 
-.confirmed-icon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  color: #4caf50;
+.player-name {
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trial-status-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #1565c0;
+  flex-shrink: 0;
 }
 
 .attendance-status {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 500;
+  flex-shrink: 0;
 
-  &--present {
-    background: #e8f5e9;
-    color: #2e7d32;
-  }
-
-  &--absent {
-    background: #fce4ec;
-    color: #b71c1c;
-  }
-
-  &--justified {
-    background: #fff8e1;
-    color: #e65100;
-  }
+  &.status-present  { color: #2e7d32; }
+  &.status-absent   { color: #c62828; }
+  &.status-justified { color: #e65100; }
 }
 
-.actions {
+.viewer-actions {
   display: flex;
+  justify-content: flex-end;
   gap: 8px;
-  margin-top: 16px;
 
   button {
     display: inline-flex;

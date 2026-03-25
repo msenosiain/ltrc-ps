@@ -29,23 +29,16 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          @if (row.confirmed && !isInfantiles) {
+          <mat-icon class="confirmed-badge" matTooltip="El jugador confirmó su presencia">check_circle</mat-icon>
           }
         </div>
         <mat-button-toggle-group
           [value]="row.status"
           (change)="row.status = $event.value"
         >
-          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
-            P
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
-            A
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
-            J
-          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">P</mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">J</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
       }
@@ -61,23 +54,22 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          @if (row.isTrial) {
+          <mat-icon class="trial-status-icon" matTooltip="A prueba">person_add</mat-icon>
+          }
+          @if (row.trialDaysLeft !== undefined) {
+          <span class="trial-days trial-{{ getTrialClass(row.trialDaysLeft) }}">{{ row.trialDaysLeft <= 0 ? 'Vencido' : row.trialDaysLeft + 'd' }}</span>
+          }
+          @if (row.confirmed && !isInfantiles) {
+          <mat-icon class="confirmed-badge" matTooltip="El jugador confirmó su presencia">check_circle</mat-icon>
           }
         </div>
         <mat-button-toggle-group
           [value]="row.status"
           (change)="row.status = $event.value"
         >
-          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
-            P
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
-            A
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
-            J
-          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">P</mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">J</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
       }
@@ -93,23 +85,22 @@
       <div class="attendance-row">
         <div class="row-info">
           <span class="row-name">{{ row.name }}</span>
-          @if (row.confirmed) {
-          <mat-icon class="confirmed-badge">check_circle</mat-icon>
+          @if (row.isTrial) {
+          <mat-icon class="trial-status-icon" matTooltip="A prueba">person_add</mat-icon>
+          }
+          @if (row.trialDaysLeft !== undefined) {
+          <span class="trial-days trial-{{ getTrialClass(row.trialDaysLeft) }}">{{ row.trialDaysLeft <= 0 ? 'Vencido' : row.trialDaysLeft + 'd' }}</span>
+          }
+          @if (row.confirmed && !isInfantiles) {
+          <mat-icon class="confirmed-badge" matTooltip="El jugador confirmó su presencia">check_circle</mat-icon>
           }
         </div>
         <mat-button-toggle-group
           [value]="row.status"
           (change)="row.status = $event.value"
         >
-          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">
-            P
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.ABSENT">
-            A
-          </mat-button-toggle>
-          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">
-            J
-          </mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.PRESENT">P</mat-button-toggle>
+          <mat-button-toggle [value]="AttendanceStatusEnum.JUSTIFIED">J</mat-button-toggle>
         </mat-button-toggle-group>
       </div>
       }

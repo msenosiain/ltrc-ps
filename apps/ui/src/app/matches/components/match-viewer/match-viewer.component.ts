@@ -10,15 +10,18 @@ import { MatchesService } from '../../services/matches.service';
 import {
   AttendanceEntry,
   AttendanceStatusEnum,
+  BlockEnum,
   CategoryEnum,
   Match,
   MatchAttachment,
   MatchStatusEnum,
+  PlayerStatusEnum,
   RoleEnum,
   SportEnum,
   SquadEntry,
   Tournament,
   VideoClip,
+  getCategoryBlock,
   isCompetitiveCategory,
 } from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
@@ -69,9 +72,11 @@ export class MatchViewerComponent implements OnInit {
 
   match?: Match;
   isCompetitive = false;
+  isInfantiles = false;
   uploadingAttachment = false;
   readonly MatchStatusEnum = MatchStatusEnum;
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
+  readonly PlayerStatusEnum = PlayerStatusEnum;
   readonly RoleEnum = RoleEnum;
 
   ngOnInit(): void {
@@ -91,6 +96,9 @@ export class MatchViewerComponent implements OnInit {
           const sport = tournament?.sport ?? match.sport;
           if (match.category && sport) {
             this.isCompetitive = isCompetitiveCategory(match.category, sport);
+          }
+          if (match.category) {
+            this.isInfantiles = getCategoryBlock(match.category) === BlockEnum.INFANTILES;
           }
         },
         error: () => this.router.navigate(['/dashboard/matches']),
@@ -187,11 +195,15 @@ export class MatchViewerComponent implements OnInit {
   }
 
   openUploadDialog(): void {
-    const ref = this.dialog.open(UploadAttachmentDialogComponent, { width: '400px', data: {} satisfies UploadAttachmentDialogData });
+    const allSquad = [...this.titulares, ...this.suplentes];
+    const ref = this.dialog.open(UploadAttachmentDialogComponent, {
+      width: '400px',
+      data: { squad: allSquad } satisfies UploadAttachmentDialogData,
+    });
     ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
       if (!result) return;
       this.uploadingAttachment = true;
-      this.matchesService.uploadAttachment(this.match!.id!, result.file!, result.name, result.visibility).subscribe({
+      this.matchesService.uploadAttachment(this.match!.id!, result.file!, result.name, result.visibility, result.targetPlayers).subscribe({
         next: (att) => {
           (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
           this.uploadingAttachment = false;
@@ -206,13 +218,14 @@ export class MatchViewerComponent implements OnInit {
   }
 
   openEditAttachmentDialog(att: MatchAttachment): void {
+    const allSquad = [...this.titulares, ...this.suplentes];
     const ref = this.dialog.open(UploadAttachmentDialogComponent, {
       width: '400px',
-      data: { attachment: att } satisfies UploadAttachmentDialogData,
+      data: { attachment: att, squad: allSquad } satisfies UploadAttachmentDialogData,
     });
     ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
       if (!result) return;
-      this.matchesService.updateAttachment(this.match!.id!, att.fileId, result.name, result.visibility).subscribe({
+      this.matchesService.updateAttachment(this.match!.id!, att.fileId, result.name, result.visibility, result.targetPlayers).subscribe({
         next: (updated) => {
           (this.match as any).attachments = this.match!.attachments!.map((a) =>
             a.fileId === att.fileId ? updated : a
@@ -273,7 +286,7 @@ export class MatchViewerComponent implements OnInit {
 
   getAttachmentVisibilityLabel(att: MatchAttachment): string {
     if (att.visibility === 'staff') return 'Solo staff';
-    if (att.visibility === 'players') return 'Jugadores';
+    if (att.visibility === 'players') return 'Jugadores específicos';
     return 'Todos';
   }
 
