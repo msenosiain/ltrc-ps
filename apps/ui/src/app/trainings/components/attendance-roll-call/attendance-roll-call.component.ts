@@ -14,15 +14,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   AttendanceStatusEnum,
+  BlockEnum,
   Player,
   PlayerAvailabilityEnum,
   PlayerStatusEnum,
   SortOrder,
   TrainingSession,
+  getCategoryBlock,
 } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { PlayersService } from '../../../players/services/players.service';
@@ -38,6 +41,8 @@ interface AttendanceRow {
   isStaff: boolean;
   confirmed: boolean;
   status: AttendanceStatusEnum | null;
+  isTrial?: boolean;
+  trialDaysLeft?: number;
 }
 
 @Component({
@@ -50,6 +55,7 @@ interface AttendanceRow {
     MatButtonToggleModule,
     MatProgressBarModule,
     MatExpansionModule,
+    MatTooltipModule,
     DatePipe,
     FormsModule,
   ],
@@ -66,6 +72,7 @@ export class AttendanceRollCallComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   session?: TrainingSession;
+  isInfantiles = false;
   staffRows: AttendanceRow[] = [];
   playerRows: AttendanceRow[] = [];
   injuredRows: AttendanceRow[] = [];
@@ -87,6 +94,9 @@ export class AttendanceRollCallComponent implements OnInit {
       .subscribe({
         next: (session) => {
           this.session = session;
+          if (session.category) {
+            this.isInfantiles = getCategoryBlock(session.category as any) === BlockEnum.INFANTILES;
+          }
           forkJoin({
             players: this.playersService.getPlayers({
               page: 1,
@@ -166,12 +176,18 @@ export class AttendanceRollCallComponent implements OnInit {
 
     const toRow = (player: Player): AttendanceRow => {
       const existing = attendanceByPlayer.get(player.id!);
+      const isTrial = player.status === PlayerStatusEnum.TRIAL;
+      const trialDaysLeft = isTrial && player.trialStartDate
+        ? Math.ceil((new Date(player.trialStartDate as any).getTime() + 14 * 86400000 - Date.now()) / 86400000)
+        : undefined;
       return {
         playerId: player.id!,
         name: (player as any).name ?? player.id!,
         isStaff: false,
         confirmed: existing?.confirmed ?? false,
         status: (existing?.status as AttendanceStatusEnum) ?? null,
+        isTrial,
+        trialDaysLeft,
       };
     };
 
@@ -195,6 +211,12 @@ export class AttendanceRollCallComponent implements OnInit {
         });
       }
     }
+  }
+
+  getTrialClass(days: number): string {
+    if (days <= 0) return 'trial-expired';
+    if (days <= 3) return 'trial-expiring';
+    return 'trial-ok';
   }
 
   setStatus(row: AttendanceRow, status: AttendanceStatusEnum): void {
