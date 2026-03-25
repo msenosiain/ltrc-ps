@@ -112,6 +112,7 @@ export class BranchDetailComponent implements OnInit {
             size: 10,
             filters: {
               searchTerm: term,
+              availableForTraining: true,
               sport: SportEnum.HOCKEY,
               category: this.category,
             },

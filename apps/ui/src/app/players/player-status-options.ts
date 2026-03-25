@@ -18,6 +18,7 @@ export const playerAvailabilityOptions: {
   { id: PlayerAvailabilityEnum.CALLED_UP, label: 'Convocado' },
   { id: PlayerAvailabilityEnum.SUSPENDED, label: 'Suspendido' },
   { id: PlayerAvailabilityEnum.LEAVE, label: 'Licencia' },
+  { id: PlayerAvailabilityEnum.NOT_PLAYING, label: 'No juega' },
 ];
 
 export function getStatusLabel(status?: PlayerStatusEnum): string {
@@ -46,6 +47,8 @@ export function getAvailabilityColor(
       return '#5c35bb';   // violeta
     case PlayerAvailabilityEnum.LEAVE:
       return '#6a1b9a';   // violeta oscuro
+    case PlayerAvailabilityEnum.NOT_PLAYING:
+      return '#757575';   // gris
     default:
       return '#2e7d32';   // verde (disponible)
   }

@@ -10,4 +10,5 @@ export enum PlayerAvailabilityEnum {
   CALLED_UP = 'called_up',
   SUSPENDED = 'suspended',
   LEAVE = 'leave',
+  NOT_PLAYING = 'not_playing',
 }

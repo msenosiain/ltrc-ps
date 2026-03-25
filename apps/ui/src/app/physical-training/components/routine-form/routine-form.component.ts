@@ -130,7 +130,7 @@ export class RoutineFormComponent implements OnInit {
 
     // Load players
     this.playersService
-      .getPlayers({ page: 1, size: 500, sortBy: 'name' })
+      .getPlayers({ page: 1, size: 500, sortBy: 'name', filters: { availableForTraining: true } })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res) => {
         this.allPlayers = res.items.map((p) => ({ id: p.id!, name: p.name }));

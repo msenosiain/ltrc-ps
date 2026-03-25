@@ -45,6 +45,7 @@ export class AvailabilityDialogComponent {
     { id: PlayerAvailabilityEnum.SUSPENDED, label: 'Suspendido' },
     { id: PlayerAvailabilityEnum.LEAVE, label: 'Con permiso' },
     { id: PlayerAvailabilityEnum.CALLED_UP, label: 'Convocado' },
+    { id: PlayerAvailabilityEnum.NOT_PLAYING, label: 'No juega' },
   ];
 
   readonly PlayerAvailabilityEnum = PlayerAvailabilityEnum;

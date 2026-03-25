@@ -241,7 +241,7 @@ export class PlayersService {
       queryFilters['branch'] = filters.branch;
     }
 
-    // availableForTraining: exclude called_up, suspended, leave (keep injured + available)
+    // availableForTraining: exclude called_up, suspended, leave, not_playing (keep injured + available)
     if (filters.availableForTraining) {
       andConditions.push({
         $or: [

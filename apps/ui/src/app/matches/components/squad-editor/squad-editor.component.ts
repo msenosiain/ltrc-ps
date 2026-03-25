@@ -229,6 +229,7 @@ export class SquadEditorComponent implements OnInit {
             size: 20,
             filters: {
               searchTerm: term,
+              availableForTraining: true,
               ...((this.match?.tournament?.sport ?? this.match?.sport) && { sport: this.match!.tournament?.sport ?? this.match!.sport }),
               ...(this.match?.category && { category: this.match.category }),
             },

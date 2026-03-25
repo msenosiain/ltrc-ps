@@ -164,7 +164,7 @@ export class RoutineListComponent implements AfterViewInit, OnDestroy {
         distinctUntilChanged(),
         switchMap((term) =>
           term
-            ? this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term }, sortBy: 'name', sortOrder: SortOrder.ASC })
+            ? this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term, availableForTraining: true }, sortBy: 'name', sortOrder: SortOrder.ASC })
             : of({ items: [] as Player[], total: 0, page: 1, size: 20 } as PaginatedResponse<Player>)
         ),
         takeUntilDestroyed(this.destroyRef)
