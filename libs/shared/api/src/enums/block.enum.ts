@@ -4,6 +4,7 @@ export enum BlockEnum {
   INFANTILES = 'infantiles',
   CADETES = 'cadetes',
   JUVENILES = 'juveniles',
+  MAYORES = 'mayores',
   PLANTEL_SUPERIOR = 'plantel_superior',
 }
 
@@ -34,7 +35,10 @@ const BLOCK_CATEGORIES: Record<BlockEnum, CategoryEnum[]> = {
     CategoryEnum.M19,
     CategoryEnum.SEXTA,
     CategoryEnum.QUINTA,
+  ],
+  [BlockEnum.MAYORES]: [
     CategoryEnum.CUARTA,
+    CategoryEnum.MASTER,
   ],
   [BlockEnum.PLANTEL_SUPERIOR]: [
     CategoryEnum.PLANTEL_SUPERIOR,

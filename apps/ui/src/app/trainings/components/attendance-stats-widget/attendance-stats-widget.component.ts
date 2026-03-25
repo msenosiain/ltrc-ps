@@ -23,6 +23,7 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
   [BlockEnum.INFANTILES]: 'Infantiles',
   [BlockEnum.CADETES]: 'Cadetes',
   [BlockEnum.JUVENILES]: 'Juveniles',
+  [BlockEnum.MAYORES]: 'Mayores',
   [BlockEnum.PLANTEL_SUPERIOR]: 'Plantel Superior',
 };
 
