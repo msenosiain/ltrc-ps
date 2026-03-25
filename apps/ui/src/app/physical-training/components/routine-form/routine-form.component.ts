@@ -22,8 +22,10 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AsyncPipe } from '@angular/common';
+import { format } from 'date-fns';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, startWith, map } from 'rxjs';
@@ -55,6 +57,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatCardModule,
     MatCheckboxModule,
     MatAutocompleteModule,
+    MatDatepickerModule,
     AsyncPipe,
   ],
   templateUrl: './routine-form.component.html',
@@ -108,8 +111,8 @@ export class RoutineFormComponent implements OnInit {
       description: [''],
       sport: [null],
       category: [null],
-      validFrom: ['', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)]],
-      validUntil: ['', [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2}$/)]],
+      validFrom: [null as Date | null, Validators.required],
+      validUntil: [null as Date | null, Validators.required],
       daysOfWeek: [[]],
       assignedPlayers: [[]],
       status: [RoutineStatusEnum.DRAFT],
@@ -146,8 +149,8 @@ export class RoutineFormComponent implements OnInit {
             description: routine.description ?? '',
             sport: routine.sport ?? null,
             category: routine.category ?? null,
-            validFrom: routine.validFrom,
-            validUntil: routine.validUntil,
+            validFrom: routine.validFrom ? new Date(routine.validFrom) : null,
+            validUntil: routine.validUntil ? new Date(routine.validUntil) : null,
             daysOfWeek: routine.daysOfWeek ?? [],
             assignedPlayers: (routine.assignedPlayers ?? []).map((p) =>
               typeof p === 'string' ? p : (p as any).id ?? p
@@ -287,8 +290,8 @@ export class RoutineFormComponent implements OnInit {
       description: raw.description || undefined,
       sport: raw.sport || undefined,
       category: raw.category || undefined,
-      validFrom: raw.validFrom,
-      validUntil: raw.validUntil,
+      validFrom: raw.validFrom ? format(raw.validFrom, 'yyyy-MM-dd') : undefined,
+      validUntil: raw.validUntil ? format(raw.validUntil, 'yyyy-MM-dd') : undefined,
       daysOfWeek: raw.daysOfWeek ?? [],
       assignedPlayers: raw.assignedPlayers ?? [],
       status: raw.status,

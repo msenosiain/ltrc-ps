@@ -54,17 +54,21 @@
         <div class="routine-form__row">
           <mat-form-field appearance="outline" class="routine-form__field">
             <mat-label>Válido desde</mat-label>
-            <input matInput formControlName="validFrom" placeholder="2025-01-01" />
+            <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" placeholder="DD/MM/AAAA" />
+            <mat-datepicker-toggle matSuffix [for]="pickerFrom" />
+            <mat-datepicker #pickerFrom />
             @if (form.get('validFrom')?.hasError('required')) {
-              <mat-error>Fecha requerida (YYYY-MM-DD)</mat-error>
+              <mat-error>Fecha requerida</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="routine-form__field">
             <mat-label>Válido hasta</mat-label>
-            <input matInput formControlName="validUntil" placeholder="2025-12-31" />
+            <input matInput [matDatepicker]="pickerUntil" formControlName="validUntil" placeholder="DD/MM/AAAA" />
+            <mat-datepicker-toggle matSuffix [for]="pickerUntil" />
+            <mat-datepicker #pickerUntil />
             @if (form.get('validUntil')?.hasError('required')) {
-              <mat-error>Fecha requerida (YYYY-MM-DD)</mat-error>
+              <mat-error>Fecha requerida</mat-error>
             }
           </mat-form-field>
         </div>
