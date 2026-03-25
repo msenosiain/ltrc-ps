@@ -53,7 +53,7 @@ export const WorkoutSchema = new Schema<WorkoutEntity>(
     createdBy: { type: Types.ObjectId, ref: 'User' },
     updatedBy: { type: Types.ObjectId, ref: 'User' },
   },
-  { timestamps: true, collection: 'routines' }
+  { timestamps: true, collection: 'workouts' }
 );
 
 WorkoutSchema.virtual('id').get(function () {

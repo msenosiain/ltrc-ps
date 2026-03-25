@@ -12,7 +12,7 @@ import { PlayerSchema } from '../players/schemas/player.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: WorkoutEntity.name, schema: WorkoutSchema, collection: 'routines' },
+      { name: WorkoutEntity.name, schema: WorkoutSchema, collection: 'workouts' },
       { name: ExerciseEntity.name, schema: ExerciseSchema, collection: 'exercises' },
       { name: PlayerEntity.name, schema: PlayerSchema, collection: 'players' },
     ]),
