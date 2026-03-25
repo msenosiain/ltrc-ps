@@ -15,6 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -26,6 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    MatProgressBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -39,6 +41,7 @@ export class ScheduleViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   schedule?: TrainingSchedule;
+  loading = false;
   readonly RoleEnum = RoleEnum;
 
   ngOnInit(): void {
@@ -48,12 +51,13 @@ export class ScheduleViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.schedulesService
       .getScheduleById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (schedule) => (this.schedule = schedule),
-        error: () => this.router.navigate(['/dashboard/trainings/schedules']),
+        next: (schedule) => { this.schedule = schedule; this.loading = false; },
+        error: () => { this.loading = false; this.router.navigate(['/dashboard/trainings/schedules']); },
       });
   }
 

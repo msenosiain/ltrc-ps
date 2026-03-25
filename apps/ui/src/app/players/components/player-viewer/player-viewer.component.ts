@@ -72,6 +72,7 @@ export class PlayerViewerComponent implements OnInit {
   RoleEnum = RoleEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
   player?: Player;
+  loading = false;
   matchHistory: Match[] = [];
   matchHistoryLoading = false;
   isOwnProfile = signal(false);
@@ -84,16 +85,18 @@ export class PlayerViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.playersService
       .getPlayerById(playerId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (player) => {
           this.player = player;
+          this.loading = false;
           this.loadMatchHistory(playerId);
           this.checkOwnProfile(player);
         },
-        error: () => this.router.navigate(['/players']),
+        error: () => { this.loading = false; this.router.navigate(['/players']); },
       });
   }
 

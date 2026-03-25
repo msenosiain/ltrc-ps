@@ -1,4 +1,7 @@
 <div class="match-viewer">
+  @if (loading) {
+  <mat-progress-bar mode="indeterminate" />
+  }
   @if (match) {
 
   <mat-card>

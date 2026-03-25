@@ -21,6 +21,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DatePipe } from '@angular/common';
 import { sportOptions } from '../../../common/sport-options';
 import { getCategoryLabel, sortCategoriesAsc } from '../../../common/category-options';
@@ -36,6 +37,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatButtonModule,
     MatIconModule,
     MatListModule,
+    MatProgressBarModule,
     DatePipe,
     AllowedRolesDirective,
   ],
@@ -49,6 +51,7 @@ export class TournamentViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
+  loading = false;
   readonly RoleEnum = RoleEnum;
 
   getSportLabel(sport?: SportEnum): string {
@@ -89,12 +92,13 @@ export class TournamentViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.tournamentsService
       .getTournamentById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (tournament) => (this.tournament = tournament),
-        error: () => this.router.navigate(['/dashboard/tournaments']),
+        next: (tournament) => { this.tournament = tournament; this.loading = false; },
+        error: () => { this.loading = false; this.router.navigate(['/dashboard/tournaments']); },
       });
   }
 

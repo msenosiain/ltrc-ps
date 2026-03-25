@@ -13,6 +13,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../User.interface';
@@ -31,6 +32,7 @@ import { getSportLabel } from '../../../common/sport-options';
     MatIconModule,
     MatCardModule,
     MatChipsModule,
+    MatProgressBarModule,
     MatSnackBarModule,
     RouterLink,
   ],
@@ -48,6 +50,7 @@ export class UserViewerComponent implements OnInit {
   private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER];
 
   user?: User;
+  loading = false;
   linkedPlayer?: Player | null;
   readonly RoleEnum = RoleEnum;
 
@@ -62,15 +65,17 @@ export class UserViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.usersService
       .getUserById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
           this.user = user;
+          this.loading = false;
           this.loadLinkedPlayer(id);
         },
-        error: () => this.router.navigate(['/dashboard/users']),
+        error: () => { this.loading = false; this.router.navigate(['/dashboard/users']); },
       });
   }
 

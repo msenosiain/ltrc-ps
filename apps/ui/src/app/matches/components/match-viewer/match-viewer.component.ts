@@ -73,6 +73,7 @@ export class MatchViewerComponent implements OnInit {
   match?: Match;
   isCompetitive = false;
   isInfantiles = false;
+  loading = false;
   uploadingAttachment = false;
   readonly MatchStatusEnum = MatchStatusEnum;
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
@@ -86,12 +87,14 @@ export class MatchViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.matchesService
       .getMatchById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (match) => {
           this.match = match;
+          this.loading = false;
           const tournament = match.tournament as Tournament | undefined;
           const sport = tournament?.sport ?? match.sport;
           if (match.category && sport) {
@@ -101,7 +104,7 @@ export class MatchViewerComponent implements OnInit {
             this.isInfantiles = getCategoryBlock(match.category) === BlockEnum.INFANTILES;
           }
         },
-        error: () => this.router.navigate(['/dashboard/matches']),
+        error: () => { this.loading = false; this.router.navigate(['/dashboard/matches']); },
       });
   }
 

@@ -26,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
@@ -40,6 +41,7 @@ import { SessionEditDialogComponent, SessionEditDialogResult } from '../session-
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    MatProgressBarModule,
     MatSnackBarModule,
     MatTooltipModule,
     DatePipe,
@@ -57,6 +59,7 @@ export class SessionViewerComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
 
   session?: TrainingSession;
+  loading = false;
   readonly RoleEnum = RoleEnum;
   readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
@@ -68,12 +71,13 @@ export class SessionViewerComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.sessionsService
       .getSessionById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (session) => (this.session = session),
-        error: () => this.router.navigate(['/dashboard/trainings/sessions']),
+        next: (session) => { this.session = session; this.loading = false; },
+        error: () => { this.loading = false; this.router.navigate(['/dashboard/trainings/sessions']); },
       });
   }
 

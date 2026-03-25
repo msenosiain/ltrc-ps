@@ -1,4 +1,7 @@
 <div class="player-viewer">
+  @if (loading) {
+  <mat-progress-bar mode="indeterminate" />
+  }
   @if (player) {
 
   <!-- HEADER -->
