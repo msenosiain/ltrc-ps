@@ -15,21 +15,25 @@
         <mat-card-title>Información general</mat-card-title>
       </mat-card-header>
       <mat-card-content>
+        <div class="routine-form__fields-grid">
 
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Nombre</mat-label>
-          <input matInput formControlName="name" placeholder="Ej. Fuerza Plantel Superior" />
-          @if (form.get('name')?.hasError('required')) {
-            <mat-error>El nombre es requerido</mat-error>
-          }
-        </mat-form-field>
+          <mat-form-field appearance="outline" class="routine-form__field">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="name" placeholder="Ej. Fuerza Plantel Superior" />
+            @if (form.get('name')?.hasError('required')) {
+              <mat-error>El nombre es requerido</mat-error>
+            }
+          </mat-form-field>
 
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Descripción</mat-label>
-          <textarea matInput formControlName="description" rows="2"></textarea>
-        </mat-form-field>
+          <mat-form-field appearance="outline" class="routine-form__field">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="status">
+              @for (opt of statusOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
 
-        <div class="routine-form__row">
           <mat-form-field appearance="outline" class="routine-form__field">
             <mat-label>Deporte</mat-label>
             <mat-select formControlName="sport">
@@ -49,9 +53,7 @@
               }
             </mat-select>
           </mat-form-field>
-        </div>
 
-        <div class="routine-form__row">
           <mat-form-field appearance="outline" class="routine-form__field">
             <mat-label>Válido desde</mat-label>
             <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" placeholder="DD/MM/AAAA" />
@@ -71,56 +73,52 @@
               <mat-error>Fecha requerida</mat-error>
             }
           </mat-form-field>
-        </div>
 
-        <div class="routine-form__days">
-          <label class="routine-form__days-label">Días de la semana</label>
-          <div class="routine-form__days-chips">
-            @for (day of daysOfWeek; track day.value) {
-              <button
-                type="button"
-                class="routine-form__day-chip"
-                [class.routine-form__day-chip--selected]="isDaySelected(day.value)"
-                (click)="toggleDay(day.value)"
-              >
-                {{ day.label }}
-              </button>
-            }
+          <div class="routine-form__days routine-form__field--span2">
+            <label class="routine-form__days-label">Días de la semana</label>
+            <div class="routine-form__days-chips">
+              @for (day of daysOfWeek; track day.value) {
+                <button
+                  type="button"
+                  class="routine-form__day-chip"
+                  [class.routine-form__day-chip--selected]="isDaySelected(day.value)"
+                  (click)="toggleDay(day.value)"
+                >
+                  {{ day.label }}
+                </button>
+              }
+            </div>
           </div>
+
+          <mat-form-field appearance="outline" class="routine-form__field">
+            <mat-label>Jugadores asignados</mat-label>
+            <mat-select formControlName="assignedPlayers" multiple>
+              @for (player of allPlayers; track player.id) {
+                <mat-option [value]="player.id">{{ player.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="routine-form__field">
+            <mat-label>Ramas (Hockey)</mat-label>
+            <mat-select formControlName="assignedBranches" multiple>
+              @for (branch of branchOptions; track branch) {
+                <mat-option [value]="branch">{{ branch }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="description" rows="2"></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+            <mat-label>Notas</mat-label>
+            <textarea matInput formControlName="notes" rows="2"></textarea>
+          </mat-form-field>
+
         </div>
-
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Jugadores asignados</mat-label>
-          <mat-select formControlName="assignedPlayers" multiple>
-            @for (player of allPlayers; track player.id) {
-              <mat-option [value]="player.id">{{ player.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Ramas (Hockey)</mat-label>
-          <mat-select formControlName="assignedBranches" multiple>
-            @for (branch of branchOptions; track branch) {
-              <mat-option [value]="branch">{{ branch }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Estado</mat-label>
-          <mat-select formControlName="status">
-            @for (opt of statusOptions; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="routine-form__field">
-          <mat-label>Notas</mat-label>
-          <textarea matInput formControlName="notes" rows="2"></textarea>
-        </mat-form-field>
-
       </mat-card-content>
     </mat-card>
 
