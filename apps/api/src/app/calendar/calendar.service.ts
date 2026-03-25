@@ -24,7 +24,7 @@ export class CalendarService {
     const toDateObj = new Date(toDate + 'T23:59:59.999Z');
 
     const [matches, sessions] = await Promise.all([
-      this.matchModel.find({ date: { $gte: fromDateObj, $lte: toDateObj }, ...scopeFilter }).lean(),
+      this.matchModel.find({ date: { $gte: fromDateObj, $lte: toDateObj }, ...scopeFilter }).populate('tournament').lean(),
       this.sessionModel.find({ date: { $gte: fromDate, $lte: toDate }, ...scopeFilter }).lean(),
     ]);
 
@@ -32,7 +32,7 @@ export class CalendarService {
       type: 'match' as const,
       id: m._id.toString(),
       date: (m.date as Date).toISOString(),
-      title: m.opponent ? `vs ${m.opponent}` : (m.name || 'Encuentro'),
+      title: m.opponent ? `vs ${m.opponent}` : ((m.tournament as any)?.name || 'Encuentro'),
       sport: m.sport,
       category: m.category,
       status: m.status,

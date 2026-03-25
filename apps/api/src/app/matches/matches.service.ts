@@ -7,7 +7,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { CategoryEnum, MatchStatusEnum, PaginatedResponse, RoleEnum } from '@ltrc-campo/shared-api-model';
+import { BlockEnum, CategoryEnum, MatchStatusEnum, PaginatedResponse, RoleEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -493,15 +493,20 @@ export class MatchesService {
     const since = new Date();
     since.setDate(since.getDate() - 28);
 
+    const infantilesCategories = getBlockCategories(BlockEnum.INFANTILES);
     const scopeFilter: Record<string, unknown> = {
       status: MatchStatusEnum.COMPLETED,
       date: { $lte: new Date(), $gte: since },
+      category: { $in: infantilesCategories },
     };
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       const sports = caller.sports ?? [];
       const categories = caller.categories ?? [];
       if (sports.length) scopeFilter['sport'] = { $in: sports };
-      if (categories.length) scopeFilter['category'] = { $in: categories };
+      if (categories.length) {
+        const callerInfantiles = categories.filter((c) => infantilesCategories.includes(c as CategoryEnum));
+        scopeFilter['category'] = { $in: callerInfantiles.length ? callerInfantiles : infantilesCategories };
+      }
     }
 
     const matches = await this.matchModel.find(scopeFilter).lean();
