@@ -15,7 +15,7 @@ $gap: 12px;
 
 .match-grid {
   display: grid;
-  grid-template-columns: repeat(3, $col);
+  grid-template-columns: repeat(3, 1fr);
   gap: $gap;
   align-items: start;
   margin-top: 12px;

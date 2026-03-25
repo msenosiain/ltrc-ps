@@ -30,6 +30,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   CategoryEnum,
+  HockeyBranchEnum,
   Match,
   MatchStatusEnum,
   SportEnum,
@@ -88,6 +89,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
   readonly statusOptions = matchStatusOptions;
   readonly sportOptions = sportOptions;
   readonly MatchStatusEnum = MatchStatusEnum;
+  readonly SportEnum = SportEnum;
+  readonly branchOptions = Object.values(HockeyBranchEnum);
 
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport(null);
   filteredTournaments: Tournament[] = [];
@@ -223,6 +226,11 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
       this.updateCompetitive();
     }
+  }
+
+  get isHockey(): boolean {
+    const sport = this.tournamentSport ?? (this.matchForm.get('sport')?.value as SportEnum | null);
+    return sport === SportEnum.HOCKEY;
   }
 
   get statusValue(): MatchStatusEnum {

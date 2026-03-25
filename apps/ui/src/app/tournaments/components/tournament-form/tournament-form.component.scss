@@ -15,7 +15,7 @@ $gap: 12px;
 
 .tournament-grid {
   display: grid;
-  grid-template-columns: repeat(2, $col);
+  grid-template-columns: repeat(2, 1fr);
   gap: $gap;
   align-items: start;
   margin-top: 12px;

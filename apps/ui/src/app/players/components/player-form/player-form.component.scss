@@ -24,7 +24,7 @@ $photo: $col;
 
 .personal-grid {
   display: grid;
-  grid-template-columns: $photo repeat(4, $col);
+  grid-template-columns: $photo repeat(4, 1fr);
   grid-template-rows: auto auto auto;
   column-gap: $gap;
   row-gap: $row-gap;
@@ -105,7 +105,7 @@ $photo: $col;
 
 .address-grid {
   display: grid;
-  grid-template-columns: repeat(4, $col);
+  grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto auto;
   column-gap: $gap;
   row-gap: $row-gap;
@@ -153,7 +153,7 @@ $photo: $col;
 
 .sport-grid {
   display: grid;
-  grid-template-columns: repeat(5, $col);
+  grid-template-columns: repeat(5, 1fr);
   gap: $gap;
   align-items: start;
 
@@ -165,7 +165,7 @@ $photo: $col;
 
 .availability-grid {
   display: grid;
-  grid-template-columns: repeat(5, $col);
+  grid-template-columns: repeat(5, 1fr);
   gap: $gap;
   align-items: start;
 
@@ -178,7 +178,7 @@ $photo: $col;
 .section-grid,
 .clothing-grid {
   display: grid;
-  grid-template-columns: repeat(4, $col);
+  grid-template-columns: repeat(4, 1fr);
   gap: $gap;
   align-items: start;
 
