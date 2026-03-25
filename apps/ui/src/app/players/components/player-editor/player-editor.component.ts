@@ -17,6 +17,7 @@ import {
   PlayerFormComponent,
   PlayerFormSubmitEvent,
 } from '../player-form/player-form.component';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getErrorMessage } from '../../../common/utils/error-message';
@@ -29,6 +30,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatButtonModule,
     MatIconModule,
     PlayerFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './player-editor.component.html',
   styleUrl: './player-editor.component.scss',
@@ -44,16 +46,18 @@ export class PlayerEditorComponent implements OnInit {
   player?: Player;
   editing = false;
   submitting = false;
+  loading = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
+      this.loading = true;
       this.playersService
         .getPlayerById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((player) => (this.player = player));
+        .subscribe({ next: (player) => { this.player = player; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

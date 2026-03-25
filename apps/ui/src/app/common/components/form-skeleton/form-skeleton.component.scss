@@ -1,0 +1,89 @@
+@keyframes shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+$shimmer-bg: linear-gradient(90deg, #e0e0e0 25%, #ececec 50%, #e0e0e0 75%);
+
+@mixin bone {
+  background: $shimmer-bg;
+  background-size: 1200px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 4px;
+}
+
+.form-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.skeleton-card-title {
+  @include bone;
+  width: 160px;
+  height: 22px;
+  margin-bottom: 20px;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeleton-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.skeleton-label {
+  @include bone;
+  width: 80px;
+  height: 12px;
+}
+
+.skeleton-input {
+  @include bone;
+  height: 52px;
+  border-radius: 4px;
+}
+
+.skeleton-textarea {
+  @include bone;
+  height: 80px;
+  border-radius: 4px;
+}
+
+.skeleton-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 4px;
+}
+
+.skeleton-btn {
+  @include bone;
+  width: 110px;
+  height: 36px;
+  border-radius: 4px;
+
+  &.primary {
+    width: 150px;
+  }
+}

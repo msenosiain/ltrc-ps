@@ -15,6 +15,7 @@ import { MatchesService } from '../../services/matches.service';
 import { MatchFormValue } from '../../forms/match-form.types';
 import { Match } from '@ltrc-campo/shared-api-model';
 import { MatchFormComponent } from '../match-form/match-form.component';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getErrorMessage } from '../../../common/utils/error-message';
@@ -27,6 +28,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatButtonModule,
     MatIconModule,
     MatchFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './match-editor.component.html',
   styleUrl: './match-editor.component.scss',
@@ -42,16 +44,18 @@ export class MatchEditorComponent implements OnInit {
   match?: Match;
   editing = false;
   submitting = false;
+  loading = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
+      this.loading = true;
       this.matchesService
         .getMatchById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((match) => (this.match = match));
+        .subscribe({ next: (match) => { this.match = match; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

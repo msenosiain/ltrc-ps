@@ -22,6 +22,7 @@ import {
 } from '../../services/tournaments.service';
 import { Tournament, TournamentAttachment } from '@ltrc-campo/shared-api-model';
 import { TournamentFormComponent } from '../tournament-form/tournament-form.component';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getErrorMessage } from '../../../common/utils/error-message';
@@ -38,6 +39,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatDividerModule,
     MatListModule,
     TournamentFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './tournament-editor.component.html',
   styleUrl: './tournament-editor.component.scss',
@@ -54,6 +56,7 @@ export class TournamentEditorComponent implements OnInit {
   editing = false;
   submitting = false;
   uploading = false;
+  loading = false;
 
   /** Files queued for upload (used in create mode before tournament exists) */
   pendingFiles: File[] = [];
@@ -63,10 +66,11 @@ export class TournamentEditorComponent implements OnInit {
     this.editing = !!id;
 
     if (id) {
+      this.loading = true;
       this.tournamentsService
         .getTournamentById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((tournament) => (this.tournament = tournament));
+        .subscribe({ next: (tournament) => { this.tournament = tournament; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

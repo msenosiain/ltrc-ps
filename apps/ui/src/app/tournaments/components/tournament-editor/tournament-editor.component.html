@@ -20,6 +20,9 @@
     }
   </div>
 
+  @if (loading) {
+  <ltrc-form-skeleton [rows]="6" />
+  } @else {
   <ltrc-tournament-form
     [tournament]="tournament"
     [submitting]="submitting"
@@ -93,4 +96,5 @@
       }
     </div>
   </ltrc-tournament-form>
+  }
 </div>

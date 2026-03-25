@@ -20,10 +20,14 @@
     }
   </div>
 
+  @if (loading) {
+  <ltrc-form-skeleton [rows]="8" />
+  } @else {
   <ltrc-match-form
     [match]="match"
     [submitting]="submitting"
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
   />
+  }
 </div>
