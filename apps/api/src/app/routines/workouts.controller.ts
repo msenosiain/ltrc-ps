@@ -11,46 +11,46 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { RoutinesService } from './routines.service';
-import { CreateRoutineDto } from './dto/create-routine.dto';
-import { UpdateRoutineDto } from './dto/update-routine.dto';
-import { RoutineFilterDto } from './dto/routine-filter.dto';
+import { WorkoutsService } from './workouts.service';
+import { CreateWorkoutDto } from './dto/create-workout.dto';
+import { UpdateWorkoutDto } from './dto/update-workout.dto';
+import { WorkoutFilterDto } from './dto/workout-filter.dto';
 import { PaginationDto } from '../shared/pagination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
-@Controller('routines')
-export class RoutinesController {
-  constructor(private readonly routinesService: RoutinesService) {}
+@Controller('workouts')
+export class WorkoutsController {
+  constructor(private readonly workoutsService: WorkoutsService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async findPaginated(@Query() pagination: PaginationDto<RoutineFilterDto>) {
-    return this.routinesService.findPaginated(pagination);
+  async findPaginated(@Query() pagination: PaginationDto<WorkoutFilterDto>) {
+    return this.workoutsService.findPaginated(pagination);
   }
 
   @Get('my')
   @UseGuards(JwtAuthGuard)
-  async findMyRoutines(@Req() req: Request) {
+  async findMyWorkouts(@Req() req: Request) {
     const userId = (req as any).user?._id?.toString();
-    return this.routinesService.findMyRoutines(userId);
+    return this.workoutsService.findMyWorkouts(userId);
   }
 
   @Get('today')
   @UseGuards(JwtAuthGuard)
-  findTodayRoutine(@Req() req: Request) {
+  findTodayWorkout(@Req() req: Request) {
     const userId = (req as any).user?._id?.toString();
-    return this.routinesService.findTodayRoutine(userId);
+    return this.workoutsService.findTodayWorkout(userId);
   }
 
   @Post()
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() dto: CreateRoutineDto, @Req() req: Request) {
+  async create(@Body() dto: CreateWorkoutDto, @Req() req: Request) {
     const callerId = (req as any).user?._id?.toString();
-    return this.routinesService.create(dto, callerId);
+    return this.workoutsService.create(dto, callerId);
   }
 
   @Post(':id/clone')
@@ -58,13 +58,13 @@ export class RoutinesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   clone(@Param('id') id: string, @Req() req: Request) {
     const callerId = (req as any).user?._id?.toString();
-    return this.routinesService.clone(id, callerId);
+    return this.workoutsService.clone(id, callerId);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string) {
-    return this.routinesService.findOne(id);
+    return this.workoutsService.findOne(id);
   }
 
   @Patch(':id')
@@ -72,17 +72,17 @@ export class RoutinesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
-    @Body() dto: UpdateRoutineDto,
+    @Body() dto: UpdateWorkoutDto,
     @Req() req: Request,
   ) {
     const callerId = (req as any).user?._id?.toString();
-    return this.routinesService.update(id, dto, callerId);
+    return this.workoutsService.update(id, dto, callerId);
   }
 
   @Delete(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Param('id') id: string) {
-    return this.routinesService.delete(id);
+    return this.workoutsService.delete(id);
   }
 }

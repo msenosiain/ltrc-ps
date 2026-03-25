@@ -1,4 +1,4 @@
-.routine-form {
+.workout-form {
   padding: 1rem;
 
   &__title {
@@ -35,7 +35,7 @@
     flex-wrap: wrap;
     grid-column: span 2;
 
-    .routine-form__field {
+    .workout-form__field {
       flex: 1;
       min-width: 180px;
     }

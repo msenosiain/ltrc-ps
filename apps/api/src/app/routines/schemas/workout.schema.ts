@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
-import { RoutineEntity } from './routine.entity';
-import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { WorkoutEntity } from './workout.entity';
+import { CategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
 const SetEntrySchema = new Schema(
@@ -12,7 +12,7 @@ const SetEntrySchema = new Schema(
   { _id: false }
 );
 
-const RoutineExerciseEntrySchema = new Schema(
+const WorkoutExerciseEntrySchema = new Schema(
   {
     exercise: { type: Types.ObjectId, ref: ExerciseEntity.name, required: true },
     order: { type: Number, required: true },
@@ -23,16 +23,16 @@ const RoutineExerciseEntrySchema = new Schema(
   { _id: false }
 );
 
-const RoutineBlockSchema = new Schema(
+const WorkoutBlockSchema = new Schema(
   {
     title: { type: String, required: true },
     order: { type: Number, required: true },
-    exercises: [RoutineExerciseEntrySchema],
+    exercises: [WorkoutExerciseEntrySchema],
   },
   { _id: false }
 );
 
-export const RoutineSchema = new Schema<RoutineEntity>(
+export const WorkoutSchema = new Schema<WorkoutEntity>(
   {
     name: { type: String, required: true },
     description: { type: String },
@@ -43,11 +43,11 @@ export const RoutineSchema = new Schema<RoutineEntity>(
     daysOfWeek: [{ type: String }],
     assignedPlayers: [{ type: Types.ObjectId, ref: 'Player' }],
     assignedBranches: [{ type: String }],
-    blocks: [RoutineBlockSchema],
+    blocks: [WorkoutBlockSchema],
     status: {
       type: String,
-      enum: Object.values(RoutineStatusEnum),
-      default: RoutineStatusEnum.DRAFT,
+      enum: Object.values(WorkoutStatusEnum),
+      default: WorkoutStatusEnum.DRAFT,
     },
     notes: { type: String },
     createdBy: { type: Types.ObjectId, ref: 'User' },
@@ -56,11 +56,11 @@ export const RoutineSchema = new Schema<RoutineEntity>(
   { timestamps: true, collection: 'routines' }
 );
 
-RoutineSchema.virtual('id').get(function () {
+WorkoutSchema.virtual('id').get(function () {
   return (this._id as Types.ObjectId).toHexString();
 });
 
-RoutineSchema.set('toJSON', {
+WorkoutSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
   transform: (_, ret) => {

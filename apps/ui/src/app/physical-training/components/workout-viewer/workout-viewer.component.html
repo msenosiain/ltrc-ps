@@ -1,15 +1,15 @@
-<div class="routine-viewer">
+<div class="workout-viewer">
   @if (loading) {
     <mat-progress-bar mode="indeterminate" />
   }
 
   @if (routine) {
-    <div class="routine-viewer__header">
+    <div class="workout-viewer__header">
       <button mat-icon-button (click)="onBack()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h2 class="routine-viewer__title">{{ routine.name }}</h2>
-      <div class="routine-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
+      <h2 class="workout-viewer__title">{{ routine.name }}</h2>
+      <div class="workout-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
         <button mat-stroked-button (click)="onClone()" [disabled]="cloning">
           <mat-icon>content_copy</mat-icon>
           Duplicar
@@ -25,32 +25,32 @@
       </div>
     </div>
 
-    <div class="routine-viewer__info">
+    <div class="workout-viewer__info">
       <span class="status-badge status-badge--{{ routine.status }}">
         {{ getStatusLabel(routine.status) }}
       </span>
       @if (routine.sport) {
-        <span class="routine-viewer__tag">{{ routine.sport }}</span>
+        <span class="workout-viewer__tag">{{ routine.sport }}</span>
       }
       @if (routine.category) {
-        <span class="routine-viewer__tag">{{ routine.category }}</span>
+        <span class="workout-viewer__tag">{{ routine.category }}</span>
       }
-      <span class="routine-viewer__validity">
+      <span class="workout-viewer__validity">
         {{ routine.validFrom }} – {{ routine.validUntil }}
       </span>
     </div>
 
     @if (routine.description) {
-      <p class="routine-viewer__description">{{ routine.description }}</p>
+      <p class="workout-viewer__description">{{ routine.description }}</p>
     }
 
     @if (routine.notes) {
-      <p class="routine-viewer__notes"><strong>Notas:</strong> {{ routine.notes }}</p>
+      <p class="workout-viewer__notes"><strong>Notas:</strong> {{ routine.notes }}</p>
     }
 
     @if (getAssignedPlayers().length) {
-      <div class="routine-viewer__section">
-        <h3 class="routine-viewer__section-title">Jugadores asignados</h3>
+      <div class="workout-viewer__section">
+        <h3 class="workout-viewer__section-title">Jugadores asignados</h3>
         <mat-chip-set>
           @for (player of getAssignedPlayers(); track player) {
             <mat-chip>{{ player }}</mat-chip>
@@ -60,12 +60,12 @@
     }
 
     @for (block of getSortedBlocks(); track block.order) {
-      <mat-card class="routine-viewer__block-card">
+      <mat-card class="workout-viewer__block-card">
         <mat-card-header>
           <mat-card-title>{{ block.title }}</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <table mat-table [dataSource]="block.exercises" class="routine-viewer__table">
+          <table mat-table [dataSource]="block.exercises" class="workout-viewer__table">
             <ng-container matColumnDef="exercise">
               <th mat-header-cell *matHeaderCellDef>Ejercicio</th>
               <td mat-cell *matCellDef="let entry">{{ getExerciseName(entry.exercise) }}</td>

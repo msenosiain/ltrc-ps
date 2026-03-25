@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { WorkoutLogEntity } from './schemas/workout-log.entity';
-import { RoutineEntity } from '../routines/schemas/routine.entity';
+import { WorkoutEntity } from '../routines/schemas/workout.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { CreateWorkoutLogDto } from './dto/create-workout-log.dto';
 import { UpdateWorkoutLogDto } from './dto/update-workout-log.dto';
@@ -13,8 +13,8 @@ export class WorkoutLogsService {
   constructor(
     @InjectModel(WorkoutLogEntity.name)
     private readonly logModel: Model<WorkoutLogEntity>,
-    @InjectModel(RoutineEntity.name)
-    private readonly routineModel: Model<RoutineEntity>,
+    @InjectModel(WorkoutEntity.name)
+    private readonly workoutModel: Model<WorkoutEntity>,
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
   ) {}
@@ -82,11 +82,11 @@ export class WorkoutLogsService {
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) throw new ForbiddenException('No player profile linked to this account');
 
-    const routine = await this.routineModel
+    const routine = await this.workoutModel
       .findById(dto.routineId)
       .populate('blocks.exercises.exercise')
       .exec();
-    if (!routine) throw new NotFoundException('Routine not found');
+    if (!routine) throw new NotFoundException('Workout not found');
 
     const today = new Date().toISOString().slice(0, 10);
 

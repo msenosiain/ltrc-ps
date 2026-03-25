@@ -16,5 +16,5 @@ export * from './trip-participant-type.enum';
 export * from './trip-participant-status.enum';
 export * from './transport-type.enum';
 export * from './exercise-category.enum';
-export * from './routine-status.enum';
+export * from './workout-status.enum';
 export * from './block.enum';

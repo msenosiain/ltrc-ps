@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WorkoutLog, Routine } from '@ltrc-campo/shared-api-model';
+import { WorkoutLog, Workout } from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
 
 @Injectable({ providedIn: 'root' })
@@ -9,7 +9,7 @@ export class WorkoutLogsService {
   private readonly httpClient = inject(HttpClient);
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly apiUrl = `${this.config.baseUrl}/workout-logs`;
-  private readonly routinesUrl = `${this.config.baseUrl}/routines`;
+  private readonly workoutsUrl = `${this.config.baseUrl}/routines`;
 
   getWorkoutLogs(params?: any): Observable<{ items: WorkoutLog[]; total: number }> {
     return this.httpClient.get<{ items: WorkoutLog[]; total: number }>(this.apiUrl, { params });
@@ -35,7 +35,7 @@ export class WorkoutLogsService {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getTodayRoutine(): Observable<Routine | null> {
-    return this.httpClient.get<Routine | null>(`${this.routinesUrl}/today`);
+  getTodayWorkout(): Observable<Workout | null> {
+    return this.httpClient.get<Workout | null>(`${this.workoutsUrl}/today`);
   }
 }

@@ -1,5 +1,5 @@
-<div class="routine-form">
-  <h2 class="routine-form__title">
+<div class="workout-form">
+  <h2 class="workout-form__title">
     {{ editing ? 'Editar rutina' : 'Nueva rutina' }}
   </h2>
 
@@ -7,18 +7,18 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="routine-form__form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="workout-form__form">
 
     <!-- ── Sección 1: Información general ── -->
-    <mat-card class="routine-form__card">
+    <mat-card class="workout-form__card">
       <mat-card-header>
         <mat-card-title>Información general</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="routine-form__fields-grid">
+        <div class="workout-form__fields-grid">
 
           <!-- Nombre | Deporte -->
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Nombre</mat-label>
             <input matInput formControlName="name" placeholder="Ej. Fuerza Plantel Superior" />
             @if (form.get('name')?.hasError('required')) {
@@ -26,7 +26,7 @@
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Deporte</mat-label>
             <mat-select formControlName="sport">
               <mat-option [value]="null">Todos</mat-option>
@@ -37,7 +37,7 @@
           </mat-form-field>
 
           <!-- Categoría | Rama -->
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Categoría</mat-label>
             <mat-select formControlName="category">
               <mat-option [value]="null">Todas</mat-option>
@@ -49,7 +49,7 @@
 
           <mat-form-field
             appearance="outline"
-            class="routine-form__field"
+            class="workout-form__field"
             [style.visibility]="form.get('sport')?.value === 'hockey' ? 'visible' : 'hidden'"
           >
             <mat-label>Rama</mat-label>
@@ -61,7 +61,7 @@
           </mat-form-field>
 
           <!-- Válido desde | Válido hasta -->
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Válido desde</mat-label>
             <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" placeholder="DD/MM/AAAA" />
             <mat-datepicker-toggle matSuffix [for]="pickerFrom" />
@@ -71,7 +71,7 @@
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Válido hasta</mat-label>
             <input matInput [matDatepicker]="pickerUntil" formControlName="validUntil" placeholder="DD/MM/AAAA" />
             <mat-datepicker-toggle matSuffix [for]="pickerUntil" />
@@ -82,14 +82,14 @@
           </mat-form-field>
 
           <!-- Días | Estado -->
-          <div class="routine-form__days">
-            <label class="routine-form__days-label">Días de la semana</label>
-            <div class="routine-form__days-chips">
+          <div class="workout-form__days">
+            <label class="workout-form__days-label">Días de la semana</label>
+            <div class="workout-form__days-chips">
               @for (day of daysOfWeek; track day.value) {
                 <button
                   type="button"
-                  class="routine-form__day-chip"
-                  [class.routine-form__day-chip--selected]="isDaySelected(day.value)"
+                  class="workout-form__day-chip"
+                  [class.workout-form__day-chip--selected]="isDaySelected(day.value)"
                   (click)="toggleDay(day.value)"
                 >
                   {{ day.label }}
@@ -98,7 +98,7 @@
             </div>
           </div>
 
-          <mat-form-field appearance="outline" class="routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Estado</mat-label>
             <mat-select formControlName="status">
               @for (opt of statusOptions; track opt.value) {
@@ -108,7 +108,7 @@
           </mat-form-field>
 
           <!-- Jugadores (span 2) -->
-          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
             <mat-label>Jugadores asignados</mat-label>
             <mat-select formControlName="assignedPlayers" multiple>
               @for (player of allPlayers; track player.id) {
@@ -118,13 +118,13 @@
           </mat-form-field>
 
           <!-- Descripción (span 2) -->
-          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
             <mat-label>Descripción</mat-label>
             <textarea matInput formControlName="description" rows="2"></textarea>
           </mat-form-field>
 
           <!-- Notas (span 2) -->
-          <mat-form-field appearance="outline" class="routine-form__field--span2 routine-form__field">
+          <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
             <mat-label>Notas</mat-label>
             <textarea matInput formControlName="notes" rows="2"></textarea>
           </mat-form-field>
@@ -134,7 +134,7 @@
     </mat-card>
 
     <!-- ── Sección 2: Bloques ── -->
-    <div class="routine-form__blocks-header">
+    <div class="workout-form__blocks-header">
       <h3>Bloques de ejercicios</h3>
       <button mat-stroked-button type="button" (click)="addBlock()">
         <mat-icon>add</mat-icon>
@@ -144,9 +144,9 @@
 
     <div formArrayName="blocks">
       @for (block of blocksArray.controls; track $index; let bi = $index) {
-        <mat-card class="routine-form__card routine-form__block-card" [formGroupName]="bi">
+        <mat-card class="workout-form__card workout-form__block-card" [formGroupName]="bi">
           <mat-card-header>
-            <mat-form-field appearance="outline" class="routine-form__block-title-field">
+            <mat-form-field appearance="outline" class="workout-form__block-title-field">
               <mat-label>Título del bloque</mat-label>
               <input matInput formControlName="title" placeholder="Ej. Calentamiento" />
             </mat-form-field>
@@ -155,7 +155,7 @@
               type="button"
               color="warn"
               (click)="removeBlock(bi)"
-              class="routine-form__remove-block"
+              class="workout-form__remove-block"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -164,10 +164,10 @@
 
             <div formArrayName="exercises">
               @for (entry of getExercisesArray(bi).controls; track $index; let ei = $index) {
-                <div class="routine-form__exercise-entry" [formGroupName]="ei">
+                <div class="workout-form__exercise-entry" [formGroupName]="ei">
 
-                  <div class="routine-form__exercise-header">
-                    <mat-form-field appearance="outline" class="routine-form__exercise-field">
+                  <div class="workout-form__exercise-header">
+                    <mat-form-field appearance="outline" class="workout-form__exercise-field">
                       <mat-label>Ejercicio</mat-label>
                       <input
                         matInput
@@ -186,12 +186,12 @@
                       </mat-autocomplete>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="routine-form__small-field">
+                    <mat-form-field appearance="outline" class="workout-form__small-field">
                       <mat-label>Descanso</mat-label>
                       <input matInput formControlName="rest" placeholder="60s" />
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="routine-form__notes-field">
+                    <mat-form-field appearance="outline" class="workout-form__notes-field">
                       <mat-label>Notas</mat-label>
                       <input matInput formControlName="notes" />
                     </mat-form-field>
@@ -208,9 +208,9 @@
                   </div>
 
                   <!-- Series -->
-                  <div class="routine-form__sets-section" formArrayName="sets">
-                    <div class="routine-form__sets-header">
-                      <span class="routine-form__sets-label">Series</span>
+                  <div class="workout-form__sets-section" formArrayName="sets">
+                    <div class="workout-form__sets-header">
+                      <span class="workout-form__sets-label">Series</span>
                       <button mat-icon-button type="button" title="Duplicar última serie" (click)="duplicateLastSet(entry)">
                         <mat-icon>content_copy</mat-icon>
                       </button>
@@ -219,17 +219,17 @@
                       </button>
                     </div>
                     @for (setEntry of getSetsArray(entry).controls; track $index; let si = $index) {
-                      <div class="routine-form__set-row" [formGroupName]="si">
-                        <span class="routine-form__set-index">{{ si + 1 }}</span>
-                        <mat-form-field appearance="outline" class="routine-form__set-field">
+                      <div class="workout-form__set-row" [formGroupName]="si">
+                        <span class="workout-form__set-index">{{ si + 1 }}</span>
+                        <mat-form-field appearance="outline" class="workout-form__set-field">
                           <mat-label>Reps</mat-label>
                           <input matInput formControlName="reps" placeholder="10" />
                         </mat-form-field>
-                        <mat-form-field appearance="outline" class="routine-form__set-field">
+                        <mat-form-field appearance="outline" class="workout-form__set-field">
                           <mat-label>Duración</mat-label>
                           <input matInput formControlName="duration" placeholder='30"' />
                         </mat-form-field>
-                        <mat-form-field appearance="outline" class="routine-form__set-field">
+                        <mat-form-field appearance="outline" class="workout-form__set-field">
                           <mat-label>Carga</mat-label>
                           <input matInput formControlName="load" placeholder="80kg" />
                         </mat-form-field>
@@ -246,7 +246,7 @@
               }
             </div>
 
-            <button mat-stroked-button type="button" (click)="addExerciseEntry(bi)" class="routine-form__add-exercise-btn">
+            <button mat-stroked-button type="button" (click)="addExerciseEntry(bi)" class="workout-form__add-exercise-btn">
               <mat-icon>add</mat-icon>
               Agregar ejercicio
             </button>
@@ -255,7 +255,7 @@
       }
     </div>
 
-    <div class="routine-form__actions">
+    <div class="workout-form__actions">
       <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
       <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
         {{ editing ? 'Guardar cambios' : 'Crear rutina' }}

@@ -1,4 +1,4 @@
-export enum RoutineStatusEnum {
+export enum WorkoutStatusEnum {
   DRAFT = 'draft',
   ACTIVE = 'active',
   COMPLETED = 'completed',

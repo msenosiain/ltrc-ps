@@ -36,20 +36,20 @@ import {
   PaginatedResponse,
   PaginationQuery,
   Player,
-  Routine,
+  Workout,
   RoleEnum,
   SortOrder,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
-import { RoutinesService } from '../../services/routines.service';
+import { WorkoutsService } from '../../services/workouts.service';
 import { PlayersService } from '../../../players/services/players.service';
-import { getRoutineStatusLabel, routineStatusOptions, sportOptions } from '../../physical-training-options';
+import { getWorkoutStatusLabel, workoutStatusOptions, sportOptions } from '../../physical-training-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
 
-class RoutinesDataSource implements DataSource<Routine> {
-  private itemsSubject = new BehaviorSubject<Routine[]>([]);
+class WorkoutsDataSource implements DataSource<Workout> {
+  private itemsSubject = new BehaviorSubject<Workout[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
   loading$ = this.loadingSubject.asObservable().pipe(observeOn(asyncScheduler));
@@ -59,9 +59,9 @@ class RoutinesDataSource implements DataSource<Routine> {
   private pageSize = 25;
   private filters: Record<string, unknown> = {};
 
-  constructor(private service: RoutinesService) {}
+  constructor(private service: WorkoutsService) {}
 
-  connect(_: CollectionViewer): Observable<Routine[]> {
+  connect(_: CollectionViewer): Observable<Workout[]> {
     return this.itemsSubject.asObservable();
   }
 
@@ -105,7 +105,7 @@ class RoutinesDataSource implements DataSource<Routine> {
 }
 
 @Component({
-  selector: 'ltrc-routine-list',
+  selector: 'ltrc-workout-list',
   standalone: true,
   imports: [
     MatTableModule,
@@ -121,21 +121,21 @@ class RoutinesDataSource implements DataSource<Routine> {
     FormsModule,
     AllowedRolesDirective,
   ],
-  templateUrl: './routine-list.component.html',
-  styleUrl: './routine-list.component.scss',
+  templateUrl: './workout-list.component.html',
+  styleUrl: './workout-list.component.scss',
 })
-export class RoutineListComponent implements AfterViewInit, OnDestroy {
+export class WorkoutListComponent implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
-  private readonly routinesService = inject(RoutinesService);
+  private readonly routinesService = inject(WorkoutsService);
   private readonly playersService = inject(PlayersService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
   readonly displayedColumns = ['name', 'sport', 'category', 'validity', 'status', 'players'];
-  readonly dataSource = new RoutinesDataSource(this.routinesService);
+  readonly dataSource = new WorkoutsDataSource(this.routinesService);
   readonly sportOptions = sportOptions;
-  readonly statusOptions = routineStatusOptions;
+  readonly statusOptions = workoutStatusOptions;
 
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
 
@@ -175,7 +175,7 @@ export class RoutineListComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy(): void {}
 
   getStatusLabel(status: string): string {
-    return getRoutineStatusLabel(status);
+    return getWorkoutStatusLabel(status);
   }
 
   onSportChange(): void {
@@ -219,11 +219,11 @@ export class RoutineListComponent implements AfterViewInit, OnDestroy {
   }
 
   viewDetails(id: string): void {
-    this.router.navigate(['/dashboard/physical/routines', id]);
+    this.router.navigate(['/dashboard/physical/workouts', id]);
   }
 
-  createRoutine(): void {
-    this.router.navigate(['/dashboard/physical/routines/new']);
+  createWorkout(): void {
+    this.router.navigate(['/dashboard/physical/workouts/new']);
   }
 
   goToExercises(): void {

@@ -10,7 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Routine, WorkoutLog, WorkoutLogBlock, WorkoutLogSetEntry } from '@ltrc-campo/shared-api-model';
+import { Workout, WorkoutLog, WorkoutLogBlock, WorkoutLogSetEntry } from '@ltrc-campo/shared-api-model';
 import { WorkoutLogsService } from '../../services/workout-logs.service';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
@@ -36,34 +36,34 @@ export class MyWorkoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  todayRoutine: Routine | null = null;
+  todayWorkout: Workout | null = null;
   activeLog: WorkoutLog | null = null;
   loading = true;
   saving = false;
-  noRoutine = false;
+  noWorkout = false;
 
   ngOnInit(): void {
     this.workoutLogsService
-      .getTodayRoutine()
+      .getTodayWorkout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (routine) => {
-          this.todayRoutine = routine;
+          this.todayWorkout = routine;
           this.loading = false;
-          if (!routine) this.noRoutine = true;
+          if (!routine) this.noWorkout = true;
         },
         error: () => {
           this.loading = false;
-          this.noRoutine = true;
+          this.noWorkout = true;
         },
       });
   }
 
   startWorkout(): void {
-    if (!this.todayRoutine?.id) return;
+    if (!this.todayWorkout?.id) return;
     this.saving = true;
     this.workoutLogsService
-      .createLog({ routineId: this.todayRoutine.id })
+      .createLog({ routineId: this.todayWorkout.id })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (log) => { this.activeLog = log; this.saving = false; },

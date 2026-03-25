@@ -1,6 +1,6 @@
-<div class="routine-list">
-  <div class="routine-list__header">
-    <div class="routine-list__actions">
+<div class="workout-list">
+  <div class="workout-list__header">
+    <div class="workout-list__actions">
       <button
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
         mat-stroked-button
@@ -21,8 +21,8 @@
     </div>
   </div>
 
-  <div class="routine-list__filters">
-    <mat-form-field appearance="outline" class="routine-list__filter-field">
+  <div class="workout-list__filters">
+    <mat-form-field appearance="outline" class="workout-list__filter-field">
       <mat-label>Deporte</mat-label>
       <mat-select [(ngModel)]="selectedSport" (selectionChange)="onSportChange()">
         <mat-option value="">Todas</mat-option>
@@ -32,7 +32,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="routine-list__filter-field">
+    <mat-form-field appearance="outline" class="workout-list__filter-field">
       <mat-label>Categoría</mat-label>
       <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyFilters()">
         <mat-option value="">Todas</mat-option>
@@ -42,7 +42,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="routine-list__filter-field">
+    <mat-form-field appearance="outline" class="workout-list__filter-field">
       <mat-label>Estado</mat-label>
       <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
         <mat-option value="">Todos</mat-option>
@@ -52,7 +52,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="routine-list__filter-field routine-list__filter-field--player">
+    <mat-form-field appearance="outline" class="workout-list__filter-field workout-list__filter-field--player">
       <mat-label>Jugador</mat-label>
       <input
         matInput
@@ -81,7 +81,7 @@
   <table
     mat-table
     [dataSource]="dataSource"
-    class="routine-list__table mat-elevation-z2"
+    class="workout-list__table mat-elevation-z2"
   >
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -126,7 +126,7 @@
       mat-row
       *matRowDef="let row; columns: displayedColumns"
       (click)="viewDetails(row.id)"
-      class="routine-list__row"
+      class="workout-list__row"
     ></tr>
   </table>
 

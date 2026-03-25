@@ -9,14 +9,14 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Exercise, RoleEnum, Routine, RoutineBlock } from '@ltrc-campo/shared-api-model';
-import { RoutinesService } from '../../services/routines.service';
-import { getRoutineStatusLabel } from '../../physical-training-options';
+import { Exercise, RoleEnum, Workout, WorkoutBlock } from '@ltrc-campo/shared-api-model';
+import { WorkoutsService } from '../../services/workouts.service';
+import { getWorkoutStatusLabel } from '../../physical-training-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
-  selector: 'ltrc-routine-viewer',
+  selector: 'ltrc-workout-viewer',
   standalone: true,
   imports: [
     MatButtonModule,
@@ -27,13 +27,13 @@ import { ConfirmDialogComponent } from '../../../common/components/confirm-dialo
     MatTableModule,
     AllowedRolesDirective,
   ],
-  templateUrl: './routine-viewer.component.html',
-  styleUrl: './routine-viewer.component.scss',
+  templateUrl: './workout-viewer.component.html',
+  styleUrl: './workout-viewer.component.scss',
 })
-export class RoutineViewerComponent implements OnInit {
+export class WorkoutViewerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly routinesService = inject(RoutinesService);
+  private readonly routinesService = inject(WorkoutsService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -41,29 +41,29 @@ export class RoutineViewerComponent implements OnInit {
   readonly RoleEnum = RoleEnum;
   readonly exerciseColumns = ['exercise', 'sets', 'reps', 'rest', 'load', 'notes'];
 
-  routine?: Routine;
+  workout?: Workout;
   loading = true;
   cloning = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.routinesService
-      .getRoutineById(id)
+    this.workoutsService
+      .getWorkoutById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (routine) => {
-          this.routine = routine;
+          this.workout = routine;
           this.loading = false;
         },
         error: () => {
           this.loading = false;
-          this.router.navigate(['/dashboard/physical/routines']);
+          this.router.navigate(['/dashboard/physical/workouts']);
         },
       });
   }
 
   getStatusLabel(status: string): string {
-    return getRoutineStatusLabel(status);
+    return getWorkoutStatusLabel(status);
   }
 
   getExerciseName(exercise: Exercise | string): string {
@@ -72,18 +72,18 @@ export class RoutineViewerComponent implements OnInit {
   }
 
   getAssignedPlayers(): string[] {
-    return (this.routine?.assignedPlayers ?? []).map((p) => {
+    return (this.workout?.assignedPlayers ?? []).map((p) => {
       if (typeof p === 'string') return p;
       return (p as any).name ?? (p as any).id ?? '';
     });
   }
 
-  getSortedBlocks(): RoutineBlock[] {
-    return [...(this.routine?.blocks ?? [])].sort((a, b) => a.order - b.order);
+  getSortedBlocks(): WorkoutBlock[] {
+    return [...(this.workout?.blocks ?? [])].sort((a, b) => a.order - b.order);
   }
 
   onEdit(): void {
-    this.router.navigate(['/dashboard/physical/routines', this.routine!.id, 'edit']);
+    this.router.navigate(['/dashboard/physical/workouts', this.workout!.id, 'edit']);
   }
 
   onDelete(): void {
@@ -98,13 +98,13 @@ export class RoutineViewerComponent implements OnInit {
 
     ref.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
       if (!confirmed) return;
-      this.routinesService
-        .deleteRoutine(this.routine!.id!)
+      this.workoutsService
+        .deleteWorkout(this.workout!.id!)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.snackBar.open('Rutina eliminada', 'Cerrar', { duration: 3000 });
-            this.router.navigate(['/dashboard/physical/routines']);
+            this.router.navigate(['/dashboard/physical/workouts']);
           },
           error: () => {
             this.snackBar.open('Error al eliminar', 'Cerrar', { duration: 5000 });
@@ -114,16 +114,16 @@ export class RoutineViewerComponent implements OnInit {
   }
 
   onClone(): void {
-    if (!this.routine?.id) return;
+    if (!this.workout?.id) return;
     this.cloning = true;
-    this.routinesService
-      .cloneRoutine(this.routine.id)
+    this.workoutsService
+      .cloneWorkout(this.workout.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (cloned) => {
           this.cloning = false;
           this.snackBar.open('Rutina duplicada', 'Cerrar', { duration: 3000 });
-          this.router.navigate(['/dashboard/physical/routines', cloned.id]);
+          this.router.navigate(['/dashboard/physical/workouts', cloned.id]);
         },
         error: () => {
           this.cloning = false;
@@ -133,6 +133,6 @@ export class RoutineViewerComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/dashboard/physical/routines']);
+    this.router.navigate(['/dashboard/physical/workouts']);
   }
 }

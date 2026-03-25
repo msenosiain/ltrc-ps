@@ -1,27 +1,27 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RoutineEntity } from './schemas/routine.entity';
-import { CreateRoutineDto } from './dto/create-routine.dto';
-import { UpdateRoutineDto } from './dto/update-routine.dto';
-import { RoutineFilterDto } from './dto/routine-filter.dto';
-import { PaginatedResponse, RoutineStatusEnum } from '@ltrc-campo/shared-api-model';
+import { WorkoutEntity } from './schemas/workout.entity';
+import { CreateWorkoutDto } from './dto/create-workout.dto';
+import { UpdateWorkoutDto } from './dto/update-workout.dto';
+import { WorkoutFilterDto } from './dto/workout-filter.dto';
+import { PaginatedResponse, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
 import { PaginationDto } from '../shared/pagination.dto';
 import { PlayerEntity } from '../players/schemas/player.entity';
 
 const POPULATE_BLOCKS = 'blocks.exercises.exercise';
 
 @Injectable()
-export class RoutinesService {
+export class WorkoutsService {
   constructor(
-    @InjectModel(RoutineEntity.name)
-    private readonly routineModel: Model<RoutineEntity>,
+    @InjectModel(WorkoutEntity.name)
+    private readonly workoutModel: Model<WorkoutEntity>,
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
   ) {}
 
   async findPaginated(
-    pagination: PaginationDto<RoutineFilterDto>,
+    pagination: PaginationDto<WorkoutFilterDto>,
   ): Promise<PaginatedResponse<unknown>> {
     const { page, size, filters = {}, sortBy, sortOrder = 'asc' } = pagination;
     const skip = (page - 1) * size;
@@ -40,33 +40,31 @@ export class RoutinesService {
       : { name: 1 };
 
     const [items, total] = await Promise.all([
-      this.routineModel
+      this.workoutModel
         .find(query)
         .sort(sort)
         .skip(skip)
         .limit(size)
         .populate(POPULATE_BLOCKS)
         .exec(),
-      this.routineModel.countDocuments(query),
+      this.workoutModel.countDocuments(query),
     ]);
 
     return { items, total, page, size };
   }
 
   async findOne(id: string) {
-    const routine = await this.routineModel.findById(id).populate(POPULATE_BLOCKS);
-    if (!routine) throw new NotFoundException('Routine not found');
-    return routine;
+    const workout = await this.workoutModel.findById(id).populate(POPULATE_BLOCKS);
+    if (!workout) throw new NotFoundException('Workout not found');
+    return workout;
   }
 
-  async findMyRoutines(userId: string) {
+  async findMyWorkouts(userId: string) {
     const today = new Date().toISOString().slice(0, 10);
-
-    // Find the player linked to this user
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) return [];
 
-    return this.routineModel
+    return this.workoutModel
       .find({
         assignedPlayers: player._id,
         validFrom: { $lte: today },
@@ -76,42 +74,42 @@ export class RoutinesService {
       .exec();
   }
 
-  async create(dto: CreateRoutineDto, callerId?: string) {
-    return this.routineModel.create({
+  async create(dto: CreateWorkoutDto, callerId?: string) {
+    return this.workoutModel.create({
       ...dto,
       createdBy: callerId,
       updatedBy: callerId,
     });
   }
 
-  async update(id: string, dto: UpdateRoutineDto, callerId?: string) {
-    const routine = await this.routineModel.findById(id);
-    if (!routine) throw new NotFoundException('Routine not found');
-    Object.assign(routine, dto);
-    if (callerId) (routine as any).updatedBy = callerId;
-    return routine.save();
+  async update(id: string, dto: UpdateWorkoutDto, callerId?: string) {
+    const workout = await this.workoutModel.findById(id);
+    if (!workout) throw new NotFoundException('Workout not found');
+    Object.assign(workout, dto);
+    if (callerId) (workout as any).updatedBy = callerId;
+    return workout.save();
   }
 
   async delete(id: string) {
-    const routine = await this.routineModel.findById(id);
-    if (!routine) throw new NotFoundException('Routine not found');
-    return routine.deleteOne();
+    const workout = await this.workoutModel.findById(id);
+    if (!workout) throw new NotFoundException('Workout not found');
+    return workout.deleteOne();
   }
 
   async clone(id: string, callerId?: string) {
-    const original = await this.routineModel.findById(id).lean();
-    if (!original) throw new NotFoundException('Routine not found');
+    const original = await this.workoutModel.findById(id).lean();
+    if (!original) throw new NotFoundException('Workout not found');
     const { _id, __v, createdAt, updatedAt, ...rest } = original as any;
-    return this.routineModel.create({
+    return this.workoutModel.create({
       ...rest,
       name: `Copia de ${rest.name}`,
-      status: RoutineStatusEnum.DRAFT,
+      status: WorkoutStatusEnum.DRAFT,
       createdBy: callerId,
       updatedBy: callerId,
     });
   }
 
-  async findTodayRoutine(userId: string) {
+  async findTodayWorkout(userId: string) {
     const today = new Date().toISOString().slice(0, 10);
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const todayDayName = dayNames[new Date().getDay()];
@@ -119,9 +117,9 @@ export class RoutinesService {
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) return null;
 
-    const routine = await this.routineModel
+    const workout = await this.workoutModel
       .findOne({
-        status: RoutineStatusEnum.ACTIVE,
+        status: WorkoutStatusEnum.ACTIVE,
         validFrom: { $lte: today },
         validUntil: { $gte: today },
         $and: [
@@ -150,6 +148,6 @@ export class RoutinesService {
       .populate('blocks.exercises.exercise')
       .exec();
 
-    return routine ?? null;
+    return workout ?? null;
   }
 }

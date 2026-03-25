@@ -34,18 +34,18 @@ import {
   Exercise,
   HockeyBranchEnum,
   RoleEnum,
-  RoutineStatusEnum,
+  WorkoutStatusEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { ExercisesService } from '../../services/exercises.service';
-import { RoutinesService } from '../../services/routines.service';
+import { WorkoutsService } from '../../services/workouts.service';
 import { PlayersService } from '../../../players/services/players.service';
-import { routineStatusOptions } from '../../physical-training-options';
+import { workoutStatusOptions } from '../../physical-training-options';
 import { getCategoryOptionsBySport } from '../../../common/category-options';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
-  selector: 'ltrc-routine-form',
+  selector: 'ltrc-workout-form',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -61,21 +61,21 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatDatepickerModule,
     AsyncPipe,
   ],
-  templateUrl: './routine-form.component.html',
-  styleUrl: './routine-form.component.scss',
+  templateUrl: './workout-form.component.html',
+  styleUrl: './workout-form.component.scss',
 })
-export class RoutineFormComponent implements OnInit {
+export class WorkoutFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly exercisesService = inject(ExercisesService);
-  private readonly routinesService = inject(RoutinesService);
+  private readonly routinesService = inject(WorkoutsService);
   private readonly playersService = inject(PlayersService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
-  readonly statusOptions = routineStatusOptions;
+  readonly statusOptions = workoutStatusOptions;
   readonly sportOptions = Object.values(SportEnum).map((v) => ({
     value: v,
     label: v === SportEnum.RUGBY ? 'Rugby' : 'Hockey',
@@ -118,7 +118,7 @@ export class RoutineFormComponent implements OnInit {
       daysOfWeek: [[]],
       assignedPlayers: [[]],
       assignedBranches: [[]],
-      status: [RoutineStatusEnum.DRAFT],
+      status: [WorkoutStatusEnum.DRAFT],
       notes: [''],
       blocks: this.fb.array([]),
     });
@@ -144,7 +144,7 @@ export class RoutineFormComponent implements OnInit {
       this.editing = true;
       this.routineId = id;
       this.routinesService
-        .getRoutineById(id)
+        .getWorkoutById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((routine) => {
           this.form.patchValue({
@@ -344,12 +344,12 @@ export class RoutineFormComponent implements OnInit {
 
     if (this.editing && this.routineId) {
       this.routinesService
-        .updateRoutine(this.routineId, dto)
+        .updateWorkout(this.routineId, dto)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.submitting = false;
-            this.router.navigate(['/dashboard/physical/routines']);
+            this.router.navigate(['/dashboard/physical/workouts']);
           },
           error: onError,
         });
@@ -357,18 +357,18 @@ export class RoutineFormComponent implements OnInit {
     }
 
     this.routinesService
-      .createRoutine(dto)
+      .createWorkout(dto)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.submitting = false;
-          this.router.navigate(['/dashboard/physical/routines']);
+          this.router.navigate(['/dashboard/physical/workouts']);
         },
         error: onError,
       });
   }
 
   onCancel(): void {
-    this.router.navigate(['/dashboard/physical/routines']);
+    this.router.navigate(['/dashboard/physical/workouts']);
   }
 }

@@ -3,7 +3,7 @@ import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 export const PHYSICAL_TRAINING_ROUTES: Routes = [
-  { path: '', redirectTo: 'routines', pathMatch: 'full' },
+  { path: '', redirectTo: 'workouts', pathMatch: 'full' },
   {
     path: 'exercises',
     loadComponent: () =>
@@ -37,35 +37,35 @@ export const PHYSICAL_TRAINING_ROUTES: Routes = [
       ),
   },
   {
-    path: 'routines',
+    path: 'workouts',
     loadComponent: () =>
-      import('./components/routine-list/routine-list.component').then(
-        (m) => m.RoutineListComponent
+      import('./components/workout-list/workout-list.component').then(
+        (m) => m.WorkoutListComponent
       ),
   },
   {
-    path: 'routines/new',
+    path: 'workouts/new',
     loadComponent: () =>
-      import('./components/routine-form/routine-form.component').then(
-        (m) => m.RoutineFormComponent
-      ),
-    canActivate: [hasRoleGuard],
-    data: { allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER] },
-  },
-  {
-    path: 'routines/:id/edit',
-    loadComponent: () =>
-      import('./components/routine-form/routine-form.component').then(
-        (m) => m.RoutineFormComponent
+      import('./components/workout-form/workout-form.component').then(
+        (m) => m.WorkoutFormComponent
       ),
     canActivate: [hasRoleGuard],
     data: { allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER] },
   },
   {
-    path: 'routines/:id',
+    path: 'workouts/:id/edit',
     loadComponent: () =>
-      import('./components/routine-viewer/routine-viewer.component').then(
-        (m) => m.RoutineViewerComponent
+      import('./components/workout-form/workout-form.component').then(
+        (m) => m.WorkoutFormComponent
+      ),
+    canActivate: [hasRoleGuard],
+    data: { allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER] },
+  },
+  {
+    path: 'workouts/:id',
+    loadComponent: () =>
+      import('./components/workout-viewer/workout-viewer.component').then(
+        (m) => m.WorkoutViewerComponent
       ),
   },
   {

@@ -9,6 +9,6 @@ export * from './training-schedule.interface';
 export * from './training-session.interface';
 export * from './trip.interface';
 export * from './exercise.interface';
-export * from './routine.interface';
+export * from './workout.interface';
 export * from './calendar-event.interface';
 export * from './workout-log.interface';

@@ -8,7 +8,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export class SetEntryDto {
   @IsOptional()
@@ -24,7 +24,7 @@ export class SetEntryDto {
   load?: string;
 }
 
-export class RoutineExerciseEntryDto {
+export class WorkoutExerciseEntryDto {
   @IsString()
   exercise: string;
 
@@ -45,7 +45,7 @@ export class RoutineExerciseEntryDto {
   notes?: string;
 }
 
-export class RoutineBlockDto {
+export class WorkoutBlockDto {
   @IsString()
   title: string;
 
@@ -54,11 +54,11 @@ export class RoutineBlockDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RoutineExerciseEntryDto)
-  exercises: RoutineExerciseEntryDto[];
+  @Type(() => WorkoutExerciseEntryDto)
+  exercises: WorkoutExerciseEntryDto[];
 }
 
-export class CreateRoutineDto {
+export class CreateWorkoutDto {
   @IsString()
   name: string;
 
@@ -100,12 +100,12 @@ export class CreateRoutineDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => RoutineBlockDto)
-  blocks?: RoutineBlockDto[];
+  @Type(() => WorkoutBlockDto)
+  blocks?: WorkoutBlockDto[];
 
   @IsOptional()
-  @IsEnum(RoutineStatusEnum)
-  status?: RoutineStatusEnum;
+  @IsEnum(WorkoutStatusEnum)
+  status?: WorkoutStatusEnum;
 
   @IsOptional()
   @IsString()

@@ -1,4 +1,4 @@
-import { RoutineStatusEnum } from '../enums';
+import { WorkoutStatusEnum } from '../enums';
 import { Exercise } from './exercise.interface';
 
 export interface SetEntry {
@@ -7,7 +7,7 @@ export interface SetEntry {
   load?: string;
 }
 
-export interface RoutineExerciseEntry {
+export interface WorkoutExerciseEntry {
   exercise: Exercise | string;
   order: number;
   sets: SetEntry[];
@@ -15,13 +15,13 @@ export interface RoutineExerciseEntry {
   notes?: string;
 }
 
-export interface RoutineBlock {
+export interface WorkoutBlock {
   title: string;
   order: number;
-  exercises: RoutineExerciseEntry[];
+  exercises: WorkoutExerciseEntry[];
 }
 
-export interface Routine {
+export interface Workout {
   id?: string;
   name: string;
   description?: string;
@@ -32,8 +32,8 @@ export interface Routine {
   daysOfWeek?: string[];
   assignedPlayers: (string | { id: string; name: string })[];
   assignedBranches?: string[];
-  blocks: RoutineBlock[];
-  status: RoutineStatusEnum;
+  blocks: WorkoutBlock[];
+  status: WorkoutStatusEnum;
   notes?: string;
   createdBy?: string;
   createdAt?: Date;

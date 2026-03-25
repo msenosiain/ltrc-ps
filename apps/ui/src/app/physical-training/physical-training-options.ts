@@ -1,4 +1,4 @@
-import { ExerciseCategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { ExerciseCategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export const sportOptions = [
   { value: SportEnum.RUGBY, label: 'Rugby' },
@@ -25,12 +25,12 @@ export function getExerciseCategoryLabel(cat?: ExerciseCategoryEnum | string): s
   return cat ? labels[cat] ?? cat : '';
 }
 
-export function getRoutineStatusLabel(status?: RoutineStatusEnum | string): string {
+export function getWorkoutStatusLabel(status?: WorkoutStatusEnum | string): string {
   const labels: Record<string, string> = {
     draft: 'Borrador',
-    active: 'Activa',
-    completed: 'Completada',
-    archived: 'Archivada',
+    active: 'Activo',
+    completed: 'Completado',
+    archived: 'Archivado',
   };
   return status ? labels[status] ?? status : '';
 }
@@ -40,7 +40,7 @@ export const exerciseCategoryOptions = Object.values(ExerciseCategoryEnum).map((
   label: getExerciseCategoryLabel(value),
 }));
 
-export const routineStatusOptions = Object.values(RoutineStatusEnum).map((value) => ({
+export const workoutStatusOptions = Object.values(WorkoutStatusEnum).map((value) => ({
   value,
-  label: getRoutineStatusLabel(value),
+  label: getWorkoutStatusLabel(value),
 }));

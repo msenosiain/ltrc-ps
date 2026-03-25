@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { CategoryEnum, RoutineStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
 export class SetEntryEntity {
@@ -8,7 +8,7 @@ export class SetEntryEntity {
   load?: string;
 }
 
-export class RoutineExerciseEntryEntity {
+export class WorkoutExerciseEntryEntity {
   exercise: Types.ObjectId | ExerciseEntity;
   order: number;
   sets: SetEntryEntity[];
@@ -16,13 +16,13 @@ export class RoutineExerciseEntryEntity {
   notes?: string;
 }
 
-export class RoutineBlockEntity {
+export class WorkoutBlockEntity {
   title: string;
   order: number;
-  exercises: RoutineExerciseEntryEntity[];
+  exercises: WorkoutExerciseEntryEntity[];
 }
 
-export class RoutineEntity extends Document {
+export class WorkoutEntity extends Document {
   id: string;
   name: string;
   description?: string;
@@ -33,8 +33,8 @@ export class RoutineEntity extends Document {
   daysOfWeek: string[];
   assignedPlayers: Types.ObjectId[];
   assignedBranches: string[];
-  blocks: RoutineBlockEntity[];
-  status: RoutineStatusEnum;
+  blocks: WorkoutBlockEntity[];
+  status: WorkoutStatusEnum;
   notes?: string;
   createdBy?: Types.ObjectId;
   updatedBy?: Types.ObjectId;
