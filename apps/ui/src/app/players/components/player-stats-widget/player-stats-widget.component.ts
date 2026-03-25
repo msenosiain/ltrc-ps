@@ -3,7 +3,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { BlockEnum, CategoryEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { PlayersService } from '../../services/players.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../../auth/auth.service';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { getCategoryLabel } from '../../../common/category-options';
 
 interface CategoryStat {
@@ -35,7 +36,10 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
 })
 export class PlayerStatsWidgetComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
+  private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly currentUser = toSignal(this.authService.user$);
 
   loading = true;
   blocks: BlockStat[] = [];
@@ -44,19 +48,23 @@ export class PlayerStatsWidgetComponent implements OnInit {
   ngOnInit(): void {
     this.playersService.getStats().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (stats) => {
+        const allowedCategories = this.currentUser()?.categories as CategoryEnum[] | undefined;
         this.total = stats.total;
-        this.blocks = this.buildBlocks(stats.byCategory);
+        this.blocks = this.buildBlocks(stats.byCategory, allowedCategories);
         this.loading = false;
       },
       error: () => { this.loading = false; },
     });
   }
 
-  private buildBlocks(byCategory: Record<string, number>): BlockStat[] {
+  private buildBlocks(byCategory: Record<string, number>, allowedCategories?: CategoryEnum[]): BlockStat[] {
     const result: BlockStat[] = [];
     for (const block of Object.values(BlockEnum)) {
       const cats = getBlockCategories(block)
-        .filter((cat) => byCategory[cat] !== undefined)
+        .filter((cat) => {
+          if (allowedCategories?.length) return allowedCategories.includes(cat);
+          return byCategory[cat] !== undefined;
+        })
         .map((cat) => ({
           category: cat,
           label: getCategoryLabel(cat),
