@@ -93,8 +93,9 @@ export class PlayersController {
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
   @UseInterceptors(FileInterceptor('photo'))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePlayerDto,
@@ -138,6 +139,8 @@ export class PlayersController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Param('id') id: string) {
     return this.playersService.delete(id);
   }
