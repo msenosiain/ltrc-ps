@@ -33,7 +33,7 @@ import { ConfirmDialogComponent } from '../../../common/components/confirm-dialo
 export class WorkoutViewerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly routinesService = inject(WorkoutsService);
+  private readonly workoutsService = inject(WorkoutsService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);

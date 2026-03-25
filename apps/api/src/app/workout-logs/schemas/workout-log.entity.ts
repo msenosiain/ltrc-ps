@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { RoutineEntity } from '../../routines/schemas/routine.entity';
+import { WorkoutEntity } from '../../routines/schemas/workout.entity';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
@@ -32,7 +32,7 @@ export class WorkoutLogBlockEntity {
 
 export class WorkoutLogEntity extends Document {
   id: string;
-  routine: Types.ObjectId | RoutineEntity;
+  routine: Types.ObjectId | WorkoutEntity;
   player: Types.ObjectId | PlayerEntity;
   date: string;
   status: WorkoutLogStatus;

@@ -92,10 +92,10 @@ class WorkoutsDataSource implements DataSource<Workout> {
       filters: this.filters,
     };
     this.service
-      .getRoutines(query)
+      .getWorkouts(query)
       .pipe(finalize(() => this.loadingSubject.next(false)))
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.total = res.total;
           this.itemsSubject.next(res.items);
         },

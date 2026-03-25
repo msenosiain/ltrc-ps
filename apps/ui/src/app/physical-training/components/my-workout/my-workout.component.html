@@ -10,23 +10,23 @@
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && noRoutine && !activeLog) {
+  @if (!loading && noWorkout && !activeLog) {
     <div class="my-workout__empty">
       <mat-icon class="my-workout__empty-icon">fitness_center</mat-icon>
       <p>No tenés una rutina asignada para hoy.</p>
     </div>
   }
 
-  @if (!loading && todayRoutine && !activeLog) {
+  @if (!loading && todayWorkout && !activeLog) {
     <mat-card class="my-workout__card">
       <mat-card-header>
-        <mat-card-title>{{ todayRoutine.name }}</mat-card-title>
-        @if (todayRoutine.description) {
-          <mat-card-subtitle>{{ todayRoutine.description }}</mat-card-subtitle>
+        <mat-card-title>{{ todayWorkout.name }}</mat-card-title>
+        @if (todayWorkout.description) {
+          <mat-card-subtitle>{{ todayWorkout.description }}</mat-card-subtitle>
         }
       </mat-card-header>
       <mat-card-content>
-        <p class="my-workout__meta">{{ todayRoutine.blocks?.length ?? 0 }} bloques de ejercicios</p>
+        <p class="my-workout__meta">{{ todayWorkout.blocks?.length ?? 0 }} bloques de ejercicios</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" (click)="startWorkout()" [disabled]="saving">
