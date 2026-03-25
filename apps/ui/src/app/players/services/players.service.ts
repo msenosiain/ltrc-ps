@@ -141,6 +141,12 @@ export class PlayersService {
     }>(`${this.playersApiUrl}/update-from-survey`, form);
   }
 
+  getStats(): Observable<{ byCategory: Record<string, number>; total: number }> {
+    return this.httpClient.get<{ byCategory: Record<string, number>; total: number }>(
+      `${this.playersApiUrl}/stats`
+    );
+  }
+
   getMyPlayer(): Observable<Player> {
     return this.httpClient.get<Player>(`${this.playersApiUrl}/me`);
   }

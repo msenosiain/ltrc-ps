@@ -376,6 +376,25 @@ export class PlayersService {
     return player.deleteOne();
   }
 
+  async getStats(caller?: User): Promise<{ byCategory: Record<string, number>; total: number }> {
+    const queryFilters: Record<string, unknown> = { status: { $ne: 'inactive' } };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      if (caller.sports?.length) queryFilters['sport'] = { $in: caller.sports };
+      if (caller.categories?.length) queryFilters['category'] = { $in: caller.categories };
+    }
+    const results = await this.playerModel.aggregate([
+      { $match: queryFilters },
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+    ]);
+    const byCategory: Record<string, number> = {};
+    let total = 0;
+    for (const r of results) {
+      byCategory[r._id] = r.count;
+      total += r.count;
+    }
+    return { byCategory, total };
+  }
+
   async importFromFile(
     buffer: Buffer
   ): Promise<{ created: number; updated: number; errors: { row: number; message: string }[] }> {

@@ -1,0 +1,28 @@
+<div class="stats-widget">
+  <h3 class="widget-title">Jugadores por categoría</h3>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  } @else if (!blocks.length) {
+    <p class="no-data">Sin datos disponibles.</p>
+  } @else {
+    @for (block of blocks; track block.block) {
+      <div class="block-section">
+        <div class="block-header">
+          <span class="block-name">{{ block.label }}</span>
+          <span class="block-total">{{ block.total }}</span>
+        </div>
+        @for (cat of block.categories; track cat.category) {
+          <div class="category-row">
+            <span class="category-label">{{ cat.label }}</span>
+            <span class="category-count">{{ cat.count }}</span>
+          </div>
+        }
+      </div>
+    }
+    <div class="total-row">
+      <span>Total</span>
+      <span class="total-count">{{ total }}</span>
+    </div>
+  }
+</div>

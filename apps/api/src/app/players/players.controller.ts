@@ -104,6 +104,12 @@ export class PlayersController {
     return this.playersService.update(id, dto, photo, (req as any)?.user);
   }
 
+  @Get('stats')
+  @UseGuards(JwtAuthGuard)
+  async getStats(@Req() req: Request) {
+    return this.playersService.getStats((req as any).user);
+  }
+
   @Get('field-options')
   async getFieldOptions() {
     return this.playersService.getFieldOptions();

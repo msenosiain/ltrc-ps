@@ -396,6 +396,43 @@ export class TrainingSessionsService {
     return session.populate(POPULATE_FIELDS);
   }
 
+  async getAttendanceStats(caller?: User): Promise<{
+    byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
+  }> {
+    const since = new Date();
+    since.setDate(since.getDate() - 28);
+
+    const scopeFilter: Record<string, unknown> = { date: { $lte: new Date(), $gte: since } };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      const categories = caller.categories ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+      if (categories.length) scopeFilter['category'] = { $in: categories };
+    }
+
+    const sessions = await this.sessionModel.find(scopeFilter).lean();
+
+    const stats: Record<string, { sessions: number; totalPresent: number; totalAttendees: number }> = {};
+    for (const s of sessions) {
+      const cat = s.category as string;
+      if (!stats[cat]) stats[cat] = { sessions: 0, totalPresent: 0, totalAttendees: 0 };
+      stats[cat].sessions++;
+      const playerAttendance = (s.attendance ?? []).filter((a: any) => !a.isStaff);
+      stats[cat].totalAttendees += playerAttendance.length;
+      stats[cat].totalPresent += playerAttendance.filter((a: any) => a.status === 'present').length;
+    }
+
+    const byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }> = {};
+    for (const [cat, data] of Object.entries(stats)) {
+      byCategory[cat] = {
+        ...data,
+        pct: data.totalAttendees > 0 ? Math.round((data.totalPresent / data.totalAttendees) * 100) : 0,
+      };
+    }
+
+    return { byCategory };
+  }
+
   /**
    * Returns staff users (coach/trainer/manager/analyst) relevant to this session's sport+category.
    */

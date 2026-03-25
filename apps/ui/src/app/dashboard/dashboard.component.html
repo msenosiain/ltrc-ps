@@ -179,6 +179,10 @@
           @if (isPlayer()) {
           <ltrc-my-matches-widget />
           }
+          @if (isCoordinator()) {
+          <ltrc-player-stats-widget />
+          <ltrc-attendance-stats-widget />
+          }
         </div>
       </div>
       } }

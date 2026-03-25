@@ -83,6 +83,14 @@ export class TrainingSessionsService {
     );
   }
 
+  getAttendanceStats(): Observable<{
+    byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
+  }> {
+    return this.httpClient.get<{
+      byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
+    }>(`${this.apiUrl}/stats/attendance`);
+  }
+
   updateSession(
     id: string,
     data: { startTime?: string; endTime?: string; location?: string; notes?: string; status?: string }

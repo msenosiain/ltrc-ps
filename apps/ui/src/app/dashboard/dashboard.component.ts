@@ -27,6 +27,8 @@ import { SidenavService } from '../common/services/sidenav.service';
 import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
 import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-matches-widget/upcoming-matches-widget.component';
 import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widget/my-matches-widget.component';
+import { PlayerStatsWidgetComponent } from '../players/components/player-stats-widget/player-stats-widget.component';
+import { AttendanceStatsWidgetComponent } from '../trainings/components/attendance-stats-widget/attendance-stats-widget.component';
 
 @Component({
   selector: 'ltrc-dashboard',
@@ -43,6 +45,8 @@ import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widge
     UpcomingTrainingsWidgetComponent,
     UpcomingMatchesWidgetComponent,
     MyMatchesWidgetComponent,
+    PlayerStatsWidgetComponent,
+    AttendanceStatsWidgetComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -69,6 +73,12 @@ export class DashboardComponent implements OnInit {
     const viewAs = this.viewAsService.viewAsRole();
     if (viewAs) return viewAs === RoleEnum.PLAYER;
     return this.currentUser()?.roles?.includes(RoleEnum.PLAYER) ?? false;
+  });
+
+  readonly isCoordinator = computed(() => {
+    const viewAs = this.viewAsService.viewAsRole();
+    if (viewAs) return viewAs === RoleEnum.COORDINATOR;
+    return this.currentUser()?.roles?.includes(RoleEnum.COORDINATOR) ?? false;
   });
 
   readonly hasNoRoles = computed(() => {
