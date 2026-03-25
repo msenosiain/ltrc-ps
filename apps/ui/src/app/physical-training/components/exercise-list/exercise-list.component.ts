@@ -59,7 +59,7 @@ export class ExerciseListComponent implements AfterViewInit, OnDestroy {
 
   readonly RoleEnum = RoleEnum;
   readonly categoryOptions = exerciseCategoryOptions;
-  readonly displayedColumns = ['name', 'category', 'muscleGroups', 'actions'];
+  readonly displayedColumns = ['name', 'muscleGroups', 'actions'];
   readonly dataSource = new ExercisesDataSource(this.exercisesService);
 
   readonly muscleGroupOptions = [

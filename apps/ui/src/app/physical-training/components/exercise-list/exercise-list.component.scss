@@ -30,8 +30,15 @@
     min-width: 200px;
   }
 
-  &__category-filter {
+  &__category-filter,
+  &__muscle-filter {
     min-width: 160px;
+  }
+
+  &__col-muscles {
+    @media (max-width: 599px) {
+      display: none;
+    }
   }
 
   &__table {
