@@ -8,7 +8,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { CategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, HockeyPositions, RugbyPositions, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export class SetEntryDto {
   @IsOptional()
@@ -95,6 +95,11 @@ export class CreateWorkoutDto {
   @IsArray()
   @IsString({ each: true })
   assignedBranches?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum({ ...RugbyPositions, ...HockeyPositions }, { each: true })
+  targetPositions?: (RugbyPositions | HockeyPositions)[];
 
   @IsOptional()
   @IsArray()

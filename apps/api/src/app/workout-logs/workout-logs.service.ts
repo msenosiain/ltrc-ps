@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { WorkoutLogEntity } from './schemas/workout-log.entity';
-import { WorkoutEntity } from '../routines/schemas/workout.entity';
+import { WorkoutEntity } from '../workouts/schemas/workout.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { CreateWorkoutLogDto } from './dto/create-workout-log.dto';
 import { UpdateWorkoutLogDto } from './dto/update-workout-log.dto';

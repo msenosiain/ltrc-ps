@@ -43,6 +43,7 @@ export const WorkoutSchema = new Schema<WorkoutEntity>(
     validUntil: { type: String, required: true },
     assignedPlayers: [{ type: Types.ObjectId, ref: 'Player' }],
     assignedBranches: [{ type: String }],
+    targetPositions: [{ type: String }],
     blocks: [WorkoutBlockSchema],
     status: {
       type: String,

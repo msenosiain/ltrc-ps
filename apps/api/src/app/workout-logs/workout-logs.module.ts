@@ -4,8 +4,8 @@ import { WorkoutLogEntity } from './schemas/workout-log.entity';
 import { WorkoutLogSchema } from './schemas/workout-log.schema';
 import { WorkoutLogsController } from './workout-logs.controller';
 import { WorkoutLogsService } from './workout-logs.service';
-import { WorkoutEntity } from '../routines/schemas/workout.entity';
-import { WorkoutSchema } from '../routines/schemas/workout.schema';
+import { WorkoutEntity } from '../workouts/schemas/workout.entity';
+import { WorkoutSchema } from '../workouts/schemas/workout.schema';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PlayerSchema } from '../players/schemas/player.schema';
 

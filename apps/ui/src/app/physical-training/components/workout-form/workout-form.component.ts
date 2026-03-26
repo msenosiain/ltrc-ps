@@ -34,6 +34,7 @@ import { PlayersService } from '../../../players/services/players.service';
 import { workoutStatusOptions } from '../../physical-training-options';
 import { getCategoryOptionsBySport } from '../../../common/category-options';
 import { getErrorMessage } from '../../../common/utils/error-message';
+import { getPositionOptionsBySport, PositionOption } from '../../../players/position-options';
 
 @Component({
   selector: 'ltrc-workout-form',
@@ -85,6 +86,7 @@ export class WorkoutFormComponent implements OnInit {
       validUntil: [null as Date | null, Validators.required],
       assignedPlayers: [[]],
       assignedBranches: [[]],
+      targetPositions: [[]],
       status: [WorkoutStatusEnum.DRAFT],
       notes: [''],
     });
@@ -135,6 +137,7 @@ export class WorkoutFormComponent implements OnInit {
               typeof p === 'string' ? p : (p as any).id ?? p
             ),
             assignedBranches: workout.assignedBranches ?? [],
+            targetPositions: workout.targetPositions ?? [],
             status: workout.status,
             notes: workout.notes ?? '',
           });
@@ -145,6 +148,11 @@ export class WorkoutFormComponent implements OnInit {
   getCategoryOptions() {
     const sport = this.form.get('sport')?.value;
     return getCategoryOptionsBySport(sport);
+  }
+
+  getPositionOptions(): PositionOption[] {
+    const sport = this.form.get('sport')?.value as SportEnum | null;
+    return getPositionOptionsBySport(sport);
   }
 
   onSubmit(): void {
@@ -164,6 +172,7 @@ export class WorkoutFormComponent implements OnInit {
       validUntil: raw.validUntil ? format(raw.validUntil, 'yyyy-MM-dd') : undefined,
       assignedPlayers: raw.assignedPlayers ?? [],
       assignedBranches: raw.assignedBranches ?? [],
+      targetPositions: raw.targetPositions ?? [],
       status: raw.status,
       notes: raw.notes || undefined,
     };

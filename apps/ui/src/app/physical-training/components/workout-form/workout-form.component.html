@@ -67,6 +67,19 @@
             </mat-select>
           </mat-form-field>
 
+          <!-- Posiciones (span 2, solo si hay deporte seleccionado) -->
+          @if (form.get('sport')?.value) {
+            <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
+              <mat-label>Posiciones objetivo</mat-label>
+              <mat-select formControlName="targetPositions" multiple>
+                @for (opt of getPositionOptions(); track opt.id) {
+                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Dejá vacío para aplicar a todas las posiciones del deporte</mat-hint>
+            </mat-form-field>
+          }
+
           <!-- Válido desde | Válido hasta -->
           <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Válido desde</mat-label>

@@ -115,23 +115,29 @@ export class WorkoutsService {
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) return null;
 
+    const p = player as any;
+
     const workout = await this.workoutModel
       .findOne({
         status: WorkoutStatusEnum.ACTIVE,
         validFrom: { $lte: today },
         validUntil: { $gte: today },
-        $and: [
+        $or: [
+          // Asignación explícita por jugador
+          { assignedPlayers: player._id },
+          // Sin asignación explícita: matchear por sport/category/posición del jugador
           {
-            $or: [
-              { assignedPlayers: { $size: 0 } },
-              { assignedPlayers: player._id },
-            ],
-          },
-          {
-            $or: [
-              { assignedBranches: { $size: 0 } },
-              { assignedBranches: { $exists: false } },
-              { assignedBranches: (player as any).branch },
+            assignedPlayers: { $size: 0 },
+            $and: [
+              { $or: [{ sport: { $exists: false } }, { sport: null }, { sport: '' }, { sport: p.sport }] },
+              { $or: [{ category: { $exists: false } }, { category: null }, { category: '' }, { category: p.category }] },
+              {
+                $or: [
+                  { targetPositions: { $size: 0 } },
+                  { targetPositions: { $exists: false } },
+                  { targetPositions: { $in: p.positions ?? [] } },
+                ],
+              },
             ],
           },
         ],

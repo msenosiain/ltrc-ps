@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { WorkoutEntity } from '../../routines/schemas/workout.entity';
+import { WorkoutEntity } from '../../workouts/schemas/workout.entity';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 

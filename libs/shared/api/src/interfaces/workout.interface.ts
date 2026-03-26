@@ -1,4 +1,5 @@
 import { WorkoutStatusEnum } from '../enums';
+import { PlayerPosition } from './player.interface';
 import { Exercise } from './exercise.interface';
 
 export interface SetEntry {
@@ -32,6 +33,7 @@ export interface Workout {
   validUntil: string;
   assignedPlayers: (string | { id: string; name: string })[];
   assignedBranches?: string[];
+  targetPositions?: PlayerPosition[];
   blocks: WorkoutBlock[];
   status: WorkoutStatusEnum;
   notes?: string;

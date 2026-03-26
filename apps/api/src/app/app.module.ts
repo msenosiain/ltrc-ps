@@ -15,7 +15,7 @@ import { HealthModule } from './health/health.module';
 import { TrainingsModule } from './trainings/trainings.module';
 import { TripsModule } from './trips/trips.module';
 import { ExercisesModule } from './exercises/exercises.module';
-import { WorkoutsModule } from './routines/workouts.module';
+import { WorkoutsModule } from './workouts/workouts.module';
 import { WorkoutLogsModule } from './workout-logs/workout-logs.module';
 import { CalendarModule } from './calendar/calendar.module';
 
