@@ -8,6 +8,19 @@ import { ExerciseFilterDto } from './dto/exercise-filter.dto';
 import { ExerciseCategoryEnum, PaginatedResponse } from '@ltrc-campo/shared-api-model';
 import { PaginationDto } from '../shared/pagination.dto';
 
+function accentInsensitiveRegex(term: string): RegExp {
+  const stripped = term.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const pattern = stripped
+    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    .replace(/[aA]/g, '[aáàâäã]')
+    .replace(/[eE]/g, '[eéèêë]')
+    .replace(/[iI]/g, '[iíìîï]')
+    .replace(/[oO]/g, '[oóòôöõ]')
+    .replace(/[uU]/g, '[uúùûü]')
+    .replace(/[nN]/g, '[nñ]');
+  return new RegExp(pattern, 'i');
+}
+
 const SEED_EXERCISES = [
   // Piernas
   { name: 'Sentadilla con barra', category: ExerciseCategoryEnum.STRENGTH, muscleGroups: ['cuádriceps', 'glúteos', 'femoral'], equipment: ['barra'] },
@@ -74,7 +87,7 @@ export class ExercisesService implements OnModuleInit {
     const query: Record<string, unknown> = {};
 
     if (filters.searchTerm) {
-      query['name'] = new RegExp(filters.searchTerm, 'i');
+      query['name'] = accentInsensitiveRegex(filters.searchTerm);
     }
     if (filters.category) {
       query['category'] = filters.category;

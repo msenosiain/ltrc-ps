@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, debounceTime, startWith, map } from 'rxjs';
+import { normalizeSearch } from '../../../common/utils/normalize-search';
 import { Exercise, RoleEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
 import { WorkoutsService } from '../../services/workouts.service';
 import { ExercisesService } from '../../services/exercises.service';
@@ -139,9 +140,9 @@ export class WorkoutBlocksEditorComponent implements OnInit {
     return ctrl.valueChanges.pipe(
       startWith(''),
       map((val) => {
-        const term = (typeof val === 'string' ? val : '').toLowerCase();
+        const term = normalizeSearch(typeof val === 'string' ? val : '');
         if (!term) return this.allExercises.slice(0, 30);
-        return this.allExercises.filter((e) => e.name.toLowerCase().includes(term)).slice(0, 30);
+        return this.allExercises.filter((e) => normalizeSearch(e.name).includes(term)).slice(0, 30);
       })
     );
   }
