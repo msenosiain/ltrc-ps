@@ -121,6 +121,14 @@ export class AuthService {
       );
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.authApiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.authApiUrl}/reset-password`, { token, password });
+  }
+
   refreshToken(): Observable<{ access_token: string; refresh_token: string }> {
     const refreshToken = localStorage.getItem(this.refreshTokenKey);
     if (refreshToken && this.isTokenExpired(refreshToken)) {

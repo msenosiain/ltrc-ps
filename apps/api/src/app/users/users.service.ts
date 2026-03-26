@@ -89,4 +89,26 @@ export class UsersService {
       .findByIdAndUpdate(id, { $unset: { password: 1 } }, { returnDocument: 'after' })
       .exec();
   }
+
+  async setResetToken(id: string, token: string, expires: Date): Promise<void> {
+    await this.userModel
+      .findByIdAndUpdate(id, { resetPasswordToken: token, resetPasswordExpires: expires })
+      .exec();
+  }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.userModel
+      .findOne({ resetPasswordToken: token })
+      .select('+resetPasswordToken')
+      .exec();
+  }
+
+  async applyNewPassword(id: string, hashedPassword: string): Promise<void> {
+    await this.userModel
+      .findByIdAndUpdate(id, {
+        password: hashedPassword,
+        $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 },
+      })
+      .exec();
+  }
 }

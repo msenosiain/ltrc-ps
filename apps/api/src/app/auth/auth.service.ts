@@ -11,14 +11,17 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/schemas/user.schema';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
+import { MailerService } from './mailer.service';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly mailerService: MailerService
   ) {}
 
   async register(userData: Partial<User>) {
@@ -76,6 +79,28 @@ export class AuthService {
     await user.save();
 
     return this.generateJwt(user);
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.usersService.findOneByEmail(email);
+    // Silently succeed even if email not found — don't reveal existence
+    if (!user || user.googleId) return;
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 3600 * 1000); // 1 hour
+
+    await this.usersService.setResetToken((user as any)._id.toString(), token, expires);
+    await this.mailerService.sendPasswordReset(user.email, user.name, token);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const user = await this.usersService.findByResetToken(token);
+    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException('El enlace es inválido o ya expiró');
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.usersService.applyNewPassword((user as any)._id.toString(), hashed);
   }
 
   async generateJwt(user: User) {

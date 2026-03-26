@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthService } from './auth.service';
+import { MailerService } from './mailer.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -39,6 +40,6 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [GoogleStrategy, JwtStrategy, RefreshJwtStrategy, AuthService],
+  providers: [GoogleStrategy, JwtStrategy, RefreshJwtStrategy, AuthService, MailerService],
 })
 export class AuthModule {}

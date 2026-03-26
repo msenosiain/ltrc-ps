@@ -27,6 +27,12 @@ export class User extends Document {
   @Prop({ required: false, select: false })
   password?: string;
 
+  @Prop({ required: false, select: false })
+  resetPasswordToken?: string;
+
+  @Prop({ required: false })
+  resetPasswordExpires?: Date;
+
   @Prop({ type: [String], enum: RoleEnum, default: [] })
   roles!: RoleEnum[];
 

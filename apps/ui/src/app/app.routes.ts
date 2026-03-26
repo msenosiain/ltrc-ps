@@ -7,12 +7,16 @@ import { authGuard } from './auth/guards/auth.guard';
 import { LoginComponent } from './auth/components/login/login.component';
 import { ActivateAccountComponent } from './auth/components/activate-account/activate-account.component';
 import { SetPasswordComponent } from './auth/components/set-password/set-password.component';
+import { ForgotPasswordComponent } from './auth/components/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './auth/components/reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'auth/activate', component: ActivateAccountComponent },
+  { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+  { path: 'auth/reset-password', component: ResetPasswordComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,

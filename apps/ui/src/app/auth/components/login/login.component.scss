@@ -59,6 +59,18 @@ button {
   }
 }
 
+.forgot-password-link {
+  font-size: 13px;
+  color: #666;
+  text-align: right;
+  text-decoration: none;
+  margin-top: -8px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .google-button {
   display: flex;
   align-items: center;

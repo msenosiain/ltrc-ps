@@ -36,6 +36,18 @@ export class AuthController {
     return this.authService.activateAccount(body.email, body.password);
   }
 
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: { email: string }) {
+    await this.authService.forgotPassword(body.email);
+    return { message: 'Si el email existe, recibirás un enlace para restablecer tu contraseña.' };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() body: { token: string; password: string }) {
+    await this.authService.resetPassword(body.token, body.password);
+    return { message: 'Contraseña restablecida correctamente.' };
+  }
+
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(): Promise<void> {
