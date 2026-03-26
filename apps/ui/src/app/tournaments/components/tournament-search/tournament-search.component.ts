@@ -77,6 +77,18 @@ export class TournamentSearchComponent implements OnInit {
         }
       });
 
+    this.searchForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((sport) => {
+        this.categoryOptions = getCategoryOptionsBySport(sport);
+        const currentCats = this.searchForm.get('categories')!.value as CategoryEnum[];
+        const validIds = new Set(this.categoryOptions.map((c) => c.id));
+        const filtered = currentCats.filter((c) => validIds.has(c));
+        if (filtered.length !== currentCats.length) {
+          this.searchForm.get('categories')!.setValue(filtered, { emitEvent: false });
+        }
+      });
+
     this.searchForm.valueChanges
       .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.emitFilters());
