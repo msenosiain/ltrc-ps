@@ -5,6 +5,13 @@ import { RoleEnum } from '@ltrc-campo/shared-api-model';
 export const PHYSICAL_TRAINING_ROUTES: Routes = [
   { path: '', redirectTo: 'workouts', pathMatch: 'full' },
   {
+    path: 'my-workout',
+    loadComponent: () =>
+      import('./components/my-workout/my-workout.component').then(
+        (m) => m.MyWorkoutComponent
+      ),
+  },
+  {
     path: 'exercises',
     loadComponent: () =>
       import('./components/exercise-list/exercise-list.component').then(

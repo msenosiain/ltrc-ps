@@ -1,0 +1,82 @@
+.workout-widget {
+  max-width: 500px;
+}
+
+.widget-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0 0 16px;
+}
+
+.widget-title__icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--mat-app-primary, #1976d2);
+}
+
+.workout-widget__empty {
+  color: var(--mat-app-on-surface-variant, #666);
+  font-size: 0.9rem;
+}
+
+.workout-widget__card {
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  gap: 8px;
+
+  &:hover {
+    background: #eeeeee;
+  }
+}
+
+.workout-widget__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.workout-widget__name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workout-widget__desc {
+  font-size: 0.82rem;
+  color: var(--mat-app-on-surface-variant, #666);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workout-widget__meta {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--mat-app-on-surface-variant, #888);
+  margin-top: 4px;
+}
+
+.workout-widget__meta-icon {
+  font-size: 0.9rem;
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.workout-widget__arrow {
+  color: #bbb;
+  flex-shrink: 0;
+}

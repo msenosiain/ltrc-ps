@@ -9,7 +9,7 @@ export class WorkoutLogsService {
   private readonly httpClient = inject(HttpClient);
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly apiUrl = `${this.config.baseUrl}/workout-logs`;
-  private readonly workoutsUrl = `${this.config.baseUrl}/routines`;
+  private readonly workoutsUrl = `${this.config.baseUrl}/workouts`;
 
   getWorkoutLogs(params?: any): Observable<{ items: WorkoutLog[]; total: number }> {
     return this.httpClient.get<{ items: WorkoutLog[]; total: number }>(this.apiUrl, { params });

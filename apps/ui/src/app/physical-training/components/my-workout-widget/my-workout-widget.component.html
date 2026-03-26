@@ -1,0 +1,29 @@
+<div class="workout-widget">
+  <h3 class="widget-title">
+    <mat-icon class="widget-title__icon" fontSet="material-symbols-outlined">exercise</mat-icon>
+    Mi rutina de hoy
+  </h3>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  } @else if (!workout) {
+    <p class="workout-widget__empty">No tenés una rutina asignada para hoy.</p>
+  } @else {
+    <div class="workout-widget__card" (click)="goToWorkout()" tabindex="0" (keydown.enter)="goToWorkout()">
+      <div class="workout-widget__info">
+        <span class="workout-widget__name">{{ workout.name }}</span>
+        @if (workout.description) {
+          <span class="workout-widget__desc">{{ workout.description }}</span>
+        }
+        <span class="workout-widget__meta">
+          <mat-icon class="workout-widget__meta-icon">view_agenda</mat-icon>
+          {{ workout.blocks.length }} {{ workout.blocks.length === 1 ? 'bloque' : 'bloques' }}
+          &nbsp;·&nbsp;
+          <mat-icon class="workout-widget__meta-icon">fitness_center</mat-icon>
+          {{ exerciseCount }} {{ exerciseCount === 1 ? 'ejercicio' : 'ejercicios' }}
+        </span>
+      </div>
+      <mat-icon class="workout-widget__arrow">chevron_right</mat-icon>
+    </div>
+  }
+</div>
