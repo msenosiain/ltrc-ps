@@ -63,7 +63,7 @@ export class ExerciseViewerComponent implements OnInit {
     const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?\s]+)/);
     if (ytMatch) {
       return this.sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${ytMatch[1]}?rel=0`
+        `https://www.youtube.com/embed/${ytMatch[1]}?rel=0&loop=1&playlist=${ytMatch[1]}`
       );
     }
     if (url.includes('youtube.com/embed/')) {
