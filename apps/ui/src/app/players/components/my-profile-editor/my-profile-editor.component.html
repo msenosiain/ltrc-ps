@@ -12,7 +12,7 @@
   </div>
 
   @if (loading) {
-  <mat-progress-bar mode="indeterminate" />
+  <ltrc-form-skeleton [rows]="6" />
   } @else {
   <form [formGroup]="form" (ngSubmit)="save()">
     <mat-card class="profile-editor__card">

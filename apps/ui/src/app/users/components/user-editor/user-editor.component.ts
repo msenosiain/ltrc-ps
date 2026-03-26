@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsersService } from '../../services/users.service';
@@ -31,6 +32,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatIconModule,
     MatProgressBarModule,
     UserFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './user-editor.component.html',
   styleUrl: './user-editor.component.scss',
@@ -46,16 +48,18 @@ export class UserEditorComponent implements OnInit {
   user?: User;
   editing = false;
   submitting = false;
+  loading = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
+      this.loading = true;
       this.usersService
         .getUserById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((user) => (this.user = user));
+        .subscribe({ next: (user) => { this.user = user; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

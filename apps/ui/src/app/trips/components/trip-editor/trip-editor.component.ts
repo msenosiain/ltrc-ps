@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Trip } from '@ltrc-campo/shared-api-model';
 import { TripsService, CreateTripPayload } from '../../services/trips.service';
 import { TripFormComponent } from '../trip-form/trip-form.component';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
@@ -26,6 +27,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatButtonModule,
     MatIconModule,
     TripFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './trip-editor.component.html',
   styleUrl: './trip-editor.component.scss',
@@ -41,16 +43,18 @@ export class TripEditorComponent implements OnInit {
   trip?: Trip;
   editing = false;
   submitting = false;
+  loading = false;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
+      this.loading = true;
       this.tripsService
         .getTripById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((trip) => (this.trip = trip));
+        .subscribe({ next: (trip) => { this.trip = trip; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

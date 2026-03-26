@@ -15,6 +15,7 @@ import { TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { ScheduleFormValue } from '../../forms/schedule-form.types';
 import { ScheduleFormComponent } from '../schedule-form/schedule-form.component';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getErrorMessage } from '../../../common/utils/error-message';
@@ -27,6 +28,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatButtonModule,
     MatIconModule,
     ScheduleFormComponent,
+    FormSkeletonComponent,
   ],
   templateUrl: './schedule-editor.component.html',
   styleUrl: './schedule-editor.component.scss',
@@ -42,6 +44,7 @@ export class ScheduleEditorComponent implements OnInit {
   schedule?: TrainingSchedule;
   editing = false;
   submitting = false;
+  loading = false;
   clearCategory = false;
 
   ngOnInit(): void {
@@ -50,10 +53,11 @@ export class ScheduleEditorComponent implements OnInit {
     this.clearCategory = this.route.snapshot.queryParamMap.get('newDuplicate') === '1';
 
     if (id) {
+      this.loading = true;
       this.schedulesService
         .getScheduleById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((schedule) => (this.schedule = schedule));
+        .subscribe({ next: (schedule) => { this.schedule = schedule; this.loading = false; }, error: () => { this.loading = false; } });
     }
   }
 

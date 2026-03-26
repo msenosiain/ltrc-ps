@@ -38,6 +38,9 @@
   <mat-progress-bar mode="indeterminate" />
   }
 
+  @if (loading) {
+  <ltrc-form-skeleton [rows]="8" />
+  } @else {
   <ltrc-schedule-form
     [schedule]="schedule"
     [submitting]="submitting"
@@ -45,4 +48,5 @@
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
   />
+  }
 </div>

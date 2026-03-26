@@ -23,10 +23,14 @@
     </div>
   </div>
 
+  @if (loading) {
+  <ltrc-form-skeleton [rows]="8" />
+  } @else {
   <ltrc-trip-form
     [trip]="trip"
     [submitting]="submitting"
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
   />
+  }
 </div>

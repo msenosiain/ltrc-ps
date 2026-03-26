@@ -6,8 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ClothingSizesEnum } from '@ltrc-campo/shared-api-model';
 import { PlayersService } from '../../services/players.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,8 +22,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatProgressBarModule,
     MatSnackBarModule,
+    FormSkeletonComponent,
   ],
   templateUrl: './my-profile-editor.component.html',
   styleUrl: './my-profile-editor.component.scss',

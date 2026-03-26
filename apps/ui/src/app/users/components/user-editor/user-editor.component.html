@@ -24,10 +24,14 @@
   <mat-progress-bar mode="indeterminate" />
   }
 
+  @if (loading) {
+  <ltrc-form-skeleton [rows]="8" />
+  } @else {
   <ltrc-user-form
     [user]="user"
     [submitting]="submitting"
     (formSubmit)="onFormSubmit($event)"
     (cancel)="onCancel()"
   />
+  }
 </div>
