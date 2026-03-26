@@ -1,4 +1,5 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,6 +27,7 @@ import { ConfirmDialogComponent } from '../../../common/components/confirm-dialo
     MatProgressBarModule,
     MatCardModule,
     AllowedRolesDirective,
+    DatePipe,
   ],
   templateUrl: './workout-viewer.component.html',
   styleUrl: './workout-viewer.component.scss',

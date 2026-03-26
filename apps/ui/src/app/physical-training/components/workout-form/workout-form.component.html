@@ -7,7 +7,7 @@
       <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
       <button mat-flat-button color="primary" type="submit" form="workoutForm" [disabled]="submitting">
         <mat-icon>arrow_forward</mat-icon>
-        {{ editing ? 'Guardar y editar ejercicios' : 'Siguiente: cargar ejercicios' }}
+        {{ editing ? 'Guardar' : 'Siguiente: cargar ejercicios' }}
       </button>
     </div>
   </div>
@@ -18,9 +18,6 @@
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="workout-form__form" id="workoutForm">
     <mat-card class="workout-form__card">
-      <mat-card-header>
-        <mat-card-title>Información general</mat-card-title>
-      </mat-card-header>
       <mat-card-content>
         <div class="workout-form__fields-grid">
 
@@ -43,7 +40,7 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Categoría | Rama -->
+          <!-- Categoría | Rama (hockey) -->
           <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Categoría</mat-label>
             <mat-select formControlName="category">
@@ -67,19 +64,6 @@
             </mat-select>
           </mat-form-field>
 
-l          <!-- Días de semana | (placeholder) -->
-          <mat-form-field appearance="outline" class="workout-form__field">
-            <mat-label>Días sugeridos</mat-label>
-            <mat-select formControlName="daysOfWeek" multiple>
-              @for (opt of dayOptions; track opt.value) {
-                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-              }
-            </mat-select>
-            <mat-hint>Orientativo para el jugador</mat-hint>
-          </mat-form-field>
-
-          <div class="workout-form__field"></div>
-
           <!-- Válido desde | Válido hasta -->
           <mat-form-field appearance="outline" class="workout-form__field">
             <mat-label>Válido desde</mat-label>
@@ -101,44 +85,51 @@ l          <!-- Días de semana | (placeholder) -->
             }
           </mat-form-field>
 
-          <!-- Estado | Posiciones (solo en edición) -->
-          @if (editing) {
-            <mat-form-field appearance="outline" class="workout-form__field">
-              <mat-label>Estado</mat-label>
-              <mat-select formControlName="status">
-                @for (opt of statusOptions; track opt.value) {
-                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+          <!-- Posiciones | Días sugeridos -->
+          <mat-form-field
+            appearance="outline"
+            class="workout-form__field"
+            [style.visibility]="form.get('sport')?.value ? 'visible' : 'hidden'"
+          >
+            <mat-label>Posiciones objetivo</mat-label>
+            <mat-select formControlName="targetPositions" multiple>
+              @for (opt of getPositionOptions(); track opt.id) {
+                <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Vacío = todas las posiciones</mat-hint>
+          </mat-form-field>
 
-            <mat-form-field appearance="outline" class="workout-form__field">
-              <mat-label>Posiciones objetivo</mat-label>
-              <mat-select formControlName="targetPositions" multiple>
-                @for (opt of getPositionOptions(); track opt.id) {
-                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-hint>Vacío = todas las posiciones</mat-hint>
-            </mat-form-field>
-          } @else if (form.get('sport')?.value) {
-            <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
-              <mat-label>Posiciones objetivo</mat-label>
-              <mat-select formControlName="targetPositions" multiple>
-                @for (opt of getPositionOptions(); track opt.id) {
-                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-hint>Vacío = todas las posiciones</mat-hint>
-            </mat-form-field>
-          }
+          <mat-form-field appearance="outline" class="workout-form__field">
+            <mat-label>Días sugeridos</mat-label>
+            <mat-select formControlName="daysOfWeek" multiple>
+              @for (opt of dayOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Orientativo para el jugador</mat-hint>
+          </mat-form-field>
 
-          <!-- Jugadores (span 2) -->
-          <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
-            <mat-label>Jugadores asignados</mat-label>
+          <!-- Jugadores | Estado -->
+          <mat-form-field appearance="outline" class="workout-form__field">
+            <mat-label>Jugadores asignados individualmente</mat-label>
             <mat-select formControlName="assignedPlayers" multiple>
               @for (player of allPlayers; track player.id) {
                 <mat-option [value]="player.id">{{ player.name }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Opcional — si no se asigna, se usa deporte/categoría/posiciones</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field
+            appearance="outline"
+            class="workout-form__field"
+            [style.visibility]="editing ? 'visible' : 'hidden'"
+          >
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="status">
+              @for (opt of statusOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -151,13 +142,12 @@ l          <!-- Días de semana | (placeholder) -->
 
           <!-- Notas (span 2) -->
           <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
-            <mat-label>Notas</mat-label>
+            <mat-label>Notas internas</mat-label>
             <textarea matInput formControlName="notes" rows="2"></textarea>
           </mat-form-field>
 
         </div>
       </mat-card-content>
     </mat-card>
-
   </form>
 </div>

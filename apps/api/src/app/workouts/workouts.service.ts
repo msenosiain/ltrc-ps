@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { WorkoutEntity } from './schemas/workout.entity';
 import { CreateWorkoutDto } from './dto/create-workout.dto';
 import { UpdateWorkoutDto } from './dto/update-workout.dto';
@@ -61,7 +61,7 @@ export class WorkoutsService {
 
   async findMyWorkouts(userId: string) {
     const today = new Date().toISOString().slice(0, 10);
-    const player = await this.playerModel.findOne({ userId }).exec();
+    const player = await this.playerModel.findOne({ userId: new Types.ObjectId(userId) }).exec();
     if (!player) return [];
 
     const p = player as any;
@@ -132,7 +132,7 @@ export class WorkoutsService {
   async findTodayWorkout(userId: string) {
     const today = new Date().toISOString().slice(0, 10);
 
-    const player = await this.playerModel.findOne({ userId }).exec();
+    const player = await this.playerModel.findOne({ userId: new Types.ObjectId(userId) }).exec();
     if (!player) return null;
 
     const p = player as any;
