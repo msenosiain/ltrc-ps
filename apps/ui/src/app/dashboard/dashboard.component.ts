@@ -14,7 +14,7 @@ import { map } from 'rxjs';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { Router, RouterModule } from '@angular/router';
-import { RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { BlockEnum, CategoryEnum, getCategoryBlock, RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { AllowedRolesDirective } from '../auth/directives/allowed-roles.directive';
 import { AuthService } from '../auth/auth.service';
 import { ViewAsRoleService } from '../auth/services/view-as-role.service';
@@ -101,6 +101,10 @@ export class DashboardComponent implements OnInit {
   });
 
   myPlayerId = signal<string | null>(null);
+  private myPlayerCategory = signal<CategoryEnum | null>(null);
+  readonly isInfantil = computed(
+    () => getCategoryBlock(this.myPlayerCategory() as CategoryEnum) === BlockEnum.INFANTILES
+  );
 
   private readonly breakpointObserver = inject(BreakpointObserver);
   isSmallScreen = toSignal(
@@ -129,6 +133,7 @@ export class DashboardComponent implements OnInit {
       this.playersService.getMyPlayer().subscribe({
         next: (player) => {
           this.myPlayerId.set(player.id ?? null);
+          this.myPlayerCategory.set((player.category as CategoryEnum) ?? null);
         },
         error: () => {
           /* jugador sin perfil vinculado, se queda en dashboard */

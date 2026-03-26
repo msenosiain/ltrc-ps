@@ -187,7 +187,9 @@
           <ltrc-upcoming-matches-widget />
           <ltrc-upcoming-trainings-widget />
           @if (isPlayer()) {
+          @if (!isInfantil()) {
           <ltrc-my-matches-widget />
+          }
           <ltrc-my-workout-widget />
           }
           @if (isCoordinator()) {
