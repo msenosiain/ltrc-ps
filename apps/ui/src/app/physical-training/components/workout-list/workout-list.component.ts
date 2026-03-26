@@ -2,9 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  DestroyRef,
   inject,
-  OnDestroy,
   ViewChild,
 } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -15,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -26,28 +23,19 @@ import {
   Observable,
   asyncScheduler,
   observeOn,
-  Subject,
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  of,
 } from 'rxjs';
 import {
-  PaginatedResponse,
   PaginationQuery,
-  Player,
   Workout,
   RoleEnum,
   SortOrder,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { WorkoutsService } from '../../services/workouts.service';
-import { PlayersService } from '../../../players/services/players.service';
 import { getWorkoutStatusLabel, workoutStatusOptions, sportOptions } from '../../physical-training-options';
 import { getCategoryLabel } from '../../../common/category-options';
 import { getSportLabel } from '../../../common/sport-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
 
 class WorkoutsDataSource implements DataSource<Workout> {
@@ -118,7 +106,6 @@ class WorkoutsDataSource implements DataSource<Workout> {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatAutocompleteModule,
     AsyncPipe,
     FormsModule,
     AllowedRolesDirective,
@@ -126,15 +113,13 @@ class WorkoutsDataSource implements DataSource<Workout> {
   templateUrl: './workout-list.component.html',
   styleUrl: './workout-list.component.scss',
 })
-export class WorkoutListComponent implements AfterViewInit, OnDestroy {
+export class WorkoutListComponent implements AfterViewInit {
   private readonly router = inject(Router);
   private readonly routinesService = inject(WorkoutsService);
-  private readonly playersService = inject(PlayersService);
   private readonly cdr = inject(ChangeDetectorRef);
-  private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
-  readonly displayedColumns = ['name', 'sport', 'category', 'validity', 'status', 'players'];
+  readonly displayedColumns = ['name', 'sport', 'category', 'validity', 'status'];
   readonly dataSource = new WorkoutsDataSource(this.routinesService);
   readonly sportOptions = sportOptions;
   readonly statusOptions = workoutStatusOptions;
@@ -144,11 +129,6 @@ export class WorkoutListComponent implements AfterViewInit, OnDestroy {
   selectedSport = '';
   selectedCategory = '';
   selectedStatus = '';
-  playerSearch = '';
-  selectedPlayerId = '';
-  filteredPlayers: Player[] = [];
-
-  private playerSearch$ = new Subject<string>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -159,22 +139,7 @@ export class WorkoutListComponent implements AfterViewInit, OnDestroy {
     this.paginator.page.subscribe(() => {
       this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
     });
-
-    this.playerSearch$
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        switchMap((term) =>
-          term
-            ? this.playersService.getPlayers({ page: 1, size: 20, filters: { searchTerm: term }, sortBy: 'name', sortOrder: SortOrder.ASC })
-            : of({ items: [] as Player[], total: 0, page: 1, size: 20 } as PaginatedResponse<Player>)
-        ),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((res) => (this.filteredPlayers = res.items));
   }
-
-  ngOnDestroy(): void {}
 
   getStatusLabel(status: string): string {
     return getWorkoutStatusLabel(status);
@@ -194,36 +159,11 @@ export class WorkoutListComponent implements AfterViewInit, OnDestroy {
     this.applyFilters();
   }
 
-  onPlayerInput(term: string): void {
-    if (!term) {
-      this.selectedPlayerId = '';
-    }
-    this.playerSearch$.next(term);
-  }
-
-  onPlayerSelected(player: Player): void {
-    this.selectedPlayerId = player.id ?? '';
-    this.playerSearch = player.name;
-    this.applyFilters();
-  }
-
-  displayPlayer(player: Player): string {
-    return player ? player.name : '';
-  }
-
-  clearPlayerFilter(): void {
-    this.selectedPlayerId = '';
-    this.playerSearch = '';
-    this.filteredPlayers = [];
-    this.applyFilters();
-  }
-
   applyFilters(): void {
     const filters: Record<string, unknown> = {};
     if (this.selectedSport) filters['sport'] = this.selectedSport;
     if (this.selectedCategory) filters['category'] = this.selectedCategory;
     if (this.selectedStatus) filters['status'] = this.selectedStatus;
-    if (this.selectedPlayerId) filters['playerId'] = this.selectedPlayerId;
     if (this.paginator) this.paginator.pageIndex = 0;
     this.dataSource.setFilters(filters);
   }

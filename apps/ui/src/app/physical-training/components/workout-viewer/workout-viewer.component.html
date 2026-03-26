@@ -76,19 +76,11 @@
             </ng-container>
             <ng-container matColumnDef="sets">
               <th mat-header-cell *matHeaderCellDef>Series</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.sets || '—' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="reps">
-              <th mat-header-cell *matHeaderCellDef>Reps</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.reps || '—' }}</td>
+              <td mat-cell *matCellDef="let entry" class="workout-viewer__sets-cell">{{ getSetsLabel(entry.sets) }}</td>
             </ng-container>
             <ng-container matColumnDef="rest">
               <th mat-header-cell *matHeaderCellDef>Descanso</th>
               <td mat-cell *matCellDef="let entry">{{ entry.rest || '—' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="load">
-              <th mat-header-cell *matHeaderCellDef>Carga</th>
-              <td mat-cell *matCellDef="let entry">{{ entry.load || '—' }}</td>
             </ng-container>
             <ng-container matColumnDef="notes">
               <th mat-header-cell *matHeaderCellDef>Notas</th>

@@ -41,7 +41,7 @@ export class WorkoutViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
-  readonly exerciseColumns = ['exercise', 'sets', 'reps', 'rest', 'load', 'notes'];
+  readonly exerciseColumns = ['exercise', 'sets', 'rest', 'notes'];
 
   workout?: Workout;
   loading = true;
@@ -74,6 +74,14 @@ export class WorkoutViewerComponent implements OnInit {
 
   getCategoryLabel(category?: string): string {
     return getCategoryLabel(category as CategoryEnum);
+  }
+
+  getSetsLabel(sets: any[]): string {
+    if (!sets?.length) return '—';
+    return sets.map((s, i) => {
+      const parts = [s.reps, s.duration, s.load].filter(Boolean);
+      return `${i + 1}. ${parts.join(' / ') || '—'}`;
+    }).join('  ·  ');
   }
 
   getExerciseName(exercise: Exercise | string): string {
