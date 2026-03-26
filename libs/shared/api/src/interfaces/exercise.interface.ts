@@ -1,4 +1,4 @@
-import { ExerciseCategoryEnum } from '../enums';
+import { ExerciseCategoryEnum, ExerciseTrackingTypeEnum } from '../enums';
 
 export interface ExerciseVideo {
   url: string;
@@ -10,6 +10,7 @@ export interface Exercise {
   name: string;
   description?: string;
   category: ExerciseCategoryEnum;
+  trackingType: ExerciseTrackingTypeEnum;
   muscleGroups?: string[];
   equipment?: string[];
   videos?: ExerciseVideo[];

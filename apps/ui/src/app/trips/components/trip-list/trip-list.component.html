@@ -1,14 +1,17 @@
 <div class="trips-list">
   <div class="list-header">
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
-      mat-flat-button
-      color="primary"
-      (click)="goToCreate()"
-    >
-      <mat-icon>add</mat-icon>
-      Agregar viaje
-    </button>
+    <h2 class="list-header__title">Viajes</h2>
+    <div class="list-header__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
+        mat-flat-button
+        color="primary"
+        (click)="goToCreate()"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar viaje
+      </button>
+    </div>
   </div>
 
   <ltrc-trip-search

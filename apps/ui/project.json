@@ -64,7 +64,15 @@
           "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
-          "namedChunks": true
+          "namedChunks": true,
+          "allowedCommonJsDependencies": [
+            "canvg",
+            "core-js",
+            "jspdf",
+            "html2canvas",
+            "raf",
+            "rgbcolor"
+          ]
         }
       },
       "defaultConfiguration": "production"

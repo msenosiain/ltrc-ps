@@ -5,6 +5,7 @@ export interface SetEntry {
   reps?: string;
   duration?: string;
   load?: string;
+  distance?: string;
 }
 
 export interface WorkoutExerciseEntry {

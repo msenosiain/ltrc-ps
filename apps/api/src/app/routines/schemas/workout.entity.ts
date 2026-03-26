@@ -5,6 +5,7 @@ import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 export class SetEntryEntity {
   reps?: string;
   duration?: string;
+  distance?: string;
   load?: string;
 }
 

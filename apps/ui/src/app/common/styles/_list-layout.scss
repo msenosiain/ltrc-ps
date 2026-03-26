@@ -2,9 +2,22 @@
 
 .list-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
 
   button {
     display: inline-flex;

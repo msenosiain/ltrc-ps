@@ -1,5 +1,15 @@
 <form [formGroup]="searchForm" class="search-form">
   <div class="filters-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Apellido o Apodo</mat-label>
+      <input matInput placeholder="Ej: Perez o Pepe" formControlName="searchTerm" />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
     @if (showSportFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Deporte</mat-label>
@@ -10,56 +20,12 @@
         }
       </mat-select>
       @if (searchForm.get('sport')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('sport')"
-      >
+      <button mat-icon-button matSuffix type="button" (click)="clearField('sport')">
         <mat-icon>close</mat-icon>
       </button>
       }
     </mat-form-field>
     }
-
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Apellido o Apodo</mat-label>
-      <input
-        matInput
-        placeholder="Ej: Perez o Pepe"
-        formControlName="searchTerm"
-      />
-      @if (searchForm.get('searchTerm')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('searchTerm')"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      }
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="position-field">
-      <mat-label>Posicion</mat-label>
-      <mat-select formControlName="position">
-        <mat-option [value]="undefined">Todas</mat-option>
-        @for (option of positionOptions; track $index) {
-        <mat-option [value]="option.id">{{ option.name }}</mat-option>
-        }
-      </mat-select>
-      @if (searchForm.get('position')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('position')"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      }
-    </mat-form-field>
 
     @if (showCategoryFilter) {
     <mat-form-field appearance="outline" class="filter-field">
@@ -71,12 +37,7 @@
         }
       </mat-select>
       @if (searchForm.get('category')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('category')"
-      >
+      <button mat-icon-button matSuffix type="button" (click)="clearField('category')">
         <mat-icon>close</mat-icon>
       </button>
       }
@@ -93,17 +54,28 @@
         }
       </mat-select>
       @if (searchForm.get('branch')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('branch')"
-      >
+      <button mat-icon-button matSuffix type="button" (click)="clearField('branch')">
         <mat-icon>close</mat-icon>
       </button>
       }
     </mat-form-field>
     }
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Posición</mat-label>
+      <mat-select formControlName="position">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (option of positionOptions; track $index) {
+        <mat-option [value]="option.id">{{ option.name }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('position')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('position')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Estado</mat-label>
       <mat-select formControlName="status">

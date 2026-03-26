@@ -1,14 +1,17 @@
 <div class="users-list">
   <div class="list-header">
-    <button
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="goToCreate()"
-    >
-      <mat-icon>add</mat-icon>
-      Agregar usuario
-    </button>
+    <h2 class="list-header__title">Usuarios</h2>
+    <div class="list-header__actions">
+      <button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="goToCreate()"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar usuario
+      </button>
+    </div>
   </div>
 
   <ltrc-user-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />

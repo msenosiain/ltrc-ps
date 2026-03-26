@@ -21,6 +21,10 @@ export class SetEntryDto {
 
   @IsOptional()
   @IsString()
+  distance?: string;
+
+  @IsOptional()
+  @IsString()
   load?: string;
 }
 

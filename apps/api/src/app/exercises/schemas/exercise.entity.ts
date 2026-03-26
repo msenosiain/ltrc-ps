@@ -1,11 +1,12 @@
 import { Document, Types } from 'mongoose';
-import { ExerciseCategoryEnum } from '@ltrc-campo/shared-api-model';
+import { ExerciseCategoryEnum, ExerciseTrackingTypeEnum } from '@ltrc-campo/shared-api-model';
 
 export class ExerciseEntity extends Document {
   id: string;
   name: string;
   description?: string;
   category: ExerciseCategoryEnum;
+  trackingType: ExerciseTrackingTypeEnum;
   muscleGroups: string[];
   equipment: string[];
   videos: { url: string; title?: string }[];

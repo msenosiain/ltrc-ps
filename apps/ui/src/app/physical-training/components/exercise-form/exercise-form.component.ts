@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ExercisesService } from '../../services/exercises.service';
-import { exerciseCategoryOptions } from '../../physical-training-options';
+import { exerciseCategoryOptions, exerciseTrackingTypeOptions } from '../../physical-training-options';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
@@ -48,6 +48,7 @@ export class ExerciseFormComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly categoryOptions = exerciseCategoryOptions;
+  readonly trackingTypeOptions = exerciseTrackingTypeOptions;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   form!: FormGroup;
@@ -62,6 +63,7 @@ export class ExerciseFormComponent implements OnInit {
     this.form = this.fb.group({
       name: ['', Validators.required],
       category: ['', Validators.required],
+      trackingType: ['reps', Validators.required],
       description: [''],
       instructions: [''],
     });
@@ -77,6 +79,7 @@ export class ExerciseFormComponent implements OnInit {
           this.form.patchValue({
             name: exercise.name,
             category: exercise.category,
+            trackingType: exercise.trackingType ?? 'reps',
             description: exercise.description ?? '',
             instructions: exercise.instructions ?? '',
           });

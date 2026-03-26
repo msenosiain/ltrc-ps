@@ -96,32 +96,32 @@
   margin: 0;
 }
 
-.exercise-table {
-  width: 100%;
+.exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.exercise-row {
-  display: grid;
-  grid-template-columns: 2fr 2fr 1fr 2fr;
-  gap: 0.5rem;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 0.875rem;
-  align-items: start;
-
-  &--header {
-    font-weight: 600;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--mat-app-on-surface-variant, #888);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.12);
-    padding-bottom: 0.4rem;
-  }
+.exercise-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 
   &:last-child {
     border-bottom: none;
   }
+}
+
+.exercise-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.exercise-sets {
+  font-size: 0.8rem;
+  color: var(--mat-app-on-surface-variant, #666);
 }
 
 .status-badge {

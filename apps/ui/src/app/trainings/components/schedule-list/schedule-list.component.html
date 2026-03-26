@@ -1,15 +1,18 @@
 <div class="schedules-list">
   <div class="list-header">
-    <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN, RoleEnum.COORDINATOR]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="goToCreate()"
-    >
-      <mat-icon>add</mat-icon>
-      Agregar horario
-    </button>
+    <h2 class="list-header__title">Horarios</h2>
+    <div class="list-header__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN, RoleEnum.COORDINATOR]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="goToCreate()"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar horario
+      </button>
+    </div>
   </div>
 
   <ltrc-schedule-search

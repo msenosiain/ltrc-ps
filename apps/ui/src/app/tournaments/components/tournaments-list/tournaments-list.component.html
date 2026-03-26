@@ -1,15 +1,18 @@
 <div class="tournaments-list">
   <div class="list-header">
-    <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="goToCreate()"
-    >
-      <mat-icon>add</mat-icon>
-      Agregar torneo
-    </button>
+    <h2 class="list-header__title">Torneos</h2>
+    <div class="list-header__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="goToCreate()"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar torneo
+      </button>
+    </div>
   </div>
 
   <ltrc-tournament-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />

@@ -37,6 +37,15 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="exercise-form__field">
+      <mat-label>Se mide por</mat-label>
+      <mat-select formControlName="trackingType">
+        @for (opt of trackingTypeOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="exercise-form__field">
       <mat-label>Grupos musculares</mat-label>
       <mat-chip-grid #muscleChipGrid>
         @for (group of muscleGroups; track group) {

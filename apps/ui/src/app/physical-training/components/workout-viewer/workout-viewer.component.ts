@@ -8,11 +8,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CategoryEnum, Exercise, RoleEnum, SportEnum, Workout, WorkoutBlock } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, Exercise, RoleEnum, SportEnum, Workout, WorkoutBlock, WorkoutExerciseEntry } from '@ltrc-campo/shared-api-model';
 import { getCategoryLabel } from '../../../common/category-options';
 import { getSportLabel } from '../../../common/sport-options';
 import { WorkoutsService } from '../../services/workouts.service';
-import { getWorkoutStatusLabel } from '../../physical-training-options';
+import { getWorkoutStatusLabel, getTrackingTypeInfo } from '../../physical-training-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 
@@ -73,12 +73,22 @@ export class WorkoutViewerComponent implements OnInit {
     return getCategoryLabel(category as CategoryEnum);
   }
 
-  getSetsLabel(sets: any[]): string {
-    if (!sets?.length) return '—';
-    return sets.map((s, i) => {
-      const parts = [s.reps, s.duration, s.load].filter(Boolean);
-      return `${i + 1}. ${parts.join(' / ') || '—'}`;
-    }).join('  ·  ');
+  getSetsLabel(entry: WorkoutExerciseEntry): string {
+    const sets = (entry.sets ?? []).filter(Boolean);
+    if (!sets.length) return '—';
+    const n = sets.length;
+    const seriesLabel = n === 1 ? '1 serie' : `${n} series`;
+    const exercise = entry.exercise as Exercise | null | undefined;
+    const info = getTrackingTypeInfo((exercise as any)?.trackingType);
+    const measureValues = sets.map((s) => (s as any)[info.measureField]).filter(Boolean);
+    const loadValues = sets.map((s) => s.load).filter(Boolean);
+    const parts: string[] = [];
+    if (measureValues.length) {
+      const val = [...new Set(measureValues)].join('/');
+      parts.push(info.measureSuffix ? `${val} ${info.measureSuffix}` : val);
+    }
+    if (loadValues.length) parts.push([...new Set(loadValues)].join('/') + ' kg');
+    return parts.length ? `${seriesLabel} - ${parts.join(' - ')}` : seriesLabel;
   }
 
   getExerciseName(exercise: Exercise | string | null | undefined): string {

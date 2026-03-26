@@ -7,6 +7,7 @@ const SetEntrySchema = new Schema(
   {
     reps: { type: String },
     duration: { type: String },
+    distance: { type: String },
     load: { type: String },
   },
   { _id: false }

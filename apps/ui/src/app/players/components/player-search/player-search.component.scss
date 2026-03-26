@@ -4,14 +4,17 @@
 
 .filters-container {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .search-field {
-  width: 300px;
+  flex: 2;
+  min-width: 0;
 }
 
+.filter-field,
 .position-field {
-  width: 200px;
+  flex: 1;
+  min-width: 0;
 }

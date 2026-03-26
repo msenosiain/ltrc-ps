@@ -1,49 +1,52 @@
 <div class="players-list">
   <div class="list-header">
-    <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="goToCreate()"
-    >
-      <mat-icon>add</mat-icon>
-      Agregar jugador
-    </button>
-    <input
-      #importInput
-      type="file"
-      accept=".csv,.xlsx"
-      hidden
-      (change)="onImportFileSelected($event)"
-    />
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN]"
-      mat-stroked-button
-      type="button"
-      [disabled]="importing"
-      (click)="importInput.click()"
-    >
-      <mat-icon>upload_file</mat-icon>
-      Importar
-    </button>
-    <input
-      #surveyInput
-      type="file"
-      accept=".xlsx"
-      hidden
-      (change)="onSurveyFileSelected($event)"
-    />
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN]"
-      mat-stroked-button
-      type="button"
-      [disabled]="importing"
-      (click)="surveyInput.click()"
-    >
-      <mat-icon>sync</mat-icon>
-      Actualizar desde encuesta
-    </button>
+    <h2 class="list-header__title">Jugadores</h2>
+    <div class="list-header__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.ADMIN]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="goToCreate()"
+      >
+        <mat-icon>add</mat-icon>
+        Agregar jugador
+      </button>
+      <input
+        #importInput
+        type="file"
+        accept=".csv,.xlsx"
+        hidden
+        (change)="onImportFileSelected($event)"
+      />
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN]"
+        mat-stroked-button
+        type="button"
+        [disabled]="importing"
+        (click)="importInput.click()"
+      >
+        <mat-icon>upload_file</mat-icon>
+        Importar
+      </button>
+      <input
+        #surveyInput
+        type="file"
+        accept=".xlsx"
+        hidden
+        (change)="onSurveyFileSelected($event)"
+      />
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN]"
+        mat-stroked-button
+        type="button"
+        [disabled]="importing"
+        (click)="surveyInput.click()"
+      >
+        <mat-icon>sync</mat-icon>
+        Actualizar desde encuesta
+      </button>
+    </div>
   </div>
 
   <ltrc-player-search [initialFilters]="savedState?.filters" (filtersChange)="applyFilters($event)" />

@@ -100,20 +100,12 @@
       <mat-card>
         <mat-card-content>
           <p class="section-title">{{ block.title }}</p>
-          @if (block.exercises?.length) {
-            <div class="exercise-table">
-              <div class="exercise-row exercise-row--header">
-                <span>Ejercicio</span>
-                <span>Series</span>
-                <span>Descanso</span>
-                <span>Notas</span>
-              </div>
+          @if (block.exercises.length) {
+            <div class="exercise-list">
               @for (entry of getSortedExercises(block); track $index) {
-                <div class="exercise-row">
-                  <span>{{ getExerciseName(entry.exercise) }}</span>
-                  <span>{{ getSetsLabel(entry.sets) }}</span>
-                  <span>{{ entry.rest || '—' }}</span>
-                  <span>{{ entry.notes || '—' }}</span>
+                <div class="exercise-item">
+                  <span class="exercise-name">{{ getExerciseName(entry.exercise) }}</span>
+                  <span class="exercise-sets">{{ getSetsLabel(entry) }}</span>
                 </div>
               }
             </div>

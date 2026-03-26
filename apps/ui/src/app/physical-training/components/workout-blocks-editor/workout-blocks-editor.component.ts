@@ -15,23 +15,25 @@ import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, debounceTime, startWith, map } from 'rxjs';
 import { normalizeSearch } from '../../../common/utils/normalize-search';
-import { CategoryEnum, Exercise, RoleEnum, SportEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, Exercise, ExerciseTrackingTypeEnum, RoleEnum, SportEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
 import { getCategoryLabel } from '../../../common/category-options';
 import { getSportLabel } from '../../../common/sport-options';
 import { WorkoutsService } from '../../services/workouts.service';
 import { ExercisesService } from '../../services/exercises.service';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
-import { getWorkoutStatusLabel } from '../../physical-training-options';
+import { getWorkoutStatusLabel, getTrackingTypeInfo, TrackingTypeInfo } from '../../physical-training-options';
 
 interface SetDraft {
   reps: string;
   duration: string;
+  distance: string;
   load: string;
 }
 
 interface ExerciseDraft {
   exerciseId: string;
   exerciseName: string;
+  trackingType: ExerciseTrackingTypeEnum;
   sets: SetDraft[];
   rest: string;
   notes: string;
@@ -72,6 +74,7 @@ export class WorkoutBlocksEditorComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
+  readonly getTrackingTypeInfo = getTrackingTypeInfo;
 
   workoutId!: string;
   workout?: Workout;
@@ -121,9 +124,11 @@ export class WorkoutBlocksEditorComponent implements OnInit {
       exercises: (b.exercises ?? []).map((e: any) => ({
         exerciseId: typeof e.exercise === 'string' ? e.exercise : (e.exercise?.id ?? ''),
         exerciseName: typeof e.exercise === 'string' ? e.exercise : (e.exercise?.name ?? ''),
-        sets: (e.sets ?? [{ reps: '', duration: '', load: '' }]).map((s: any) => ({
+        trackingType: (typeof e.exercise === 'object' ? e.exercise?.trackingType : null) ?? ExerciseTrackingTypeEnum.WEIGHT_REPS,
+        sets: (e.sets ?? [{ reps: '', duration: '', distance: '', load: '' }]).filter(Boolean).map((s: any) => ({
           reps: s.reps ?? '',
           duration: s.duration ?? '',
+          distance: s.distance ?? '',
           load: s.load ?? '',
         })),
         rest: e.rest ?? '',
@@ -167,6 +172,9 @@ export class WorkoutBlocksEditorComponent implements OnInit {
   }
 
   private buildBlocksDto() {
+    const toStr = (v: unknown): string | undefined =>
+      v != null && v !== '' && !Number.isNaN(v as number) ? String(v) : undefined;
+
     return this.blocks.map((b, i) => ({
       title: b.title,
       order: i,
@@ -174,9 +182,10 @@ export class WorkoutBlocksEditorComponent implements OnInit {
         exercise: e.exerciseId,
         order: ei,
         sets: e.sets.map((s) => ({
-          reps: s.reps || undefined,
-          duration: s.duration || undefined,
-          load: s.load || undefined,
+          reps: toStr(s.reps),
+          duration: toStr(s.duration),
+          distance: toStr(s.distance),
+          load: toStr(s.load),
         })),
         rest: e.rest || undefined,
         notes: e.notes || undefined,
@@ -217,7 +226,8 @@ export class WorkoutBlocksEditorComponent implements OnInit {
     this.blocks[bi].exercises.push({
       exerciseId: exercise.id!,
       exerciseName: exercise.name,
-      sets: [{ reps: '', duration: '', load: '' }],
+      trackingType: exercise.trackingType ?? ExerciseTrackingTypeEnum.WEIGHT_REPS,
+      sets: [{ reps: '', duration: '', distance: '', load: '' }],
       rest: '',
       notes: '',
     });
@@ -231,7 +241,7 @@ export class WorkoutBlocksEditorComponent implements OnInit {
   }
 
   addSet(bi: number, ei: number): void {
-    this.blocks[bi].exercises[ei].sets.push({ reps: '', duration: '', load: '' });
+    this.blocks[bi].exercises[ei].sets.push({ reps: '', duration: '', distance: '', load: '' });
     this.scheduleSave();
   }
 

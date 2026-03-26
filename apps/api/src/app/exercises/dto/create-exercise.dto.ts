@@ -1,6 +1,6 @@
 import { IsString, IsEnum, IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ExerciseCategoryEnum } from '@ltrc-campo/shared-api-model';
+import { ExerciseCategoryEnum, ExerciseTrackingTypeEnum } from '@ltrc-campo/shared-api-model';
 
 export class ExerciseVideoDto {
   @IsString()
@@ -21,6 +21,10 @@ export class CreateExerciseDto {
 
   @IsEnum(ExerciseCategoryEnum)
   category: ExerciseCategoryEnum;
+
+  @IsOptional()
+  @IsEnum(ExerciseTrackingTypeEnum)
+  trackingType?: ExerciseTrackingTypeEnum;
 
   @IsOptional()
   @IsArray()

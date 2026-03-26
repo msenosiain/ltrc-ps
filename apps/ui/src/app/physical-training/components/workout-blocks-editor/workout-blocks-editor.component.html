@@ -28,9 +28,7 @@
       </div>
     </div>
 
-    @if (saving) {
-      <mat-progress-bar mode="indeterminate" class="blocks-editor__save-bar" />
-    }
+    <mat-progress-bar mode="indeterminate" class="blocks-editor__save-bar" [style.visibility]="saving ? 'visible' : 'hidden'" />
 
     <div class="blocks-editor__blocks">
       @for (block of blocks; track $index; let bi = $index) {
@@ -62,51 +60,55 @@
               <div class="blocks-editor__exercise">
                 <div class="blocks-editor__exercise-header">
                   <span class="blocks-editor__exercise-name">{{ ex.exerciseName }}</span>
-                  <mat-form-field appearance="outline" class="blocks-editor__small-field">
-                    <mat-label>Descanso</mat-label>
-                    <input matInput [(ngModel)]="ex.rest" (ngModelChange)="scheduleSave()" placeholder="60s" />
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="blocks-editor__notes-field">
-                    <mat-label>Notas</mat-label>
-                    <input matInput [(ngModel)]="ex.notes" (ngModelChange)="scheduleSave()" />
-                  </mat-form-field>
-                  <button mat-icon-button type="button" color="warn" (click)="removeExercise(bi, ei)" title="Eliminar ejercicio">
-                    <mat-icon>delete_outline</mat-icon>
-                  </button>
-                </div>
-
-                <div class="blocks-editor__sets">
-                  <div class="blocks-editor__sets-header">
-                    <span class="blocks-editor__sets-label">Series</span>
-                    <button mat-icon-button type="button" (click)="duplicateLastSet(bi, ei)" title="Duplicar última serie">
-                      <mat-icon>content_copy</mat-icon>
-                    </button>
-                    <button mat-icon-button type="button" (click)="addSet(bi, ei)" title="Agregar serie">
-                      <mat-icon>add</mat-icon>
+                  <div class="blocks-editor__exercise-meta">
+                    <mat-form-field appearance="outline" class="blocks-editor__meta-field">
+                      <mat-label>Descanso</mat-label>
+                      <input matInput [(ngModel)]="ex.rest" (ngModelChange)="scheduleSave()" placeholder="60s" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="blocks-editor__meta-field blocks-editor__meta-field--wide">
+                      <mat-label>Notas</mat-label>
+                      <input matInput [(ngModel)]="ex.notes" (ngModelChange)="scheduleSave()" />
+                    </mat-form-field>
+                    <button mat-icon-button type="button" color="warn" (click)="removeExercise(bi, ei)" title="Eliminar ejercicio">
+                      <mat-icon>delete_outline</mat-icon>
                     </button>
                   </div>
+                </div>
+
+                <div class="blocks-editor__sets-table">
+                  @let info = getTrackingTypeInfo(ex.trackingType);
+                  <div class="blocks-editor__sets-cols" [class.blocks-editor__sets-cols--no-load]="!info.showLoad">
+                    <span class="blocks-editor__col-label">#</span>
+                    <span class="blocks-editor__col-label">
+                      {{ info.measureLabel }}{{ info.eachSide ? ' (por lado)' : '' }}
+                    </span>
+                    @if (info.showLoad) {
+                      <span class="blocks-editor__col-label">{{ info.loadLabel }}</span>
+                    }
+                    <span></span>
+                  </div>
                   @for (set of ex.sets; track $index; let si = $index) {
-                    <div class="blocks-editor__set-row">
+                    <div class="blocks-editor__set-row" [class.blocks-editor__set-row--no-load]="!info.showLoad">
                       <span class="blocks-editor__set-index">{{ si + 1 }}</span>
-                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
-                        <mat-label>Reps</mat-label>
-                        <input matInput [(ngModel)]="set.reps" (ngModelChange)="scheduleSave()" placeholder="10" />
-                      </mat-form-field>
-                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
-                        <mat-label>Duración</mat-label>
-                        <input matInput [(ngModel)]="set.duration" (ngModelChange)="scheduleSave()" placeholder='30"' />
-                      </mat-form-field>
-                      <mat-form-field appearance="outline" class="blocks-editor__set-field">
-                        <mat-label>Carga</mat-label>
-                        <input matInput [(ngModel)]="set.load" (ngModelChange)="scheduleSave()" placeholder="80kg" />
-                      </mat-form-field>
-                      @if (ex.sets.length > 1) {
-                        <button mat-icon-button type="button" color="warn" (click)="removeSet(bi, ei, si)" title="Eliminar serie">
-                          <mat-icon>remove</mat-icon>
-                        </button>
+                      @if (info.measureField === 'duration') {
+                        <input type="number" min="0" step="1" class="blocks-editor__set-input" [(ngModel)]="set.duration" (ngModelChange)="scheduleSave()" placeholder="30" />
+                      } @else if (info.measureField === 'distance') {
+                        <input type="number" min="0" step="1" class="blocks-editor__set-input" [(ngModel)]="set.distance" (ngModelChange)="scheduleSave()" placeholder="1000" />
+                      } @else {
+                        <input type="number" min="0" step="1" class="blocks-editor__set-input" [(ngModel)]="set.reps" (ngModelChange)="scheduleSave()" placeholder="10" />
                       }
+                      @if (info.showLoad) {
+                        <input type="number" min="0" step="0.5" class="blocks-editor__set-input" [(ngModel)]="set.load" (ngModelChange)="scheduleSave()" placeholder="80" />
+                      }
+                      <button mat-icon-button type="button" color="warn" (click)="removeSet(bi, ei, si)" title="Eliminar serie" [style.visibility]="ex.sets.length > 1 ? 'visible' : 'hidden'">
+                        <mat-icon>delete_outline</mat-icon>
+                      </button>
                     </div>
                   }
+                  <button mat-button type="button" class="blocks-editor__add-set" (click)="addSet(bi, ei)">
+                    <mat-icon>add</mat-icon>
+                    Añadir serie
+                  </button>
                 </div>
               </div>
             }

@@ -103,61 +103,94 @@
   &__exercise-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
     margin-bottom: 8px;
+    flex-wrap: wrap;
   }
 
   &__exercise-name {
-    font-weight: 500;
-    flex: 1;
-    min-width: 160px;
+    font-weight: 600;
+    font-size: 0.95rem;
   }
 
-  &__small-field {
-    width: 100px;
-  }
-
-  &__notes-field {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  &__sets {
-    padding-left: 8px;
-  }
-
-  &__sets-header {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-
-  &__sets-label {
-    font-size: 0.8rem;
-    color: #666;
-    font-weight: 500;
-    margin-right: 4px;
-  }
-
-  &__set-row {
+  &__exercise-meta {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 4px;
     flex-wrap: wrap;
   }
 
-  &__set-index {
-    width: 20px;
-    text-align: right;
-    color: #888;
-    font-size: 0.85rem;
+  &__meta-field {
+    width: 90px;
+
+    &--wide {
+      width: 160px;
+    }
   }
 
-  &__set-field {
-    width: 90px;
+  &__sets-table {
+    padding-left: 4px;
+  }
+
+  &__sets-cols {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 40px;
+    gap: 8px;
+    align-items: center;
+    padding: 0 4px 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 4px;
+
+    &--no-load {
+      grid-template-columns: 28px 1fr 40px;
+    }
+  }
+
+  &__col-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #555;
+  }
+
+  &__set-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 40px;
+    gap: 8px;
+    align-items: center;
+    padding: 2px 4px;
+
+    &--no-load {
+      grid-template-columns: 28px 1fr 40px;
+    }
+  }
+
+  &__set-index {
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  &__set-input {
+    width: 100%;
+    font-size: 0.9rem;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    outline: none;
+    padding: 4px 2px;
+    background: transparent;
+    text-align: center;
+
+    &:focus {
+      border-bottom-color: #1976d2;
+    }
+  }
+
+  &__add-set {
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #1976d2;
   }
 
   &__add-exercise-field {
