@@ -18,7 +18,6 @@ import { normalizeSearch } from '../../../common/utils/normalize-search';
 import { Exercise, RoleEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
 import { WorkoutsService } from '../../services/workouts.service';
 import { ExercisesService } from '../../services/exercises.service';
-import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { getWorkoutStatusLabel } from '../../physical-training-options';
 
@@ -57,7 +56,6 @@ interface BlockDraft {
     MatAutocompleteModule,
     MatProgressBarModule,
     AsyncPipe,
-    AllowedRolesDirective,
   ],
   templateUrl: './workout-blocks-editor.component.html',
   styleUrl: './workout-blocks-editor.component.scss',

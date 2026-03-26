@@ -26,7 +26,7 @@
         }
       </mat-card-header>
       <mat-card-content>
-        <p class="my-workout__meta">{{ todayWorkout.blocks?.length ?? 0 }} bloques de ejercicios</p>
+        <p class="my-workout__meta">{{ todayWorkout.blocks.length }} bloques de ejercicios</p>
       </mat-card-content>
       <mat-card-actions>
         <button mat-raised-button color="primary" (click)="startWorkout()" [disabled]="saving">
