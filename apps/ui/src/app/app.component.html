@@ -1,3 +1,4 @@
+@if (showToolbar()) {
 <mat-toolbar color="primary">
   <div class="toolbar-content">
     <div class="logo-left">
@@ -17,6 +18,7 @@
     <ltrc-user-profile-menu />
   </div>
 </mat-toolbar>
+}
 <div class="main-content">
   <router-outlet />
 </div>
