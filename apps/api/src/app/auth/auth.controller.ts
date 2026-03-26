@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Post,
   Req,
   Res,
@@ -16,6 +17,8 @@ import { User } from '../users/schemas/user.schema';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(
     private authService: AuthService,
     private configService: ConfigService
@@ -38,6 +41,7 @@ export class AuthController {
 
   @Post('forgot-password')
   async forgotPassword(@Body() body: { email: string }) {
+    this.logger.log(`POST /auth/forgot-password for: ${body.email}`);
     await this.authService.forgotPassword(body.email);
     return { message: 'Si el email existe, recibirás un enlace para restablecer tu contraseña.' };
   }
