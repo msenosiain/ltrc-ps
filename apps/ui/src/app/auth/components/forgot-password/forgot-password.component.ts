@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../auth.service';
 
 @Component({
@@ -25,10 +26,11 @@ import { AuthService } from '../../auth.service';
 })
 export class ForgotPasswordComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
 
   emailControl = new FormControl('', [Validators.required, Validators.email]);
   isLoading = false;
-  submitted = false;
   errorMessage = '';
 
   onSubmit(): void {
@@ -38,8 +40,8 @@ export class ForgotPasswordComponent {
 
     this.authService.forgotPassword(this.emailControl.value!).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.submitted = true;
+        this.snackBar.open('Si el email está registrado, recibirás un enlace en unos minutos.', 'OK', { duration: 6000 });
+        this.router.navigate(['/login']);
       },
       error: () => {
         this.isLoading = false;
