@@ -67,4 +67,31 @@
     width: 100%;
     height: 100%;
   }
+
+  &__video-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  &__video-tab {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+
+    &--active {
+      background: #1976d2;
+      color: #fff;
+      border-color: #1976d2;
+    }
+  }
+
+  &__video-direct {
+    max-width: 640px;
+    width: 100%;
+  }
 }

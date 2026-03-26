@@ -62,24 +62,33 @@
         </div>
       }
 
-      @if (videoEmbedUrl) {
+      @if (exercise.videos?.length) {
         <div class="exercise-viewer__section">
-          <h3 class="exercise-viewer__section-title">Video</h3>
-          <div class="exercise-viewer__video-wrapper">
-            <iframe
-              [src]="videoEmbedUrl"
-              frameborder="0"
-              allowfullscreen
-              class="exercise-viewer__video"
-            ></iframe>
-          </div>
-        </div>
-      } @else if (exercise.videoUrl) {
-        <div class="exercise-viewer__section">
-          <h3 class="exercise-viewer__section-title">Video</h3>
-          <a [href]="exercise.videoUrl" target="_blank" rel="noopener noreferrer">
-            {{ exercise.videoUrl }}
-          </a>
+          <h3 class="exercise-viewer__section-title">Videos</h3>
+          @if (exercise.videos!.length > 1) {
+            <div class="exercise-viewer__video-tabs">
+              @for (v of exercise.videos; track $index; let i = $index) {
+                <button
+                  class="exercise-viewer__video-tab"
+                  [class.exercise-viewer__video-tab--active]="selectedVideoIndex === i"
+                  (click)="selectedVideoIndex = i"
+                >{{ v.title || 'Video ' + (i + 1) }}</button>
+              }
+            </div>
+          }
+          @for (v of exercise.videos; track $index; let i = $index) {
+            @if (selectedVideoIndex === i) {
+              @if (getEmbedUrl(v.url); as embedUrl) {
+                <div class="exercise-viewer__video-wrapper">
+                  <iframe [src]="embedUrl" frameborder="0" allowfullscreen class="exercise-viewer__video"></iframe>
+                </div>
+              } @else if (isDirectVideo(v.url)) {
+                <video [src]="v.url" controls playsinline class="exercise-viewer__video-direct"></video>
+              } @else {
+                <a [href]="v.url" target="_blank" rel="noopener noreferrer">{{ v.title || v.url }}</a>
+              }
+            }
+          }
         </div>
       }
     </div>

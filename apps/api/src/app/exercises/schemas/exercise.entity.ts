@@ -8,7 +8,7 @@ export class ExerciseEntity extends Document {
   category: ExerciseCategoryEnum;
   muscleGroups: string[];
   equipment: string[];
-  videoUrl?: string;
+  videos: { url: string; title?: string }[];
   instructions?: string;
   createdBy?: Types.ObjectId;
   updatedBy?: Types.ObjectId;

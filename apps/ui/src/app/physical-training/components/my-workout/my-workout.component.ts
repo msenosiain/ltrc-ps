@@ -8,9 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Workout, WorkoutLog, WorkoutLogBlock, WorkoutLogSetEntry } from '@ltrc-campo/shared-api-model';
+import { ExerciseVideo, Workout, WorkoutLog, WorkoutLogBlock, WorkoutLogSetEntry } from '@ltrc-campo/shared-api-model';
+import { ExerciseVideoDialogComponent } from '../exercise-video-dialog/exercise-video-dialog.component';
 import { WorkoutLogsService } from '../../services/workout-logs.service';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
@@ -26,6 +28,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatInputModule,
     MatFormFieldModule,
     MatCheckboxModule,
+    MatDialogModule,
   ],
   templateUrl: './my-workout.component.html',
   styleUrl: './my-workout.component.scss',
@@ -33,6 +36,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
 export class MyWorkoutComponent implements OnInit {
   private readonly workoutLogsService = inject(WorkoutLogsService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -42,6 +46,8 @@ export class MyWorkoutComponent implements OnInit {
   saving = false;
   noWorkout = false;
 
+  private exerciseVideosMap = new Map<string, { videos: ExerciseVideo[]; name: string }>();
+
   ngOnInit(): void {
     this.workoutLogsService
       .getTodayWorkout()
@@ -50,7 +56,16 @@ export class MyWorkoutComponent implements OnInit {
         next: (routine) => {
           this.todayWorkout = routine;
           this.loading = false;
-          if (!routine) this.noWorkout = true;
+          if (!routine) { this.noWorkout = true; return; }
+          // Build map of exerciseId → videos from the populated workout
+          for (const block of routine.blocks ?? []) {
+            for (const entry of block.exercises ?? []) {
+              const ex = entry.exercise as any;
+              if (ex && typeof ex === 'object' && ex.id) {
+                this.exerciseVideosMap.set(ex.id, { videos: ex.videos ?? [], name: ex.name ?? '' });
+              }
+            }
+          }
         },
         error: () => {
           this.loading = false;
@@ -111,6 +126,21 @@ export class MyWorkoutComponent implements OnInit {
           this.snackBar.open(getErrorMessage(err, 'Error al guardar'), 'Cerrar', { duration: 5000 });
         },
       });
+  }
+
+  hasVideos(exerciseId: string): boolean {
+    return (this.exerciseVideosMap.get(exerciseId)?.videos.length ?? 0) > 0;
+  }
+
+  openVideos(exerciseId: string, exerciseName: string): void {
+    const entry = this.exerciseVideosMap.get(exerciseId);
+    const videos = entry?.videos ?? [];
+    if (!videos.length) return;
+    this.dialog.open(ExerciseVideoDialogComponent, {
+      width: '600px',
+      maxWidth: '95vw',
+      data: { exerciseName, videos },
+    });
   }
 
   onBack(): void {

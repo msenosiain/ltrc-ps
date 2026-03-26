@@ -1,0 +1,51 @@
+<h2 mat-dialog-title class="video-dialog__title">{{ data.exerciseName }}</h2>
+
+<mat-dialog-content class="video-dialog__content">
+  @if (data.videos.length > 1) {
+    <div class="video-dialog__tabs">
+      @for (v of data.videos; track $index; let i = $index) {
+        <button
+          class="video-dialog__tab"
+          [class.video-dialog__tab--active]="selectedIndex === i"
+          (click)="selectedIndex = i"
+        >
+          {{ getVideoTitle(v, i) }}
+        </button>
+      }
+    </div>
+  }
+
+  @for (video of data.videos; track $index; let i = $index) {
+    @if (selectedIndex === i) {
+      <div class="video-dialog__player">
+        @if (getEmbedUrl(video.url); as embedUrl) {
+          <iframe
+            [src]="embedUrl"
+            class="video-dialog__iframe"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        } @else if (isDirectVideo(video.url)) {
+          <video
+            [src]="video.url"
+            class="video-dialog__video"
+            controls
+            playsinline
+          ></video>
+        } @else {
+          <div class="video-dialog__link-fallback">
+            <mat-icon>play_circle</mat-icon>
+            <a [href]="video.url" target="_blank" rel="noopener">
+              {{ getVideoTitle(video, i) }}
+            </a>
+          </div>
+        }
+      </div>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cerrar</button>
+</mat-dialog-actions>

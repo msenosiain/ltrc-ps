@@ -40,7 +40,7 @@ export class ExerciseViewerComponent implements OnInit {
 
   exercise?: Exercise;
   loading = true;
-  videoEmbedUrl?: SafeResourceUrl;
+  selectedVideoIndex = 0;
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
@@ -51,9 +51,6 @@ export class ExerciseViewerComponent implements OnInit {
         next: (exercise) => {
           this.exercise = exercise;
           this.loading = false;
-          if (exercise.videoUrl) {
-            this.videoEmbedUrl = this.buildEmbedUrl(exercise.videoUrl);
-          }
         },
         error: () => {
           this.loading = false;
@@ -62,20 +59,21 @@ export class ExerciseViewerComponent implements OnInit {
       });
   }
 
-  private buildEmbedUrl(url: string): SafeResourceUrl | undefined {
-    let embedUrl: string | null = null;
-
-    if (url.includes('youtube.com/watch')) {
-      const videoId = new URL(url).searchParams.get('v');
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes('youtu.be/')) {
-      const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-      if (videoId) embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    } else if (url.includes('youtube.com/embed/')) {
-      embedUrl = url;
+  getEmbedUrl(url: string): SafeResourceUrl | null {
+    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?\s]+)/);
+    if (ytMatch) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://www.youtube.com/embed/${ytMatch[1]}?rel=0`
+      );
     }
+    if (url.includes('youtube.com/embed/')) {
+      return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+    return null;
+  }
 
-    return embedUrl ? this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl) : undefined;
+  isDirectVideo(url: string): boolean {
+    return /\.(mp4|webm|ogg)(\?|$)/i.test(url);
   }
 
   getCategoryLabel(cat: string): string {

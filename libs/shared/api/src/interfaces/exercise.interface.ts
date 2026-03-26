@@ -1,5 +1,10 @@
 import { ExerciseCategoryEnum } from '../enums';
 
+export interface ExerciseVideo {
+  url: string;
+  title?: string;
+}
+
 export interface Exercise {
   id?: string;
   name: string;
@@ -7,7 +12,7 @@ export interface Exercise {
   category: ExerciseCategoryEnum;
   muscleGroups?: string[];
   equipment?: string[];
-  videoUrl?: string;
+  videos?: ExerciseVideo[];
   instructions?: string;
   createdBy?: string;
   createdAt?: Date;

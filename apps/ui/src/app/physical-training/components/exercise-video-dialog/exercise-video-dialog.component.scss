@@ -1,0 +1,69 @@
+.video-dialog {
+  &__title {
+    margin: 0;
+  }
+
+  &__content {
+    padding: 0 24px 8px !important;
+    min-width: min(90vw, 560px);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  &__tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.15s, color 0.15s;
+
+    &--active {
+      background: #1976d2;
+      color: #fff;
+      border-color: #1976d2;
+    }
+  }
+
+  &__player {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__iframe,
+  &__video {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &__link-fallback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: #fff;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+
+    a {
+      color: #90caf9;
+      font-size: 1rem;
+    }
+  }
+}

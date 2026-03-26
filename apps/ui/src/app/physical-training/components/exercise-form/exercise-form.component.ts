@@ -5,6 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -26,6 +27,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    FormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -54,12 +56,12 @@ export class ExerciseFormComponent implements OnInit {
   submitting = false;
   muscleGroups: string[] = [];
   equipment: string[] = [];
+  videos: { url: string; title: string }[] = [];
 
   ngOnInit(): void {
     this.form = this.fb.group({
       name: ['', Validators.required],
       category: ['', Validators.required],
-      videoUrl: [''],
       description: [''],
       instructions: [''],
     });
@@ -75,12 +77,12 @@ export class ExerciseFormComponent implements OnInit {
           this.form.patchValue({
             name: exercise.name,
             category: exercise.category,
-            videoUrl: exercise.videoUrl ?? '',
             description: exercise.description ?? '',
             instructions: exercise.instructions ?? '',
           });
           this.muscleGroups = [...(exercise.muscleGroups ?? [])];
           this.equipment = [...(exercise.equipment ?? [])];
+          this.videos = (exercise.videos ?? []).map((v) => ({ url: v.url, title: v.title ?? '' }));
         });
     }
   }
@@ -107,6 +109,14 @@ export class ExerciseFormComponent implements OnInit {
     if (idx >= 0) this.equipment.splice(idx, 1);
   }
 
+  addVideo(): void {
+    this.videos.push({ url: '', title: '' });
+  }
+
+  removeVideo(index: number): void {
+    this.videos.splice(index, 1);
+  }
+
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -118,6 +128,7 @@ export class ExerciseFormComponent implements OnInit {
       ...this.form.value,
       muscleGroups: this.muscleGroups,
       equipment: this.equipment,
+      videos: this.videos.filter((v) => v.url.trim()).map((v) => ({ url: v.url.trim(), title: v.title.trim() || undefined })),
     };
 
     const onError = (err: unknown) => {

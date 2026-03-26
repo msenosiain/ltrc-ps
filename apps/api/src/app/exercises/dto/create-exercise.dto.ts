@@ -1,5 +1,15 @@
-import { IsString, IsEnum, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ExerciseCategoryEnum } from '@ltrc-campo/shared-api-model';
+
+export class ExerciseVideoDto {
+  @IsString()
+  url: string;
+
+  @IsOptional()
+  @IsString()
+  title?: string;
+}
 
 export class CreateExerciseDto {
   @IsString()
@@ -23,8 +33,10 @@ export class CreateExerciseDto {
   equipment?: string[];
 
   @IsOptional()
-  @IsString()
-  videoUrl?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ExerciseVideoDto)
+  videos?: ExerciseVideoDto[];
 
   @IsOptional()
   @IsString()

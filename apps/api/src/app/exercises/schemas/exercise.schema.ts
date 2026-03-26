@@ -9,7 +9,7 @@ export const ExerciseSchema = new Schema<ExerciseEntity>(
     category: { type: String, enum: Object.values(ExerciseCategoryEnum), required: true },
     muscleGroups: [{ type: String }],
     equipment: [{ type: String }],
-    videoUrl: { type: String },
+    videos: [{ url: { type: String, required: true }, title: { type: String } }],
     instructions: { type: String },
     createdBy: { type: Types.ObjectId, ref: 'User' },
     updatedBy: { type: Types.ObjectId, ref: 'User' },

@@ -31,7 +31,14 @@
     &:last-child { border-bottom: none; }
   }
 
-  &__exercise-name { margin: 0 0 4px; font-weight: 500; }
+  &__exercise-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  &__exercise-name { margin: 0; font-weight: 500; flex: 1; }
 
   &__exercise-notes { font-size: 0.85rem; color: rgba(0, 0, 0, 0.54); margin: 0 0 8px; }
 

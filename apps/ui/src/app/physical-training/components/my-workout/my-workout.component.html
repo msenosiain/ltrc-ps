@@ -50,7 +50,14 @@
         <mat-card-content>
           @for (exercise of block.exercises; track exercise.order) {
             <div class="my-workout__exercise">
-              <h4 class="my-workout__exercise-name">{{ exercise.exerciseName }}</h4>
+              <div class="my-workout__exercise-title">
+                <h4 class="my-workout__exercise-name">{{ exercise.exerciseName }}</h4>
+                @if (hasVideos(exercise.exerciseId)) {
+                  <button mat-icon-button (click)="openVideos(exercise.exerciseId, exercise.exerciseName)" title="Ver video">
+                    <mat-icon>play_circle</mat-icon>
+                  </button>
+                }
+              </div>
               @if (exercise.notes) {
                 <p class="my-workout__exercise-notes">{{ exercise.notes }}</p>
               }

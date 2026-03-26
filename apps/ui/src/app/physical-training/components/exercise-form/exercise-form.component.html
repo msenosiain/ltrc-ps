@@ -68,10 +68,30 @@
       </mat-chip-grid>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="exercise-form__field">
-      <mat-label>URL de video (opcional)</mat-label>
-      <input matInput formControlName="videoUrl" placeholder="https://youtube.com/..." />
-    </mat-form-field>
+    <div class="exercise-form__videos">
+      <div class="exercise-form__videos-header">
+        <label class="exercise-form__videos-label">Videos</label>
+        <button mat-stroked-button type="button" (click)="addVideo()">
+          <mat-icon>add</mat-icon>
+          Agregar video
+        </button>
+      </div>
+      @for (video of videos; track $index; let vi = $index) {
+        <div class="exercise-form__video-row">
+          <mat-form-field appearance="outline" class="exercise-form__video-url">
+            <mat-label>URL</mat-label>
+            <input matInput [(ngModel)]="video.url" [ngModelOptions]="{standalone: true}" placeholder="https://youtube.com/..." />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="exercise-form__video-title">
+            <mat-label>Título (opcional)</mat-label>
+            <input matInput [(ngModel)]="video.title" [ngModelOptions]="{standalone: true}" placeholder="Ej. Vista lateral" />
+          </mat-form-field>
+          <button mat-icon-button type="button" color="warn" (click)="removeVideo(vi)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
 
     <mat-form-field appearance="outline" class="exercise-form__field">
       <mat-label>Descripción (opcional)</mat-label>
