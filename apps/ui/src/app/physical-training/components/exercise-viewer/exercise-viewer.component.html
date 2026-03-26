@@ -83,7 +83,7 @@
                   <iframe [src]="embedUrl" frameborder="0" allowfullscreen class="exercise-viewer__video"></iframe>
                 </div>
               } @else if (isDirectVideo(v.url)) {
-                <video [src]="v.url" controls playsinline loop class="exercise-viewer__video-direct"></video>
+                <video [src]="v.url" controls playsinline autoplay muted loop class="exercise-viewer__video-direct"></video>
               } @else {
                 <a [href]="v.url" target="_blank" rel="noopener noreferrer">{{ v.title || v.url }}</a>
               }
