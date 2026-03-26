@@ -56,7 +56,7 @@ export class UserFormComponent implements OnInit, OnChanges {
   @Output() readonly formSubmit = new EventEmitter<UserFormValue>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER, RoleEnum.COORDINATOR, RoleEnum.ANALYST];
+  private static readonly NON_SPORT_ROLES: RoleEnum[] = [RoleEnum.PLAYER];
 
   readonly roleOptions = roleOptions;
   readonly sportOptions = sportOptions;
@@ -69,8 +69,8 @@ export class UserFormComponent implements OnInit, OnChanges {
   }
 
   get hasSportRole(): boolean {
-    const roles = this.form.get('roles')?.value ?? [];
-    return UserFormComponent.SPORT_ROLES.some((r) => roles.includes(r));
+    const roles: RoleEnum[] = this.form.get('roles')?.value ?? [];
+    return roles.some((r) => !UserFormComponent.NON_SPORT_ROLES.includes(r));
   }
 
   get hasHockey(): boolean {
@@ -92,7 +92,7 @@ export class UserFormComponent implements OnInit, OnChanges {
       .get('roles')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((roles: RoleEnum[]) => {
-        const hasSportRole = UserFormComponent.SPORT_ROLES.some((r) => roles.includes(r));
+        const hasSportRole = roles.some((r) => !UserFormComponent.NON_SPORT_ROLES.includes(r));
         if (!hasSportRole) {
           this.form.patchValue({ sports: [], categories: [], branches: [] });
         }
