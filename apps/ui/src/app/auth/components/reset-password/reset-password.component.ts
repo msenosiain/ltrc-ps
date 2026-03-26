@@ -7,7 +7,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -26,7 +26,6 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
@@ -43,7 +42,6 @@ export class ResetPasswordComponent implements OnInit {
 
   token = '';
   isLoading = false;
-  done = false;
   errorMessage = '';
 
   form = new FormGroup(
@@ -69,7 +67,7 @@ export class ResetPasswordComponent implements OnInit {
     this.authService.resetPassword(this.token, this.form.value.password!).subscribe({
       next: () => {
         this.isLoading = false;
-        this.done = true;
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.isLoading = false;
