@@ -4,12 +4,14 @@
   }
 
   @if (exercise) {
-    <div class="exercise-viewer__header">
-      <button mat-icon-button (click)="onBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h2 class="exercise-viewer__title">{{ exercise.name }}</h2>
-      <div class="exercise-viewer__header-actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
+    <div class="sticky-toolbar">
+      <div class="sticky-toolbar__title">
+        <button mat-icon-button (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="sticky-toolbar__name">{{ exercise.name }}</span>
+      </div>
+      <div class="sticky-toolbar__actions" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]">
         <button mat-stroked-button (click)="onEdit()">
           <mat-icon>edit</mat-icon>
           Editar

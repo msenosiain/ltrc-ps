@@ -1,24 +1,42 @@
 <div class="tournament-editor">
-  <div class="editor-header">
-    <h2 class="editor-title">
-      {{ editing ? 'Editar torneo' : 'Nuevo torneo' }}
-    </h2>
-
-    @if (editing && tournament) {
-    <button
-      mat-stroked-button
-      color="warn"
-      type="button"
-      class="delete-btn"
-      (click)="onDelete()"
-    >
-      <mat-icon>delete</mat-icon>
-      Eliminar torneo
-    </button>
-    } @if (submitting || uploading) {
-    <mat-progress-bar mode="indeterminate" />
-    }
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">
+        {{ editing ? 'Editar torneo' : 'Nuevo torneo' }}
+      </span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button mat-stroked-button type="button" (click)="onCancel()">
+        <mat-icon>arrow_back</mat-icon>
+        Cancelar
+      </button>
+      @if (editing && tournament) {
+      <button
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="onDelete()"
+      >
+        <mat-icon>delete</mat-icon>
+        Eliminar torneo
+      </button>
+      }
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        form="tournamentForm"
+        [disabled]="submitting || uploading"
+      >
+        <mat-icon>{{ tournament ? 'save' : 'add' }}</mat-icon>
+        {{ tournament ? 'Actualizar torneo' : 'Crear torneo' }}
+      </button>
+    </div>
   </div>
+
+  @if (submitting || uploading) {
+  <mat-progress-bar mode="indeterminate" />
+  }
 
   @if (loading) {
   <ltrc-form-skeleton [rows]="6" />

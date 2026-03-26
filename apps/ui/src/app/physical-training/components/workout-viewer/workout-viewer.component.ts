@@ -5,7 +5,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -26,7 +25,6 @@ import { ConfirmDialogComponent } from '../../../common/components/confirm-dialo
     MatChipsModule,
     MatProgressBarModule,
     MatCardModule,
-    MatTableModule,
     AllowedRolesDirective,
   ],
   templateUrl: './workout-viewer.component.html',
@@ -41,7 +39,6 @@ export class WorkoutViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
-  readonly exerciseColumns = ['exercise', 'sets', 'rest', 'notes'];
 
   workout?: Workout;
   loading = true;
@@ -84,9 +81,14 @@ export class WorkoutViewerComponent implements OnInit {
     }).join('  ·  ');
   }
 
-  getExerciseName(exercise: Exercise | string): string {
+  getExerciseName(exercise: Exercise | string | null | undefined): string {
+    if (!exercise) return '—';
     if (typeof exercise === 'string') return exercise;
-    return (exercise as Exercise).name ?? '';
+    return (exercise as Exercise).name ?? '—';
+  }
+
+  getSortedExercises(block: WorkoutBlock) {
+    return [...(block.exercises ?? [])].sort((a, b) => a.order - b.order);
   }
 
   getAssignedPlayers(): string[] {

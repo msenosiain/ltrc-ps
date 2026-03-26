@@ -1,4 +1,23 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="user-form">
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">{{ isCreate ? 'Nuevo usuario' : 'Editar usuario' }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button mat-stroked-button type="button" (click)="onCancel()">
+        Cancelar
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || submitting"
+      >
+        {{ isCreate ? 'Crear usuario' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </div>
+
   <mat-card>
     <mat-card-header>
       <mat-card-title>Datos del usuario</mat-card-title>
@@ -95,18 +114,4 @@
       }
     </mat-card-content>
   </mat-card>
-
-  <div class="form-actions">
-    <button mat-stroked-button type="button" (click)="onCancel()">
-      Cancelar
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="form.invalid || submitting"
-    >
-      {{ isCreate ? 'Crear usuario' : 'Guardar cambios' }}
-    </button>
-  </div>
 </form>

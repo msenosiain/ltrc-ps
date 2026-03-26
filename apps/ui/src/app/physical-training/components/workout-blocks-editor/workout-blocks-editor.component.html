@@ -5,29 +5,23 @@
   }
 
   @if (!loading && workout) {
-    <div class="blocks-editor__header">
-      <div class="blocks-editor__header-info">
-        <h2 class="blocks-editor__title">{{ workout.name }}</h2>
-        <div class="blocks-editor__meta">
-          <span class="status-badge status-badge--{{ workout.status }}">{{ getStatusLabel(workout.status) }}</span>
-          @if (workout.sport) { <span class="blocks-editor__tag">{{ getSportLabel(workout.sport) }}</span> }
-          @if (workout.category) { <span class="blocks-editor__tag">{{ getCategoryLabel(workout.category) }}</span> }
-          <span class="blocks-editor__dates">{{ workout.validFrom }} – {{ workout.validUntil }}</span>
-        </div>
+    <div class="sticky-toolbar">
+      <div class="sticky-toolbar__title">
+        <span class="sticky-toolbar__name">{{ workout.name }}</span>
       </div>
-      <div class="blocks-editor__header-actions">
+      <div class="sticky-toolbar__actions">
         <button mat-stroked-button (click)="onEditInfo()">
           <mat-icon>edit</mat-icon>
           Editar info
         </button>
-        <button mat-stroked-button color="warn" (click)="onDiscard()">
+        <button mat-stroked-button color="warn" (click)="onDiscard()" [disabled]="saving">
           <mat-icon>delete</mat-icon>
           Descartar
         </button>
         <button mat-stroked-button (click)="onSaveDraft()" [disabled]="saving">
           Guardar borrador
         </button>
-        <button mat-raised-button color="primary" (click)="onPublish()" [disabled]="saving">
+        <button mat-flat-button color="primary" (click)="onPublish()" [disabled]="saving">
           <mat-icon>publish</mat-icon>
           Publicar
         </button>
@@ -149,18 +143,5 @@
       </button>
     </div>
 
-    <div class="blocks-editor__footer-actions">
-      <button mat-stroked-button color="warn" (click)="onDiscard()">
-        <mat-icon>delete</mat-icon>
-        Descartar
-      </button>
-      <button mat-stroked-button (click)="onSaveDraft()" [disabled]="saving">
-        Guardar borrador
-      </button>
-      <button mat-raised-button color="primary" (click)="onPublish()" [disabled]="saving">
-        <mat-icon>publish</mat-icon>
-        Publicar
-      </button>
-    </div>
   }
 </div>

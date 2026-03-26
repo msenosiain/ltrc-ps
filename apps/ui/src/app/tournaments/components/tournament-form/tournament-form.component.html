@@ -1,4 +1,5 @@
 <form
+  id="tournamentForm"
   [formGroup]="tournamentForm"
   (ngSubmit)="onSubmit()"
   class="tournament-form-container"
@@ -61,23 +62,6 @@
     <!-- Fila 5: Adjuntos (proyectado desde editor) -->
     <ng-content></ng-content>
   </mat-card>
-
-  <div class="form-actions">
-    <button mat-stroked-button type="button" (click)="onCancel()">
-      <mat-icon>arrow_back</mat-icon>
-      Cancelar
-    </button>
-
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="submitting || tournamentForm.invalid"
-    >
-      <mat-icon>{{ tournament ? 'save' : 'add' }}</mat-icon>
-      {{ tournament ? 'Actualizar torneo' : 'Crear torneo' }}
-    </button>
-  </div>
 
   @if (submitting) {
   <mat-progress-bar mode="indeterminate" />

@@ -1,33 +1,37 @@
 @if (match) {
 
-<div class="editor-header">
-  <button mat-icon-button type="button" (click)="cancel()" [disabled]="saving">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <div class="editor-title">
-    <span class="editor-subtitle">Plantel convocado</span>
-    <span class="editor-match">{{ opponentLabel }}</span>
+<div class="sticky-toolbar">
+  <div class="sticky-toolbar__title">
+    <button mat-icon-button type="button" (click)="cancel()" [disabled]="saving">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="sticky-toolbar__title-text">
+      <span class="sticky-toolbar__subtitle">Plantel convocado</span>
+      <span class="sticky-toolbar__name">{{ opponentLabel }}</span>
+    </div>
   </div>
-  <button
-    mat-stroked-button
-    type="button"
-    [disabled]="!squadRows.length || saving"
-    (click)="downloadPdf()"
-    matTooltip="Descargar PDF del plantel"
-  >
-    <mat-icon>picture_as_pdf</mat-icon>
-    PDF
-  </button>
-  <button
-    mat-flat-button
-    color="primary"
-    type="button"
-    [disabled]="!isDirty || saving"
-    (click)="saveSquad()"
-  >
-    <mat-icon>save</mat-icon>
-    Guardar
-  </button>
+  <div class="sticky-toolbar__actions">
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!squadRows.length || saving"
+      (click)="downloadPdf()"
+      matTooltip="Descargar PDF del plantel"
+    >
+      <mat-icon>picture_as_pdf</mat-icon>
+      PDF
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="!isDirty || saving"
+      (click)="saveSquad()"
+    >
+      <mat-icon>save</mat-icon>
+      Guardar
+    </button>
+  </div>
 </div>
 
 @if (saving) {

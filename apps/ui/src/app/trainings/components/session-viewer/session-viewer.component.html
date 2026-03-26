@@ -4,6 +4,39 @@
   }
   @if (session) {
 
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">{{ dayName }} {{ session.date | date : 'dd/MM/yyyy' : 'UTC' }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
+        mat-stroked-button
+        type="button"
+        (click)="openEditDialog()"
+      >
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+      @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="session.status === TrainingSessionStatusEnum.COMPLETED"
+        (click)="goToAttendance()"
+      >
+        <mat-icon>how_to_reg</mat-icon>
+        Pasar lista
+      </button>
+      }
+    </div>
+  </div>
+
   <mat-card>
     <mat-card-content>
       <div class="session-header">
@@ -98,35 +131,6 @@
     </mat-card-content>
   </mat-card>
   }
-
-  <div class="viewer-actions">
-    <button mat-stroked-button type="button" (click)="backToList()">
-      <mat-icon>arrow_back</mat-icon>
-      Volver
-    </button>
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
-      mat-stroked-button
-      type="button"
-      (click)="openEditDialog()"
-    >
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
-    @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      [disabled]="session.status === TrainingSessionStatusEnum.COMPLETED"
-      (click)="goToAttendance()"
-    >
-      <mat-icon>how_to_reg</mat-icon>
-      Pasar lista
-    </button>
-    }
-  </div>
 
   }
 </div>

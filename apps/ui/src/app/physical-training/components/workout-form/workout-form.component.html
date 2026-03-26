@@ -1,13 +1,22 @@
 <div class="workout-form">
-  <h2 class="workout-form__title">
-    {{ editing ? 'Editar rutina' : 'Nueva rutina' }}
-  </h2>
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">{{ editing ? 'Editar rutina' : 'Nueva rutina' }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" form="workoutForm" [disabled]="submitting">
+        <mat-icon>arrow_forward</mat-icon>
+        {{ editing ? 'Guardar y editar ejercicios' : 'Siguiente: cargar ejercicios' }}
+      </button>
+    </div>
+  </div>
 
   @if (submitting) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="workout-form__form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="workout-form__form" id="workoutForm">
     <mat-card class="workout-form__card">
       <mat-card-header>
         <mat-card-title>Información general</mat-card-title>
@@ -119,12 +128,5 @@
       </mat-card-content>
     </mat-card>
 
-    <div class="workout-form__actions">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
-        <mat-icon>arrow_forward</mat-icon>
-        {{ editing ? 'Guardar y editar ejercicios' : 'Siguiente: cargar ejercicios' }}
-      </button>
-    </div>
   </form>
 </div>

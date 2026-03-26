@@ -1,13 +1,21 @@
 <div class="exercise-form">
-  <h2 class="exercise-form__title">
-    {{ editing ? 'Editar ejercicio' : 'Nuevo ejercicio' }}
-  </h2>
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">{{ editing ? 'Editar ejercicio' : 'Nuevo ejercicio' }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" form="exerciseForm" [disabled]="submitting">
+        {{ editing ? 'Guardar cambios' : 'Crear ejercicio' }}
+      </button>
+    </div>
+  </div>
 
   @if (submitting) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="exercise-form__form">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="exercise-form__form" id="exerciseForm">
     <mat-form-field appearance="outline" class="exercise-form__field">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="name" placeholder="Ej. Sentadilla con barra" />
@@ -103,11 +111,5 @@
       <textarea matInput formControlName="instructions" rows="4"></textarea>
     </mat-form-field>
 
-    <div class="exercise-form__actions">
-      <button mat-stroked-button type="button" (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
-        {{ editing ? 'Guardar cambios' : 'Crear ejercicio' }}
-      </button>
-    </div>
   </form>
 </div>

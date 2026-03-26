@@ -4,6 +4,27 @@
   }
   @if (tournament) {
 
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">{{ tournament.name }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="edit()"
+      >
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+  </div>
+
   <mat-card>
     <mat-card-content>
       <div class="tournament-header">
@@ -71,23 +92,6 @@
     </mat-card-content>
   </mat-card>
   }
-
-  <div class="viewer-actions">
-    <button mat-stroked-button type="button" (click)="backToList()">
-      <mat-icon>arrow_back</mat-icon>
-      Volver
-    </button>
-    <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="edit()"
-    >
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
-  </div>
 
   }
 </div>

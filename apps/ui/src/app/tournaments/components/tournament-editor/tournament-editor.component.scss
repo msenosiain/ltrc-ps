@@ -4,35 +4,49 @@
   gap: 0;
 }
 
-.editor-header {
+.sticky-toolbar {
   position: sticky;
   top: 0;
-  z-index: 10;
-  background: var(--mat-app-background-color, #fafafa);
-  padding: 16px 24px 0;
-  margin-bottom: 12px;
+  z-index: 100;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--mat-app-surface, #fff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  margin-bottom: 16px;
 
-  .editor-title {
-    flex: 1;
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin: 0;
-    color: var(--mat-app-on-background, rgba(0, 0, 0, 0.87));
-  }
-
-  .delete-btn {
-    display: inline-flex;
+  &__title {
+    display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
   }
 
-  mat-progress-bar {
-    flex-basis: 100%;
-    margin-top: 8px;
+  &__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
   }
 }
 

@@ -4,6 +4,42 @@
   }
   @if (player) {
 
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">{{ player.name }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      @if (isOwnProfile()) {
+      <button mat-flat-button color="primary" type="button" (click)="editMyProfile()">
+        <mat-icon>edit</mat-icon>
+        Editar mi perfil
+      </button>
+      }
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.KINE, RoleEnum.TRAINER, RoleEnum.COACH]"
+        mat-stroked-button
+        type="button"
+        (click)="openAvailabilityDialog()"
+      >
+        <mat-icon>health_and_safety</mat-icon>
+        Disponibilidad
+      </button>
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="edit()"
+      >
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <mat-card class="player-header">
     <mat-card-content>
@@ -267,39 +303,6 @@
       }
     </mat-card-content>
   </mat-card>
-
-  <!-- ACCIONES -->
-  <div class="viewer-actions">
-    <button mat-stroked-button type="button" (click)="backToList()">
-      <mat-icon>arrow_back</mat-icon>
-      Volver
-    </button>
-    @if (isOwnProfile()) {
-    <button mat-flat-button color="primary" type="button" (click)="editMyProfile()">
-      <mat-icon>edit</mat-icon>
-      Editar mi perfil
-    </button>
-    }
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.KINE, RoleEnum.TRAINER, RoleEnum.COACH]"
-      mat-stroked-button
-      type="button"
-      (click)="openAvailabilityDialog()"
-    >
-      <mat-icon>health_and_safety</mat-icon>
-      Disponibilidad
-    </button>
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="edit()"
-    >
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
-  </div>
 
   }
 </div>

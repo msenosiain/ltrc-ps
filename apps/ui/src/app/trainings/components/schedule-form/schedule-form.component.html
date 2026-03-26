@@ -1,4 +1,5 @@
 <form
+  id="scheduleForm"
   [formGroup]="scheduleForm"
   (ngSubmit)="onSubmit()"
   class="schedule-form-container"
@@ -153,23 +154,6 @@
       </mat-form-field>
     </div>
   </mat-card>
-
-  <!-- ACCIONES -->
-  <div class="form-actions">
-    <button mat-stroked-button type="button" (click)="onCancel()">
-      <mat-icon>arrow_back</mat-icon>
-      Cancelar
-    </button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="submitting || scheduleForm.invalid"
-    >
-      <mat-icon>{{ schedule ? 'save' : 'add' }}</mat-icon>
-      {{ schedule ? 'Actualizar horario' : 'Crear horario' }}
-    </button>
-  </div>
 
   @if (submitting) {
   <mat-progress-bar mode="indeterminate" />

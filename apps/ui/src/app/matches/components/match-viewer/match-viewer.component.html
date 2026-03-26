@@ -4,6 +4,33 @@
   }
   @if (match) {
 
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="backToList()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">{{ match.opponent ? (match.branch ? 'Rama ' + match.branch + ' ' : '') + (match.division ? match.division + ' ' : '') + 'vs ' + match.opponent : (tournamentName || 'Encuentro') }}</span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      @if (match!.squad.length) {
+        <button mat-stroked-button type="button" (click)="downloadSquadPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          PDF Plantel
+        </button>
+      }
+      <button
+        *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="edit()"
+      >
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    </div>
+  </div>
+
   <mat-card>
     <mat-card-content>
       <div class="match-header">
@@ -313,29 +340,6 @@
       </div>
     </mat-card-content>
   </mat-card>
-
-  <div class="viewer-actions">
-    <button mat-stroked-button type="button" (click)="backToList()">
-      <mat-icon>arrow_back</mat-icon>
-      Volver
-    </button>
-    @if (match!.squad.length) {
-      <button mat-stroked-button type="button" (click)="downloadSquadPdf()">
-        <mat-icon>picture_as_pdf</mat-icon>
-        PDF Plantel
-      </button>
-    }
-    <button
-      *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"
-      mat-flat-button
-      color="primary"
-      type="button"
-      (click)="edit()"
-    >
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
-  </div>
 
   }
 </div>

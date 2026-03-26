@@ -1,24 +1,28 @@
 <div class="user-editor">
-  <div class="editor-header">
-    <h2 class="editor-title">
-      {{ editing ? 'Editar usuario' : 'Nuevo usuario' }}
-    </h2>
-
-    @if (editing && user) {
-    <button
-      mat-stroked-button
-      color="warn"
-      type="button"
-      class="delete-btn"
-      (click)="onDelete()"
-    >
-      <mat-icon>delete</mat-icon>
-      Eliminar usuario
-    </button>
-    } @if (submitting) {
-    <mat-progress-bar mode="indeterminate" />
-    }
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">
+        {{ editing ? 'Editar usuario' : 'Nuevo usuario' }}
+      </span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      @if (editing && user) {
+      <button
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="onDelete()"
+      >
+        <mat-icon>delete</mat-icon>
+        Eliminar usuario
+      </button>
+      }
+    </div>
   </div>
+
+  @if (submitting) {
+  <mat-progress-bar mode="indeterminate" />
+  }
 
   <ltrc-user-form
     [user]="user"

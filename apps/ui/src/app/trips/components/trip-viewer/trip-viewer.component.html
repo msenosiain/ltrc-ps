@@ -6,24 +6,18 @@
 <div class="viewer-container">
 
   <!-- Header -->
-  <div class="viewer-header">
-    <div class="header-left">
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
       <button mat-icon-button (click)="backToList()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <div>
-        <h2 class="trip-name">{{ trip.name }}</h2>
-        <span class="trip-destination">
-          <mat-icon class="inline-icon">place</mat-icon>
-          {{ trip.destination }}
-        </span>
-      </div>
+      <span class="sticky-toolbar__name">{{ trip.name }}</span>
     </div>
-    <div class="header-actions">
-      <span class="status-chip status-{{ trip.status }}">{{ getStatusLabel(trip.status) }}</span>
+    <div class="sticky-toolbar__actions">
       <button
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
-        mat-stroked-button
+        mat-flat-button
+        color="primary"
         (click)="goToEdit()"
       >
         <mat-icon>edit</mat-icon>
@@ -36,6 +30,12 @@
   <mat-card class="info-card">
     <mat-card-content>
       <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Estado</span>
+          <span class="info-value">
+            <span class="status-chip status-{{ trip.status }}">{{ getStatusLabel(trip.status) }}</span>
+          </span>
+        </div>
         <div class="info-item">
           <span class="info-label">Salida</span>
           <span class="info-value">{{ trip.departureDate | date : 'dd/MM/yyyy' }}</span>

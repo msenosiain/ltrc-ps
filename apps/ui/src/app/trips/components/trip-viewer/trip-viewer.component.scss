@@ -1,39 +1,51 @@
 .viewer-container {
-  padding: 24px;
-  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.viewer-header {
+.sticky-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  gap: 16px;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--mat-app-surface, #fff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
 
-  .header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-
-    .trip-name {
-      margin: 0 0 4px;
-      font-size: 1.5rem;
-    }
-
-    .trip-destination {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--mat-sys-on-surface-variant);
-      font-size: 0.9rem;
-    }
-  }
-
-  .header-actions {
+  &__title {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
+    flex-wrap: wrap;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
   }
 }
 

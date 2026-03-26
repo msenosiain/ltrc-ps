@@ -1,12 +1,26 @@
 <div class="editor-container">
-  <div class="editor-header">
-    <h2>{{ editing ? 'Editar viaje' : 'Nuevo viaje' }}</h2>
-    @if (editing) {
-    <button mat-stroked-button color="warn" type="button" (click)="onDelete()">
-      <mat-icon>delete_outline</mat-icon>
-      Eliminar
-    </button>
-    }
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <span class="sticky-toolbar__name">
+        {{ editing ? 'Editar viaje' : 'Nuevo viaje' }}
+      </span>
+    </div>
+    <div class="sticky-toolbar__actions">
+      <button mat-stroked-button type="button" [disabled]="submitting" (click)="onCancel()">
+        <mat-icon>arrow_back</mat-icon>
+        Cancelar
+      </button>
+      @if (editing) {
+      <button mat-stroked-button color="warn" type="button" [disabled]="submitting" (click)="onDelete()">
+        <mat-icon>delete_outline</mat-icon>
+        Eliminar
+      </button>
+      }
+      <button mat-flat-button color="primary" type="submit" form="tripForm" [disabled]="submitting">
+        <mat-icon>save</mat-icon>
+        Guardar
+      </button>
+    </div>
   </div>
 
   <ltrc-trip-form
