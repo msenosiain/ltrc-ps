@@ -34,10 +34,10 @@
         {{ getStatusLabel(workout.status) }}
       </span>
       @if (workout.sport) {
-        <span class="workout-viewer__tag">{{ workout.sport }}</span>
+        <span class="workout-viewer__tag">{{ getSportLabel(workout.sport) }}</span>
       }
       @if (workout.category) {
-        <span class="workout-viewer__tag">{{ workout.category }}</span>
+        <span class="workout-viewer__tag">{{ getCategoryLabel(workout.category) }}</span>
       }
       <span class="workout-viewer__validity">
         {{ workout.validFrom }} – {{ workout.validUntil }}

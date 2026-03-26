@@ -90,12 +90,12 @@
 
     <ng-container matColumnDef="sport">
       <th mat-header-cell *matHeaderCellDef>Rama</th>
-      <td mat-cell *matCellDef="let routine">{{ routine.sport || '—' }}</td>
+      <td mat-cell *matCellDef="let routine">{{ getSportLabel(routine.sport) || '—' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="category">
       <th mat-header-cell *matHeaderCellDef>Categoría</th>
-      <td mat-cell *matCellDef="let routine">{{ routine.category || '—' }}</td>
+      <td mat-cell *matCellDef="let routine">{{ getCategoryLabel(routine.category) || '—' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="validity">

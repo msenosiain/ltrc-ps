@@ -44,6 +44,8 @@ import {
 import { WorkoutsService } from '../../services/workouts.service';
 import { PlayersService } from '../../../players/services/players.service';
 import { getWorkoutStatusLabel, workoutStatusOptions, sportOptions } from '../../physical-training-options';
+import { getCategoryLabel } from '../../../common/category-options';
+import { getSportLabel } from '../../../common/sport-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
@@ -176,6 +178,14 @@ export class WorkoutListComponent implements AfterViewInit, OnDestroy {
 
   getStatusLabel(status: string): string {
     return getWorkoutStatusLabel(status);
+  }
+
+  getSportLabel(sport?: string): string {
+    return getSportLabel(sport as any);
+  }
+
+  getCategoryLabel(category?: string): string {
+    return getCategoryLabel(category as any);
   }
 
   onSportChange(): void {

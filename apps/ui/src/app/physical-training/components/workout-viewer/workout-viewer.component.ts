@@ -9,7 +9,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Exercise, RoleEnum, Workout, WorkoutBlock } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, Exercise, RoleEnum, SportEnum, Workout, WorkoutBlock } from '@ltrc-campo/shared-api-model';
+import { getCategoryLabel } from '../../../common/category-options';
+import { getSportLabel } from '../../../common/sport-options';
 import { WorkoutsService } from '../../services/workouts.service';
 import { getWorkoutStatusLabel } from '../../physical-training-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
@@ -64,6 +66,14 @@ export class WorkoutViewerComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     return getWorkoutStatusLabel(status);
+  }
+
+  getSportLabel(sport?: string): string {
+    return getSportLabel(sport as SportEnum);
+  }
+
+  getCategoryLabel(category?: string): string {
+    return getCategoryLabel(category as CategoryEnum);
   }
 
   getExerciseName(exercise: Exercise | string): string {

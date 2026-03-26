@@ -10,8 +10,8 @@
         <h2 class="blocks-editor__title">{{ workout.name }}</h2>
         <div class="blocks-editor__meta">
           <span class="status-badge status-badge--{{ workout.status }}">{{ getStatusLabel(workout.status) }}</span>
-          @if (workout.sport) { <span class="blocks-editor__tag">{{ workout.sport }}</span> }
-          @if (workout.category) { <span class="blocks-editor__tag">{{ workout.category }}</span> }
+          @if (workout.sport) { <span class="blocks-editor__tag">{{ getSportLabel(workout.sport) }}</span> }
+          @if (workout.category) { <span class="blocks-editor__tag">{{ getCategoryLabel(workout.category) }}</span> }
           <span class="blocks-editor__dates">{{ workout.validFrom }} – {{ workout.validUntil }}</span>
         </div>
       </div>

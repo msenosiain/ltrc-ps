@@ -15,7 +15,9 @@ import { AsyncPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, debounceTime, startWith, map } from 'rxjs';
 import { normalizeSearch } from '../../../common/utils/normalize-search';
-import { Exercise, RoleEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, Exercise, RoleEnum, SportEnum, Workout, WorkoutStatusEnum } from '@ltrc-campo/shared-api-model';
+import { getCategoryLabel } from '../../../common/category-options';
+import { getSportLabel } from '../../../common/sport-options';
 import { WorkoutsService } from '../../services/workouts.service';
 import { ExercisesService } from '../../services/exercises.service';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
@@ -251,6 +253,14 @@ export class WorkoutBlocksEditorComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     return getWorkoutStatusLabel(status);
+  }
+
+  getSportLabel(sport?: string): string {
+    return getSportLabel(sport as SportEnum);
+  }
+
+  getCategoryLabel(category?: string): string {
+    return getCategoryLabel(category as CategoryEnum);
   }
 
   onPublish(): void {
