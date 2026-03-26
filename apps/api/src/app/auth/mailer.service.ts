@@ -1,32 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { MailerService as NestMailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailerService {
   private readonly logger = new Logger(MailerService.name);
-  private transporter: nodemailer.Transporter;
 
-  constructor(private readonly config: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: config.get<string>('SMTP_HOST', 'smtp.gmail.com'),
-      port: config.get<number>('SMTP_PORT', 587),
-      secure: config.get<string>('SMTP_SECURE', 'false') === 'true',
-      auth: {
-        user: config.get<string>('SMTP_USER'),
-        pass: config.get<string>('SMTP_PASS'),
-      },
-    });
-  }
+  constructor(
+    private readonly mailer: NestMailerService,
+    private readonly config: ConfigService,
+  ) {}
 
   async sendPasswordReset(to: string, name: string, token: string): Promise<void> {
     const appUrl = this.config.get<string>('APP_URL', 'http://localhost:4200');
-    const from = this.config.get<string>('SMTP_FROM', 'LTRC Campo <no-reply@lostordos.com.ar>');
     const link = `${appUrl}/auth/reset-password?token=${token}`;
 
     try {
-      await this.transporter.sendMail({
-        from,
+      await this.mailer.sendMail({
         to,
         subject: 'Restablecer contraseña — LTRC Campo',
         html: `

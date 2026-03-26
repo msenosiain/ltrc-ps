@@ -4,6 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { AuthService } from './auth.service';
 import { MailerService } from './mailer.service';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -17,15 +18,11 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        // Prefer a dedicated AUTH_JWT_SECRET. For backward compatibility,
-        // fall back to GOOGLE_AUTH_JWT_SECRET if AUTH_JWT_SECRET is not set.
-        // Do NOT use a hard-coded weak default in production.
         const secret =
           configService.get<string>('AUTH_JWT_SECRET') ||
           configService.get<string>('GOOGLE_AUTH_JWT_SECRET');
 
         if (!secret) {
-          // Fail fast so deployment/configurations without a secret are obvious.
           throw new Error(
             'Missing JWT secret: please set AUTH_JWT_SECRET (or GOOGLE_AUTH_JWT_SECRET)'
           );
@@ -36,6 +33,24 @@ import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
           signOptions: { expiresIn: '1h' },
         };
       },
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get<string>('SMTP_HOST', 'smtp.gmail.com'),
+          port: config.get<number>('SMTP_PORT', 587),
+          secure: config.get<string>('SMTP_SECURE', 'false') === 'true',
+          auth: {
+            user: config.get<string>('SMTP_USER'),
+            pass: config.get<string>('SMTP_PASS'),
+          },
+        },
+        defaults: {
+          from: config.get<string>('SMTP_FROM', 'LTRC Campo <no-reply@lostordos.com.ar>'),
+        },
+      }),
     }),
     UsersModule,
   ],
