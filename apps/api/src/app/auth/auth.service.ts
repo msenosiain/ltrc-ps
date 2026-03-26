@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   UnauthorizedException,
   ConflictException,
   HttpException,
@@ -17,6 +18,8 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -83,14 +86,18 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     const user = await this.usersService.findOneByEmail(email);
-    // Silently succeed even if email not found — don't reveal existence
-    if (!user || user.googleId) return;
+    if (!user) {
+      this.logger.warn(`forgotPassword: no user found for email ${email}`);
+      return; // silently succeed — don't reveal if email exists
+    }
 
+    this.logger.log(`forgotPassword: sending reset email to ${email}`);
     const token = crypto.randomBytes(32).toString('hex');
     const expires = new Date(Date.now() + 3600 * 1000); // 1 hour
 
     await this.usersService.setResetToken((user as any)._id.toString(), token, expires);
     await this.mailerService.sendPasswordReset(user.email, user.name, token);
+    this.logger.log(`forgotPassword: email sent to ${email}`);
   }
 
   async resetPassword(token: string, newPassword: string): Promise<void> {
