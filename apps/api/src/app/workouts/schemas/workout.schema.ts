@@ -1,6 +1,6 @@
 import { Schema, Types } from 'mongoose';
 import { WorkoutEntity } from './workout.entity';
-import { CategoryEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, DayOfWeekEnum, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
 const SetEntrySchema = new Schema(
@@ -41,6 +41,7 @@ export const WorkoutSchema = new Schema<WorkoutEntity>(
     category: { type: String, enum: Object.values(CategoryEnum) },
     validFrom: { type: String, required: true },
     validUntil: { type: String, required: true },
+    daysOfWeek: [{ type: String, enum: Object.values(DayOfWeekEnum) }],
     assignedPlayers: [{ type: Types.ObjectId, ref: 'Player' }],
     assignedBranches: [{ type: String }],
     targetPositions: [{ type: String }],

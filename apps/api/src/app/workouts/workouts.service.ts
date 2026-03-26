@@ -64,13 +64,33 @@ export class WorkoutsService {
     const player = await this.playerModel.findOne({ userId }).exec();
     if (!player) return [];
 
+    const p = player as any;
+
     return this.workoutModel
       .find({
-        assignedPlayers: player._id,
+        status: WorkoutStatusEnum.ACTIVE,
         validFrom: { $lte: today },
         validUntil: { $gte: today },
+        $or: [
+          { assignedPlayers: player._id },
+          {
+            assignedPlayers: { $size: 0 },
+            $and: [
+              { $or: [{ sport: { $exists: false } }, { sport: null }, { sport: '' }, { sport: p.sport }] },
+              { $or: [{ category: { $exists: false } }, { category: null }, { category: '' }, { category: p.category }] },
+              {
+                $or: [
+                  { targetPositions: { $size: 0 } },
+                  { targetPositions: { $exists: false } },
+                  { targetPositions: { $in: p.positions ?? [] } },
+                ],
+              },
+            ],
+          },
+        ],
       })
       .populate(POPULATE_BLOCKS)
+      .sort({ name: 1 })
       .exec();
   }
 

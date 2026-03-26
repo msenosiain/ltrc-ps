@@ -67,18 +67,18 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Posiciones (span 2, solo si hay deporte seleccionado) -->
-          @if (form.get('sport')?.value) {
-            <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
-              <mat-label>Posiciones objetivo</mat-label>
-              <mat-select formControlName="targetPositions" multiple>
-                @for (opt of getPositionOptions(); track opt.id) {
-                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
-                }
-              </mat-select>
-              <mat-hint>Dejá vacío para aplicar a todas las posiciones del deporte</mat-hint>
-            </mat-form-field>
-          }
+l          <!-- Días de semana | (placeholder) -->
+          <mat-form-field appearance="outline" class="workout-form__field">
+            <mat-label>Días sugeridos</mat-label>
+            <mat-select formControlName="daysOfWeek" multiple>
+              @for (opt of dayOptions; track opt.value) {
+                <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              }
+            </mat-select>
+            <mat-hint>Orientativo para el jugador</mat-hint>
+          </mat-form-field>
+
+          <div class="workout-form__field"></div>
 
           <!-- Válido desde | Válido hasta -->
           <mat-form-field appearance="outline" class="workout-form__field">
@@ -101,7 +101,7 @@
             }
           </mat-form-field>
 
-          <!-- Estado (solo en edición) -->
+          <!-- Estado | Posiciones (solo en edición) -->
           @if (editing) {
             <mat-form-field appearance="outline" class="workout-form__field">
               <mat-label>Estado</mat-label>
@@ -112,7 +112,25 @@
               </mat-select>
             </mat-form-field>
 
-            <div class="workout-form__field"></div>
+            <mat-form-field appearance="outline" class="workout-form__field">
+              <mat-label>Posiciones objetivo</mat-label>
+              <mat-select formControlName="targetPositions" multiple>
+                @for (opt of getPositionOptions(); track opt.id) {
+                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Vacío = todas las posiciones</mat-hint>
+            </mat-form-field>
+          } @else if (form.get('sport')?.value) {
+            <mat-form-field appearance="outline" class="workout-form__field--span2 workout-form__field">
+              <mat-label>Posiciones objetivo</mat-label>
+              <mat-select formControlName="targetPositions" multiple>
+                @for (opt of getPositionOptions(); track opt.id) {
+                  <mat-option [value]="opt.id">{{ opt.name }}</mat-option>
+                }
+              </mat-select>
+              <mat-hint>Vacío = todas las posiciones</mat-hint>
+            </mat-form-field>
           }
 
           <!-- Jugadores (span 2) -->

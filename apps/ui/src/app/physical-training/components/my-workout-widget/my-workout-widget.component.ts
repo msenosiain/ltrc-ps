@@ -1,45 +1,55 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Workout } from '@ltrc-campo/shared-api-model';
-import { WorkoutLogsService } from '../../services/workout-logs.service';
+import { DayOfWeekEnum, Workout } from '@ltrc-campo/shared-api-model';
+import { WorkoutsService } from '../../services/workouts.service';
+
+const DAY_LABELS: Record<DayOfWeekEnum, string> = {
+  [DayOfWeekEnum.MONDAY]: 'Lun',
+  [DayOfWeekEnum.TUESDAY]: 'Mar',
+  [DayOfWeekEnum.WEDNESDAY]: 'Mié',
+  [DayOfWeekEnum.THURSDAY]: 'Jue',
+  [DayOfWeekEnum.FRIDAY]: 'Vie',
+  [DayOfWeekEnum.SATURDAY]: 'Sáb',
+  [DayOfWeekEnum.SUNDAY]: 'Dom',
+};
 
 @Component({
   selector: 'ltrc-my-workout-widget',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, MatProgressBarModule],
+  imports: [MatIconModule, MatProgressBarModule],
   templateUrl: './my-workout-widget.component.html',
   styleUrl: './my-workout-widget.component.scss',
 })
 export class MyWorkoutWidgetComponent implements OnInit {
-  private readonly workoutLogsService = inject(WorkoutLogsService);
+  private readonly workoutsService = inject(WorkoutsService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  workout: Workout | null = null;
+  workouts: Workout[] = [];
   loading = true;
 
   ngOnInit(): void {
-    this.workoutLogsService
-      .getTodayWorkout()
+    this.workoutsService
+      .getMyWorkouts()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (w) => { this.workout = w; this.loading = false; },
+        next: (list) => { this.workouts = list; this.loading = false; },
         error: () => { this.loading = false; },
       });
   }
 
-  get exerciseCount(): number {
-    return (this.workout?.blocks ?? []).reduce(
-      (sum, b) => sum + (b.exercises?.length ?? 0),
-      0
-    );
+  exerciseCount(workout: Workout): number {
+    return (workout.blocks ?? []).reduce((sum, b) => sum + (b.exercises?.length ?? 0), 0);
   }
 
-  goToWorkout(): void {
-    this.router.navigate(['/dashboard/physical/my-workout']);
+  daysLabel(workout: Workout): string {
+    return (workout.daysOfWeek ?? []).map((d) => DAY_LABELS[d]).join(' · ');
+  }
+
+  goToWorkout(id: string): void {
+    this.router.navigate(['/dashboard/physical/my-workout'], { queryParams: { id } });
   }
 }

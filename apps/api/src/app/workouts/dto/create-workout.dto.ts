@@ -8,7 +8,7 @@ import {
   Matches,
   ValidateNested,
 } from 'class-validator';
-import { CategoryEnum, HockeyPositions, RugbyPositions, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+ import { CategoryEnum, DayOfWeekEnum, HockeyPositions, RugbyPositions, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 
 export class SetEntryDto {
   @IsOptional()
@@ -85,6 +85,11 @@ export class CreateWorkoutDto {
   @IsString()
   @Matches(/^\d{4}-\d{2}-\d{2}$/)
   validUntil: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(DayOfWeekEnum, { each: true })
+  daysOfWeek?: DayOfWeekEnum[];
 
   @IsOptional()
   @IsArray()

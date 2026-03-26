@@ -10,10 +10,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseVideo, Workout, WorkoutLog, WorkoutLogBlock, WorkoutLogSetEntry } from '@ltrc-campo/shared-api-model';
 import { ExerciseVideoDialogComponent } from '../exercise-video-dialog/exercise-video-dialog.component';
 import { WorkoutLogsService } from '../../services/workout-logs.service';
+import { WorkoutsService } from '../../services/workouts.service';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
 @Component({
@@ -35,9 +36,11 @@ import { getErrorMessage } from '../../../common/utils/error-message';
 })
 export class MyWorkoutComponent implements OnInit {
   private readonly workoutLogsService = inject(WorkoutLogsService);
+  private readonly workoutsService = inject(WorkoutsService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
   todayWorkout: Workout | null = null;
@@ -49,8 +52,12 @@ export class MyWorkoutComponent implements OnInit {
   private exerciseVideosMap = new Map<string, { videos: ExerciseVideo[]; name: string }>();
 
   ngOnInit(): void {
-    this.workoutLogsService
-      .getTodayWorkout()
+    const workoutId = this.route.snapshot.queryParamMap.get('id');
+    const source$ = workoutId
+      ? this.workoutsService.getWorkoutById(workoutId)
+      : this.workoutLogsService.getTodayWorkout();
+
+    source$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (routine) => {

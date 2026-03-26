@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { CategoryEnum, HockeyPositions, RugbyPositions, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+ import { CategoryEnum, DayOfWeekEnum, HockeyPositions, RugbyPositions, WorkoutStatusEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { ExerciseEntity } from '../../exercises/schemas/exercise.entity';
 
 export class SetEntryEntity {
@@ -31,6 +31,7 @@ export class WorkoutEntity extends Document {
   category?: CategoryEnum;
   validFrom: string;
   validUntil: string;
+  daysOfWeek: DayOfWeekEnum[];
   assignedPlayers: Types.ObjectId[];
   assignedBranches: string[];
   targetPositions: (RugbyPositions | HockeyPositions)[];

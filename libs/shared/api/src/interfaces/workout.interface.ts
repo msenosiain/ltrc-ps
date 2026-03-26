@@ -1,4 +1,4 @@
-import { WorkoutStatusEnum } from '../enums';
+import { DayOfWeekEnum, WorkoutStatusEnum } from '../enums';
 import { PlayerPosition } from './player.interface';
 import { Exercise } from './exercise.interface';
 
@@ -31,6 +31,7 @@ export interface Workout {
   category?: string;
   validFrom: string;
   validUntil: string;
+  daysOfWeek?: DayOfWeekEnum[];
   assignedPlayers: (string | { id: string; name: string })[];
   assignedBranches?: string[];
   targetPositions?: PlayerPosition[];

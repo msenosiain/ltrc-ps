@@ -24,6 +24,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { combineLatest, startWith } from 'rxjs';
 import {
+  DayOfWeekEnum,
   HockeyBranchEnum,
   WorkoutStatusEnum,
   SportEnum,
@@ -68,6 +69,15 @@ export class WorkoutFormComponent implements OnInit {
     label: v === SportEnum.RUGBY ? 'Rugby' : 'Hockey',
   }));
   readonly branchOptions = Object.values(HockeyBranchEnum);
+  readonly dayOptions = [
+    { value: DayOfWeekEnum.MONDAY, label: 'Lunes' },
+    { value: DayOfWeekEnum.TUESDAY, label: 'Martes' },
+    { value: DayOfWeekEnum.WEDNESDAY, label: 'Miércoles' },
+    { value: DayOfWeekEnum.THURSDAY, label: 'Jueves' },
+    { value: DayOfWeekEnum.FRIDAY, label: 'Viernes' },
+    { value: DayOfWeekEnum.SATURDAY, label: 'Sábado' },
+    { value: DayOfWeekEnum.SUNDAY, label: 'Domingo' },
+  ];
 
   form!: FormGroup;
   editing = false;
@@ -84,6 +94,7 @@ export class WorkoutFormComponent implements OnInit {
       category: [null],
       validFrom: [null as Date | null, Validators.required],
       validUntil: [null as Date | null, Validators.required],
+      daysOfWeek: [[]],
       assignedPlayers: [[]],
       assignedBranches: [[]],
       targetPositions: [[]],
@@ -136,6 +147,7 @@ export class WorkoutFormComponent implements OnInit {
             assignedPlayers: (workout.assignedPlayers ?? []).map((p) =>
               typeof p === 'string' ? p : (p as any).id ?? p
             ),
+            daysOfWeek: workout.daysOfWeek ?? [],
             assignedBranches: workout.assignedBranches ?? [],
             targetPositions: workout.targetPositions ?? [],
             status: workout.status,
@@ -170,6 +182,7 @@ export class WorkoutFormComponent implements OnInit {
       category: raw.category || undefined,
       validFrom: raw.validFrom ? format(raw.validFrom, 'yyyy-MM-dd') : undefined,
       validUntil: raw.validUntil ? format(raw.validUntil, 'yyyy-MM-dd') : undefined,
+      daysOfWeek: raw.daysOfWeek ?? [],
       assignedPlayers: raw.assignedPlayers ?? [],
       assignedBranches: raw.assignedBranches ?? [],
       targetPositions: raw.targetPositions ?? [],
