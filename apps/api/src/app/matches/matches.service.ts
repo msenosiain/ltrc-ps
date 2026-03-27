@@ -283,6 +283,7 @@ export class MatchesService {
     const items = await this.matchModel.populate(rawItems, POPULATE_FIELDS as any);
     const stripped = items.map((m: any) => {
       m.squad = (m.squad ?? []).filter((e: any) => e.player != null);
+      if (!m.id && m._id) m.id = m._id.toString();
       return m;
     });
 
