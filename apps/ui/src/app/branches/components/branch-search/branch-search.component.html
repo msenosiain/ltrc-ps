@@ -1,5 +1,12 @@
 <div class="search-form">
-  <div class="filters-container" [formGroup]="searchForm">
+  <div class="search-row">
+    <button mat-stroked-button type="button" class="filters-toggle" (click)="filtersExpanded = !filtersExpanded">
+      <mat-icon>tune</mat-icon>
+      {{ filtersExpanded ? 'Ocultar' : 'Filtros' }}
+    </button>
+  </div>
+
+  <div class="filters-row" [formGroup]="searchForm" [class.filters-row--open]="filtersExpanded">
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Temporada</mat-label>
       <mat-select formControlName="season">

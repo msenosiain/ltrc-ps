@@ -48,6 +48,7 @@ export class ScheduleSearchComponent implements OnInit {
 
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: TrainingOption<CategoryEnum>[] = getCategoryOptionsBySport();
+  filtersExpanded = false;
   showSportFilter = true;
   showCategoryFilter = true;
 

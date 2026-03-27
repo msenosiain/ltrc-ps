@@ -7,7 +7,7 @@ import { getCategoryLabel } from '../../common/category-options';
 
 @Injectable({ providedIn: 'root' })
 export class SquadPdfService {
-  private readonly LOGO_PATH = '/logo-ltrc.png';
+  private readonly LOGO_PATH = '/escudo.png';
   private readonly PRIMARY = [30, 30, 30] as [number, number, number];
   private readonly HEADER_BG = [20, 20, 20] as [number, number, number];
   private readonly SECTION_BG = [245, 245, 245] as [number, number, number];

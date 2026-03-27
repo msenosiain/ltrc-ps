@@ -42,6 +42,7 @@ export class UserSearchComponent implements OnInit {
 
   @Output() readonly filtersChange = new EventEmitter<UserFilters>();
 
+  filtersExpanded = false;
   readonly roleOptions = roleOptions;
 
   readonly searchForm = this.fb.group({

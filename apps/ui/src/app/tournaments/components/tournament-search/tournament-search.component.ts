@@ -50,6 +50,7 @@ export class TournamentSearchComponent implements OnInit {
 
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
+  filtersExpanded = false;
   showSportFilter = true;
 
   readonly searchForm = this.fb.group({

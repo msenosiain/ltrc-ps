@@ -68,6 +68,7 @@ export class MatchSearchComponent implements OnInit {
   opponents: string[] = [];
   divisions: string[] = [];
 
+  filtersExpanded = false;
   showSportFilter = true;
   showCategoryFilter = true;
 

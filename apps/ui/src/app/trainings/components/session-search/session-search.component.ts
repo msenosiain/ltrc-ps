@@ -54,6 +54,7 @@ export class SessionSearchComponent implements OnInit {
   readonly statusOptions = sessionStatusOptions;
   sportOptions: SportOption[] = sportOptions;
   categoryOptions: TrainingOption<CategoryEnum>[] = getCategoryOptionsBySport();
+  filtersExpanded = false;
   showSportFilter = true;
   showCategoryFilter = true;
 

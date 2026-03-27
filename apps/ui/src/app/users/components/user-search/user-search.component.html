@@ -1,5 +1,5 @@
 <form [formGroup]="searchForm" class="search-form">
-  <div class="filters-container">
+  <div class="search-row">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar</mat-label>
       <input
@@ -15,7 +15,13 @@
       <mat-icon matSuffix>search</mat-icon>
       }
     </mat-form-field>
+    <button mat-stroked-button type="button" class="filters-toggle" (click)="filtersExpanded = !filtersExpanded">
+      <mat-icon>tune</mat-icon>
+      {{ filtersExpanded ? 'Ocultar' : 'Filtros' }}
+    </button>
+  </div>
 
+  <div class="filters-row" [class.filters-row--open]="filtersExpanded">
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Rol</mat-label>
       <mat-select formControlName="role">

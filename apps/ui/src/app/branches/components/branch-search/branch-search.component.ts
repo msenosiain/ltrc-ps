@@ -9,7 +9,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { debounceTime } from 'rxjs';
 import {
@@ -36,7 +38,7 @@ export interface BranchSearchFilters {
 @Component({
   selector: 'ltrc-branch-search',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './branch-search.component.html',
   styleUrl: './branch-search.component.scss',
 })
@@ -60,6 +62,7 @@ export class BranchSearchComponent implements OnInit {
     branch: [undefined as HockeyBranchEnum | undefined],
   });
 
+  filtersExpanded = false;
   showCategoryFilter = true;
   showBranchFilter = true;
 

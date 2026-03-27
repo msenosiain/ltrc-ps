@@ -42,6 +42,7 @@ export class TripSearchComponent implements OnInit {
   @Input() initialFilters?: Record<string, unknown>;
   @Output() readonly filtersChange = new EventEmitter<TripListFilters>();
 
+  filtersExpanded = false;
   readonly sportOptions: SportOption[] = sportOptions;
   readonly statusOptions: TripOption<TripStatusEnum>[] = tripStatusOptions;
 
