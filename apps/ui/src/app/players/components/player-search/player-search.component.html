@@ -1,5 +1,5 @@
 <form [formGroup]="searchForm" class="search-form">
-  <div class="filters-container">
+  <div class="search-row">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Apellido o Apodo</mat-label>
       <input matInput placeholder="Ej: Perez o Pepe" formControlName="searchTerm" />
@@ -10,6 +10,13 @@
       }
     </mat-form-field>
 
+    <button mat-stroked-button type="button" class="filters-toggle" (click)="filtersExpanded = !filtersExpanded">
+      <mat-icon>tune</mat-icon>
+      {{ filtersExpanded ? 'Ocultar' : 'Filtros' }}
+    </button>
+  </div>
+
+  <div class="filters-row" [class.filters-row--open]="filtersExpanded">
     @if (showSportFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Deporte</mat-label>

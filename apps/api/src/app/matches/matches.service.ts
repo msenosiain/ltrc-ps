@@ -7,7 +7,7 @@ import { MatchEntity } from './schemas/match.entity';
 import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { PaginationDto } from '../shared/pagination.dto';
-import { BlockEnum, CategoryEnum, MatchStatusEnum, PaginatedResponse, RoleEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
+import { BlockEnum, CATEGORY_AGE_RANK, CategoryEnum, MatchStatusEnum, PaginatedResponse, RoleEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
@@ -226,27 +226,67 @@ export class MatchesService {
         queryFilters['category'] = { $in: categories };
     }
 
-    const sort: Record<string, 1 | -1> = {};
     if (sortBy) {
-      sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-      sort['category'] = 1;
-    } else {
-      sort['date'] = -1;
-      sort['category'] = 1;
+      const sort: Record<string, 1 | -1> = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+      const [items, total] = await Promise.all([
+        this.matchModel
+          .find(queryFilters)
+          .skip(skip)
+          .limit(size)
+          .sort(sort)
+          .populate(POPULATE_FIELDS)
+          .exec(),
+        this.matchModel.countDocuments(queryFilters).exec(),
+      ]);
+      return { items, total, page, size };
     }
 
-    const [items, total] = await Promise.all([
-      this.matchModel
-        .find(queryFilters)
-        .skip(skip)
-        .limit(size)
-        .sort(sort)
-        .populate(POPULATE_FIELDS)
-        .exec(),
+    // Default sort: upcoming matches first (ASC by date), past matches below (DESC by date).
+    // Within the same day: earlier time first, then highest category rank first.
+    const now = new Date();
+    const categoryRankSwitch = {
+      $switch: {
+        branches: Object.entries(CATEGORY_AGE_RANK).map(([cat, rank]) => ({
+          case: { $eq: ['$category', cat] },
+          then: rank,
+        })),
+        default: -1,
+      },
+    };
+
+    const pipeline: any[] = [
+      { $match: queryFilters },
+      {
+        $addFields: {
+          _isPast: { $cond: [{ $lt: ['$date', now] }, 1, 0] },
+          _distanceMs: {
+            $cond: [
+              { $gte: ['$date', now] },
+              { $subtract: ['$date', now] },
+              { $subtract: [now, '$date'] },
+            ],
+          },
+          _categoryRank: categoryRankSwitch,
+        },
+      },
+      { $sort: { _isPast: 1, _distanceMs: 1, time: 1, _categoryRank: -1 } },
+      { $skip: skip },
+      { $limit: size },
+      { $project: { _isPast: 0, _distanceMs: 0, _categoryRank: 0 } },
+    ];
+
+    const [rawItems, total] = await Promise.all([
+      this.matchModel.aggregate(pipeline).exec(),
       this.matchModel.countDocuments(queryFilters).exec(),
     ]);
 
-    return { items, total, page, size };
+    const items = await this.matchModel.populate(rawItems, POPULATE_FIELDS as any);
+    const stripped = items.map((m: any) => {
+      m.squad = (m.squad ?? []).filter((e: any) => e.player != null);
+      return m;
+    });
+
+    return { items: stripped, total, page, size };
   }
 
   async addAttachment(matchId: string, file: MulterFile, name?: string, visibility: 'all' | 'staff' | 'players' = 'all', targetPlayers?: string[]) {

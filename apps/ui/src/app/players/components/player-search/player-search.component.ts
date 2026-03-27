@@ -78,6 +78,7 @@ export class PlayerSearchComponent implements OnInit {
   showSportFilter = true;
   showCategoryFilter = true;
   showBranchFilter = false;
+  filtersExpanded = false;
 
   private allowedCategories: CategoryEnum[] | undefined;
 
