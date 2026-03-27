@@ -21,7 +21,7 @@ export const PLAYERS_ROUTES: Routes = [
     path: 'create',
     component: PlayerEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Crear jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
+    data: { title: 'Crear jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN, RoleEnum.COACH] },
   },
   {
     path: ':id',
@@ -32,6 +32,6 @@ export const PLAYERS_ROUTES: Routes = [
     path: ':id/edit',
     component: PlayerEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Editar jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
+    data: { title: 'Editar jugador', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN, RoleEnum.COACH] },
   },
 ];

@@ -12,6 +12,7 @@
       </button>
       @if (editing && player) {
       <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
         mat-stroked-button
         color="warn"
         type="button"

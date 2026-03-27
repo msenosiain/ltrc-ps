@@ -82,8 +82,9 @@ export class PlayersController {
   }
 
   @Post()
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH)
   @UseInterceptors(FileInterceptor('photo'))
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async create(
     @Body() dto: CreatePlayerDto,
     @UploadedFile() photo?: MulterFile,
@@ -93,7 +94,7 @@ export class PlayersController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH)
   @UseInterceptors(FileInterceptor('photo'))
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(

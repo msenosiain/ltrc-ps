@@ -12,13 +12,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PlayersService } from '../../services/players.service';
-import { Player } from '@ltrc-campo/shared-api-model';
+import { Player, RoleEnum } from '@ltrc-campo/shared-api-model';
 import {
   PlayerFormComponent,
   PlayerFormSubmitEvent,
 } from '../player-form/player-form.component';
 import { FormSkeletonComponent } from '../../../common/components/form-skeleton/form-skeleton.component';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getErrorMessage } from '../../../common/utils/error-message';
 
@@ -31,6 +32,7 @@ import { getErrorMessage } from '../../../common/utils/error-message';
     MatIconModule,
     PlayerFormComponent,
     FormSkeletonComponent,
+    AllowedRolesDirective,
   ],
   templateUrl: './player-editor.component.html',
   styleUrl: './player-editor.component.scss',
@@ -42,6 +44,8 @@ export class PlayerEditorComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly RoleEnum = RoleEnum;
 
   player?: Player;
   editing = false;
