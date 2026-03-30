@@ -341,5 +341,26 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Sección Cobros -->
+  <mat-card class="section-card" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH]">
+    <mat-card-header>
+      <mat-card-title>
+        <button mat-icon-button (click)="showPaymentsPanel = !showPaymentsPanel">
+          <mat-icon>{{ showPaymentsPanel ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+        Cobros
+      </mat-card-title>
+    </mat-card-header>
+    @if (showPaymentsPanel) {
+      <mat-card-content>
+        <ltrc-payment-links-panel
+          [entityId]="match!.id!"
+          [entityDate]="match!.date"
+          [entityLabel]="matchPaymentLabel"
+        />
+      </mat-card-content>
+    }
+  </mat-card>
+
   }
 </div>

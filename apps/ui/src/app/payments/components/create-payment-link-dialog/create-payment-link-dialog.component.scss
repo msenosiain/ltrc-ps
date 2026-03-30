@@ -1,0 +1,51 @@
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 8px;
+  min-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.installment-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.fee-preview {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: #fafafa;
+
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 3px 0;
+
+    &--sub {
+      color: #aaa;
+      font-size: 11px;
+    }
+
+    &--fee {
+      color: #888;
+    }
+
+    &--net {
+      color: #2e7d32;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+  }
+
+  mat-divider {
+    margin: 6px 0;
+  }
+}

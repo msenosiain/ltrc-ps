@@ -1,0 +1,459 @@
+import {
+  BadRequestException,
+  GoneException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
+import { Model, Types } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
+import PDFDocument from 'pdfkit';
+import MercadoPagoConfig, { Payment as MpPayment, Preference } from 'mercadopago';
+import { PaymentLinkEntity } from './schemas/payment-link.entity';
+import { PaymentEntity } from './schemas/payment.entity';
+import { PlayerEntity } from '../players/schemas/player.entity';
+import { MatchEntity } from '../matches/schemas/match.entity';
+import { TripEntity } from '../trips/schemas/trip.entity';
+import { CreatePaymentLinkDto } from './dto/create-payment-link.dto';
+import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
+import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
+import { User } from '../users/schemas/user.schema';
+import {
+  PaymentEntityTypeEnum,
+  PaymentLinkStatusEnum,
+  PaymentMethodEnum,
+  PaymentStatusEnum,
+} from '@ltrc-campo/shared-api-model';
+
+@Injectable()
+export class PaymentsService {
+  private readonly mpClient: MercadoPagoConfig;
+  private readonly appBaseUrl: string;
+  private readonly mpFeeRate: number;
+
+  constructor(
+    @InjectModel(PaymentLinkEntity.name)
+    private readonly paymentLinkModel: Model<PaymentLinkEntity>,
+    @InjectModel(PaymentEntity.name)
+    private readonly paymentModel: Model<PaymentEntity>,
+    @InjectModel(PlayerEntity.name)
+    private readonly playerModel: Model<PlayerEntity>,
+    @InjectModel(MatchEntity.name)
+    private readonly matchModel: Model<MatchEntity>,
+    @InjectModel(TripEntity.name)
+    private readonly tripModel: Model<TripEntity>,
+    private readonly configService: ConfigService
+  ) {
+    // MP_FEE_RATE se configura como porcentaje (ej: 5 = 5%, 4.83 = 4.83%)
+    const feePercent = this.configService.get<number>('MP_FEE_RATE', 4.83);
+    this.mpFeeRate = feePercent / 100;
+    this.mpClient = new MercadoPagoConfig({
+      accessToken: this.configService.get<string>('MP_ACCESS_TOKEN', ''),
+    });
+    this.appBaseUrl = this.configService.get<string>(
+      'APP_BASE_URL',
+      'http://localhost:4200'
+    );
+  }
+
+  // ── Cálculo de comisión ────────────────────────────────────────────────────
+
+  calculateFee(netTarget: number) {
+    // El manager ingresa lo que quiere recibir neto; calculamos el bruto que paga el jugador
+    const rawGross = netTarget / (1 - this.mpFeeRate);
+    const grossAmount = Math.ceil(rawGross / 10) * 10;
+    const mpFeeAmount = Math.round(grossAmount * this.mpFeeRate * 100) / 100;
+    const netAmount = Math.round((grossAmount - mpFeeAmount) * 100) / 100;
+    return { mpFeeRate: this.mpFeeRate, grossAmount, mpFeeAmount, netAmount };
+  }
+
+  getConfig() {
+    return { mpFeeRate: this.mpFeeRate };
+  }
+
+  async getFieldOptions() {
+    const concepts = await this.paymentLinkModel.distinct('concept');
+    return { concepts: concepts.sort() };
+  }
+
+  // ── PaymentLinks ──────────────────────────────────────────────────────────
+
+  async createLink(dto: CreatePaymentLinkDto, caller: User) {
+    const { mpFeeRate, grossAmount, mpFeeAmount, netAmount } = this.calculateFee(dto.amount);
+
+    return this.paymentLinkModel.create({
+      linkToken: uuidv4(),
+      entityType: dto.entityType,
+      entityId: new Types.ObjectId(dto.entityId),
+      concept: dto.concept,
+      description: dto.description,
+      amount: grossAmount,
+      mpFeeRate,
+      mpFeeAmount,
+      netAmount,
+      paymentType: dto.paymentType,
+      installmentNumber: dto.installmentNumber,
+      installmentTotal: dto.installmentTotal,
+      expiresAt: this.endOfDay(dto.expiresAt),
+      status: PaymentLinkStatusEnum.ACTIVE,
+      createdBy: (caller as any)._id,
+    });
+  }
+
+  async getLinksForEntity(entityType: PaymentEntityTypeEnum, entityId: string) {
+    return this.paymentLinkModel
+      .find({ entityType, entityId: new Types.ObjectId(entityId) })
+      .sort({ createdAt: -1 });
+  }
+
+  async cancelLink(id: string) {
+    const link = await this.paymentLinkModel.findById(id);
+    if (!link) throw new NotFoundException('Link de pago no encontrado');
+    link.status = PaymentLinkStatusEnum.CANCELLED;
+    return link.save();
+  }
+
+  // ── Endpoints públicos ────────────────────────────────────────────────────
+
+  async getPublicLinkInfo(token: string) {
+    const link = await this.paymentLinkModel.findOne({ linkToken: token }).lean();
+    if (!link) throw new NotFoundException('Link de pago no encontrado');
+    this.assertLinkActive(link);
+
+    const entityLabel = await this.resolveEntityLabel(
+      link.entityType,
+      link.entityId.toString()
+    );
+
+    return {
+      linkToken: link.linkToken,
+      concept: link.concept,
+      description: link.description,
+      amount: link.amount,
+      mpFeeRate: link.mpFeeRate,
+      mpFeeAmount: link.mpFeeAmount,
+      netAmount: link.netAmount,
+      paymentType: link.paymentType,
+      installmentNumber: link.installmentNumber,
+      installmentTotal: link.installmentTotal,
+      expiresAt: link.expiresAt,
+      entityType: link.entityType,
+      entityLabel,
+    };
+  }
+
+  async validateDni(token: string, dni: string) {
+    const link = await this.paymentLinkModel.findOne({ linkToken: token });
+    if (!link) throw new NotFoundException('Link de pago no encontrado');
+    this.assertLinkActive(link);
+
+    const player = await this.playerModel
+      .findOne({ idNumber: dni })
+      .select('id name idNumber email')
+      .lean();
+    if (!player) throw new NotFoundException('No se encontró un jugador con ese DNI');
+
+    return { playerId: player._id.toString(), playerName: player.name };
+  }
+
+  async initiateCheckout(token: string, dni: string) {
+    const link = await this.paymentLinkModel.findOne({ linkToken: token });
+    if (!link) throw new NotFoundException('Link de pago no encontrado');
+    this.assertLinkActive(link);
+
+    const player = await this.playerModel
+      .findOne({ idNumber: dni })
+      .select('id name idNumber email')
+      .lean();
+    if (!player) throw new NotFoundException('No se encontró un jugador con ese DNI');
+
+    const externalReference = uuidv4();
+
+    // Crea registro de pago pendiente
+    const payment = await this.paymentModel.create({
+      paymentLinkId: link._id,
+      entityType: link.entityType,
+      entityId: link.entityId,
+      playerId: player._id,
+      amount: link.amount,
+      method: PaymentMethodEnum.MERCADOPAGO,
+      status: PaymentStatusEnum.PENDING,
+      concept: link.concept,
+      mpExternalReference: externalReference,
+      date: new Date(),
+    });
+
+    const entityLabel = await this.resolveEntityLabel(
+      link.entityType,
+      link.entityId.toString()
+    );
+
+    // Crea preferencia en MP
+    const preference = new Preference(this.mpClient);
+    const mpResponse = await preference.create({
+      body: {
+        items: [
+          {
+            id: payment.id,
+            title: `${link.concept} - ${entityLabel}`,
+            description: link.description ?? link.concept,
+            quantity: 1,
+            unit_price: link.amount,
+            currency_id: 'ARS',
+          },
+        ],
+        payer: {
+          name: player.name,
+          identification: { type: 'DNI', number: player.idNumber },
+        },
+        external_reference: externalReference,
+        back_urls: {
+          success: `${this.appBaseUrl}/pay/result?status=approved`,
+          failure: `${this.appBaseUrl}/pay/result?status=rejected`,
+          pending: `${this.appBaseUrl}/pay/result?status=pending`,
+        },
+        auto_return: 'approved',
+        expiration_date_to: link.expiresAt.toISOString(),
+      },
+    });
+
+    // Guarda el preference ID en el pago
+    await this.paymentModel.findByIdAndUpdate(payment.id, {
+      mpPreferenceId: mpResponse.id,
+    });
+
+    return { checkoutUrl: mpResponse.init_point };
+  }
+
+  async confirmPayment(dto: ConfirmPaymentDto) {
+    const payment = await this.paymentModel.findOne({
+      mpExternalReference: dto.externalReference,
+    });
+    if (!payment) throw new NotFoundException('Pago no encontrado');
+
+    // Si MP no envió payment_id (ej: pago pendiente o error de red), guardamos el status del redirect
+    if (!dto.paymentId) {
+      const status = this.mapMpStatus(dto.status ?? 'pending');
+      payment.status = status;
+      await payment.save();
+      return { status: payment.status };
+    }
+
+    // Verificamos contra la API de MP para no confiar solo en los query params del redirect
+    try {
+      const mpPayment = new MpPayment(this.mpClient);
+      const mpData = await mpPayment.get({ id: dto.paymentId });
+
+      payment.mpPaymentId = String(mpData.id);
+      payment.mpStatusDetail = mpData.status_detail ?? undefined;
+      payment.status = this.mapMpStatus(mpData.status ?? 'pending');
+      payment.date = mpData.date_approved
+        ? new Date(mpData.date_approved)
+        : new Date();
+      await payment.save();
+    } catch {
+      // Si falla la verificación con MP, guardamos lo que vino del redirect
+      payment.status = this.mapMpStatus(dto.status ?? 'pending');
+      await payment.save();
+    }
+
+    return { status: payment.status };
+  }
+
+  // ── Pagos manuales ────────────────────────────────────────────────────────
+
+  async recordManualPayment(dto: RecordManualPaymentDto, caller: User) {
+    const player = await this.playerModel.findById(dto.playerId).select('id').lean();
+    if (!player) throw new NotFoundException('Jugador no encontrado');
+
+    return this.paymentModel.create({
+      entityType: dto.entityType,
+      entityId: new Types.ObjectId(dto.entityId),
+      playerId: new Types.ObjectId(dto.playerId),
+      amount: dto.amount,
+      method: dto.method,
+      status: PaymentStatusEnum.APPROVED,
+      concept: dto.concept,
+      date: new Date(dto.date),
+      notes: dto.notes,
+      recordedBy: (caller as any)._id,
+    });
+  }
+
+  async getPaymentsForEntity(entityType: PaymentEntityTypeEnum, entityId: string) {
+    return this.paymentModel
+      .find({ entityType, entityId: new Types.ObjectId(entityId) })
+      .populate({ path: 'playerId', select: 'name idNumber' })
+      .sort({ date: -1 });
+  }
+
+  async findPlayerByDni(dni: string) {
+    const player = await this.playerModel
+      .findOne({ idNumber: dni })
+      .select('id name idNumber')
+      .lean();
+    if (!player) throw new NotFoundException('No se encontró un jugador con ese DNI');
+    return { playerId: player._id.toString(), playerName: player.name };
+  }
+
+  async deleteManualPayment(id: string) {
+    const payment = await this.paymentModel.findById(id);
+    if (!payment) throw new NotFoundException('Pago no encontrado');
+    if (payment.method === PaymentMethodEnum.MERCADOPAGO) {
+      throw new BadRequestException('No se pueden eliminar pagos de Mercado Pago');
+    }
+    await payment.deleteOne();
+  }
+
+  // ── Reporte PDF ───────────────────────────────────────────────────────────
+
+  async generatePdfReport(
+    entityType: PaymentEntityTypeEnum,
+    entityId: string
+  ): Promise<Buffer> {
+    const [payments, entityLabel] = await Promise.all([
+      this.paymentModel
+        .find({ entityType, entityId: new Types.ObjectId(entityId) })
+        .populate({ path: 'playerId', select: 'name idNumber' })
+        .sort({ date: 1 })
+        .lean(),
+      this.resolveEntityLabel(entityType, entityId),
+    ]);
+
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      const doc = new PDFDocument({ margin: 40, size: 'A4' });
+
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
+
+      // Encabezado
+      doc.fontSize(16).text('Los Tordos RC — Reporte de Cobros', { align: 'center' });
+      doc.fontSize(12).text(entityLabel, { align: 'center' });
+      doc.moveDown();
+
+      // Totales
+      const approved = payments.filter((p) => p.status === PaymentStatusEnum.APPROVED);
+      const totalApproved = approved.reduce((s, p) => s + p.amount, 0);
+      const pending = payments.filter((p) => p.status === PaymentStatusEnum.PENDING);
+      const totalPending = pending.reduce((s, p) => s + p.amount, 0);
+
+      doc
+        .fontSize(10)
+        .text(`Total aprobado: $${totalApproved.toFixed(2)}   |   Pendiente: $${totalPending.toFixed(2)}   |   Total pagos: ${payments.length}`)
+        .moveDown();
+
+      // Tabla
+      const cols = [30, 160, 60, 80, 80, 70, 90, 100];
+      const headers = ['#', 'Jugador', 'DNI', 'Concepto', 'Método', 'Monto', 'Fecha', 'Estado'];
+      const startX = 40;
+      let y = doc.y;
+
+      // Cabecera de tabla
+      doc.fontSize(8).font('Helvetica-Bold');
+      headers.forEach((h, i) => {
+        doc.text(h, startX + cols.slice(0, i).reduce((a, b) => a + b, 0), y, {
+          width: cols[i],
+          align: 'left',
+        });
+      });
+      y += 14;
+      doc.moveTo(startX, y).lineTo(startX + cols.reduce((a, b) => a + b, 0), y).stroke();
+      y += 4;
+
+      // Filas
+      doc.font('Helvetica');
+      payments.forEach((p, idx) => {
+        const player = p.playerId as any;
+        const row = [
+          String(idx + 1),
+          player?.name ?? '-',
+          player?.idNumber ?? '-',
+          p.concept,
+          p.method,
+          `$${p.amount.toFixed(2)}`,
+          new Date(p.date).toLocaleDateString('es-AR'),
+          p.status,
+        ];
+
+        if (y > 750) {
+          doc.addPage();
+          y = 40;
+        }
+
+        row.forEach((cell, i) => {
+          doc.fontSize(8).text(cell, startX + cols.slice(0, i).reduce((a, b) => a + b, 0), y, {
+            width: cols[i],
+            align: 'left',
+          });
+        });
+        y += 14;
+      });
+
+      doc.end();
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  private assertLinkActive(link: { status: PaymentLinkStatusEnum; expiresAt: Date }) {
+    if (link.status === PaymentLinkStatusEnum.CANCELLED) {
+      throw new GoneException('Este link de pago fue cancelado');
+    }
+    if (link.status === PaymentLinkStatusEnum.EXPIRED || new Date() > this.endOfDay(link.expiresAt)) {
+      throw new GoneException('Este link de pago ha expirado');
+    }
+  }
+
+  // Devuelve el último instante del día UTC de la fecha dada
+  private endOfDay(date: string | Date): Date {
+    const d = new Date(date);
+    d.setUTCHours(23, 59, 59, 999);
+    return d;
+  }
+
+  private mapMpStatus(mpStatus: string): PaymentStatusEnum {
+    switch (mpStatus) {
+      case 'approved':
+        return PaymentStatusEnum.APPROVED;
+      case 'in_process':
+      case 'authorized':
+        return PaymentStatusEnum.IN_PROCESS;
+      case 'rejected':
+        return PaymentStatusEnum.REJECTED;
+      case 'cancelled':
+        return PaymentStatusEnum.CANCELLED;
+      default:
+        return PaymentStatusEnum.PENDING;
+    }
+  }
+
+  private async resolveEntityLabel(
+    entityType: PaymentEntityTypeEnum,
+    entityId: string
+  ): Promise<string> {
+    if (entityType === PaymentEntityTypeEnum.MATCH) {
+      const match = await this.matchModel
+        .findById(entityId)
+        .select('date opponent name category')
+        .lean();
+      if (!match) return 'Partido';
+      const date = new Date(match.date).toLocaleDateString('es-AR');
+      return match.name
+        ? `${match.name} (${date})`
+        : `vs ${match.opponent ?? 'Rival'} — ${date}`;
+    }
+    if (entityType === PaymentEntityTypeEnum.TRIP) {
+      const trip = await this.tripModel
+        .findById(entityId)
+        .select('name destination departureDate')
+        .lean();
+      if (!trip) return 'Viaje';
+      const date = new Date(trip.departureDate).toLocaleDateString('es-AR');
+      return `${trip.name} — ${trip.destination} (${date})`;
+    }
+    return entityId;
+  }
+}

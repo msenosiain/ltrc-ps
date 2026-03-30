@@ -41,6 +41,7 @@ import { SquadPdfService } from '../../services/squad-pdf.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadAttachmentDialogComponent, UploadAttachmentDialogData, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
 import { VideoDialogComponent, VideoDialogData, VideoDialogResult } from '../video-dialog/video-dialog.component';
+import { PaymentLinksPanelComponent } from '../../../payments/components/payment-links-panel/payment-links-panel.component';
 
 @Component({
   selector: 'ltrc-match-viewer',
@@ -56,6 +57,7 @@ import { VideoDialogComponent, VideoDialogData, VideoDialogResult } from '../vid
     MatTooltipModule,
     DatePipe,
     AllowedRolesDirective,
+    PaymentLinksPanelComponent,
   ],
   templateUrl: './match-viewer.component.html',
   styleUrl: './match-viewer.component.scss',
@@ -79,6 +81,15 @@ export class MatchViewerComponent implements OnInit {
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
   readonly RoleEnum = RoleEnum;
+  showPaymentsPanel = false;
+
+  get matchPaymentLabel(): string {
+    if (!this.match) return '';
+    const date = new Date(this.match.date).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    if (this.match.name) return `${this.match.name} (${date})`;
+    if (this.match.opponent) return `vs ${this.match.opponent} (${date})`;
+    return `Encuentro (${date})`;
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

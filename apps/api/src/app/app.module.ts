@@ -18,6 +18,7 @@ import { ExercisesModule } from './exercises/exercises.module';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { WorkoutLogsModule } from './workout-logs/workout-logs.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { PaymentsModule } from './payments/payments.module';
 
 export const configSchema = Joi.object({
   API_PORT: Joi.number().integer().default(3000),
@@ -33,6 +34,9 @@ export const configSchema = Joi.object({
   GOOGLE_AUTH_REFRESH_JWT_SECRET: Joi.string().allow('').optional(),
   AUTH_JWT_SECRET: Joi.string().optional(),
   AUTH_REFRESH_JWT_SECRET: Joi.string().optional(),
+  MP_ACCESS_TOKEN: Joi.string().allow('').optional(),
+  MP_FEE_RATE: Joi.number().default(4.83),
+  APP_BASE_URL: Joi.string().default('http://localhost:4200'),
 });
 
 @Module({
@@ -70,6 +74,7 @@ export const configSchema = Joi.object({
     WorkoutsModule,
     WorkoutLogsModule,
     CalendarModule,
+    PaymentsModule,
     HealthModule,
   ],
 })
