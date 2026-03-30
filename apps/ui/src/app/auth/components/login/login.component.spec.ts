@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../auth.service';
-import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of, throwError, EMPTY } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 const authServiceMock = {
@@ -12,6 +12,9 @@ const authServiceMock = {
 
 const routerMock = {
   navigate: jest.fn(),
+  events: EMPTY,
+  createUrlTree: jest.fn().mockReturnValue({}),
+  serializeUrl: jest.fn().mockReturnValue(''),
 } as Partial<Router>;
 
 describe('LoginComponent', () => {
@@ -26,6 +29,7 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
+        { provide: ActivatedRoute, useValue: { snapshot: {}, paramMap: { get: () => null } } },
       ],
     }).compileComponents();
 
