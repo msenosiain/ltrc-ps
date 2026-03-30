@@ -19,8 +19,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('squads')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class SquadsController {
   constructor(private readonly squadsService: SquadsService) {}
 
@@ -33,17 +33,19 @@ export class SquadsController {
   }
 
   @Post()
-  @Roles(RoleEnum.MANAGER, RoleEnum.ADMIN)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH)
   async create(@Body() dto: CreateSquadDto, @Req() req?: Request) {
     return this.squadsService.create(dto, (req as any)?.user);
   }
 
   @Get(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH)
   async getOne(@Param('id') id: string) {
     return this.squadsService.findOne(id);
   }
 
   @Patch(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateSquadDto,
@@ -53,6 +55,7 @@ export class SquadsController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH)
   async delete(@Param('id') id: string) {
     return this.squadsService.delete(id);
   }

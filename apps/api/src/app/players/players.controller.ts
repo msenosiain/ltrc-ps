@@ -74,6 +74,7 @@ export class PlayersController {
   }
 
   @Patch('me')
+  @Roles(RoleEnum.ADMIN, RoleEnum.PLAYER)
   async updateMyProfile(@Body() dto: UpdateMyProfileDto, @Req() req: Request) {
     const user = (req as any).user as User;
     const userId = (user as any)._id?.toString();
@@ -94,7 +95,6 @@ export class PlayersController {
   @Patch(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
   @UseInterceptors(FileInterceptor('photo'))
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
     @Body() dto: UpdatePlayerDto,
@@ -105,7 +105,6 @@ export class PlayersController {
   }
 
   @Get('stats')
-  @UseGuards(JwtAuthGuard)
   async getStats(@Req() req: Request) {
     return this.playersService.getStats((req as any).user);
   }
@@ -134,18 +133,16 @@ export class PlayersController {
   @Roles(
     RoleEnum.ADMIN,
     RoleEnum.MANAGER,
+    RoleEnum.COACH,
     RoleEnum.KINE,
-    RoleEnum.TRAINER,
-    RoleEnum.COACH
+    RoleEnum.TRAINER
   )
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async updateAvailability(@Param('id') id: string, @Body() dto: any) {
     return this.playersService.updateAvailability(id, dto);
   }
 
   @Delete(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Param('id') id: string) {
     return this.playersService.delete(id);
   }

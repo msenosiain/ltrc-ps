@@ -23,13 +23,16 @@ import { UpdateTournamentDto } from './dto/update-tournament.dto';
 import { TournamentFilterDto } from './dto/tournament-filter.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PaginationDto } from '../shared/pagination.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RoleEnum } from '@ltrc-campo/shared-api-model';
 
 @Controller('tournaments')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TournamentsController {
   constructor(private readonly tournamentsService: TournamentsService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   async findAll(
     @Query() query: PaginationDto<TournamentFilterDto>,
     @Req() req: Request
@@ -38,7 +41,7 @@ export class TournamentsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
   async create(@Body() dto: CreateTournamentDto, @Req() req: Request) {
     return this.tournamentsService.create(dto, (req as any).user);
   }
@@ -46,6 +49,7 @@ export class TournamentsController {
   // --- Attachments (before :id to avoid route conflicts) ---
 
   @Post(':id/attachments')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
   @UseInterceptors(FileInterceptor('file'))
   async uploadAttachment(
     @Param('id') id: string,
@@ -65,12 +69,13 @@ export class TournamentsController {
     res.setHeader('Content-Type', mimetype);
     res.setHeader(
       'Content-Disposition',
-      `inline; filename="${encodeURIComponent(filename)}"`,
+      `inline; filename="${encodeURIComponent(filename)}"`
     );
     stream.pipe(res);
   }
 
   @Delete(':id/attachments/:attachmentId')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
   async deleteAttachment(
     @Param('id') id: string,
     @Param('attachmentId') attachmentId: string
@@ -78,11 +83,13 @@ export class TournamentsController {
     return this.tournamentsService.removeAttachment(id, attachmentId);
   }
 
-  // --- Single tournament CRUD ---
-
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  async update(@Param('id') id: string, @Body() dto: UpdateTournamentDto, @Req() req: Request) {
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
+  async update(
+    @Param('id') id: string,
+    @Body() dto: UpdateTournamentDto,
+    @Req() req: Request
+  ) {
     return this.tournamentsService.update(id, dto, (req as any).user);
   }
 
@@ -92,6 +99,7 @@ export class TournamentsController {
   }
 
   @Delete(':id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
   async delete(@Param('id') id: string) {
     return this.tournamentsService.delete(id);
   }
