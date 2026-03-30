@@ -1,23 +1,23 @@
 import {
-  Controller,
-  Post,
-  Patch,
-  Get,
-  Delete,
   Body,
-  Param,
-  UploadedFile,
-  UseInterceptors,
-  UseGuards,
-  Res,
-  Req,
+  Controller,
+  Delete,
+  Get,
   NotFoundException,
+  Param,
+  Patch,
+  Post,
   Query,
+  Req,
+  Res,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import type { File as MulterFile } from 'multer';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 
 import { PlayersService } from './players.service';
 import { PaginationDto } from '../shared/pagination.dto';
@@ -32,11 +32,11 @@ import { RoleEnum } from '@ltrc-campo/shared-api-model';
 import { User } from '../users/schemas/user.schema';
 
 @Controller('players')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   async findPaginated(
     @Query() pagination: PaginationDto<PlayerFiltersDto>,
     @Req() req: Request
@@ -45,12 +45,14 @@ export class PlayersController {
   }
 
   @Post('import')
+  @Roles(RoleEnum.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async importFromFile(@UploadedFile() file: MulterFile) {
     return this.playersService.importFromFile(file.buffer);
   }
 
   @Post('update-from-survey')
+  @Roles(RoleEnum.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async updateFromSurvey(@UploadedFile() file: MulterFile) {
     return this.playersService.updateFromSurvey(file.buffer);
@@ -58,13 +60,11 @@ export class PlayersController {
 
   // ⚠️ Debe estar ANTES de GET :id para que rutas con prefijo no sean interpretadas como un ID
   @Get('by-user/:userId')
-  @UseGuards(JwtAuthGuard)
   async findByUserId(@Param('userId') userId: string) {
     return this.playersService.findByUserId(userId);
   }
 
   @Get('me')
-  @UseGuards(JwtAuthGuard)
   async getMyPlayer(@Req() req: Request) {
     const user = (req as any).user as User;
     const userId = (user as any)._id?.toString();
@@ -74,7 +74,6 @@ export class PlayersController {
   }
 
   @Patch('me')
-  @UseGuards(JwtAuthGuard)
   async updateMyProfile(@Body() dto: UpdateMyProfileDto, @Req() req: Request) {
     const user = (req as any).user as User;
     const userId = (user as any)._id?.toString();
@@ -82,9 +81,8 @@ export class PlayersController {
   }
 
   @Post()
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
   @UseInterceptors(FileInterceptor('photo'))
-  @UseGuards(JwtAuthGuard, RolesGuard)
   async create(
     @Body() dto: CreatePlayerDto,
     @UploadedFile() photo?: MulterFile,
@@ -94,7 +92,7 @@ export class PlayersController {
   }
 
   @Patch(':id')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
   @UseInterceptors(FileInterceptor('photo'))
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
@@ -133,7 +131,13 @@ export class PlayersController {
   }
 
   @Patch(':id/availability')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.KINE, RoleEnum.TRAINER, RoleEnum.COACH)
+  @Roles(
+    RoleEnum.ADMIN,
+    RoleEnum.MANAGER,
+    RoleEnum.KINE,
+    RoleEnum.TRAINER,
+    RoleEnum.COACH
+  )
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateAvailability(@Param('id') id: string, @Body() dto: any) {
     return this.playersService.updateAvailability(id, dto);

@@ -22,7 +22,12 @@ import { RecordAttendanceDto } from './dto/record-attendance.dto';
 import { User } from '../../users/schemas/user.schema';
 import { PlayerEntity } from '../../players/schemas/player.entity';
 
-const STAFF_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER, RoleEnum.ANALYST];
+const STAFF_ROLES: RoleEnum[] = [
+  RoleEnum.COACH,
+  RoleEnum.TRAINER,
+  RoleEnum.MANAGER,
+  RoleEnum.ANALYST,
+];
 
 const POPULATE_FIELDS = ['schedule', { path: 'attendance.player' }];
 
@@ -57,7 +62,11 @@ export class TrainingSessionsService {
 
   async create(dto: CreateTrainingSessionDto, caller?: User) {
     const callerId = caller ? (caller as any)._id : undefined;
-    return this.sessionModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
+    return this.sessionModel.create({
+      ...(dto as any),
+      createdBy: callerId,
+      updatedBy: callerId,
+    });
   }
 
   async findPaginated(
@@ -98,26 +107,73 @@ export class TrainingSessionsService {
       if (categories.length) queryFilters['category'] = { $in: categories };
     }
 
-    const sort: Record<string, 1 | -1> = {};
-    if (sortBy) {
-      sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-    } else {
-      sort['date'] = 1;
-    }
-    sort['startTime'] = 1;
-
     const [items, total] = await Promise.all([
-      this.sessionModel
-        .find(queryFilters)
-        .skip(skip)
-        .limit(size)
-        .sort(sort)
-        .populate(POPULATE_FIELDS)
-        .exec(),
+      sortBy
+        ? this.sessionModel
+            .find(queryFilters)
+            .skip(skip)
+            .limit(size)
+            .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1, startTime: 1 })
+            .populate(POPULATE_FIELDS)
+            .exec()
+        : this.findSortedByProximity(queryFilters, skip, size),
       this.sessionModel.countDocuments(queryFilters).exec(),
     ]);
 
     return { items, total, page, size };
+  }
+
+  private async findSortedByProximity(
+    queryFilters: Record<string, unknown>,
+    skip: number,
+    size: number
+  ) {
+    const now = new Date();
+    const pipeline: any[] = [
+      { $match: queryFilters },
+      {
+        $addFields: {
+          _dateObj: {
+            $dateFromString: {
+              dateString: {
+                $concat: [
+                  '$date',
+                  'T',
+                  { $ifNull: ['$startTime', '00:00'] },
+                  ':00Z',
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          _isPast: { $cond: [{ $lt: ['$_dateObj', now] }, 1, 0] },
+          _distanceMs: {
+            $cond: [
+              { $gte: ['$_dateObj', now] },
+              { $subtract: ['$_dateObj', now] },
+              { $subtract: [now, '$_dateObj'] },
+            ],
+          },
+        },
+      },
+      { $sort: { _isPast: 1, _distanceMs: 1 } },
+      { $skip: skip },
+      { $limit: size },
+      { $project: { _isPast: 0, _distanceMs: 0, _dateObj: 0 } },
+    ];
+
+    const rawItems = await this.sessionModel.aggregate(pipeline).exec();
+    const items = await this.sessionModel.populate(
+      rawItems,
+      POPULATE_FIELDS as any
+    );
+    return items.map((m: any) => {
+      if (!m.id && m._id) m.id = m._id.toString();
+      return m;
+    });
   }
 
   async findOne(id: string) {
@@ -154,7 +210,7 @@ export class TrainingSessionsService {
   async getUpcomingForUser(
     caller: User,
     days = 7,
-    todayStr?: string,
+    todayStr?: string
   ): Promise<UpcomingTraining[]> {
     const from = todayStr ?? new Date().toISOString().slice(0, 10);
     const toDate = new Date(from + 'T12:00:00Z');
@@ -175,25 +231,28 @@ export class TrainingSessionsService {
       const sports = caller.sports?.length
         ? caller.sports
         : player?.sport
-          ? [player.sport]
-          : [];
+        ? [player.sport]
+        : [];
       const categories = caller.categories?.length
         ? caller.categories
         : player?.category
-          ? [player.category]
-          : [];
+        ? [player.category]
+        : [];
 
       if (sports.length) scopeFilter['sport'] = { $in: sports };
       if (categories.length) scopeFilter['category'] = { $in: categories };
     }
 
-    const sessions = await this.sessionModel.find({
-      date: { $gte: from, $lte: to },
-      status: { $ne: TrainingSessionStatusEnum.CANCELLED },
-      ...scopeFilter,
-    }).sort({ date: 1, startTime: 1 }).exec();
+    const sessions = await this.sessionModel
+      .find({
+        date: { $gte: from, $lte: to },
+        status: { $ne: TrainingSessionStatusEnum.CANCELLED },
+        ...scopeFilter,
+      })
+      .sort({ date: 1, startTime: 1 })
+      .exec();
 
-    return sessions.map(session => ({
+    return sessions.map((session) => ({
       sessionId: session.id,
       date: session.date as unknown as string,
       startTime: session.startTime,
@@ -203,11 +262,13 @@ export class TrainingSessionsService {
       division: session.division,
       location: session.location,
       status: session.status,
-      confirmations: session.attendance.filter(a => a.confirmed).length,
-      confirmed: session.attendance.some(a => a.confirmed && (
-        (player && a.player?.toString() === player._id.toString()) ||
-        a.user === userId
-      )),
+      confirmations: session.attendance.filter((a) => a.confirmed).length,
+      confirmed: session.attendance.some(
+        (a) =>
+          a.confirmed &&
+          ((player && a.player?.toString() === player._id.toString()) ||
+            a.user === userId)
+      ),
     }));
   }
 
@@ -215,7 +276,11 @@ export class TrainingSessionsService {
    * Generate sessions for a schedule and persist to DB.
    * Idempotent via upsert. Used by the scheduler cron and on schedule create/update.
    */
-  async generateForSchedule(scheduleId: string, fromDateStr?: string, toDateStr?: string) {
+  async generateForSchedule(
+    scheduleId: string,
+    fromDateStr?: string,
+    toDateStr?: string
+  ) {
     const schedule = await this.scheduleModel.findById(scheduleId);
     if (!schedule || !schedule.isActive) return;
 
@@ -257,7 +322,9 @@ export class TrainingSessionsService {
     }
 
     // Update generatedUntil watermark
-    await this.scheduleModel.findByIdAndUpdate(scheduleId, { generatedUntil: to });
+    await this.scheduleModel.findByIdAndUpdate(scheduleId, {
+      generatedUntil: to,
+    });
   }
 
   /**
@@ -268,10 +335,19 @@ export class TrainingSessionsService {
     if (!session) throw new NotFoundException('Training session not found');
 
     // Only field roles can confirm attendance
-    const fieldRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
-    const hasFieldRole = (caller.roles ?? []).some((r) => fieldRoles.includes(r as RoleEnum));
+    const fieldRoles = [
+      RoleEnum.PLAYER,
+      RoleEnum.COACH,
+      RoleEnum.TRAINER,
+      RoleEnum.MANAGER,
+    ];
+    const hasFieldRole = (caller.roles ?? []).some((r) =>
+      fieldRoles.includes(r as RoleEnum)
+    );
     if (!hasFieldRole) {
-      throw new BadRequestException('Solo usuarios con rol de cancha pueden confirmar asistencia');
+      throw new BadRequestException(
+        'Solo usuarios con rol de cancha pueden confirmar asistencia'
+      );
     }
 
     // Determine if caller is staff or player
@@ -397,12 +473,22 @@ export class TrainingSessionsService {
   }
 
   async getAttendanceStats(caller?: User): Promise<{
-    byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
+    byCategory: Record<
+      string,
+      {
+        sessions: number;
+        totalPresent: number;
+        totalAttendees: number;
+        pct: number;
+      }
+    >;
   }> {
     const since = new Date();
     since.setDate(since.getDate() - 28);
 
-    const scopeFilter: Record<string, unknown> = { date: { $lte: new Date(), $gte: since } };
+    const scopeFilter: Record<string, unknown> = {
+      date: { $lte: new Date(), $gte: since },
+    };
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       const sports = caller.sports ?? [];
       const categories = caller.categories ?? [];
@@ -412,21 +498,40 @@ export class TrainingSessionsService {
 
     const sessions = await this.sessionModel.find(scopeFilter).lean();
 
-    const stats: Record<string, { sessions: number; totalPresent: number; totalAttendees: number }> = {};
+    const stats: Record<
+      string,
+      { sessions: number; totalPresent: number; totalAttendees: number }
+    > = {};
     for (const s of sessions) {
       const cat = s.category as string;
-      if (!stats[cat]) stats[cat] = { sessions: 0, totalPresent: 0, totalAttendees: 0 };
+      if (!stats[cat])
+        stats[cat] = { sessions: 0, totalPresent: 0, totalAttendees: 0 };
       stats[cat].sessions++;
-      const playerAttendance = (s.attendance ?? []).filter((a: any) => !a.isStaff);
+      const playerAttendance = (s.attendance ?? []).filter(
+        (a: any) => !a.isStaff
+      );
       stats[cat].totalAttendees += playerAttendance.length;
-      stats[cat].totalPresent += playerAttendance.filter((a: any) => a.status === 'present').length;
+      stats[cat].totalPresent += playerAttendance.filter(
+        (a: any) => a.status === 'present'
+      ).length;
     }
 
-    const byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }> = {};
+    const byCategory: Record<
+      string,
+      {
+        sessions: number;
+        totalPresent: number;
+        totalAttendees: number;
+        pct: number;
+      }
+    > = {};
     for (const [cat, data] of Object.entries(stats)) {
       byCategory[cat] = {
         ...data,
-        pct: data.totalAttendees > 0 ? Math.round((data.totalPresent / data.totalAttendees) * 100) : 0,
+        pct:
+          data.totalAttendees > 0
+            ? Math.round((data.totalPresent / data.totalAttendees) * 100)
+            : 0,
       };
     }
 
@@ -436,7 +541,9 @@ export class TrainingSessionsService {
   /**
    * Returns staff users (coach/trainer/manager/analyst) relevant to this session's sport+category.
    */
-  async getStaffForSession(sessionId: string): Promise<{ id: string; name: string; roles: string[] }[]> {
+  async getStaffForSession(
+    sessionId: string
+  ): Promise<{ id: string; name: string; roles: string[] }[]> {
     const session = await this.sessionModel.findById(sessionId);
     if (!session) throw new NotFoundException('Training session not found');
 
@@ -459,7 +566,14 @@ export class TrainingSessionsService {
       },
     ];
 
-    const users = await this.userModel.find(query).select('_id name roles').exec();
-    return users.map((u) => ({ id: (u as any)._id.toString(), name: u.name, roles: u.roles ?? [] }));
+    const users = await this.userModel
+      .find(query)
+      .select('_id name roles')
+      .exec();
+    return users.map((u) => ({
+      id: (u as any)._id.toString(),
+      name: u.name,
+      roles: u.roles ?? [],
+    }));
   }
 }

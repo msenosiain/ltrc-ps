@@ -17,7 +17,10 @@ export const MATCHES_ROUTES: Routes = [
     path: 'create',
     component: MatchEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Crear partido', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
+    data: {
+      title: 'Crear partido',
+      allowedRoles: [RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER],
+    },
   },
   {
     path: ':id',
@@ -28,7 +31,10 @@ export const MATCHES_ROUTES: Routes = [
     path: ':id/edit',
     component: MatchEditorComponent,
     canActivate: [hasRoleGuard],
-    data: { title: 'Editar partido', allowedRoles: [RoleEnum.MANAGER, RoleEnum.ADMIN] },
+    data: {
+      title: 'Editar partido',
+      allowedRoles: [RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER],
+    },
   },
   {
     path: ':id/squad',
@@ -36,7 +42,7 @@ export const MATCHES_ROUTES: Routes = [
     canActivate: [hasRoleGuard],
     data: {
       title: 'Gestionar plantel',
-      allowedRoles: [RoleEnum.COACH, RoleEnum.ADMIN],
+      allowedRoles: [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.ADMIN],
     },
   },
   {
@@ -45,7 +51,12 @@ export const MATCHES_ROUTES: Routes = [
     canActivate: [hasRoleGuard],
     data: {
       title: 'Gestionar asistencia',
-      allowedRoles: [RoleEnum.COACH, RoleEnum.ADMIN, RoleEnum.TRAINER],
+      allowedRoles: [
+        RoleEnum.COACH,
+        RoleEnum.MANAGER,
+        RoleEnum.TRAINER,
+        RoleEnum.ADMIN,
+      ],
     },
   },
 ];
