@@ -193,8 +193,14 @@ export class MatchViewerComponent implements OnInit {
     return att.mimeType.startsWith('image/');
   }
 
-  getAttachmentUrl(fileId: string): string {
-    return this.matchesService.getAttachmentUrl(this.match!.id!, fileId);
+  openAttachment(att: MatchAttachment): void {
+    this.matchesService.fetchAttachmentBlob(this.match!.id!, att.fileId).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      },
+    });
   }
 
   openUploadDialog(): void {

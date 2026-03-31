@@ -103,6 +103,13 @@ export class MatchesService {
     return `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`;
   }
 
+  fetchAttachmentBlob(matchId: string, fileId: string) {
+    return this.httpClient.get(
+      `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`,
+      { responseType: 'blob' }
+    );
+  }
+
   addVideo(matchId: string, dto: { url: string; name: string; description?: string; visibility: VideoVisibility; targetPlayers?: string[] }): Observable<VideoClip> {
     return this.httpClient.post<VideoClip>(`${this.matchesApiUrl}/${matchId}/videos`, dto);
   }

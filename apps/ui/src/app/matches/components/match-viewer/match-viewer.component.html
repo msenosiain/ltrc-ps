@@ -239,7 +239,7 @@
         @for (att of match.attachments; track att.fileId) {
         <div class="attachment-item">
           <div class="attachment-info">
-            <a [href]="getAttachmentUrl(att.fileId)" target="_blank" class="attachment-link">
+            <a class="attachment-link" (click)="openAttachment(att)" style="cursor:pointer">
               <mat-icon>{{ isImage(att) ? 'image' : 'description' }}</mat-icon>
               <span class="attachment-name">{{ att.name || att.filename }}</span>
             </a>
