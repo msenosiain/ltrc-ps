@@ -81,6 +81,14 @@ export class MatchesService {
     return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, dto);
   }
 
+  patchStatus(id: string, status: MatchStatusEnum): Observable<Match> {
+    return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, { status });
+  }
+
+  patchResult(id: string, homeScore: number, awayScore: number): Observable<Match> {
+    return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, { result: { homeScore, awayScore } });
+  }
+
   deleteMatch(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.matchesApiUrl}/${id}`);
   }

@@ -13,8 +13,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { SetResultDialogComponent, SetResultDialogResult } from '../set-result-dialog/set-result-dialog.component';
 import { MatchesService } from '../../services/matches.service';
 import { MatchesDataSource } from '../../services/matches.datasource';
 import { MatchFilters } from '../../forms/match-form.types';
@@ -42,6 +47,10 @@ import { ListStateService } from '../../../common/services/list-state.service';
     MatButtonModule,
     MatChipsModule,
     MatTooltipModule,
+    MatMenuModule,
+    MatDividerModule,
+    MatSnackBarModule,
+    MatDialogModule,
     AsyncPipe,
     DatePipe,
     MatchSearchComponent,
@@ -55,8 +64,11 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly matchesService = inject(MatchesService);
   private readonly listState = inject(ListStateService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   readonly RoleEnum = RoleEnum;
+  readonly MatchStatusEnum = MatchStatusEnum;
   readonly displayedColumns = [
     'date',
     'category',
@@ -66,6 +78,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     'result',
     'status',
     'attachments',
+    'actions',
   ];
   readonly dataSource = new MatchesDataSource(this.matchesService);
   readonly savedState = this.listState.get(MatchesListComponent.STATE_KEY);
@@ -130,6 +143,11 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     this.router.navigate(['/dashboard/matches', matchId]);
   }
 
+  goToSquad(event: Event, matchId: string): void {
+    event.stopPropagation();
+    this.router.navigate(['/dashboard/matches', matchId, 'squad']);
+  }
+
   getStatusLabel(status: MatchStatusEnum): string {
     return this.matchesService.getStatusLabel(status);
   }
@@ -157,5 +175,31 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     return (match.videos ?? [])
       .map((v) => `• ${v.name}`)
       .join('\n');
+  }
+
+  openResultDialog(event: Event, match: Match): void {
+    event.stopPropagation();
+    const ref = this.dialog.open(SetResultDialogComponent, { data: { match }, width: '320px' });
+    ref.afterClosed().subscribe((result: SetResultDialogResult | null) => {
+      if (!result) return;
+      this.matchesService.patchResult(match.id!, result.homeScore, result.awayScore).subscribe({
+        next: () => {
+          this.snackBar.open('Resultado guardado', '', { duration: 2500 });
+          this.dataSource.refresh();
+        },
+        error: () => this.snackBar.open('Error al guardar el resultado', 'Cerrar', { duration: 3000 }),
+      });
+    });
+  }
+
+  changeStatus(event: Event, match: Match, status: MatchStatusEnum): void {
+    event.stopPropagation();
+    this.matchesService.patchStatus(match.id!, status).subscribe({
+      next: () => {
+        this.snackBar.open('Estado actualizado', '', { duration: 2500 });
+        this.dataSource.refresh();
+      },
+      error: () => this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 3000 }),
+    });
   }
 }
