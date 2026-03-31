@@ -4,16 +4,24 @@
 
 .search-row {
   display: none;
+  gap: 8px;
+  align-items: center;
+}
+
+.filters-toggle {
+  flex-shrink: 0;
+  margin-bottom: 20px;
 }
 
 .filters-row {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
 }
 
 .filter-field {
-  width: 200px;
+  flex: 1;
+  min-width: 0;
 }
 
 @media (max-width: 767px) {
@@ -36,7 +44,7 @@
   }
 
   .filter-field {
-    flex: 1 1 calc(50% - 6px);
+    flex: 1 1 calc(50% - 4px);
     width: auto;
   }
 }

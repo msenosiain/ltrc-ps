@@ -1,28 +1,26 @@
 <div class="branch-list">
   <div class="list-header">
-    <button
-      *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
-      mat-stroked-button
-      (click)="importInput.click()"
-      [disabled]="importing"
-    >
-      <mat-icon>upload_file</mat-icon>
-      Importar ramas
-    </button>
-    <input
-      #importInput
-      hidden
-      type="file"
-      accept=".xlsx,.csv"
-      (change)="onImportFileSelected($event)"
-    />
+    <h2 class="list-header__title">Ramas</h2>
+    <div class="list-header__actions">
+      <input
+        #importInput
+        hidden
+        type="file"
+        accept=".xlsx,.csv"
+        (change)="onImportFileSelected($event)"
+      />
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH]"
+        mat-stroked-button
+        type="button"
+        (click)="importInput.click()"
+        [disabled]="importing"
+      >
+        <mat-icon>upload_file</mat-icon>
+        Importar ramas
+      </button>
+    </div>
   </div>
-
-  <ltrc-branch-search [initialFilters]="savedState?.filters" (filtersChange)="onFiltersChange($event)" />
-
-  @if ((loading$ | async) || importing) {
-    <mat-progress-bar mode="indeterminate" />
-  }
 
   @if (tabs.length > 0) {
     <div class="tab-filters">
@@ -46,7 +44,15 @@
         </mat-select>
       </mat-form-field>
     </div>
+  }
 
+  <ltrc-branch-search [initialFilters]="savedState?.filters" (filtersChange)="onFiltersChange($event)" />
+
+  @if ((loading$ | async) || importing) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (tabs.length > 0) {
     <mat-tab-group animationDuration="0ms">
       @for (tab of tabs; track tab.label) {
         <mat-tab>
