@@ -2,6 +2,16 @@
 
 <mat-dialog-content>
   <form [formGroup]="form" class="session-edit-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="datePicker" formControlName="date" />
+      <mat-datepicker-toggle matIconSuffix [for]="datePicker" />
+      <mat-datepicker #datePicker />
+      @if (form.get('date')?.invalid) {
+        <mat-error>Requerido</mat-error>
+      }
+    </mat-form-field>
+
     <div class="time-row">
       <mat-form-field appearance="outline">
         <mat-label>Inicio</mat-label>
