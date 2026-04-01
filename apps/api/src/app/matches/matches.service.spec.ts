@@ -7,7 +7,7 @@ import { TournamentEntity } from '../tournaments/schemas/tournament.entity';
 import { PlayerEntity } from '../players/schemas/player.entity';
 import { SquadsService } from '../squads/squads.service';
 import { GridFsService } from '../shared/gridfs/gridfs.service';
-import { AttendanceStatusEnum, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
+import { AttendanceStatusEnum, MatchStatusEnum, SortOrder } from '@ltrc-campo/shared-api-model';
 
 const POPULATE_FIELDS = [
   'tournament',
@@ -39,6 +39,8 @@ const mockModel = {
   findById: jest.fn(),
   countDocuments: jest.fn(),
   distinct: jest.fn(),
+  aggregate: jest.fn().mockReturnValue({ exec: jest.fn().mockResolvedValue([]) }),
+  populate: jest.fn(),
 };
 
 const mockTournamentModel = {
@@ -188,33 +190,24 @@ describe('MatchesService', () => {
 
   describe('findPaginated()', () => {
     it('should return paginated matches', async () => {
-      const execMock = jest.fn().mockResolvedValue([mockMatch]);
-      const countMock = jest.fn().mockResolvedValue(1);
-      mockModel.find.mockReturnValue({
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        sort: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        exec: execMock,
+      const rawItems = [{ ...mockMatch, _id: 'match-1', squad: [] }];
+      mockModel.aggregate.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(rawItems),
       });
-      mockModel.countDocuments.mockReturnValue({ exec: countMock });
+      mockModel.populate.mockResolvedValue(rawItems);
+      mockModel.countDocuments.mockReturnValue({ exec: jest.fn().mockResolvedValue(1) });
 
       const result = await service.findPaginated({ page: 1, size: 10 });
 
-      expect(result.items).toEqual([mockMatch]);
       expect(result.total).toBe(1);
       expect(result.page).toBe(1);
     });
 
-    it('should apply status filter', async () => {
-      const execMock = jest.fn().mockResolvedValue([]);
-      mockModel.find.mockReturnValue({
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        sort: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        exec: execMock,
+    it('should apply status filter (aggregate pipeline)', async () => {
+      mockModel.aggregate.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([]),
       });
+      mockModel.populate.mockResolvedValue([]);
       mockModel.countDocuments.mockReturnValue({
         exec: jest.fn().mockResolvedValue(0),
       });
@@ -225,20 +218,18 @@ describe('MatchesService', () => {
         filters: { status: MatchStatusEnum.UPCOMING },
       });
 
-      expect(mockModel.find).toHaveBeenCalledWith(
-        expect.objectContaining({ status: MatchStatusEnum.UPCOMING })
+      expect(mockModel.aggregate).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({ $match: expect.objectContaining({ status: MatchStatusEnum.UPCOMING }) }),
+        ])
       );
     });
 
     it('should use two-step query for sport filter', async () => {
-      const execMock = jest.fn().mockResolvedValue([]);
-      mockModel.find.mockReturnValue({
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockReturnThis(),
-        sort: jest.fn().mockReturnThis(),
-        populate: jest.fn().mockReturnThis(),
-        exec: execMock,
+      mockModel.aggregate.mockReturnValue({
+        exec: jest.fn().mockResolvedValue([]),
       });
+      mockModel.populate.mockResolvedValue([]);
       mockModel.countDocuments.mockReturnValue({
         exec: jest.fn().mockResolvedValue(0),
       });
@@ -255,14 +246,37 @@ describe('MatchesService', () => {
       });
 
       expect(mockTournamentModel.find).toHaveBeenCalledWith({ sport: 'rugby' });
-      expect(mockModel.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          $or: [
-            { tournament: { $in: ['t1', 't2'] } },
-            { tournament: { $exists: false }, sport: 'rugby' },
-          ],
-        })
+      expect(mockModel.aggregate).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            $match: expect.objectContaining({
+              $or: [
+                { tournament: { $in: ['t1', 't2'] } },
+                { tournament: { $exists: false }, sport: 'rugby' },
+              ],
+            }),
+          }),
+        ])
       );
+    });
+
+    it('should use find+sort when sortBy is provided', async () => {
+      const execMock = jest.fn().mockResolvedValue([mockMatch]);
+      mockModel.find.mockReturnValue({
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+        populate: jest.fn().mockReturnThis(),
+        exec: execMock,
+      });
+      mockModel.countDocuments.mockReturnValue({
+        exec: jest.fn().mockResolvedValue(1),
+      });
+
+      const result = await service.findPaginated({ page: 1, size: 10, sortBy: 'date', sortOrder: SortOrder.DESC });
+
+      expect(mockModel.find).toHaveBeenCalled();
+      expect(result.total).toBe(1);
     });
   });
 
@@ -339,6 +353,128 @@ describe('MatchesService', () => {
     it('should throw NotFoundException when not found', async () => {
       mockModel.findById.mockResolvedValueOnce(null);
       await expect(service.delete('bad-id')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('addVideo()', () => {
+    it('should add a video to a match', async () => {
+      const match = {
+        ...mockMatch,
+        videos: [],
+        save: jest.fn().mockResolvedValue(undefined),
+      };
+      mockModel.findById.mockResolvedValueOnce(match);
+
+      const result = await service.addVideo('match-1', {
+        url: 'https://youtube.com/xyz',
+        name: 'Highlights',
+        visibility: 'all',
+      } as any);
+
+      expect(match.save).toHaveBeenCalled();
+      expect(result).toHaveProperty('url', 'https://youtube.com/xyz');
+      expect(result).toHaveProperty('videoId');
+    });
+
+    it('should throw NotFoundException when match not found', async () => {
+      mockModel.findById.mockResolvedValueOnce(null);
+      await expect(service.addVideo('bad-id', { url: 'x', visibility: 'all' } as any)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('updateVideo()', () => {
+    it('should update an existing video', async () => {
+      const videoId = 'vid-1';
+      const match = {
+        ...mockMatch,
+        videos: [{ videoId, url: 'https://old.com', name: 'Old', visibility: 'all', targetPlayers: [] }],
+        save: jest.fn().mockResolvedValue(undefined),
+      };
+      mockModel.findById.mockResolvedValueOnce(match);
+
+      const result = await service.updateVideo('match-1', videoId, {
+        url: 'https://new.com',
+        name: 'New',
+        visibility: 'players',
+        targetPlayers: [],
+      } as any);
+
+      expect(match.save).toHaveBeenCalled();
+      expect(result).toHaveProperty('url', 'https://new.com');
+    });
+
+    it('should throw NotFoundException when match not found', async () => {
+      mockModel.findById.mockResolvedValueOnce(null);
+      await expect(service.updateVideo('bad-id', 'vid-1', {} as any)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException when video not found', async () => {
+      const match = { ...mockMatch, videos: [] };
+      mockModel.findById.mockResolvedValueOnce(match);
+      await expect(service.updateVideo('match-1', 'missing-vid', {} as any)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('deleteVideo()', () => {
+    it('should delete a video from a match', async () => {
+      const videoId = 'vid-1';
+      const match = {
+        ...mockMatch,
+        videos: [{ videoId, url: 'x', visibility: 'all' }],
+        save: jest.fn().mockResolvedValue(undefined),
+      };
+      mockModel.findById.mockResolvedValueOnce(match);
+
+      await service.deleteVideo('match-1', videoId);
+
+      expect(match.save).toHaveBeenCalled();
+      expect(match.videos).toHaveLength(0);
+    });
+
+    it('should throw NotFoundException when match not found', async () => {
+      mockModel.findById.mockResolvedValueOnce(null);
+      await expect(service.deleteVideo('bad-id', 'vid-1')).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException when video not found', async () => {
+      const match = { ...mockMatch, videos: [] };
+      mockModel.findById.mockResolvedValueOnce(match);
+      await expect(service.deleteVideo('match-1', 'missing')).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('getAttendanceStats()', () => {
+    it('should return attendance stats grouped by category', async () => {
+      const matchData = {
+        category: 'm14',
+        attendance: [
+          { isStaff: false, status: 'present' },
+          { isStaff: false, status: 'absent' },
+          { isStaff: true, status: 'present' },
+        ],
+      };
+      mockModel.find.mockReturnValue({
+        lean: jest.fn().mockResolvedValue([matchData]),
+      });
+
+      const result = await service.getAttendanceStats();
+
+      expect(result.byCategory).toHaveProperty('m14');
+      expect(result.byCategory['m14'].matches).toBe(1);
+      expect(result.byCategory['m14'].totalAttendees).toBe(2);
+      expect(result.byCategory['m14'].totalPresent).toBe(1);
+      expect(result.byCategory['m14'].pct).toBe(50);
+    });
+
+    it('should return pct=0 when there are no attendees', async () => {
+      const matchData = { category: 'm12', attendance: [] };
+      mockModel.find.mockReturnValue({
+        lean: jest.fn().mockResolvedValue([matchData]),
+      });
+
+      const result = await service.getAttendanceStats();
+
+      expect(result.byCategory['m12'].pct).toBe(0);
     });
   });
 });

@@ -23,7 +23,7 @@ export class SquadsService {
       category: dto.category,
       players: dto.players.map(({ shirtNumber, playerId }) => ({
         shirtNumber,
-        player: playerId,
+        player: playerId as any,
       })),
       createdBy: callerId,
       updatedBy: callerId,

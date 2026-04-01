@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+} from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BranchListComponent, BranchTab } from './branch-list.component';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
@@ -14,10 +19,21 @@ import { AuthService } from '../../../auth/auth.service';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 import {
   categoryOptions,
-  CategoryOption,
 } from '../../../common/category-options';
 import { branchOptions } from '../../../common/branch-options';
 import { sportOptions } from '../../../common/sport-options';
+import { BranchSearchComponent, BranchSearchFilters } from '../branch-search/branch-search.component';
+
+// Stub for BranchSearchComponent that does NOT emit on init
+@Component({
+  selector: 'ltrc-branch-search',
+  standalone: true,
+  template: '',
+})
+class BranchSearchStubComponent {
+  @Input() initialFilters?: Record<string, unknown>;
+  @Output() filtersChange = new EventEmitter<BranchSearchFilters>();
+}
 
 describe('BranchListComponent', () => {
   let component: BranchListComponent;
@@ -48,7 +64,7 @@ describe('BranchListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BranchListComponent, RouterModule.forRoot([])],
+      imports: [BranchListComponent, RouterModule.forRoot([]), NoopAnimationsModule],
       providers: [
         {
           provide: BranchAssignmentsService,
@@ -67,7 +83,12 @@ describe('BranchListComponent', () => {
           useValue: filterContextMock,
         },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(BranchListComponent, {
+        remove: { imports: [BranchSearchComponent] },
+        add: { imports: [BranchSearchStubComponent] },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(BranchListComponent);
     component = fixture.componentInstance;

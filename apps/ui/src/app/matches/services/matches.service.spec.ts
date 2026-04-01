@@ -60,4 +60,12 @@ describe('MatchesService', () => {
     expect(service.getStatusLabel(MatchStatusEnum.CANCELLED)).toBe('Cancelado');
   });
 
+  it('patchResult should PATCH /matches/:id with result payload', () => {
+    service.patchResult('abc', 3, 1).subscribe();
+    const req = httpMock.expectOne(`${API_BASE}/matches/abc`);
+    expect(req.request.method).toBe('PATCH');
+    expect(req.request.body).toEqual({ result: { homeScore: 3, awayScore: 1 } });
+    req.flush({});
+  });
+
 });
