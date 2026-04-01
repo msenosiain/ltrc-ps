@@ -83,9 +83,9 @@ describe('DashboardComponent', () => {
       expect(component.canViewStats()).toBe(true);
     });
 
-    it('should return false for ADMIN role (not in the allowed set)', async () => {
+    it('should return true for ADMIN role', async () => {
       await createComponent({ roles: [RoleEnum.ADMIN] });
-      expect(component.canViewStats()).toBe(false);
+      expect(component.canViewStats()).toBe(true);
     });
 
     it('should return false when user has no roles', async () => {

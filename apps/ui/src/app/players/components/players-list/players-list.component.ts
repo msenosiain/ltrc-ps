@@ -134,16 +134,9 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   private updateColumns(sport?: SportEnum): void {
     if (sport === SportEnum.HOCKEY) {
-      this.displayedColumns = [
-        ...this.baseColumns,
-        'branch',
-        ...this.afterCategoryColumns,
-      ];
+      this.displayedColumns = [...this.baseColumns, 'branch', ...this.afterCategoryColumns];
     } else {
-      this.displayedColumns = [
-        ...this.baseColumns,
-        ...this.afterCategoryColumns,
-      ];
+      this.displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
     }
   }
 
