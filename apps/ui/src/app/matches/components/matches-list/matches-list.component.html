@@ -25,8 +25,8 @@
     mat-table
     [dataSource]="dataSource"
     matSort
-    [matSortActive]="savedState?.sortBy || 'date'"
-    [matSortDirection]="savedState?.sortOrder || 'desc'"
+    [matSortActive]="savedState?.sortBy || ''"
+    [matSortDirection]="savedState?.sortOrder || ''"
     class="matches-table mat-elevation-z2"
   >
     <!-- Fecha -->

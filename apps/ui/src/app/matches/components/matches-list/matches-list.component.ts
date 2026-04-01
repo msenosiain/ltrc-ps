@@ -87,6 +87,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   private currentFilters: MatchFilters = this.savedState?.filters ?? {};
+  private userSorted = !!this.savedState?.sortBy;
 
   constructor() {
     const s = this.savedState;
@@ -101,6 +102,7 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
     this.paginator.pageIndex = pageIndex;
     this.paginator.pageSize = pageSize;
     this.sort.sortChange.subscribe(() => {
+      this.userSorted = true;
       this.paginator.pageIndex = 0;
       this.dataSource.setSorting(this.sort.active, this.sort.direction as SortOrder);
       this.saveState();
@@ -130,8 +132,8 @@ export class MatchesListComponent implements AfterViewInit, OnDestroy {
       filters: this.currentFilters,
       pageIndex: this.paginator?.pageIndex ?? 0,
       pageSize: this.paginator?.pageSize ?? 25,
-      sortBy: this.sort?.active,
-      sortOrder: this.sort?.direction as SortOrder,
+      sortBy: this.userSorted ? this.sort?.active : undefined,
+      sortOrder: this.userSorted ? this.sort?.direction as SortOrder : undefined,
     });
   }
 
