@@ -84,5 +84,6 @@
     "@nx/angular:component": {
       "style": "scss"
     }
-  }
+  },
+  "analytics": true
 }
