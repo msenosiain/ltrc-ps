@@ -1,6 +1,33 @@
 <div class="stats-widget">
   <h3 class="widget-title">Asistencia a entrenamientos <span class="subtitle">(últimas 4 semanas)</span></h3>
 
+  @if (showSportFilter() || showCategoryFilter()) {
+    <div class="filters-row">
+      @if (showSportFilter()) {
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Deporte</mat-label>
+          <mat-select [ngModel]="selectedSport()" (ngModelChange)="selectedSport.set($event); onSportChange()">
+            <mat-option [value]="undefined">Todos</mat-option>
+            @for (s of sportOptions(); track s.id) {
+              <mat-option [value]="s.id">{{ s.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+      @if (showCategoryFilter()) {
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Categoría</mat-label>
+          <mat-select [ngModel]="selectedCategory()" (ngModelChange)="selectedCategory.set($event); onCategoryChange()">
+            <mat-option [value]="undefined">Todas</mat-option>
+            @for (c of availableCategoryOptions(); track c.id) {
+              <mat-option [value]="c.id">{{ c.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+  }
+
   @if (loading) {
     <mat-progress-bar mode="indeterminate" />
   } @else if (!blocks.length) {

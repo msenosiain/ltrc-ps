@@ -85,6 +85,13 @@ export class DashboardComponent implements OnInit {
     return this.currentUser()?.roles?.includes(RoleEnum.COORDINATOR) ?? false;
   });
 
+  readonly canViewStats = computed(() => {
+    const viewAs = this.viewAsService.viewAsRole();
+    const roles = this.currentUser()?.roles ?? [];
+    const check = (r: RoleEnum) => viewAs ? viewAs === r : roles.includes(r);
+    return check(RoleEnum.COORDINATOR) || check(RoleEnum.MANAGER) || check(RoleEnum.TRAINER) || check(RoleEnum.COACH);
+  });
+
   readonly hasNoRoles = computed(() => {
     const viewAs = this.viewAsService.viewAsRole();
     if (viewAs) return false;

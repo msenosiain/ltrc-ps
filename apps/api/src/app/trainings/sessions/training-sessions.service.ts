@@ -472,7 +472,10 @@ export class TrainingSessionsService {
     return session.populate(POPULATE_FIELDS);
   }
 
-  async getAttendanceStats(caller?: User): Promise<{
+  async getAttendanceStats(
+    caller?: User,
+    filters?: { sport?: string; category?: string },
+  ): Promise<{
     byCategory: Record<
       string,
       {
@@ -495,6 +498,9 @@ export class TrainingSessionsService {
       if (sports.length) scopeFilter['sport'] = { $in: sports };
       if (categories.length) scopeFilter['category'] = { $in: categories };
     }
+    // Additional filters from query params (must be within caller's allowed scope)
+    if (filters?.sport) scopeFilter['sport'] = filters.sport;
+    if (filters?.category) scopeFilter['category'] = filters.category;
 
     const sessions = await this.sessionModel.find(scopeFilter).lean();
 
