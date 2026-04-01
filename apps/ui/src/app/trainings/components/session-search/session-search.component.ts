@@ -11,9 +11,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { format } from 'date-fns';
 import {
   CategoryEnum,
   SportEnum,
@@ -36,6 +39,8 @@ import { SportOption } from '../../../common/sport-options';
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
@@ -62,11 +67,18 @@ export class SessionSearchComponent implements OnInit {
     sport: [undefined as SportEnum | undefined],
     category: [undefined as CategoryEnum | undefined],
     status: [undefined as TrainingSessionStatusEnum | undefined],
+    fromDate: [null as Date | null],
+    toDate: [null as Date | null],
   });
 
   ngOnInit(): void {
     if (this.initialFilters) {
-      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+      const { fromDate, toDate, ...rest } = this.initialFilters as TrainingSessionFilters;
+      this.searchForm.patchValue({
+        ...rest,
+        fromDate: fromDate ? new Date(fromDate + 'T12:00:00Z') : null,
+        toDate: toDate ? new Date(toDate + 'T12:00:00Z') : null,
+      }, { emitEvent: false });
     }
 
     this.filterContext.filterContext$
@@ -117,8 +129,12 @@ export class SessionSearchComponent implements OnInit {
   }
 
   private emitFilters(): void {
-    this.filtersChange.emit(
-      nullToUndefined(this.searchForm.value) as TrainingSessionFilters
-    );
+    const v = this.searchForm.value;
+    const filters: TrainingSessionFilters = {
+      ...(nullToUndefined(v) as TrainingSessionFilters),
+      fromDate: v.fromDate ? format(v.fromDate, 'yyyy-MM-dd') : undefined,
+      toDate: v.toDate ? format(v.toDate, 'yyyy-MM-dd') : undefined,
+    };
+    this.filtersChange.emit(filters);
   }
 }

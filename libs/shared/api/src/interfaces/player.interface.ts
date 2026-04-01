@@ -55,6 +55,7 @@ export interface PlayerFilters {
   sport?: SportEnum;
   position?: PlayerPosition;
   category?: CategoryEnum;
+  categories?: CategoryEnum[];
   branch?: HockeyBranchEnum;
   status?: PlayerStatusEnum;
   availability?: PlayerAvailabilityEnum;

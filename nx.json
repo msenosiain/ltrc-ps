@@ -85,5 +85,5 @@
       "style": "scss"
     }
   },
-  "analytics": true
+  "analytics": false
 }

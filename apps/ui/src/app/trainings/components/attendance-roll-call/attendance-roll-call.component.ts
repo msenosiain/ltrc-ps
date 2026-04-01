@@ -224,12 +224,10 @@ export class AttendanceRollCallComponent implements OnInit {
   }
 
   markAllPresent(): void {
-    for (const row of this.playerRows) {
-      row.status = AttendanceStatusEnum.PRESENT;
-    }
-    for (const row of this.staffRows) {
-      row.status = AttendanceStatusEnum.PRESENT;
-    }
+    const allRows = [...this.playerRows, ...this.staffRows];
+    const allPresent = allRows.every((r) => r.status === AttendanceStatusEnum.PRESENT);
+    const newStatus = allPresent ? null : AttendanceStatusEnum.PRESENT;
+    for (const row of allRows) row.status = newStatus;
   }
 
   save(): void {

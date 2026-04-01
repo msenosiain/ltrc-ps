@@ -129,6 +129,7 @@ export class TrainingSessionsService {
     size: number
   ) {
     const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
     const pipeline: any[] = [
       { $match: queryFilters },
       {
@@ -149,7 +150,14 @@ export class TrainingSessionsService {
       },
       {
         $addFields: {
-          _isPast: { $cond: [{ $lt: ['$_dateObj', now] }, 1, 0] },
+          // 0 = today, 1 = future (other days), 2 = past (other days)
+          _group: {
+            $cond: [
+              { $eq: ['$date', todayStr] },
+              0,
+              { $cond: [{ $gt: ['$date', todayStr] }, 1, 2] },
+            ],
+          },
           _distanceMs: {
             $cond: [
               { $gte: ['$_dateObj', now] },
@@ -159,10 +167,10 @@ export class TrainingSessionsService {
           },
         },
       },
-      { $sort: { _isPast: 1, _distanceMs: 1 } },
+      { $sort: { _group: 1, _distanceMs: 1 } },
       { $skip: skip },
       { $limit: size },
-      { $project: { _isPast: 0, _distanceMs: 0, _dateObj: 0 } },
+      { $project: { _group: 0, _distanceMs: 0, _dateObj: 0 } },
     ];
 
     const rawItems = await this.sessionModel.aggregate(pipeline).exec();
@@ -187,6 +195,29 @@ export class TrainingSessionsService {
   async update(id: string, dto: UpdateTrainingSessionDto, caller?: User) {
     const session = await this.sessionModel.findById(id);
     if (!session) throw new NotFoundException('Training session not found');
+
+    // If date changes on a schedule-linked session, protect the original slot
+    // so the scheduler doesn't regenerate it
+    if (dto.date && dto.date !== (session.date as unknown as string) && session.schedule) {
+      await this.sessionModel.findOneAndUpdate(
+        { schedule: session.schedule, date: session.date },
+        {
+          $setOnInsert: {
+            startTime: session.startTime,
+            endTime: session.endTime,
+            sport: session.sport,
+            category: session.category,
+            status: TrainingSessionStatusEnum.CANCELLED,
+            attendance: [],
+          },
+        },
+        { upsert: true }
+      );
+      // Detach from schedule — this session is now a one-off
+      await this.sessionModel.findByIdAndUpdate(id, { $unset: { schedule: '' } });
+      session.set('schedule', undefined);
+    }
+
     Object.assign(session, dto);
     if (caller) session.updatedBy = (caller as any)._id;
     return session.save();

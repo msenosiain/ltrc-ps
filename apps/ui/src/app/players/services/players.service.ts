@@ -2,10 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
+  CategoryEnum,
   PaginatedResponse,
   PaginationQuery,
   Player,
+  PlayerAvailabilityEnum,
   PlayerPosition,
+  PlayerStatusEnum,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../app.config';
@@ -62,6 +65,18 @@ export class PlayersService {
   }
 
   // UPDATE ─────────────────────────────────────────────────
+
+  patchCategory(id: string, category: CategoryEnum): Observable<Player> {
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, { category });
+  }
+
+  patchAvailability(id: string, status: PlayerAvailabilityEnum, details?: { reason?: string; since?: string; estimatedReturn?: string }): Observable<Player> {
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}/availability`, { status, ...details });
+  }
+
+  patchStatus(id: string, status: PlayerStatusEnum): Observable<Player> {
+    return this.httpClient.patch<Player>(`${this.playersApiUrl}/${id}`, { status });
+  }
 
   updatePlayer(id: string, formValue: PlayerFormValue): Observable<Player> {
     const dto = mapFormToCreatePlayerDto(formValue);

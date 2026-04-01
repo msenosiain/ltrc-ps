@@ -12,14 +12,18 @@ import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import {
+  RoleEnum,
   SortOrder,
   TrainingSession,
   TrainingSessionFilters,
   TrainingSessionStatusEnum,
 } from '@ltrc-campo/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { SessionsDataSource } from '../../services/sessions.datasource';
 import { SessionSearchComponent } from '../session-search/session-search.component';
@@ -39,9 +43,12 @@ import {
     MatSortModule,
     MatIconModule,
     MatButtonModule,
+    MatMenuModule,
+    MatSnackBarModule,
     AsyncPipe,
     DatePipe,
     SessionSearchComponent,
+    AllowedRolesDirective,
   ],
   templateUrl: './session-list.component.html',
   styleUrl: './session-list.component.scss',
@@ -52,6 +59,7 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
   private readonly sessionsService = inject(TrainingSessionsService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly listState = inject(ListStateService);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly displayedColumns = [
     'date',
@@ -59,7 +67,11 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
     'location',
     'attendance',
     'status',
+    'actions',
   ];
+
+  readonly RoleEnum = RoleEnum;
+  readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
   readonly dataSource = new SessionsDataSource(this.sessionsService);
   readonly savedState = this.listState.get(SessionListComponent.STATE_KEY);
 
@@ -128,6 +140,22 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
 
   viewDetails(id: string): void {
     this.router.navigate(['/dashboard/trainings/sessions', id]);
+  }
+
+  goToRollCall(event: Event, id: string): void {
+    event.stopPropagation();
+    this.router.navigate(['/dashboard/trainings/sessions', id, 'attendance']);
+  }
+
+  changeStatus(event: Event, session: TrainingSession, status: TrainingSessionStatusEnum): void {
+    event.stopPropagation();
+    this.sessionsService.updateSession(session.id!, { status }).subscribe({
+      next: () => {
+        this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+        this.snackBar.open('Estado actualizado', 'Cerrar', { duration: 3000 });
+      },
+      error: () => this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 4000 }),
+    });
   }
 
   getCategoryLabel(session: TrainingSession): string {

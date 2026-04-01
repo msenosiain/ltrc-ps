@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { PlayersService } from '../../services/players.service';
 import { PlayersDataSource } from '../../services/players.datasource';
@@ -15,6 +16,11 @@ import {
   ImportResultDialogComponent,
   ImportResultDialogData,
 } from '../../../common/components/import-result-dialog/import-result-dialog.component';
+import {
+  AvailabilityDialogComponent,
+  AvailabilityDialogData,
+  AvailabilityDialogResult,
+} from '../availability-dialog/availability-dialog.component';
 import {
   CategoryEnum,
   HockeyBranchEnum,
@@ -26,6 +32,7 @@ import {
   SortOrder,
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
+import { AuthService } from '../../../auth/auth.service';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import { categoryOptions } from '../../../common/category-options';
 import { PlayerSearchComponent } from '../player-search/player-search.component';
@@ -44,6 +51,7 @@ import { ListStateService } from '../../../common/services/list-state.service';
     MatIconModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatMenuModule,
     PlayerSearchComponent,
     AllowedRolesDirective,
     MatTooltipModule,
@@ -58,6 +66,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
   private readonly listState = inject(ListStateService);
+  readonly authService = inject(AuthService);
 
   importing = false;
   readonly RoleEnum = RoleEnum;
@@ -65,7 +74,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
   readonly PlayerAvailabilityEnum = PlayerAvailabilityEnum;
 
   private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
-  private readonly afterCategoryColumns = ['positions'];
+  private readonly afterCategoryColumns = ['positions', 'actions'];
   displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
   readonly dataSource = new PlayersDataSource(this.playersService);
@@ -151,6 +160,39 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
 
   viewPlayerDetails(playerId: string): void {
     this.router.navigate(['/dashboard/players', playerId]);
+  }
+
+  openAvailabilityDialog(event: Event, player: Player): void {
+    event.stopPropagation();
+    const dialogRef = this.dialog.open(AvailabilityDialogComponent, {
+      width: '400px',
+      data: { player } satisfies AvailabilityDialogData,
+    });
+    dialogRef.afterClosed().subscribe((result: AvailabilityDialogResult | undefined) => {
+      if (!result) return;
+      this.playersService.patchAvailability(player.id!, result.status, {
+        reason: result.reason,
+        since: result.since,
+        estimatedReturn: result.estimatedReturn,
+      }).subscribe({
+        next: () => {
+          this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+          this.snackBar.open('Disponibilidad actualizada', 'Cerrar', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+      });
+    });
+  }
+
+  approveTrial(event: Event, player: Player): void {
+    event.stopPropagation();
+    this.playersService.patchStatus(player.id!, PlayerStatusEnum.ACTIVE).subscribe({
+      next: () => {
+        this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+        this.snackBar.open('Jugador aprobado como activo', 'Cerrar', { duration: 3000 });
+      },
+      error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+    });
   }
 
   getPositionsLabel(positions?: PlayerPosition[], sport?: SportEnum | null): string {
