@@ -19,16 +19,20 @@
   }
 
   @if (!loading && days.length === 0) {
-    <p class="empty">Sin actividad próxima.</p>
+    <p class="empty">Sin actividad esta semana.</p>
   }
 
-  <div class="days-list">
+  <mat-accordion class="days-accordion" [multi]="true">
     @for (day of days; track day.dateKey) {
-      <div class="day-section">
-        <div class="day-header">
-          <span class="day-name">{{ day.dayName }}</span>
-          <span class="day-date">{{ day.dateLabel }}</span>
-        </div>
+      <mat-expansion-panel class="day-panel" [expanded]="day.dayName === 'Hoy'" hideToggle>
+        <mat-expansion-panel-header class="day-panel-header">
+          <mat-panel-title>
+            <span class="day-name" [class.day-name--today]="day.dayName === 'Hoy'">{{ day.dayName }}</span>
+            <span class="day-date">{{ day.dateLabel }}</span>
+            <span class="event-count">{{ day.events.length }}</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
         @for (event of day.events; track event.id) {
           <div class="event-row" (click)="navigate(event)" tabindex="0" (keydown.enter)="navigate(event)">
             @if (event.type === 'training' && event.sport === SportEnum.RUGBY) {
@@ -62,7 +66,7 @@
             </div>
           </div>
         }
-      </div>
+      </mat-expansion-panel>
     }
-  </div>
+  </mat-accordion>
 </div>

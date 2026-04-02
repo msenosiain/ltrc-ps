@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { CalendarEvent, CategoryEnum, HockeyBranchEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
 import { getCategoryLabel } from '../../../common/category-options';
@@ -45,7 +46,7 @@ function getWeekBounds(): { weekStart: Date; weekEnd: Date } {
 @Component({
   selector: 'ltrc-calendar-week-widget',
   standalone: true,
-  imports: [MatIconModule, MatProgressBarModule, MatButtonModule, MatTooltipModule],
+  imports: [MatIconModule, MatProgressBarModule, MatButtonModule, MatTooltipModule, MatExpansionModule],
   templateUrl: './calendar-week-widget.component.html',
   styleUrl: './calendar-week-widget.component.scss',
 })
