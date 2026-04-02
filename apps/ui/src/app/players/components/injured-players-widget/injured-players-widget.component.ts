@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { Player, PlayerAvailabilityEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { Player, PlayerAvailabilityEnum, PlayerStatusEnum } from '@ltrc-campo/shared-api-model';
 import { PlayersService } from '../../services/players.service';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
 import { getCategoryLabel } from '../../../common/category-options';
@@ -34,6 +34,7 @@ export class InjuredPlayersWidgetComponent implements OnInit {
     this.loading = true;
     const filters: Record<string, unknown> = {
       availability: PlayerAvailabilityEnum.INJURED,
+      status: PlayerStatusEnum.ACTIVE,
     };
     if (ctx.forcedSport) filters['sport'] = ctx.forcedSport;
     if (ctx.forcedCategory) filters['category'] = ctx.forcedCategory;
