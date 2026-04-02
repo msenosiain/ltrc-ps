@@ -1,7 +1,6 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import {
   BlockEnum,
@@ -22,6 +21,7 @@ import {
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
 import { Router } from '@angular/router';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 interface CategoryStat {
   category: CategoryEnum;
@@ -85,7 +85,7 @@ const HOCKEY_CATS = new Set<CategoryEnum>([
 @Component({
   selector: 'ltrc-player-stats-widget',
   standalone: true,
-  imports: [MatProgressBarModule, MatIconModule, MatButtonModule],
+  imports: [MatButtonModule, MatIconModule, WidgetShellComponent],
   templateUrl: './player-stats-widget.component.html',
   styleUrl: './player-stats-widget.component.scss',
 })

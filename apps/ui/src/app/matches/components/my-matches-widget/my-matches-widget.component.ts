@@ -1,12 +1,11 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Match, MatchStatusEnum, SortOrder } from '@ltrc-campo/shared-api-model';
 import { MatchesService } from '../../services/matches.service';
 import { getCategoryLabel } from '../../match-options';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -19,7 +18,7 @@ interface GroupedMatches {
 @Component({
   selector: 'ltrc-my-matches-widget',
   standalone: true,
-  imports: [DatePipe, MatIconModule, MatProgressBarModule],
+  imports: [DatePipe, WidgetShellComponent],
   templateUrl: './my-matches-widget.component.html',
   styleUrl: './my-matches-widget.component.scss',
 })

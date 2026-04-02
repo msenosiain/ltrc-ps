@@ -1,37 +1,40 @@
-<div class="widget">
-  <div class="widget-header">
-    <h3 class="widget-title">
-      Asist. entrenamientos <span class="subtitle">(últimas 4 semanas)</span>
-    </h3>
+<app-widget-shell
+  icon="leaderboard"
+  title="Asistenca a entrenamientos"
+  subtitle="(últimas 4 semanas)"
+  [loading]="loading"
+  height="460px"
+>
+  <ng-container widget-actions>
     @if (showFilterButton) {
       <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
         <mat-icon>tune</mat-icon>
         Filtros
       </button>
     }
-  </div>
+  </ng-container>
 
-  @if (loading) {
-    <mat-progress-bar mode="indeterminate" />
-  } @else if (!blocks.length) {
-    <p class="no-data">Sin datos de asistencia.</p>
-  } @else {
-    @for (block of blocks; track block.block) {
-      <div class="block-section">
-        <div class="block-header">
-          <span class="block-name">{{ block.label }}</span>
-          <span class="block-avg" [class]="getPctClass(block.avgPct)">{{ block.avgPct }}%</span>
-        </div>
-        @for (cat of block.categories; track cat.category) {
-          <div class="category-row">
-            <span class="category-label">{{ cat.label }}</span>
-            <div class="category-stats">
-              <span class="sessions-count">{{ cat.sessions }} ses.</span>
-              <span class="pct-badge" [class]="getPctClass(cat.pct)">{{ cat.pct }}%</span>
-            </div>
+  @if (!loading) {
+    @if (!blocks.length) {
+      <p class="no-data">Sin datos de asistencia.</p>
+    } @else {
+      @for (block of blocks; track block.block) {
+        <div class="block-section">
+          <div class="block-header">
+            <span class="block-name">{{ block.label }}</span>
+            <span class="block-avg" [class]="getPctClass(block.avgPct)">{{ block.avgPct }}%</span>
           </div>
-        }
-      </div>
+          @for (cat of block.categories; track cat.category) {
+            <div class="category-row">
+              <span class="category-label">{{ cat.label }}</span>
+              <div class="category-stats">
+                <span class="sessions-count">{{ cat.sessions }} ses.</span>
+                <span class="pct-badge" [class]="getPctClass(cat.pct)">{{ cat.pct }}%</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
     }
   }
-</div>
+</app-widget-shell>

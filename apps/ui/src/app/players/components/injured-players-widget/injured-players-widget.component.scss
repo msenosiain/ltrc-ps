@@ -1,32 +1,3 @@
-.widget {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.widget-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.widget-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: #b71c1c;
-  }
-}
-
 .widget-link {
   background: none;
   border: none;
@@ -34,14 +5,12 @@
   font-size: 0.82rem;
   color: var(--mat-app-primary, #1976d2);
   padding: 0;
-  margin-left: 4px;
   text-decoration: underline;
 }
 
 .empty {
   color: var(--mat-app-on-surface-variant, #888);
   font-size: 0.9rem;
-  margin: 8px 0;
 }
 
 .players-list {

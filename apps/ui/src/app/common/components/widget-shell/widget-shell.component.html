@@ -1,0 +1,24 @@
+<div class="widget-shell" [style.height]="height">
+  <div class="widget-shell__header">
+    <div class="widget-shell__title-group">
+      @if (icon) {
+        <mat-icon [fontSet]="iconFontSet" [style.color]="iconColor || null">{{ icon }}</mat-icon>
+      }
+      <div>
+        <span class="widget-shell__title">{{ title }}</span>
+        @if (subtitle) {
+          <span class="widget-shell__subtitle">{{ subtitle }}</span>
+        }
+      </div>
+    </div>
+    <div class="widget-shell__actions">
+      <ng-content select="[widget-actions]" />
+    </div>
+  </div>
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+  <div class="widget-shell__body">
+    <ng-content />
+  </div>
+</div>

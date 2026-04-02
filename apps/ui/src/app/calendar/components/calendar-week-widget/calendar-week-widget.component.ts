@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CalendarEvent, CategoryEnum, HockeyBranchEnum, SportEnum } from '@ltrc-campo/shared-api-model';
@@ -16,6 +15,7 @@ import {
   ScopeFilterDialogData,
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -45,7 +45,7 @@ function getWeekBounds(): { weekStart: Date; weekEnd: Date } {
 @Component({
   selector: 'ltrc-calendar-week-widget',
   standalone: true,
-  imports: [MatIconModule, MatProgressBarModule, MatButtonModule, MatExpansionModule],
+  imports: [MatIconModule, MatButtonModule, MatExpansionModule, WidgetShellComponent],
   templateUrl: './calendar-week-widget.component.html',
   styleUrl: './calendar-week-widget.component.scss',
 })
@@ -82,7 +82,6 @@ export class CalendarWeekWidgetComponent implements OnInit {
       .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((ctx) => {
         this.filterContext = ctx;
-        // Auto-apply forced values
         if (ctx.forcedSport) this.selected = { ...this.selected, sport: ctx.forcedSport };
         if (ctx.forcedCategory) this.selected = { ...this.selected, category: ctx.forcedCategory };
         if (ctx.forcedBranch) this.selected = { ...this.selected, branch: ctx.forcedBranch };
@@ -97,7 +96,7 @@ export class CalendarWeekWidgetComponent implements OnInit {
       data: { filterContext: this.filterContext, selected: { ...this.selected } } satisfies ScopeFilterDialogData,
     });
     ref.afterClosed().subscribe((result: ScopeFilterSelection | undefined) => {
-      if (result === undefined) return; // dismissed
+      if (result === undefined) return;
       this.selected = result;
       this.load();
     });

@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, DestroyRef } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,6 +12,7 @@ import {
   ScopeFilterDialogData,
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 interface CategoryAttStat {
   category: CategoryEnum;
@@ -39,7 +39,7 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
 @Component({
   selector: 'ltrc-match-attendance-stats-widget',
   standalone: true,
-  imports: [MatProgressBarModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, WidgetShellComponent],
   templateUrl: './match-attendance-stats-widget.component.html',
   styleUrl: './match-attendance-stats-widget.component.scss',
 })

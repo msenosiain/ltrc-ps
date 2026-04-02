@@ -1,5 +1,4 @@
-import { Component, inject, OnInit, DestroyRef, signal, computed } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,12 +6,13 @@ import { BlockEnum, CategoryEnum, SportEnum, getBlockCategories } from '@ltrc-ca
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { getCategoryLabel, getCategoryOptionsBySport } from '../../../common/category-options';
+import { getCategoryLabel } from '../../../common/category-options';
 import {
   ScopeFilterDialogComponent,
   ScopeFilterDialogData,
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 interface CategoryAttStat {
   category: CategoryEnum;
@@ -39,7 +39,7 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
 @Component({
   selector: 'ltrc-attendance-stats-widget',
   standalone: true,
-  imports: [MatProgressBarModule, MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, WidgetShellComponent],
   templateUrl: './attendance-stats-widget.component.html',
   styleUrl: './attendance-stats-widget.component.scss',
 })

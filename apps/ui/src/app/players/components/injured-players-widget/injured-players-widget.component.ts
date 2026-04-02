@@ -2,7 +2,6 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Player, PlayerAvailabilityEnum, PlayerStatusEnum } from '@ltrc-campo/shared-api-model';
@@ -14,11 +13,12 @@ import {
   ScopeFilterDialogData,
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 @Component({
   selector: 'ltrc-injured-players-widget',
   standalone: true,
-  imports: [MatIconModule, MatProgressBarModule, MatButtonModule],
+  imports: [MatIconModule, MatButtonModule, WidgetShellComponent],
   templateUrl: './injured-players-widget.component.html',
   styleUrl: './injured-players-widget.component.scss',
 })

@@ -1,10 +1,10 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DayOfWeekEnum, Workout } from '@ltrc-campo/shared-api-model';
 import { WorkoutsService } from '../../services/workouts.service';
+import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
 
 const DAY_LABELS: Record<DayOfWeekEnum, string> = {
   [DayOfWeekEnum.MONDAY]: 'Lun',
@@ -19,7 +19,7 @@ const DAY_LABELS: Record<DayOfWeekEnum, string> = {
 @Component({
   selector: 'ltrc-my-workout-widget',
   standalone: true,
-  imports: [MatIconModule, MatProgressBarModule],
+  imports: [MatIconModule, WidgetShellComponent],
   templateUrl: './my-workout-widget.component.html',
   styleUrl: './my-workout-widget.component.scss',
 })
