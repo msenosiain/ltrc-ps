@@ -4,7 +4,15 @@
       <mat-icon>local_hospital</mat-icon>
       Lesionados
     </h3>
-    <button class="widget-link" (click)="goToPlayers()">Ver jugadores</button>
+    <div class="widget-header-actions">
+      @if (showFilterButton) {
+        <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
+          <mat-icon>tune</mat-icon>
+          Filtros
+        </button>
+      }
+      <button class="widget-link" (click)="goToPlayers()">Ver jugadores</button>
+    </div>
   </div>
 
   @if (loading) {

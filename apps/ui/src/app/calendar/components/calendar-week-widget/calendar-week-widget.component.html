@@ -6,8 +6,9 @@
     </h3>
     <div class="widget-header-actions">
       @if (showFilterButton) {
-        <button mat-icon-button (click)="openFilters()" [matTooltip]="hasFilters ? 'Filtros activos' : 'Filtrar'" class="filter-btn" [class.filter-btn--active]="hasFilters">
-          <mat-icon>filter_list</mat-icon>
+        <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
+          <mat-icon>tune</mat-icon>
+          Filtros
         </button>
       }
       <button class="widget-link" (click)="goToCalendar()">Ver todo</button>
@@ -22,7 +23,7 @@
     <p class="empty">Sin actividad esta semana.</p>
   }
 
-  <mat-accordion class="days-accordion" [multi]="true">
+  <mat-accordion class="days-accordion">
     @for (day of days; track day.dateKey) {
       <mat-expansion-panel class="day-panel" [expanded]="day.dayName === 'Hoy'" hideToggle>
         <mat-expansion-panel-header class="day-panel-header">

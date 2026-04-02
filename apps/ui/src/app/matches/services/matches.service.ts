@@ -3,10 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   AttendanceStatusEnum,
+  CategoryEnum,
   Match,
   MatchAttachment,
   PaginatedResponse,
   PaginationQuery,
+  SportEnum,
   VideoClip,
   VideoVisibility,
 } from '@ltrc-campo/shared-api-model';
@@ -155,12 +157,15 @@ export class MatchesService {
     );
   }
 
-  getAttendanceStats(): Observable<{
+  getAttendanceStats(filters?: { sport?: SportEnum; category?: CategoryEnum }): Observable<{
     byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
   }> {
+    let params = new HttpParams();
+    if (filters?.sport) params = params.set('sport', filters.sport);
+    if (filters?.category) params = params.set('category', filters.category);
     return this.httpClient.get<{
       byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
-    }>(`${this.matchesApiUrl}/stats/attendance`);
+    }>(`${this.matchesApiUrl}/stats/attendance`, { params });
   }
 
   applySquadFromTemplate(matchId: string, squadId: string): Observable<Match> {

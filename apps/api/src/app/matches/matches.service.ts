@@ -528,7 +528,7 @@ export class MatchesService {
     );
   }
 
-  async getAttendanceStats(caller?: User): Promise<{
+  async getAttendanceStats(caller?: User, sport?: string, category?: string): Promise<{
     byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
   }> {
     const since = new Date();
@@ -549,6 +549,8 @@ export class MatchesService {
         scopeFilter['category'] = { $in: callerInfantiles.length ? callerInfantiles : infantilesCategories };
       }
     }
+    if (sport) scopeFilter['sport'] = sport;
+    if (category) scopeFilter['category'] = category;
 
     const matches = await this.matchModel.find(scopeFilter).lean();
 

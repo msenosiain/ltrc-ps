@@ -127,6 +127,18 @@ ltrc-dashboard {
   width: 100%;
 }
 
+/* Sticky toolbar: wrap to two rows on mobile */
+@media (max-width: 480px) {
+  .sticky-toolbar {
+    flex-wrap: wrap;
+  }
+  .sticky-toolbar__actions {
+    width: 100%;
+    flex-shrink: 1 !important;
+    justify-content: flex-end;
+  }
+}
+
 /* Material Icons fix */
 .material-icons {
   font-family: 'Material Icons';

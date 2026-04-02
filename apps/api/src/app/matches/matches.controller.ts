@@ -250,8 +250,12 @@ export class MatchesController {
 
   @Get('stats/attendance')
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
-  async getAttendanceStats(@Req() req: Request) {
-    return this.matchesService.getAttendanceStats((req as any).user);
+  async getAttendanceStats(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+  ) {
+    return this.matchesService.getAttendanceStats((req as any).user, sport, category);
   }
 
   @Get(':id')

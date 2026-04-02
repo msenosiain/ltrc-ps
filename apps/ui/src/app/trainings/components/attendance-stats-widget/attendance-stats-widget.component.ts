@@ -1,15 +1,18 @@
 import { Component, inject, OnInit, DestroyRef, signal, computed } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { BlockEnum, CategoryEnum, SportEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { getCategoryLabel, getCategoryOptionsBySport } from '../../../common/category-options';
-import { SportOption } from '../../../common/sport-options';
-import { CategoryOption } from '../../../common/category-options';
+import {
+  ScopeFilterDialogComponent,
+  ScopeFilterDialogData,
+  ScopeFilterSelection,
+} from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
 
 interface CategoryAttStat {
   category: CategoryEnum;
@@ -36,50 +39,27 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
 @Component({
   selector: 'ltrc-attendance-stats-widget',
   standalone: true,
-  imports: [MatProgressBarModule, MatFormFieldModule, MatSelectModule, FormsModule],
+  imports: [MatProgressBarModule, MatButtonModule, MatIconModule],
   templateUrl: './attendance-stats-widget.component.html',
   styleUrl: './attendance-stats-widget.component.scss',
 })
 export class AttendanceStatsWidgetComponent implements OnInit {
   private readonly sessionsService = inject(TrainingSessionsService);
   private readonly filterContextService = inject(UserFilterContextService);
+  private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
-  private filterContext = signal<FilterContext | null>(null);
+  private filterContext: FilterContext | null = null;
+  selected: ScopeFilterSelection = {};
 
-  readonly selectedSport = signal<SportEnum | undefined>(undefined);
-  readonly selectedCategory = signal<CategoryEnum | undefined>(undefined);
+  get showFilterButton(): boolean {
+    if (!this.filterContext) return false;
+    return this.filterContext.sportOptions.length > 1 || this.filterContext.categoryOptions.length > 1;
+  }
 
-  readonly showSportFilter = computed(() => {
-    const ctx = this.filterContext();
-    return !!ctx && ctx.sportOptions.length > 1;
-  });
-
-  readonly sportOptions = computed<SportOption[]>(() => this.filterContext()?.sportOptions ?? []);
-
-  readonly showCategoryFilter = computed(() => {
-    const ctx = this.filterContext();
-    if (!ctx) return false;
-    return this.availableCategoryOptions().length > 1;
-  });
-
-  readonly availableCategoryOptions = computed<CategoryOption[]>(() => {
-    const ctx = this.filterContext();
-    if (!ctx) return [];
-
-    const sport = this.selectedSport() ?? ctx.forcedSport;
-
-    // Start from user's allowed categories
-    let options = ctx.categoryOptions;
-
-    // Further filter by selected sport
-    if (sport) {
-      const sportCats = getCategoryOptionsBySport(sport).map((c) => c.id);
-      options = options.filter((c) => sportCats.includes(c.id));
-    }
-
-    return options;
-  });
+  get hasFilters(): boolean {
+    return !!(this.selected.sport || this.selected.category);
+  }
 
   loading = true;
   blocks: BlockAttStat[] = [];
@@ -88,34 +68,31 @@ export class AttendanceStatsWidgetComponent implements OnInit {
     this.filterContextService.filterContext$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((ctx) => {
-        this.filterContext.set(ctx);
-        // Auto-apply forced values
-        if (ctx.forcedSport) this.selectedSport.set(ctx.forcedSport);
-        if (ctx.forcedCategory) this.selectedCategory.set(ctx.forcedCategory);
+        this.filterContext = ctx;
+        if (ctx.forcedSport) this.selected = { ...this.selected, sport: ctx.forcedSport };
+        if (ctx.forcedCategory) this.selected = { ...this.selected, category: ctx.forcedCategory };
         this.loadStats();
       });
   }
 
-  onSportChange(): void {
-    // Reset category when sport changes
-    this.selectedCategory.set(undefined);
-    this.loadStats();
-  }
-
-  onCategoryChange(): void {
-    this.loadStats();
+  openFilters(): void {
+    if (!this.filterContext) return;
+    this.dialog.open(ScopeFilterDialogComponent, {
+      width: '320px',
+      data: { filterContext: this.filterContext, selected: { ...this.selected } } satisfies ScopeFilterDialogData,
+    }).afterClosed().subscribe((result: ScopeFilterSelection | undefined) => {
+      if (result === undefined) return;
+      this.selected = result;
+      this.loadStats();
+    });
   }
 
   private loadStats(): void {
-    const ctx = this.filterContext();
-    const sport = this.selectedSport() ?? ctx?.forcedSport;
-    const category = this.selectedCategory() ?? ctx?.forcedCategory;
-
     this.loading = true;
     this.sessionsService
       .getAttendanceStats({
-        sport: sport as string | undefined,
-        category: category as string | undefined,
+        sport: this.selected.sport as string | undefined,
+        category: this.selected.category as string | undefined,
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

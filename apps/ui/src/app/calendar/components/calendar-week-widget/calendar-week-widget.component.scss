@@ -42,15 +42,6 @@
   text-decoration: underline;
 }
 
-.filter-btn {
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
-
-  mat-icon { font-size: 18px; width: 18px; height: 18px; }
-
-  &--active mat-icon { color: var(--mat-app-primary, #1976d2); }
-}
 
 .empty {
   color: var(--mat-app-on-surface-variant, #888);

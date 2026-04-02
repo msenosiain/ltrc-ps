@@ -1,5 +1,13 @@
 <div class="stats-widget">
-  <h3 class="widget-title">Jugadores por categoría</h3>
+  <div class="widget-header">
+    <h3 class="widget-title">Jugadores por categoría</h3>
+    @if (showFilterButton) {
+      <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
+        <mat-icon>tune</mat-icon>
+        Filtros
+      </button>
+    }
+  </div>
 
   @if (loading) {
     <mat-progress-bar mode="indeterminate" />
