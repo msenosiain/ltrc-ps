@@ -166,6 +166,14 @@
         <mat-icon>medical_information</mat-icon>
         Disponibilidad
       </button>
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
+        mat-menu-item
+        (click)="openChangeCategoryDialog($event, player)"
+      >
+        <mat-icon>category</mat-icon>
+        Cambiar categoría
+      </button>
     </ng-template>
   </mat-menu>
 

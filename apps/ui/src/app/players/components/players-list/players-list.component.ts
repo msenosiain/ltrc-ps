@@ -22,6 +22,10 @@ import {
   AvailabilityDialogResult,
 } from '../availability-dialog/availability-dialog.component';
 import {
+  ChangeCategoryDialogComponent,
+  ChangeCategoryDialogData,
+} from '../change-category-dialog/change-category-dialog.component';
+import {
   CategoryEnum,
   HockeyBranchEnum,
   Player,
@@ -189,9 +193,27 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
     this.playersService.patchStatus(player.id!, PlayerStatusEnum.ACTIVE).subscribe({
       next: () => {
         this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
-        this.snackBar.open('Jugador aprobado como activo', 'Cerrar', { duration: 3000 });
+        this.snackBar.open('Jugador registrado como socio activo', 'Cerrar', { duration: 3000 });
       },
       error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+    });
+  }
+
+  openChangeCategoryDialog(event: Event, player: Player): void {
+    event.stopPropagation();
+    const dialogRef = this.dialog.open(ChangeCategoryDialogComponent, {
+      width: '360px',
+      data: { player } satisfies ChangeCategoryDialogData,
+    });
+    dialogRef.afterClosed().subscribe((category: string | undefined) => {
+      if (!category) return;
+      this.playersService.patchCategory(player.id!, category as any).subscribe({
+        next: () => {
+          this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
+          this.snackBar.open('Categoría actualizada', 'Cerrar', { duration: 3000 });
+        },
+        error: () => this.snackBar.open('Error al actualizar', 'Cerrar', { duration: 4000 }),
+      });
     });
   }
 

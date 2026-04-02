@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Cambiar categoría — {{ data.player.name }}</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Categoría</mat-label>
+    <mat-select [(ngModel)]="selectedCategory">
+      @for (opt of categoryOptions; track opt.id) {
+        <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="!selectedCategory">Guardar</button>
+</mat-dialog-actions>
