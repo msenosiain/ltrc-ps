@@ -1,0 +1,11 @@
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: min(280px, 100%);
+  padding-top: 8px;
+}
+
+.full-width {
+  width: 100%;
+}

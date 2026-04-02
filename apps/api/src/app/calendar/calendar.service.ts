@@ -13,12 +13,15 @@ export class CalendarService {
     @InjectModel(TrainingSessionEntity.name) private readonly sessionModel: Model<TrainingSessionEntity>,
   ) {}
 
-  async getEvents(fromDate: string, toDate: string, caller?: User): Promise<CalendarEvent[]> {
+  async getEvents(fromDate: string, toDate: string, caller?: User, sport?: string, category?: string): Promise<CalendarEvent[]> {
     const scopeFilter: Record<string, unknown> = {};
     if (caller && !caller.roles.includes(RoleEnum.ADMIN)) {
       if (caller.sports?.length) scopeFilter['sport'] = { $in: caller.sports };
       if (caller.categories?.length) scopeFilter['category'] = { $in: caller.categories };
     }
+    // Explicit filters narrow the scope further
+    if (sport) scopeFilter['sport'] = sport;
+    if (category) scopeFilter['category'] = category;
 
     const fromDateObj = new Date(fromDate + 'T00:00:00.000Z');
     const toDateObj = new Date(toDate + 'T23:59:59.999Z');

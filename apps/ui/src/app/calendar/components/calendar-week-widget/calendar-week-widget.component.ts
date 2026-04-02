@@ -1,11 +1,21 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { take } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { CalendarEvent, CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CalendarEvent, CategoryEnum, HockeyBranchEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
 import { getCategoryLabel } from '../../../common/category-options';
+import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
+import {
+  ScopeFilterDialogComponent,
+  ScopeFilterDialogData,
+  ScopeFilterSelection,
+} from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -20,15 +30,29 @@ function toDateStr(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function getWeekBounds(): { weekStart: Date; weekEnd: Date } {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const day = today.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const weekStart = new Date(today);
+  weekStart.setDate(today.getDate() + mondayOffset);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  return { weekStart, weekEnd };
+}
+
 @Component({
   selector: 'ltrc-calendar-week-widget',
   standalone: true,
-  imports: [MatIconModule, MatProgressBarModule],
+  imports: [MatIconModule, MatProgressBarModule, MatButtonModule, MatTooltipModule],
   templateUrl: './calendar-week-widget.component.html',
   styleUrl: './calendar-week-widget.component.scss',
 })
 export class CalendarWeekWidgetComponent implements OnInit {
   private readonly calendarService = inject(CalendarService);
+  private readonly filterContextService = inject(UserFilterContextService);
+  private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -37,18 +61,57 @@ export class CalendarWeekWidgetComponent implements OnInit {
   loading = true;
   days: DayGroup[] = [];
 
-  ngOnInit(): void {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const end = new Date(today);
-    end.setDate(today.getDate() + 13); // next 2 weeks
+  private filterContext: FilterContext | null = null;
+  private selected: ScopeFilterSelection = {};
 
+  get hasFilters(): boolean {
+    return !!(this.selected.sport || this.selected.category || this.selected.branch);
+  }
+
+  get showFilterButton(): boolean {
+    if (!this.filterContext) return false;
+    return (
+      this.filterContext.sportOptions.length > 1 ||
+      this.filterContext.categoryOptions.length > 1 ||
+      (this.filterContext.showBranchFilter && this.filterContext.branchOptions.length > 1)
+    );
+  }
+
+  ngOnInit(): void {
+    this.filterContextService.filterContext$
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.filterContext = ctx;
+        // Auto-apply forced values
+        if (ctx.forcedSport) this.selected = { ...this.selected, sport: ctx.forcedSport };
+        if (ctx.forcedCategory) this.selected = { ...this.selected, category: ctx.forcedCategory };
+        if (ctx.forcedBranch) this.selected = { ...this.selected, branch: ctx.forcedBranch };
+        this.load();
+      });
+  }
+
+  openFilters(): void {
+    if (!this.filterContext) return;
+    const ref = this.dialog.open(ScopeFilterDialogComponent, {
+      width: '320px',
+      data: { filterContext: this.filterContext, selected: { ...this.selected } } satisfies ScopeFilterDialogData,
+    });
+    ref.afterClosed().subscribe((result: ScopeFilterSelection | undefined) => {
+      if (result === undefined) return; // dismissed
+      this.selected = result;
+      this.load();
+    });
+  }
+
+  private load(): void {
+    const { weekStart, weekEnd } = getWeekBounds();
+    this.loading = true;
     this.calendarService
-      .getEvents(toDateStr(today), toDateStr(end))
+      .getEvents(toDateStr(weekStart), toDateStr(weekEnd), this.selected.sport, this.selected.category)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (events) => {
-          this.days = this.groupByDay(events, today, end);
+          this.days = this.groupByDay(events, weekStart, weekEnd);
           this.loading = false;
         },
         error: () => {
@@ -60,7 +123,9 @@ export class CalendarWeekWidgetComponent implements OnInit {
 
   private groupByDay(events: CalendarEvent[], from: Date, to: Date): DayGroup[] {
     const todayStr = toDateStr(new Date());
-    const tomorrowStr = toDateStr(new Date(new Date().setDate(new Date().getDate() + 1)));
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = toDateStr(tomorrow);
     const groups: DayGroup[] = [];
 
     for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {

@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>Filtros</h2>
+
+<mat-dialog-content class="filter-content">
+  @if (showSport) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Deporte</mat-label>
+      <mat-select [(ngModel)]="selectedSport" (ngModelChange)="onSportChange()">
+        <mat-option [value]="undefined">Todos</mat-option>
+        @for (opt of sportOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  @if (showCategory) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Categoría</mat-label>
+      <mat-select [(ngModel)]="selectedCategory">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (opt of categoryOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+
+  @if (showBranch) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Rama</mat-label>
+      <mat-select [(ngModel)]="selectedBranch">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (opt of branchOptions; track opt.id) {
+          <mat-option [value]="opt.id">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="clear()">Limpiar</button>
+  <button mat-flat-button color="primary" (click)="apply()">Aplicar</button>
+</mat-dialog-actions>

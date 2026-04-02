@@ -4,7 +4,14 @@
       <mat-icon>calendar_month</mat-icon>
       Calendario
     </h3>
-    <button class="widget-link" (click)="goToCalendar()">Ver todo</button>
+    <div class="widget-header-actions">
+      @if (showFilterButton) {
+        <button mat-icon-button (click)="openFilters()" [matTooltip]="hasFilters ? 'Filtros activos' : 'Filtrar'" class="filter-btn" [class.filter-btn--active]="hasFilters">
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      }
+      <button class="widget-link" (click)="goToCalendar()">Ver todo</button>
+    </div>
   </div>
 
   @if (loading) {
