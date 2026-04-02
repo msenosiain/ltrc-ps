@@ -42,7 +42,7 @@
                     @if (getEventTime(event)) {
                       <span class="event-time">{{ getEventTime(event) }}</span>
                     }
-                    <span class="event-title">{{ event.title }}</span>
+                    <span class="event-title">{{ getEventTitle(event) }}</span>
                     @if (event.type === 'match' && event.isHome !== undefined) {
                       <span class="venue-badge" [class.home]="event.isHome" [class.away]="!event.isHome">
                         {{ event.isHome ? 'L' : 'V' }}

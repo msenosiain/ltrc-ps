@@ -36,6 +36,18 @@
       </mat-select>
     </mat-form-field>
   }
+
+  @if (showDivision) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>División</mat-label>
+      <mat-select [(ngModel)]="selectedDivision">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (div of divisionOptions; track div) {
+          <mat-option [value]="div">{{ div }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

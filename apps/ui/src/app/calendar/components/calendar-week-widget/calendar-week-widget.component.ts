@@ -9,6 +9,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { CalendarEvent, CategoryEnum, HockeyBranchEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
 import { getCategoryLabel } from '../../../common/category-options';
+import { getBranchLabel } from '../../../common/branch-options';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
 import {
   ScopeFilterDialogComponent,
@@ -156,6 +157,26 @@ export class CalendarWeekWidgetComponent implements OnInit {
 
   getCategoryLabel(category: CategoryEnum): string {
     return getCategoryLabel(category);
+  }
+
+  getEventTitle(event: CalendarEvent): string {
+    if (event.type === 'training') {
+      const parts = ['Entrenamiento', getCategoryLabel(event.category)];
+      if (event.branch) parts.push(getBranchLabel(event.branch));
+      return parts.join(' ');
+    }
+
+    // match
+    let descriptor: string;
+    if (event.sport === SportEnum.RUGBY) {
+      descriptor = event.division || getCategoryLabel(event.category);
+    } else {
+      const parts = [getCategoryLabel(event.category)];
+      if (event.branch) parts.push(getBranchLabel(event.branch));
+      descriptor = parts.join(' ');
+    }
+
+    return event.opponent ? `${descriptor} vs ${event.opponent}` : descriptor;
   }
 
   navigate(event: CalendarEvent): void {
