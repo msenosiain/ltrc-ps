@@ -12,11 +12,20 @@
         Filtros
       </button>
     }
+    @if (blocks.length) {
+      <button mat-icon-button [title]="showChart ? 'Ver lista' : 'Ver gráfico'" (click)="showChart = !showChart">
+        <mat-icon>{{ showChart ? 'list' : 'bar_chart' }}</mat-icon>
+      </button>
+    }
   </ng-container>
 
   @if (!loading) {
     @if (!blocks.length) {
       <p class="no-data">Sin datos de asistencia.</p>
+    } @else if (showChart) {
+      <div class="chart-container">
+        <canvas baseChart type="bar" [data]="chartData" [options]="chartOptions"></canvas>
+      </div>
     } @else {
       @for (block of blocks; track block.block) {
         <div class="block-section">

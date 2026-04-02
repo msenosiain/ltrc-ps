@@ -2,6 +2,8 @@ import { Component, inject, OnInit, DestroyRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartData, ChartOptions } from 'chart.js';
 import { BlockEnum, CategoryEnum, getBlockCategories } from '@ltrc-campo/shared-api-model';
 import { MatchesService } from '../../services/matches.service';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
@@ -36,10 +38,16 @@ const BLOCK_LABELS: Record<BlockEnum, string> = {
   [BlockEnum.PLANTEL_SUPERIOR]: 'Plantel Superior',
 };
 
+function pctColor(pct: number): string {
+  if (pct >= 70) return 'rgba(46,125,50,0.85)';
+  if (pct >= 40) return 'rgba(245,127,23,0.85)';
+  return 'rgba(198,40,40,0.85)';
+}
+
 @Component({
   selector: 'ltrc-match-attendance-stats-widget',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, WidgetShellComponent],
+  imports: [MatButtonModule, MatIconModule, WidgetShellComponent, BaseChartDirective],
   templateUrl: './match-attendance-stats-widget.component.html',
   styleUrl: './match-attendance-stats-widget.component.scss',
 })
@@ -62,7 +70,33 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
   }
 
   loading = true;
+  showChart = false;
   blocks: BlockAttStat[] = [];
+
+  chartData: ChartData<'bar'> = { labels: [], datasets: [] };
+
+  readonly chartOptions: ChartOptions<'bar'> = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: (ctx) => ` ${ctx.parsed.x}%` },
+      },
+    },
+    scales: {
+      x: {
+        min: 0,
+        max: 100,
+        ticks: { callback: (v) => `${v}%`, font: { size: 11 } },
+        grid: { color: 'rgba(0,0,0,0.05)' },
+      },
+      y: {
+        ticks: { font: { size: 11 } },
+      },
+    },
+  };
 
   ngOnInit(): void {
     this.filterContextService.filterContext$
@@ -95,6 +129,7 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
       .subscribe({
         next: (stats) => {
           this.blocks = this.buildBlocks(stats.byCategory);
+          this.buildChartData();
           this.loading = false;
         },
         error: () => { this.loading = false; },
@@ -117,6 +152,25 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
       result.push({ block, label: BLOCK_LABELS[block], categories: cats, avgPct });
     }
     return result;
+  }
+
+  private buildChartData(): void {
+    const labels: string[] = [];
+    const data: number[] = [];
+    const colors: string[] = [];
+
+    for (const block of this.blocks) {
+      for (const cat of block.categories) {
+        labels.push(cat.label);
+        data.push(cat.pct);
+        colors.push(pctColor(cat.pct));
+      }
+    }
+
+    this.chartData = {
+      labels,
+      datasets: [{ data, backgroundColor: colors, borderRadius: 4, barThickness: 16 }],
+    };
   }
 
   getPctClass(pct: number): string {
