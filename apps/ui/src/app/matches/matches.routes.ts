@@ -52,10 +52,11 @@ export const MATCHES_ROUTES: Routes = [
     data: {
       title: 'Gestionar asistencia',
       allowedRoles: [
-        RoleEnum.COACH,
-        RoleEnum.MANAGER,
-        RoleEnum.TRAINER,
         RoleEnum.ADMIN,
+        RoleEnum.COORDINATOR,
+        RoleEnum.MANAGER,
+        RoleEnum.COACH,
+        RoleEnum.TRAINER,
       ],
     },
   },

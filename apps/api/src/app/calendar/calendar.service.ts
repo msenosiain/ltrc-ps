@@ -25,7 +25,7 @@ export class CalendarService {
 
     const [matches, sessions] = await Promise.all([
       this.matchModel.find({ date: { $gte: fromDateObj, $lte: toDateObj }, ...scopeFilter }).populate('tournament').lean(),
-      this.sessionModel.find({ date: { $gte: fromDate, $lte: toDate }, ...scopeFilter }).lean(),
+      this.sessionModel.find({ date: { $gte: fromDate, $lte: toDate }, status: { $nin: ['cancelled', 'completed'] }, ...scopeFilter }).lean(),
     ]);
 
     const matchEvents: CalendarEvent[] = (matches as any[]).map((m) => ({

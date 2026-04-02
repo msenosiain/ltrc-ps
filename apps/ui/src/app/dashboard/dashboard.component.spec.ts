@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { PlayersService } from '../players/services/players.service';
 import { AuthService } from '../auth/auth.service';
@@ -57,70 +57,75 @@ describe('DashboardComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('canViewStats', () => {
-    it('should return true for COORDINATOR role', async () => {
-      await createComponent({ roles: [RoleEnum.COORDINATOR] });
-      expect(component.canViewStats()).toBe(true);
-    });
-
-    it('should return true for MANAGER role', async () => {
-      await createComponent({ roles: [RoleEnum.MANAGER] });
-      expect(component.canViewStats()).toBe(true);
-    });
-
-    it('should return true for TRAINER role', async () => {
-      await createComponent({ roles: [RoleEnum.TRAINER] });
-      expect(component.canViewStats()).toBe(true);
-    });
-
-    it('should return false for PLAYER role', async () => {
-      await createComponent({ roles: [RoleEnum.PLAYER] });
-      expect(component.canViewStats()).toBe(false);
-    });
-
-    it('should return true for COACH role', async () => {
-      await createComponent({ roles: [RoleEnum.COACH] });
-      expect(component.canViewStats()).toBe(true);
-    });
-
-    it('should return true for ADMIN role', async () => {
+  describe('showPlayerStats', () => {
+    it('should be true for ADMIN', async () => {
       await createComponent({ roles: [RoleEnum.ADMIN] });
-      expect(component.canViewStats()).toBe(true);
+      expect(component.showPlayerStats()).toBe(true);
     });
-
-    it('should return false when user has no roles', async () => {
-      await createComponent({ roles: [] });
-      expect(component.canViewStats()).toBe(false);
+    it('should be true for MANAGER', async () => {
+      await createComponent({ roles: [RoleEnum.MANAGER] });
+      expect(component.showPlayerStats()).toBe(true);
     });
-
-    it('should return false when user is null', async () => {
-      await createComponent(null);
-      expect(component.canViewStats()).toBe(false);
+    it('should be true for COORDINATOR', async () => {
+      await createComponent({ roles: [RoleEnum.COORDINATOR] });
+      expect(component.showPlayerStats()).toBe(true);
     });
-
-    it('should return true when viewAsRole is COORDINATOR', async () => {
-      await createComponent({ roles: [RoleEnum.PLAYER] }, RoleEnum.COORDINATOR);
-      expect(component.canViewStats()).toBe(true);
+    it('should be true for COACH', async () => {
+      await createComponent({ roles: [RoleEnum.COACH] });
+      expect(component.showPlayerStats()).toBe(true);
     });
-
-    it('should return true when viewAsRole is MANAGER', async () => {
-      await createComponent({ roles: [RoleEnum.PLAYER] }, RoleEnum.MANAGER);
-      expect(component.canViewStats()).toBe(true);
+    it('should be false for TRAINER', async () => {
+      await createComponent({ roles: [RoleEnum.TRAINER] });
+      expect(component.showPlayerStats()).toBe(false);
     });
-
-    it('should return true when viewAsRole is TRAINER', async () => {
-      await createComponent({ roles: [RoleEnum.PLAYER] }, RoleEnum.TRAINER);
-      expect(component.canViewStats()).toBe(true);
+    it('should be false for PLAYER', async () => {
+      await createComponent({ roles: [RoleEnum.PLAYER] });
+      expect(component.showPlayerStats()).toBe(false);
     });
+  });
 
-    it('should return true when viewAsRole is COACH', async () => {
+  describe('showTrainingStats', () => {
+    it('should be true for TRAINER', async () => {
+      await createComponent({ roles: [RoleEnum.TRAINER] });
+      expect(component.showTrainingStats()).toBe(true);
+    });
+    it('should be true for COACH', async () => {
+      await createComponent({ roles: [RoleEnum.COACH] });
+      expect(component.showTrainingStats()).toBe(true);
+    });
+    it('should be false for ANALYST', async () => {
+      await createComponent({ roles: [RoleEnum.ANALYST] });
+      expect(component.showTrainingStats()).toBe(false);
+    });
+    it('should be false for PLAYER', async () => {
+      await createComponent({ roles: [RoleEnum.PLAYER] });
+      expect(component.showTrainingStats()).toBe(false);
+    });
+  });
+
+  describe('showInjured', () => {
+    it('should be true for KINE', async () => {
+      await createComponent({ roles: [RoleEnum.KINE] });
+      expect(component.showInjured()).toBe(true);
+    });
+    it('should be true for ANALYST', async () => {
+      await createComponent({ roles: [RoleEnum.ANALYST] });
+      expect(component.showInjured()).toBe(true);
+    });
+    it('should be false for PLAYER', async () => {
+      await createComponent({ roles: [RoleEnum.PLAYER] });
+      expect(component.showInjured()).toBe(false);
+    });
+  });
+
+  describe('viewAs overrides', () => {
+    it('showPlayerStats: viewAs COACH overrides PLAYER role', async () => {
       await createComponent({ roles: [RoleEnum.PLAYER] }, RoleEnum.COACH);
-      expect(component.canViewStats()).toBe(true);
+      expect(component.showPlayerStats()).toBe(true);
     });
-
-    it('should return false when viewAsRole is PLAYER', async () => {
+    it('showTrainingStats: viewAs PLAYER hides stats for COORDINATOR', async () => {
       await createComponent({ roles: [RoleEnum.COORDINATOR] }, RoleEnum.PLAYER);
-      expect(component.canViewStats()).toBe(false);
+      expect(component.showTrainingStats()).toBe(false);
     });
   });
 });

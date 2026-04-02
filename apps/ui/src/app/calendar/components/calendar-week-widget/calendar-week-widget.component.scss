@@ -1,0 +1,150 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.widget-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--mat-app-primary, #1976d2);
+  }
+}
+
+.widget-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--mat-app-primary, #1976d2);
+  padding: 0;
+  text-decoration: underline;
+}
+
+.empty {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+
+.days-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.day-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #e0e0e0);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+
+.day-name {
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mat-app-primary, #1976d2);
+}
+
+.day-date {
+  font-size: 0.8rem;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--mat-app-surface-variant, #f5f5f5);
+  }
+}
+
+.event-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  &.training-rugby, &.match-rugby   { color: #b71c1c; }
+  &.training-hockey, &.match-hockey { color: #1565c0; }
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.event-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.event-time {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--mat-app-on-surface-variant, #666);
+  min-width: 32px;
+}
+
+.event-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.venue-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+
+  &.home { background: #e3f2fd; color: #1565c0; }
+  &.away { background: #fce4ec; color: #b71c1c; }
+}
+
+.event-meta {
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #888);
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}

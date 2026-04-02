@@ -66,7 +66,7 @@ export class MatchesController {
   }
 
   @Patch(':id/attendance')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
   async recordAttendance(
     @Param('id') id: string,
     @Body() dto: RecordMatchAttendanceDto,

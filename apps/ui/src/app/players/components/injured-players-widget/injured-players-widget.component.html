@@ -1,0 +1,39 @@
+<div class="widget">
+  <div class="widget-header">
+    <h3 class="widget-title">
+      <mat-icon>local_hospital</mat-icon>
+      Lesionados
+    </h3>
+    <button class="widget-link" (click)="goToPlayers()">Ver jugadores</button>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading && players.length === 0) {
+    <p class="empty">Sin lesionados actualmente.</p>
+  }
+
+  <div class="players-list">
+    @for (player of players; track player.id) {
+      <div class="player-row" (click)="navigate(player.id!)" tabindex="0" (keydown.enter)="navigate(player.id!)">
+        <div class="player-info">
+          <span class="player-name">{{ player.name }}</span>
+          <span class="player-meta">{{ getCategoryLabel(player.category) }}</span>
+        </div>
+        <div class="injury-info">
+          @if (player.availability?.reason) {
+            <span class="injury-reason">{{ player.availability!.reason }}</span>
+          }
+          @if (player.availability?.estimatedReturn) {
+            <span class="injury-return">
+              <mat-icon class="return-icon">event</mat-icon>
+              {{ player.availability!.estimatedReturn }}
+            </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
