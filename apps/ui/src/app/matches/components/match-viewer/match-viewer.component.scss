@@ -11,6 +11,20 @@
   margin-bottom: 8px;
 }
 
+.collapsible-header {
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 0;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.expanded {
+    margin-bottom: 16px;
+  }
+}
+
 .videos-list {
   display: flex;
   flex-direction: column;
@@ -221,7 +235,7 @@
   margin: 10px 0;
 }
 
-.empty-squad {
+.empty-state {
   color: var(--mat-app-on-surface-variant, #888);
   font-size: 0.9rem;
   margin: 0 0 12px;
@@ -320,11 +334,6 @@
   }
 }
 
-.empty-attachments {
-  color: var(--mat-app-on-surface-variant, #888);
-  font-size: 0.9rem;
-  margin: 0 0 12px;
-}
 
 .upload-progress {
   margin-bottom: 12px;

@@ -16,7 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
@@ -57,6 +57,7 @@ import { buildCreateMatchForm } from '../../forms/match-form.factory';
 import { MatchFormValue } from '../../forms/match-form.types';
 import { MatchesService } from '../../services/matches.service';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
+import { PaymentsService } from '../../../payments/services/payments.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 function filterOptions(options: string[], value: string): string[] {
@@ -70,6 +71,7 @@ function filterOptions(options: string[], value: string): string[] {
   imports: [
     ReactiveFormsModule,
     AsyncPipe,
+    DecimalPipe,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
@@ -89,6 +91,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly matchesService = inject(MatchesService);
   private readonly tournamentsService = inject(TournamentsService);
+  private readonly paymentsService = inject(PaymentsService);
   private readonly destroyRef = inject(DestroyRef);
 
   @Input() match?: Match;
@@ -111,6 +114,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   /** Whether the current category + sport combination is competitive */
   isCompetitive = false;
+
+  mpFeeRate = 0.0483;
 
   /** Sport derived from the selected tournament */
   tournamentSport: SportEnum | null = null;
@@ -172,6 +177,10 @@ export class MatchFormComponent implements OnInit, OnChanges {
       takeUntilDestroyed(this.destroyRef)
     );
 
+    this.paymentsService.getConfig()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ mpFeeRate }) => (this.mpFeeRate = mpFeeRate));
+
     this.matchesService
       .getFieldOptions()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -228,12 +237,16 @@ export class MatchFormComponent implements OnInit, OnChanges {
       .subscribe((time) => this.applyTimeToDate(time ?? ''));
 
     // Cuando el datepicker cambia la fecha, re-aplicar la hora para no perderla.
+    // También sincroniza la fecha de vencimiento del cobro si está habilitado.
     this.matchForm
       .get('date')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+      .subscribe((newDate) => {
         if (this.timeControl.value) {
           this.applyTimeToDate(this.timeControl.value);
+        }
+        if (this.paymentEnabled && newDate) {
+          this.matchForm.get('payment.expiresAt')?.setValue(newDate, { emitEvent: false });
         }
       });
   }
@@ -283,11 +296,51 @@ export class MatchFormComponent implements OnInit, OnChanges {
     return this.matchForm.get('status')?.value;
   }
 
+  get paymentEnabled(): boolean {
+    return this.matchForm.get('payment.enabled')?.value === true;
+  }
+
+  get paymentNetTarget(): number {
+    return this.matchForm.get('payment.amount')?.value ?? 0;
+  }
+
+  get paymentRawGross(): number {
+    return this.paymentNetTarget / (1 - this.mpFeeRate);
+  }
+
+  get paymentGrossAmount(): number {
+    return Math.ceil(this.paymentRawGross / 10) * 10;
+  }
+
+  get paymentMpFeeAmount(): number {
+    return Math.round(this.paymentGrossAmount * this.mpFeeRate * 100) / 100;
+  }
+
+  get paymentNetAmount(): number {
+    return Math.round((this.paymentGrossAmount - this.paymentMpFeeAmount) * 100) / 100;
+  }
+
   get formInvalid(): boolean {
     if (this.matchForm.invalid || this.timeControl.invalid) return true;
     if (!this.match && (this.matchForm.get('categories')?.value?.length ?? 0) === 0) return true;
     if (this.isCompetitive && this.opponents.length === 0) return true;
+    if (!this.match && this.paymentEnabled) {
+      if (!this.matchForm.get('payment.amount')?.value) return true;
+      if (!this.matchForm.get('payment.expiresAt')?.value) return true;
+    }
     return false;
+  }
+
+  togglePayment(): void {
+    const ctrl = this.matchForm.get('payment.enabled');
+    const enabling = !ctrl?.value;
+    ctrl?.setValue(enabling);
+    if (enabling) {
+      const matchDate = this.matchForm.get('date')?.value as Date | null;
+      if (matchDate) {
+        this.matchForm.get('payment.expiresAt')?.setValue(matchDate);
+      }
+    }
   }
 
   onCancel(): void {

@@ -12,3 +12,4 @@ export * from './exercise.interface';
 export * from './workout.interface';
 export * from './calendar-event.interface';
 export * from './workout-log.interface';
+export * from './payment.interface';

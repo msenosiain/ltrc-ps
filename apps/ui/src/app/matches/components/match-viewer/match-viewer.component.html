@@ -151,7 +151,7 @@
           }
         }
       } @else {
-        <p class="empty-squad">Sin convocados aún.</p>
+        <p class="empty-state">Sin convocados aún.</p>
       }
 
       <div class="squad-card-actions">
@@ -204,7 +204,7 @@
       }
       }
       } @else {
-      <p class="empty-squad">Sin asistencia registrada.</p>
+      <p class="empty-state">Sin asistencia registrada.</p>
       }
 
       <div class="squad-card-actions">
@@ -232,7 +232,7 @@
       }
 
       @if (!match.attachments?.length && !uploadingAttachment) {
-      <p class="empty-attachments">Sin archivos adjuntos.</p>
+      <p class="empty-state">Sin archivos adjuntos.</p>
       }
 
       <div class="attachments-list">
@@ -293,7 +293,7 @@
       <p class="section-title">Videos</p>
 
       @if (!match!.videos?.length) {
-        <p class="empty-message">Sin videos cargados.</p>
+        <p class="empty-state">Sin videos cargados.</p>
       }
 
       <div class="videos-list">
@@ -338,6 +338,23 @@
           Agregar video
         </button>
       </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sección Cobros -->
+  <mat-card class="section-card" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH]">
+    <mat-card-content>
+      <div class="section-header collapsible-header" [class.expanded]="showPaymentsPanel" (click)="showPaymentsPanel = !showPaymentsPanel">
+        <p class="section-title">Cobros</p>
+        <mat-icon>{{ showPaymentsPanel ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </div>
+      @if (showPaymentsPanel) {
+        <ltrc-payment-links-panel
+          [entityId]="match!.id!"
+          [entityDate]="match!.date"
+          [entityLabel]="matchPaymentLabel"
+        />
+      }
     </mat-card-content>
   </mat-card>
 

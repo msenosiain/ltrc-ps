@@ -18,6 +18,20 @@ export const routes: Routes = [
   { path: 'auth/forgot-password', component: ForgotPasswordComponent },
   { path: 'auth/reset-password', component: ResetPasswordComponent },
   {
+    path: 'pay/result',
+    loadComponent: () =>
+      import('./payments/pages/payment-result/payment-result.component').then(
+        (m) => m.PaymentResultComponent
+      ),
+  },
+  {
+    path: 'pay/:token',
+    loadComponent: () =>
+      import('./payments/pages/payment-page/payment-page.component').then(
+        (m) => m.PaymentPageComponent
+      ),
+  },
+  {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [authGuard],

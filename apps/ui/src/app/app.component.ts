@@ -25,9 +25,13 @@ export class AppComponent {
   private readonly sidenavService = inject(SidenavService);
   private readonly router = inject(Router);
 
+  private isPublicRoute(url: string): boolean {
+    return url.startsWith('/auth') || url.startsWith('/login') || url.startsWith('/pay');
+  }
+
   readonly showToolbar = toSignal(
-    this.router.events.pipe(map(() => !this.router.url.startsWith('/auth') && !this.router.url.startsWith('/login'))),
-    { initialValue: !this.router.url.startsWith('/auth') && !this.router.url.startsWith('/login') }
+    this.router.events.pipe(map(() => !this.isPublicRoute(this.router.url))),
+    { initialValue: !this.isPublicRoute(this.router.url) }
   );
 
   toggleSidenav(): void {

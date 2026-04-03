@@ -1,0 +1,113 @@
+<h2 mat-dialog-title>Nuevo cobro con Mercado Pago</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Concepto</mat-label>
+      <input matInput formControlName="concept" placeholder="Ej: Tercer tiempo, Inscripción"
+             [matAutocomplete]="conceptAc" />
+      <mat-autocomplete #conceptAc autoActiveFirstOption>
+        @for (concept of filteredConcepts$ | async; track concept) {
+          <mat-option [value]="concept">{{ concept }}</mat-option>
+        }
+      </mat-autocomplete>
+      @if (form.get('concept')!.hasError('required')) {
+        <mat-error>El concepto es obligatorio</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción (opcional)</mat-label>
+      <input matInput formControlName="description" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Monto a recibir ($)</mat-label>
+      <input matInput type="number" formControlName="amount" min="0.01" step="0.01" />
+      @if (form.get('amount')!.hasError('required')) {
+        <mat-error>El monto es obligatorio</mat-error>
+      }
+      @if (form.get('amount')!.hasError('min')) {
+        <mat-error>El monto debe ser mayor a $0</mat-error>
+      }
+    </mat-form-field>
+
+    @if (showFeePreview) {
+      <div class="fee-preview">
+        <div class="fee-row fee-row--sub">
+          <span>Base calculada</span>
+          <span>${{ rawGrossAmount | number:'1.2-2' }}</span>
+        </div>
+        @if (roundingAmount > 0) {
+          <div class="fee-row fee-row--sub">
+            <span>Redondeo</span>
+            <span>+${{ roundingAmount | number:'1.2-2' }}</span>
+          </div>
+        }
+        <div class="fee-row">
+          <span>El jugador paga</span>
+          <strong>${{ grossAmount | number:'1.0-0' }}</strong>
+        </div>
+        <div class="fee-row fee-row--fee">
+          <span>Comisión MP ({{ (mpFeeRate * 100) | number:'1.2-2' }}%)</span>
+          <span>-${{ mpFeeAmount | number:'1.2-2' }}</span>
+        </div>
+        <mat-divider />
+        <div class="fee-row fee-row--net">
+          <span>El club recibe</span>
+          <strong>${{ netAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tipo de pago</mat-label>
+      <mat-select formControlName="paymentType">
+        @for (type of paymentTypes; track type.value) {
+          <mat-option [value]="type.value">{{ type.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (isInstallment) {
+      <div class="installment-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Nro. cuota</mat-label>
+          <input matInput type="number" formControlName="installmentNumber" min="1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Total cuotas</mat-label>
+          <input matInput type="number" formControlName="installmentTotal" min="1" />
+        </mat-form-field>
+      </div>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fecha de vencimiento</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="expiresAt" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+      @if (form.get('expiresAt')!.hasError('required')) {
+        <mat-error>La fecha de vencimiento es obligatoria</mat-error>
+      }
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="saving">Cancelar</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="form.invalid || saving"
+    (click)="submit()"
+  >
+    @if (saving) {
+      <mat-spinner diameter="18" />
+    } @else {
+      Crear link
+    }
+  </button>
+</mat-dialog-actions>

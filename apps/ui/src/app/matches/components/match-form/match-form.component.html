@@ -204,6 +204,53 @@
     </mat-form-field>
   </mat-card>
 
+  @if (!match) {
+  <mat-card formGroupName="payment">
+    <button type="button" class="payment-card-title" (click)="togglePayment()">
+      <p class="section-title">Cobro con Mercado Pago</p>
+      <mat-icon>{{ paymentEnabled ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+
+    @if (paymentEnabled) {
+    <div class="payment-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Concepto</mat-label>
+        <input matInput formControlName="concept" placeholder="Ej: Tercer tiempo" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Monto a recibir ($)</mat-label>
+        <input matInput type="number" formControlName="amount" min="0.01" step="0.01" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha de vencimiento</mat-label>
+        <input matInput [matDatepicker]="payPicker" formControlName="expiresAt" placeholder="DD/MM/AAAA" />
+        <mat-datepicker-toggle matIconSuffix [for]="payPicker" />
+        <mat-datepicker #payPicker />
+      </mat-form-field>
+
+      @if (paymentNetTarget > 0) {
+      <div class="fee-preview span-3">
+        <div class="fee-row">
+          <span>El jugador paga</span>
+          <strong>${{ paymentGrossAmount | number:'1.0-0' }}</strong>
+        </div>
+        <div class="fee-row fee-row--fee">
+          <span>Comisión MP ({{ (mpFeeRate * 100) | number:'1.2-2' }}%)</span>
+          <span>-${{ paymentMpFeeAmount | number:'1.2-2' }}</span>
+        </div>
+        <div class="fee-row fee-row--net">
+          <span>El club recibe</span>
+          <strong>${{ paymentNetAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </mat-card>
+  }
+
   @if (submitting) {
   <mat-progress-bar mode="indeterminate" />
   }

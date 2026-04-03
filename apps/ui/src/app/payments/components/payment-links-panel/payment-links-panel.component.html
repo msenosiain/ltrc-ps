@@ -1,0 +1,154 @@
+@if (loading) {
+  <div class="panel-loading">
+    <mat-spinner diameter="32" />
+  </div>
+} @else {
+
+  <div class="panel-header">
+    <div class="panel-totals">
+      <span class="total-label">Total cobrado:</span>
+      <span class="total-amount">${{ totalApproved | number:'1.2-2' }}</span>
+    </div>
+    <div class="panel-actions">
+      <button mat-stroked-button (click)="downloadPdf()">
+        <mat-icon>picture_as_pdf</mat-icon> Reporte PDF
+      </button>
+      <button mat-stroked-button (click)="openRecordManualDialog()">
+        <mat-icon>payments</mat-icon> Pago manual
+      </button>
+      <button mat-raised-button color="primary" (click)="openCreateLinkDialog()">
+        <mat-icon>add_link</mat-icon> Nuevo cobro
+      </button>
+    </div>
+  </div>
+
+  @if (links.length > 0) {
+    <h4 class="section-title">Links de cobro</h4>
+    <table mat-table [dataSource]="links" class="links-table">
+
+      <ng-container matColumnDef="concept">
+        <th mat-header-cell *matHeaderCellDef>Concepto</th>
+        <td mat-cell *matCellDef="let link">
+          {{ link.concept }}
+          @if (link.installmentNumber) {
+            <span class="installment-badge">Cuota {{ link.installmentNumber }}/{{ link.installmentTotal }}</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let link">
+          ${{ link.amount | number:'1.2-2' }}
+          <span class="fee-note">(-${{ link.mpFeeAmount | number:'1.2-2' }} MP)</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let link">{{ link.paymentType }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="expires">
+        <th mat-header-cell *matHeaderCellDef>Vence</th>
+        <td mat-cell *matCellDef="let link">{{ link.expiresAt | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let link">
+          <mat-chip [class]="'status-chip status-chip--' + link.status">
+            {{ statusLabel(link.status) }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let link">
+          @if (link.status === PaymentLinkStatusEnum.ACTIVE) {
+            <button mat-icon-button matTooltip="Compartir link" [matMenuTriggerFor]="shareMenu" [matMenuTriggerData]="{ link: link }">
+              <mat-icon>share</mat-icon>
+            </button>
+            <button mat-icon-button matTooltip="Cancelar link" color="warn" (click)="cancelLink(link)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="linkColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: linkColumns;"></tr>
+    </table>
+  }
+
+  <mat-menu #shareMenu="matMenu">
+    <ng-template matMenuContent let-link="link">
+      <button mat-menu-item (click)="copyLink(link)">
+        <mat-icon>content_copy</mat-icon>
+        Copiar link
+      </button>
+      <button mat-menu-item (click)="shareWhatsApp(link)">
+        <mat-icon>chat</mat-icon>
+        Enviar por WhatsApp
+      </button>
+    </ng-template>
+  </mat-menu>
+
+  <h4 class="section-title">Pagos recibidos</h4>
+
+  @if (payments.length === 0) {
+    <p class="empty-state">Aún no hay pagos registrados.</p>
+  } @else {
+    <table mat-table [dataSource]="payments" class="payments-table">
+
+      <ng-container matColumnDef="player">
+        <th mat-header-cell *matHeaderCellDef>Jugador</th>
+        <td mat-cell *matCellDef="let p">{{ p.playerId?.name ?? '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="concept">
+        <th mat-header-cell *matHeaderCellDef>Concepto</th>
+        <td mat-cell *matCellDef="let p">{{ p.concept }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="method">
+        <th mat-header-cell *matHeaderCellDef>Método</th>
+        <td mat-cell *matCellDef="let p">{{ methodLabel(p.method) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef>Monto</th>
+        <td mat-cell *matCellDef="let p">${{ p.amount | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let p">{{ p.date | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let p">
+          <mat-chip [class]="'status-chip status-chip--' + p.status">
+            {{ statusLabel(p.status) }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let p">
+          @if (p.method !== PaymentMethodEnum.MERCADOPAGO) {
+            <button mat-icon-button color="warn" matTooltip="Eliminar" (click)="deletePayment(p)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="paymentColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: paymentColumns;"></tr>
+    </table>
+  }
+}

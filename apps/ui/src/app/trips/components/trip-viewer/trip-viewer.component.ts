@@ -25,6 +25,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
+  PaymentEntityTypeEnum,
   RoleEnum,
   SportEnum,
   Trip,
@@ -32,6 +33,7 @@ import {
   TripParticipantStatusEnum,
   TripParticipantTypeEnum,
 } from '@ltrc-campo/shared-api-model';
+import { PaymentLinksPanelComponent } from '../../../payments/components/payment-links-panel/payment-links-panel.component';
 import { TripsService, AddParticipantPayload } from '../../services/trips.service';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
@@ -68,6 +70,7 @@ import { filter, switchMap } from 'rxjs/operators';
     MatDatepickerModule,
     MatTooltipModule,
     AllowedRolesDirective,
+    PaymentLinksPanelComponent,
   ],
   templateUrl: './trip-viewer.component.html',
   styleUrl: './trip-viewer.component.scss',
@@ -82,7 +85,10 @@ export class TripViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly RoleEnum = RoleEnum;
+  readonly PaymentEntityTypeEnum = PaymentEntityTypeEnum;
   readonly TripParticipantTypeEnum = TripParticipantTypeEnum;
+
+  showPaymentsPanel = false;
   readonly participantTypeOptions = participantTypeOptions;
   readonly participantStatusOptions = participantStatusOptions;
 
@@ -149,6 +155,12 @@ export class TripViewerComponent implements OnInit {
   }
 
   // ── Labels ────────────────────────────────────────────────────────────────
+
+  get tripPaymentLabel(): string {
+    if (!this.trip) return '';
+    const date = new Date(this.trip.departureDate).toLocaleDateString('es-AR');
+    return `${this.trip.name} — ${this.trip.destination} (${date})`;
+  }
 
   getSportLabel(sport?: SportEnum): string {
     return sportOptions.find((s) => s.id === sport)?.label ?? '';
