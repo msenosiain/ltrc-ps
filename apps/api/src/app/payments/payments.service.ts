@@ -278,11 +278,11 @@ export class PaymentsService {
         },
         external_reference: externalReference,
         back_urls: {
-          success: `${this.appBaseUrl}/pay/result?status=approved`,
-          failure: `${this.appBaseUrl}/pay/result?status=rejected`,
-          pending: `${this.appBaseUrl}/pay/result?status=pending`,
+          success: `${this.appBaseUrl}/pay/result`,
+          failure: `${this.appBaseUrl}/pay/result`,
+          pending: `${this.appBaseUrl}/pay/result`,
         },
-        auto_return: 'approved',
+        ...(this.appBaseUrl.startsWith('https://') ? { auto_return: 'approved' as const } : {}),
         expiration_date_to: link.expiresAt.toISOString(),
       },
     });
@@ -292,7 +292,10 @@ export class PaymentsService {
       mpPreferenceId: mpResponse.id,
     });
 
-    return { checkoutUrl: mpResponse.init_point };
+    const checkoutUrl = this.appBaseUrl.startsWith('https://')
+      ? mpResponse.init_point
+      : (mpResponse.sandbox_init_point ?? mpResponse.init_point);
+    return { checkoutUrl };
   }
 
   async confirmPayment(dto: ConfirmPaymentDto) {
@@ -303,8 +306,7 @@ export class PaymentsService {
 
     // Si MP no envió payment_id (ej: pago pendiente o error de red), guardamos el status del redirect
     if (!dto.paymentId) {
-      const status = this.mapMpStatus(dto.status ?? 'pending');
-      payment.status = status;
+      payment.status = this.mapMpStatus(dto.status ?? 'pending');
       await payment.save();
       return { status: payment.status };
     }
