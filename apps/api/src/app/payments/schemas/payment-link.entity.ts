@@ -10,6 +10,7 @@ export class PaymentLinkEntity extends Document {
   linkToken: string;
   entityType: PaymentEntityTypeEnum;
   entityId: Types.ObjectId;
+  entityIds?: Types.ObjectId[];
   concept: string;
   description?: string;
   amount: number;

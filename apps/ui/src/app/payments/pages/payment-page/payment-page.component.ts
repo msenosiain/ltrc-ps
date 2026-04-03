@@ -10,7 +10,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { PaymentsService } from '../../services/payments.service';
-import { IPaymentLinkPublicInfo } from '@ltrc-campo/shared-api-model';
+import { CategoryEnum, IPaymentLinkPublicInfo } from '@ltrc-campo/shared-api-model';
+import { getCategoryLabel } from '../../../common/category-options';
 
 type PageState = 'loading' | 'ready' | 'validating' | 'validated' | 'redirecting' | 'expired' | 'error';
 
@@ -34,6 +35,8 @@ type PageState = 'loading' | 'ready' | 'validating' | 'validated' | 'redirecting
 export class PaymentPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly paymentsService = inject(PaymentsService);
+
+  readonly getCategoryLabel = getCategoryLabel;
 
   state: PageState = 'loading';
   linkInfo: IPaymentLinkPublicInfo | null = null;
@@ -68,6 +71,7 @@ export class PaymentPageComponent implements OnInit {
   validateDni() {
     if (this.dniControl.invalid || !this.linkInfo) return;
     this.state = 'validating';
+    this.errorMessage = '';
     const token = this.route.snapshot.paramMap.get('token') ?? '';
     this.paymentsService.validateDni(token, this.dniControl.value!).subscribe({
       next: (result) => {
@@ -76,10 +80,11 @@ export class PaymentPageComponent implements OnInit {
       },
       error: (err) => {
         this.state = 'ready';
+        this.errorMessage = '';
         if (err.status === 404) {
           this.dniControl.setErrors({ notFound: true });
         } else {
-          this.errorMessage = 'Error al validar el DNI. Intente nuevamente.';
+          this.errorMessage = this.resolveDniError(err.error);
         }
       },
     });
@@ -98,6 +103,19 @@ export class PaymentPageComponent implements OnInit {
         this.errorMessage = 'Error al iniciar el pago. Intente nuevamente.';
       },
     });
+  }
+
+  private resolveDniError(body: any): string {
+    if (body?.code === 'CATEGORY_MISMATCH') {
+      const player = getCategoryLabel(body.playerCategory as CategoryEnum);
+      const match = getCategoryLabel(body.matchCategory as CategoryEnum);
+      return `La categoría del DNI ingresado es ${player}, pero este partido es de ${match}.`;
+    }
+    if (body?.code === 'CATEGORY_NOT_IN_GROUP') {
+      const player = getCategoryLabel(body.playerCategory as CategoryEnum);
+      return `La categoría del DNI ingresado es ${player}, que no está incluida en este encuentro.`;
+    }
+    return body?.message ?? 'Error al validar el DNI. Intente nuevamente.';
   }
 
   get installmentLabel(): string {

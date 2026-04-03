@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   GoneException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -80,12 +81,23 @@ export class PaymentsService {
   // ── PaymentLinks ──────────────────────────────────────────────────────────
 
   async createLink(dto: CreatePaymentLinkDto, caller: User) {
+    if (!dto.entityId && (!dto.entityIds?.length)) {
+      throw new BadRequestException('Se requiere entityId o entityIds');
+    }
+    const entityId = dto.entityId
+      ? new Types.ObjectId(dto.entityId)
+      : new Types.ObjectId(dto.entityIds![0]);
+    const entityIds = dto.entityIds?.length
+      ? dto.entityIds.map((id) => new Types.ObjectId(id))
+      : undefined;
+
     const { mpFeeRate, grossAmount, mpFeeAmount, netAmount } = this.calculateFee(dto.amount);
 
     return this.paymentLinkModel.create({
       linkToken: uuidv4(),
       entityType: dto.entityType,
-      entityId: new Types.ObjectId(dto.entityId),
+      entityId,
+      entityIds,
       concept: dto.concept,
       description: dto.description,
       amount: grossAmount,
@@ -102,8 +114,9 @@ export class PaymentsService {
   }
 
   async getLinksForEntity(entityType: PaymentEntityTypeEnum, entityId: string) {
+    const oid = new Types.ObjectId(entityId);
     return this.paymentLinkModel
-      .find({ entityType, entityId: new Types.ObjectId(entityId) })
+      .find({ entityType, $or: [{ entityId: oid }, { entityIds: oid }] })
       .sort({ createdAt: -1 });
   }
 
@@ -121,10 +134,10 @@ export class PaymentsService {
     if (!link) throw new NotFoundException('Link de pago no encontrado');
     this.assertLinkActive(link);
 
-    const entityLabel = await this.resolveEntityLabel(
-      link.entityType,
-      link.entityId.toString()
-    );
+    const [entityLabel, matchInfo] = await Promise.all([
+      this.resolveEntityLabel(link.entityType, link.entityId.toString(), link.entityIds),
+      this.resolveMatchInfo(link.entityType, link.entityId.toString(), link.entityIds),
+    ]);
 
     return {
       linkToken: link.linkToken,
@@ -140,6 +153,9 @@ export class PaymentsService {
       expiresAt: link.expiresAt,
       entityType: link.entityType,
       entityLabel,
+      matchDate: matchInfo?.date,
+      matchOpponents: matchInfo?.opponents,
+      matchCategories: matchInfo?.categories,
     };
   }
 
@@ -150,9 +166,34 @@ export class PaymentsService {
 
     const player = await this.playerModel
       .findOne({ idNumber: dni })
-      .select('id name idNumber email')
+      .select('id name idNumber email category')
       .lean();
     if (!player) throw new NotFoundException('No se encontró un jugador con ese DNI');
+
+    if (link.entityIds?.length) {
+      const matches = await this.matchModel
+        .find({ _id: { $in: link.entityIds } })
+        .select('category')
+        .lean();
+      const matchForPlayer = matches.find((m) => m.category === player.category);
+      if (!matchForPlayer) {
+        throw new HttpException(
+          { code: 'CATEGORY_NOT_IN_GROUP', playerCategory: player.category },
+          400
+        );
+      }
+    } else if (link.entityType === PaymentEntityTypeEnum.MATCH && player.category) {
+      const match = await this.matchModel
+        .findById(link.entityId)
+        .select('category')
+        .lean();
+      if (match?.category && match.category !== player.category) {
+        throw new HttpException(
+          { code: 'CATEGORY_MISMATCH', playerCategory: player.category, matchCategory: match.category },
+          400
+        );
+      }
+    }
 
     return { playerId: player._id.toString(), playerName: player.name };
   }
@@ -164,9 +205,37 @@ export class PaymentsService {
 
     const player = await this.playerModel
       .findOne({ idNumber: dni })
-      .select('id name idNumber email')
+      .select('id name idNumber email category')
       .lean();
     if (!player) throw new NotFoundException('No se encontró un jugador con ese DNI');
+
+    // Para links de jornada: resolver el partido correcto según categoría del jugador
+    let targetEntityId: Types.ObjectId = link.entityId;
+    if (link.entityIds?.length) {
+      const matches = await this.matchModel
+        .find({ _id: { $in: link.entityIds } })
+        .select('category')
+        .lean();
+      const matchForPlayer = matches.find((m) => m.category === player.category);
+      if (!matchForPlayer) {
+        throw new HttpException(
+          { code: 'CATEGORY_NOT_IN_GROUP', playerCategory: player.category },
+          400
+        );
+      }
+      targetEntityId = (matchForPlayer as any)._id;
+    } else if (link.entityType === PaymentEntityTypeEnum.MATCH && player.category) {
+      const match = await this.matchModel
+        .findById(link.entityId)
+        .select('category')
+        .lean();
+      if (match?.category && match.category !== player.category) {
+        throw new HttpException(
+          { code: 'CATEGORY_MISMATCH', playerCategory: player.category, matchCategory: match.category },
+          400
+        );
+      }
+    }
 
     const externalReference = uuidv4();
 
@@ -174,7 +243,7 @@ export class PaymentsService {
     const payment = await this.paymentModel.create({
       paymentLinkId: link._id,
       entityType: link.entityType,
-      entityId: link.entityId,
+      entityId: targetEntityId,
       playerId: player._id,
       amount: link.amount,
       method: PaymentMethodEnum.MERCADOPAGO,
@@ -430,11 +499,65 @@ export class PaymentsService {
     }
   }
 
+  private readonly CATEGORY_ORDER = [
+    'm5','m6','m7','m8','m9','m10','m11','m12','m13','m14','m15','m16','m17','m19',
+    'pre_decima','decima','novena','octava','septima','sexta','quinta','cuarta','master','plantel_superior',
+  ];
+
+  private async resolveMatchInfo(
+    entityType: PaymentEntityTypeEnum,
+    entityId: string,
+    entityIds?: Types.ObjectId[]
+  ): Promise<{ date: string; opponents: string; categories: string[] } | null> {
+    if (entityType !== PaymentEntityTypeEnum.MATCH) return null;
+
+    if (entityIds && entityIds.length > 1) {
+      const matches = await this.matchModel
+        .find({ _id: { $in: entityIds } })
+        .select('date opponent category')
+        .lean();
+      if (!matches.length) return null;
+      const date = new Date(matches[0].date).toLocaleDateString('es-AR');
+      const categories = matches
+        .map((m) => m.category)
+        .filter(Boolean) as string[];
+      categories.sort(
+        (a, b) => this.CATEGORY_ORDER.indexOf(a) - this.CATEGORY_ORDER.indexOf(b)
+      );
+      return { date, opponents: matches[0].opponent ?? 'Rival', categories };
+    }
+
+    const match = await this.matchModel
+      .findById(entityId)
+      .select('date opponent name category')
+      .lean();
+    if (!match) return null;
+    const date = new Date(match.date).toLocaleDateString('es-AR');
+    return {
+      date,
+      opponents: match.opponent ?? 'Rival',
+      categories: match.category ? [match.category] : [],
+    };
+  }
+
   private async resolveEntityLabel(
     entityType: PaymentEntityTypeEnum,
-    entityId: string
+    entityId: string,
+    entityIds?: Types.ObjectId[]
   ): Promise<string> {
     if (entityType === PaymentEntityTypeEnum.MATCH) {
+      if (entityIds && entityIds.length > 1) {
+        const matches = await this.matchModel
+          .find({ _id: { $in: entityIds } })
+          .select('date opponent name category')
+          .sort({ category: 1 })
+          .lean();
+        if (!matches.length) return 'Encuentro';
+        const date = new Date(matches[0].date).toLocaleDateString('es-AR');
+        const categories = matches.map((m) => m.category).join(', ');
+        const opponent = matches[0].opponent ?? 'Rival';
+        return `${categories} vs ${opponent} (${date})`;
+      }
       const match = await this.matchModel
         .findById(entityId)
         .select('date opponent name category')

@@ -17,7 +17,8 @@ export interface FeePreview {
 
 export interface CreatePaymentLinkPayload {
   entityType: PaymentEntityTypeEnum;
-  entityId: string;
+  entityId?: string;
+  entityIds?: string[];
   concept: string;
   description?: string;
   amount: number;

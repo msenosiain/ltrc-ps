@@ -1,7 +1,9 @@
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsInt,
+  IsMongoId,
   IsNumber,
   IsOptional,
   IsString,
@@ -15,8 +17,14 @@ export class CreatePaymentLinkDto {
   @IsEnum(PaymentEntityTypeEnum)
   readonly entityType!: PaymentEntityTypeEnum;
 
+  @IsOptional()
   @IsString()
-  readonly entityId!: string;
+  readonly entityId?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  readonly entityIds?: string[];
 
   @IsString()
   readonly concept!: string;

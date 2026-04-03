@@ -57,7 +57,7 @@ export function getCategoryOptionsBySports(
 
 export function getCategoryLabel(id?: CategoryEnum | null): string {
   if (!id) return '';
-  return categoryDefs.find((c) => c.id === id)?.label ?? id;
+  return categoryDefs.find((c) => c.id === id)?.label ?? String(id);
 }
 
 /**

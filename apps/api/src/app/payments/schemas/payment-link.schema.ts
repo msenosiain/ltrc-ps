@@ -15,6 +15,7 @@ export const PaymentLinkSchema = new Schema<PaymentLinkEntity>(
       required: true,
     },
     entityId: { type: Types.ObjectId, required: true, index: true },
+    entityIds: { type: [Types.ObjectId], default: undefined },
     concept: { type: String, required: true },
     description: { type: String },
     amount: { type: Number, required: true, min: 0.01 },

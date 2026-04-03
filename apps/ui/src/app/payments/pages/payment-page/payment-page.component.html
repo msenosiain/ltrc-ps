@@ -1,8 +1,11 @@
 <div class="payment-page">
   <mat-card class="payment-card">
-    <mat-card-header>
-      <mat-card-title>Los Tordos RC</mat-card-title>
-      <mat-card-subtitle>Portal de Pagos</mat-card-subtitle>
+    <mat-card-header class="club-header">
+      <img src="/escudo.png" alt="Escudo Los Tordos RC" class="club-crest" />
+      <div>
+        <mat-card-title>Los Tordos Rugby Club</mat-card-title>
+        <mat-card-subtitle>Portal de Pagos</mat-card-subtitle>
+      </div>
     </mat-card-header>
 
     <mat-card-content>
@@ -30,10 +33,18 @@
 
       @if (linkInfo && (state === 'ready' || state === 'validating' || state === 'validated' || state === 'redirecting')) {
         <div class="payment-info">
-          <p class="entity-label">{{ linkInfo.entityLabel }}</p>
           <p class="concept">{{ linkInfo.concept }}</p>
-          @if (linkInfo.description) {
-            <p class="description">{{ linkInfo.description }}</p>
+          @if (linkInfo.matchDate || linkInfo.matchOpponents) {
+            <p class="match-description">
+              {{ linkInfo.matchDate }}{{ linkInfo.matchOpponents ? ' vs ' + linkInfo.matchOpponents : '' }}
+            </p>
+          }
+          @if (linkInfo.matchCategories?.length) {
+            <div class="category-chips">
+              @for (cat of linkInfo.matchCategories; track cat) {
+                <span class="category-chip">{{ getCategoryLabel($any(cat)) }}</span>
+              }
+            </div>
           }
           <p class="installment-label">{{ installmentLabel }}</p>
         </div>
@@ -72,6 +83,10 @@
                 <mat-error>No se encontró un jugador con ese DNI</mat-error>
               }
             </mat-form-field>
+
+            @if (errorMessage) {
+              <p class="error-text">{{ errorMessage }}</p>
+            }
 
             <button
               mat-raised-button

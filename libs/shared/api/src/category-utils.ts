@@ -32,6 +32,38 @@ const HOCKEY_AGE_RANGES: {
   { min: 17, max: 19, category: CategoryEnum.QUINTA },
 ];
 
+const CATEGORY_LABELS: Record<CategoryEnum, string> = {
+  [CategoryEnum.PLANTEL_SUPERIOR]: 'Plantel Superior',
+  [CategoryEnum.M19]: 'M19',
+  [CategoryEnum.M17]: 'M17',
+  [CategoryEnum.M16]: 'M16',
+  [CategoryEnum.M15]: 'M15',
+  [CategoryEnum.M14]: 'M14',
+  [CategoryEnum.M13]: 'M13',
+  [CategoryEnum.M12]: 'M12',
+  [CategoryEnum.M11]: 'M11',
+  [CategoryEnum.M10]: 'M10',
+  [CategoryEnum.M9]: 'M9',
+  [CategoryEnum.M8]: 'M8',
+  [CategoryEnum.M7]: 'M7',
+  [CategoryEnum.M6]: 'M6',
+  [CategoryEnum.M5]: 'M5',
+  [CategoryEnum.CUARTA]: '4ta',
+  [CategoryEnum.QUINTA]: '5ta',
+  [CategoryEnum.SEXTA]: '6ta',
+  [CategoryEnum.SEPTIMA]: '7ma',
+  [CategoryEnum.OCTAVA]: '8va',
+  [CategoryEnum.NOVENA]: '9na',
+  [CategoryEnum.DECIMA]: '10ma',
+  [CategoryEnum.PRE_DECIMA]: 'Pre-décima',
+  [CategoryEnum.MASTER]: 'Mamis',
+};
+
+export function getCategoryLabel(id?: CategoryEnum | null): string {
+  if (!id) return '';
+  return CATEGORY_LABELS[id] ?? id;
+}
+
 /**
  * Calculate category from birth year and sport.
  * Season year defaults to the current year.

@@ -11,6 +11,7 @@ export interface IPaymentLink {
   linkToken: string;
   entityType: PaymentEntityTypeEnum;
   entityId: string;
+  entityIds?: string[];
   concept: string;
   description?: string;
   amount: number;
@@ -63,4 +64,7 @@ export interface IPaymentLinkPublicInfo {
   expiresAt: Date;
   entityType: PaymentEntityTypeEnum;
   entityLabel: string;
+  matchDate?: string;
+  matchOpponents?: string;
+  matchCategories?: string[];
 }

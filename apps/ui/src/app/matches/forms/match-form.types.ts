@@ -25,6 +25,12 @@ export interface MatchFormValue {
     awayScore: number | null;
   };
   notes: string;
+  payment: {
+    enabled: boolean;
+    concept: string;
+    amount: number | null;
+    expiresAt: Date | null;
+  };
 }
 
 export interface MatchFilters {

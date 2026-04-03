@@ -42,6 +42,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UploadAttachmentDialogComponent, UploadAttachmentDialogData, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
 import { VideoDialogComponent, VideoDialogData, VideoDialogResult } from '../video-dialog/video-dialog.component';
 import { PaymentLinksPanelComponent } from '../../../payments/components/payment-links-panel/payment-links-panel.component';
+import { PaymentsService } from '../../../payments/services/payments.service';
+import { PaymentEntityTypeEnum } from '@ltrc-campo/shared-api-model';
 
 @Component({
   selector: 'ltrc-match-viewer',
@@ -71,6 +73,7 @@ export class MatchViewerComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
+  private readonly paymentsService = inject(PaymentsService);
 
   match?: Match;
   isCompetitive = false;
@@ -114,6 +117,12 @@ export class MatchViewerComponent implements OnInit {
           if (match.category) {
             this.isInfantiles = getCategoryBlock(match.category) === BlockEnum.INFANTILES;
           }
+          // Auto-expand payments section if links already exist
+          this.paymentsService.getLinks(PaymentEntityTypeEnum.MATCH, match.id!)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((links) => {
+              if (links.length > 0) this.showPaymentsPanel = true;
+            });
         },
         error: () => { this.loading = false; this.router.navigate(['/dashboard/matches']); },
       });

@@ -24,5 +24,11 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
       awayScore: [null],
     }),
     notes: [''],
+    payment: fb.group({
+      enabled: [false],
+      concept: ['Tercer tiempo'],
+      amount: [null as number | null],
+      expiresAt: [null as Date | null],
+    }),
   });
 }
