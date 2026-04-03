@@ -21,6 +21,7 @@ import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
+import { CreateMatchBulkDto } from './dto/create-match-bulk.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { UpdateMatchSquadDto } from './dto/update-players.dto';
 import { RecordMatchAttendanceDto } from './dto/record-match-attendance.dto';
@@ -47,6 +48,12 @@ export class MatchesController {
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
   async create(@Body() dto: CreateMatchDto, @Req() req: Request) {
     return this.matchesService.create(dto, (req as any).user);
+  }
+
+  @Post('bulk')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
+  async createBulk(@Body() dto: CreateMatchBulkDto, @Req() req: Request) {
+    return this.matchesService.createBulk(dto, (req as any).user);
   }
 
   @Patch(':id')

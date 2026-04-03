@@ -15,6 +15,7 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
     status: [MatchStatusEnum.UPCOMING],
     sport: [null as SportEnum | null],
     category: [null as CategoryEnum | null, Validators.required],
+    categories: [[] as CategoryEnum[]],
     division: [''],
     branch: [null],
     tournament: ['' as string],

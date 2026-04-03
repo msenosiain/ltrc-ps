@@ -31,6 +31,7 @@
         </mat-select>
       </mat-form-field>
 
+      @if (match) {
       <mat-form-field appearance="outline">
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="category">
@@ -42,6 +43,20 @@
         <mat-error>La categoría es obligatoria</mat-error>
         }
       </mat-form-field>
+      } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Categorías</mat-label>
+        <mat-select formControlName="categories" multiple>
+          @for (group of categoryGroups; track group.label) {
+          <mat-optgroup [label]="group.label">
+            @for (cat of group.categories; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+            }
+          </mat-optgroup>
+          }
+        </mat-select>
+      </mat-form-field>
+      }
 
       @if (isHockey) {
       <mat-form-field appearance="outline">
@@ -116,13 +131,10 @@
       </mat-form-field>
       }
 
+      @if (match) {
       <mat-form-field appearance="outline">
         <mat-label>Rival</mat-label>
-        <input
-          matInput
-          formControlName="opponent"
-          [matAutocomplete]="opponentAc"
-        />
+        <input matInput formControlName="opponent" [matAutocomplete]="opponentAc" />
         <mat-autocomplete #opponentAc="matAutocomplete">
           @for (opt of filteredOpponents$ | async; track opt) {
           <mat-option [value]="opt">{{ opt }}</mat-option>
@@ -132,6 +144,36 @@
         <mat-error>El rival es obligatorio</mat-error>
         }
       </mat-form-field>
+      } @else {
+      <mat-form-field appearance="outline">
+        <mat-label>Rivales</mat-label>
+        <mat-chip-grid #opponentChipGrid>
+          @for (opp of opponents; track opp) {
+          <mat-chip-row (removed)="removeOpponent(opp)">
+            {{ opp }}
+            <button matChipRemove><mat-icon>cancel</mat-icon></button>
+          </mat-chip-row>
+          }
+          <input
+            placeholder="Agregar rival..."
+            [matChipInputFor]="opponentChipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeyCodes"
+            [formControl]="opponentChipInputControl"
+            [matAutocomplete]="opponentAcChips"
+            (matChipInputTokenEnd)="addOpponentFromInput($event)"
+          />
+        </mat-chip-grid>
+        <mat-autocomplete #opponentAcChips="matAutocomplete"
+          (optionSelected)="addOpponentFromAutocomplete($event)">
+          @for (opt of filteredOpponentsForChips$ | async; track opt) {
+          <mat-option [value]="opt">{{ opt }}</mat-option>
+          }
+        </mat-autocomplete>
+        @if (isCompetitive && opponents.length === 0) {
+        <mat-error>Agregá al menos un rival</mat-error>
+        }
+      </mat-form-field>
+      }
 
       @if (isCompetitive) {
       <div class="toggle-field">

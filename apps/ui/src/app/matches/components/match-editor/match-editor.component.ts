@@ -81,16 +81,34 @@ export class MatchEditorComponent implements OnInit {
       return;
     }
 
+    const onSuccess = () => { this.submitting = false; this.router.navigate(['/dashboard/matches']); };
+
+    const opponent = payload.opponents.length ? payload.opponents.join(', ') : (payload.opponent || undefined);
+
+    if (payload.categories.length > 1) {
+      this.matchesService
+        .createMatchesBulk({
+          date: payload.date!.toISOString(),
+          categories: payload.categories,
+          opponent,
+          name: payload.name || undefined,
+          venue: payload.venue,
+          isHome: payload.isHome,
+          status: payload.status,
+          sport: payload.sport || undefined,
+          branch: payload.branch,
+          tournament: payload.tournament || undefined,
+          notes: payload.notes || undefined,
+        })
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({ next: onSuccess, error: onError });
+      return;
+    }
+
     this.matchesService
-      .createMatch(payload)
+      .createMatch({ ...payload, category: payload.categories[0] ?? payload.category, opponent: opponent ?? '' })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.submitting = false;
-          this.router.navigate(['/dashboard/matches']);
-        },
-        error: onError,
-      });
+      .subscribe({ next: onSuccess, error: onError });
   }
 
   onDelete(): void {

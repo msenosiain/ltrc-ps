@@ -4,8 +4,10 @@ import { Observable } from 'rxjs';
 import {
   AttendanceStatusEnum,
   CategoryEnum,
+  HockeyBranchEnum,
   Match,
   MatchAttachment,
+  MatchStatusEnum,
   PaginatedResponse,
   PaginationQuery,
   SportEnum,
@@ -16,7 +18,6 @@ import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
 import { mapFormToCreateMatchDto } from '../forms/match-form.mapper';
 import { matchStatusOptions } from '../match-options';
-import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 @Injectable({
   providedIn: 'root',
@@ -76,6 +77,23 @@ export class MatchesService {
   createMatch(formValue: MatchFormValue): Observable<Match> {
     const dto = mapFormToCreateMatchDto(formValue);
     return this.httpClient.post<Match>(this.matchesApiUrl, dto);
+  }
+
+  createMatchesBulk(dto: {
+    categories: CategoryEnum[];
+    opponent?: string;
+    date: string;
+    name?: string;
+    venue: string;
+    isHome?: boolean;
+    status?: MatchStatusEnum;
+    sport?: SportEnum;
+    branch?: HockeyBranchEnum | null;
+    tournament?: string;
+    notes?: string;
+  }): Observable<Match[]> {
+    const payload = { ...dto, branch: dto.branch || undefined };
+    return this.httpClient.post<Match[]>(`${this.matchesApiUrl}/bulk`, payload);
   }
 
   updateMatch(id: string, formValue: MatchFormValue): Observable<Match> {

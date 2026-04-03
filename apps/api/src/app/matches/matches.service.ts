@@ -43,6 +43,19 @@ export class MatchesService {
     return this.matchModel.create({ ...(dto as any), createdBy: callerId, updatedBy: callerId });
   }
 
+  async createBulk(dto: import('./dto/create-match-bulk.dto').CreateMatchBulkDto, caller?: User) {
+    const callerId = caller ? (caller as any)._id : undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { categories, ...shared } = dto as any;
+    const docs = (categories as CategoryEnum[]).map((category) => ({
+      ...shared,
+      category,
+      createdBy: callerId,
+      updatedBy: callerId,
+    }));
+    return this.matchModel.insertMany(docs);
+  }
+
   async update(id: string, dto: UpdateMatchDto, caller?: User) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');

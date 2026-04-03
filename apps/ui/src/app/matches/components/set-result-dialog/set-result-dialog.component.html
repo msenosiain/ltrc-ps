@@ -3,14 +3,14 @@
 <mat-dialog-content>
   <form [formGroup]="form" class="result-form">
     <mat-form-field appearance="outline">
-      <mat-label>LTRC</mat-label>
+      <mat-label>{{ data.match.isHome ? 'LTRC' : (data.match.opponent || 'Rival') }}</mat-label>
       <input matInput type="number" min="0" formControlName="homeScore" />
     </mat-form-field>
 
     <span class="separator">-</span>
 
     <mat-form-field appearance="outline">
-      <mat-label>{{ data.match.opponent || 'Rival' }}</mat-label>
+      <mat-label>{{ data.match.isHome ? (data.match.opponent || 'Rival') : 'LTRC' }}</mat-label>
       <input matInput type="number" min="0" formControlName="awayScore" />
     </mat-form-field>
   </form>

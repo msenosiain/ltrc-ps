@@ -18,6 +18,9 @@ import {
 } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { Observable, startWith, map } from 'rxjs';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipsModule, MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,12 +32,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
+  BlockEnum,
   CategoryEnum,
   HockeyBranchEnum,
   Match,
   MatchStatusEnum,
   SportEnum,
   Tournament,
+  getBlockCategories,
   isCompetitiveCategory,
 } from '@ltrc-campo/shared-api-model';
 import {
@@ -43,6 +48,11 @@ import {
   sportOptions,
 } from '../../match-options';
 import { CategoryOption } from '../../../common/category-options';
+
+interface CategoryGroup {
+  label: string;
+  categories: CategoryOption[];
+}
 import { buildCreateMatchForm } from '../../forms/match-form.factory';
 import { MatchFormValue } from '../../forms/match-form.types';
 import { MatchesService } from '../../services/matches.service';
@@ -70,6 +80,7 @@ function filterOptions(options: string[], value: string): string[] {
     MatDatepickerModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
+    MatChipsModule,
   ],
   templateUrl: './match-form.component.html',
   styleUrl: './match-form.component.scss',
@@ -93,6 +104,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
   readonly branchOptions = Object.values(HockeyBranchEnum);
 
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport(null);
+  categoryGroups: CategoryGroup[] = [];
   filteredTournaments: Tournament[] = [];
   tournaments: Tournament[] = [];
   matchForm: FormGroup = buildCreateMatchForm(this.fb);
@@ -112,10 +124,35 @@ export class MatchFormComponent implements OnInit, OnChanges {
   private allDivisions: string[] = [];
 
   filteredOpponents$!: Observable<string[]>;
+  filteredOpponentsForChips$!: Observable<string[]>;
   filteredVenues$!: Observable<string[]>;
   filteredDivisions$!: Observable<string[]>;
 
+  readonly separatorKeyCodes = [ENTER, COMMA] as const;
+  readonly opponentChipInputControl = new FormControl<string>('');
+  opponents: string[] = [];
+  private justSelectedFromAc = false;
+
   ngOnInit(): void {
+    if (!this.match) {
+      // Create mode: use categories (multi-select) and opponents (chips)
+      this.matchForm.get('category')!.clearValidators();
+      this.matchForm.get('category')!.updateValueAndValidity({ emitEvent: false });
+      this.matchForm.get('opponent')!.clearValidators();
+      this.matchForm.get('opponent')!.updateValueAndValidity({ emitEvent: false });
+
+      this.matchForm.get('categories')!.valueChanges
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => this.updateCompetitive());
+
+      this.filteredOpponentsForChips$ = this.opponentChipInputControl.valueChanges.pipe(
+        startWith(''),
+        map((v) => filterOptions(this.allOpponents, v ?? '')),
+        takeUntilDestroyed(this.destroyRef)
+      );
+    }
+    this.updateCategoryGroups();
+
     this.filteredOpponents$ = this.matchForm.get('opponent')!.valueChanges.pipe(
       startWith(''),
       map((v) => filterOptions(this.allOpponents, v ?? '')),
@@ -163,6 +200,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
         }
         this.updateSportValidation();
         this.updateCompetitive();
+        this.updateCategoryGroups();
       });
 
     // When tournament changes: derive sport, update categories, compute competitive
@@ -240,7 +278,12 @@ export class MatchFormComponent implements OnInit, OnChanges {
   }
 
   get formInvalid(): boolean {
-    return this.matchForm.invalid || this.timeControl.invalid;
+    if (this.matchForm.invalid || this.timeControl.invalid) return true;
+    if (!this.match) {
+      if ((this.matchForm.get('categories')?.value?.length ?? 0) === 0) return true;
+      if (this.isCompetitive && this.opponents.length === 0) return true;
+    }
+    return false;
   }
 
   onCancel(): void {
@@ -249,7 +292,38 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   onSubmit(): void {
     if (this.formInvalid) return;
-    this.formSubmit.emit(this.matchForm.getRawValue() as MatchFormValue);
+    const value = this.matchForm.getRawValue() as MatchFormValue;
+    this.formSubmit.emit({ ...value, opponents: this.opponents });
+  }
+
+  addOpponentFromInput(event: MatChipInputEvent): void {
+    if (this.justSelectedFromAc) {
+      this.justSelectedFromAc = false;
+      event.chipInput.clear();
+      return;
+    }
+    const value = (event.value ?? '').trim();
+    if (value && !this.opponents.includes(value)) {
+      this.opponents = [...this.opponents, value];
+      this.updateCompetitive();
+    }
+    event.chipInput.clear();
+    this.opponentChipInputControl.setValue('');
+  }
+
+  addOpponentFromAutocomplete(event: MatAutocompleteSelectedEvent): void {
+    this.justSelectedFromAc = true;
+    const value = event.option.value as string;
+    if (value && !this.opponents.includes(value)) {
+      this.opponents = [...this.opponents, value];
+      this.updateCompetitive();
+    }
+    this.opponentChipInputControl.setValue('');
+  }
+
+  removeOpponent(opp: string): void {
+    this.opponents = this.opponents.filter((o) => o !== opp);
+    this.updateCompetitive();
   }
 
   private categoryOptionsForTournament(tournament: Tournament | undefined): CategoryOption[] {
@@ -275,6 +349,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
     const tournament = this.tournaments.find((t) => t.id === tournamentId);
     this.tournamentSport = tournament?.sport ?? null;
     this.categoryOptions = this.categoryOptionsForTournament(tournament);
+    this.updateCategoryGroups();
 
     if (tournament) {
       this.matchForm.get('sport')!.setValue(tournament.sport ?? null, { emitEvent: false });
@@ -298,15 +373,42 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.updateCompetitive();
   }
 
+  private updateCategoryGroups(): void {
+    const sport = this.tournamentSport ?? (this.matchForm.get('sport')?.value as SportEnum | null);
+    const available = getCategoryOptionsBySport(sport);
+    const availableSet = new Set(available.map((c) => c.id));
+
+    const blockDefs: { label: string; block: BlockEnum }[] = [
+      { label: 'Infantiles', block: BlockEnum.INFANTILES },
+      { label: 'Cadetes', block: BlockEnum.CADETES },
+      { label: 'Juveniles', block: BlockEnum.JUVENILES },
+      { label: 'Mayores', block: BlockEnum.MAYORES },
+      { label: 'Plantel Superior', block: BlockEnum.PLANTEL_SUPERIOR },
+    ];
+
+    this.categoryGroups = blockDefs
+      .map((def) => ({
+        label: def.label,
+        categories: getBlockCategories(def.block)
+          .filter((cat) => availableSet.has(cat))
+          .map((cat) => available.find((c) => c.id === cat)!)
+          .filter(Boolean),
+      }))
+      .filter((g) => g.categories.length > 0);
+  }
+
   private updateCompetitive(): void {
-    const category = this.matchForm.get('category')?.value as CategoryEnum | null;
     const sport = this.tournamentSport ?? (this.matchForm.get('sport')?.value as SportEnum | null);
     const wasCompetitive = this.isCompetitive;
 
-    this.isCompetitive =
-      !!category &&
-      !!sport &&
-      isCompetitiveCategory(category, sport);
+    if (this.match) {
+      const category = this.matchForm.get('category')?.value as CategoryEnum | null;
+      this.isCompetitive = !!category && !!sport && isCompetitiveCategory(category, sport);
+    } else {
+      const categories = this.matchForm.get('categories')?.value as CategoryEnum[];
+      const first = categories?.[0] ?? null;
+      this.isCompetitive = !!first && !!sport && isCompetitiveCategory(first, sport);
+    }
 
     if (this.isCompetitive !== wasCompetitive) {
       this.updateOpponentValidation();
@@ -314,6 +416,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
   }
 
   private updateOpponentValidation(): void {
+    if (!this.match) return; // create mode: validated via formInvalid getter
     const opponent = this.matchForm.get('opponent')!;
     if (this.isCompetitive) {
       opponent.setValidators(Validators.required);
