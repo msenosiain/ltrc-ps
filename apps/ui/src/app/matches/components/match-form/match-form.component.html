@@ -205,7 +205,7 @@
   </mat-card>
 
   @if (!match) {
-  <mat-card formGroupName="payment">
+  <mat-card formGroupName="payment" *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR]">
     <button type="button" class="payment-card-title" (click)="togglePayment()">
       <p class="section-title">Cobro con Mercado Pago</p>
       <mat-icon>{{ paymentEnabled ? 'expand_less' : 'expand_more' }}</mat-icon>
