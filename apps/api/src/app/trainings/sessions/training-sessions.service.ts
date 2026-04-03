@@ -7,14 +7,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TrainingSessionEntity } from './schemas/training-session.entity';
 import { TrainingScheduleEntity } from '../schedules/schemas/training-schedule.entity';
+import { MatchEntity } from '../../matches/schemas/match.entity';
 import { PaginationDto } from '../../shared/pagination.dto';
 import { TrainingSessionFiltersDto } from './training-session-filter.dto';
 import {
+  BlockEnum,
   PaginatedResponse,
   RoleEnum,
   TrainingSessionStatusEnum,
   UpcomingTraining,
   DayOfWeekEnum,
+  getBlockCategories,
 } from '@ltrc-campo/shared-api-model';
 import { CreateTrainingSessionDto } from './dto/create-training-session.dto';
 import { UpdateTrainingSessionDto } from './dto/update-training-session.dto';
@@ -57,7 +60,9 @@ export class TrainingSessionsService {
     @InjectModel(PlayerEntity.name)
     private readonly playerModel: Model<PlayerEntity>,
     @InjectModel(User.name)
-    private readonly userModel: Model<User>
+    private readonly userModel: Model<User>,
+    @InjectModel(MatchEntity.name)
+    private readonly matchModel: Model<MatchEntity>,
   ) {}
 
   async create(dto: CreateTrainingSessionDto, caller?: User) {
@@ -573,6 +578,242 @@ export class TrainingSessionsService {
     }
 
     return { byCategory };
+  }
+
+  private isoWeekKey(dateStr: string): string {
+    const d = new Date(dateStr + 'T12:00:00Z');
+    const year = d.getUTCFullYear();
+    const startOfYear = new Date(Date.UTC(year, 0, 1));
+    const week = Math.ceil(((d.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getUTCDay() + 1) / 7);
+    return `${year}-W${String(week).padStart(2, '0')}`;
+  }
+
+  private generateWeekLabels(weeks: number): string[] {
+    const labels: string[] = [];
+    for (let i = weeks - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i * 7);
+      const key = this.isoWeekKey(d.toISOString().slice(0, 10));
+      if (!labels.includes(key)) labels.push(key);
+    }
+    return labels;
+  }
+
+  private readonly NON_COMPETITIVE_CATS = [
+    ...getBlockCategories(BlockEnum.INFANTILES),
+    ...getBlockCategories(BlockEnum.CADETES),
+  ];
+
+  private readonly COMPETITIVE_CATS = [
+    ...getBlockCategories(BlockEnum.JUVENILES),
+    ...getBlockCategories(BlockEnum.MAYORES),
+    ...getBlockCategories(BlockEnum.PLANTEL_SUPERIOR),
+  ];
+
+  async getAttendanceTrend(
+    caller?: User,
+    filters?: { sport?: string; category?: string; period?: string; categoryGroup?: 'competitive' | 'non-competitive' },
+  ): Promise<{ labels: string[]; sessions: number[]; present: number[]; attendees: number[]; pct: number[] }> {
+    const weeks = filters?.period === '1m' ? 5 : filters?.period === '3m' ? 13 : 26;
+    const since = new Date();
+    since.setDate(since.getDate() - weeks * 7);
+
+    const scopeFilter: Record<string, unknown> = {
+      date: { $lte: new Date().toISOString().slice(0, 10), $gte: since.toISOString().slice(0, 10) },
+    };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      const categories = caller.categories ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+      if (categories.length) scopeFilter['category'] = { $in: categories };
+    }
+    if (filters?.sport) scopeFilter['sport'] = filters.sport;
+    if (filters?.category) scopeFilter['category'] = filters.category;
+    if (filters?.categoryGroup === 'competitive') scopeFilter['category'] = { $in: this.COMPETITIVE_CATS };
+    if (filters?.categoryGroup === 'non-competitive') scopeFilter['category'] = { $in: this.NON_COMPETITIVE_CATS };
+
+    const sessions = await this.sessionModel.find(scopeFilter).lean();
+
+    const buckets: Record<string, { sessions: number; present: number; attendees: number }> = {};
+    for (const s of sessions) {
+      const key = this.isoWeekKey(s.date);
+      if (!buckets[key]) buckets[key] = { sessions: 0, present: 0, attendees: 0 };
+      buckets[key].sessions++;
+      const playerAtt = (s.attendance ?? []).filter((a: any) => !a.isStaff);
+      buckets[key].attendees += playerAtt.length;
+      buckets[key].present += playerAtt.filter((a: any) => a.status === 'present').length;
+    }
+
+    const labels = this.generateWeekLabels(weeks);
+    return {
+      labels,
+      sessions: labels.map((l) => buckets[l]?.sessions ?? 0),
+      present: labels.map((l) => buckets[l]?.present ?? 0),
+      attendees: labels.map((l) => buckets[l]?.attendees ?? 0),
+      pct: labels.map((l) => {
+        const b = buckets[l];
+        return b && b.attendees > 0 ? Math.round((b.present / b.attendees) * 100) : 0;
+      }),
+    };
+  }
+
+  async getParticipationOverlap(
+    caller?: User,
+    filters?: { sport?: string; period?: string },
+  ): Promise<{ labels: string[]; trainOnly: number[]; matchOnly: number[]; both: number[] }> {
+    const weeks = filters?.period === '1m' ? 5 : filters?.period === '3m' ? 13 : 26;
+    const since = new Date();
+    since.setDate(since.getDate() - weeks * 7);
+    const sinceStr = since.toISOString().slice(0, 10);
+    const todayStr = new Date().toISOString().slice(0, 10);
+
+    const scopeFilter: Record<string, unknown> = {
+      category: { $in: this.NON_COMPETITIVE_CATS },
+    };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+    }
+    if (filters?.sport) scopeFilter['sport'] = filters.sport;
+
+    const [sessions, matches] = await Promise.all([
+      this.sessionModel.find({ ...scopeFilter, date: { $gte: sinceStr, $lte: todayStr } }).lean(),
+      this.matchModel.find({ ...scopeFilter, date: { $gte: new Date(sinceStr), $lte: new Date() } }).lean(),
+    ]);
+
+    // Build weekly buckets: Set of playerIds per week for training and matches
+    const trainWeek: Record<string, Set<string>> = {};
+    for (const s of sessions) {
+      const key = this.isoWeekKey(s.date);
+      if (!trainWeek[key]) trainWeek[key] = new Set();
+      for (const a of (s.attendance ?? []).filter((a: any) => !a.isStaff && a.status === 'present')) {
+        trainWeek[key].add(a.player?.toString());
+      }
+    }
+
+    const matchWeek: Record<string, Set<string>> = {};
+    for (const m of matches) {
+      const key = this.isoWeekKey(new Date(m.date).toISOString().slice(0, 10));
+      if (!matchWeek[key]) matchWeek[key] = new Set();
+      for (const a of (m.attendance ?? []).filter((a: any) => !a.isStaff && a.status === 'present')) {
+        matchWeek[key].add(a.player?.toString());
+      }
+    }
+
+    const labels = this.generateWeekLabels(weeks);
+    return {
+      labels,
+      trainOnly: labels.map((l) => {
+        const t = trainWeek[l] ?? new Set();
+        const mm = matchWeek[l] ?? new Set();
+        return [...t].filter((id) => !mm.has(id)).length;
+      }),
+      matchOnly: labels.map((l) => {
+        const t = trainWeek[l] ?? new Set();
+        const mm = matchWeek[l] ?? new Set();
+        return [...mm].filter((id) => !t.has(id)).length;
+      }),
+      both: labels.map((l) => {
+        const t = trainWeek[l] ?? new Set();
+        const mm = matchWeek[l] ?? new Set();
+        return [...t].filter((id) => mm.has(id)).length;
+      }),
+    };
+  }
+
+  async getNonCompetitiveByCategory(
+    caller?: User,
+    filters?: { sport?: string; period?: string },
+  ): Promise<{ categories: { category: string; labels: string[]; trainOnly: number[]; both: number[]; matchOnly: number[]; trainPresent: number[]; trainAttendees: number[]; matchPresent: number[]; matchAttendees: number[] }[] }> {
+    const weeks = filters?.period === '1m' ? 5 : filters?.period === '3m' ? 13 : 26;
+    const since = new Date();
+    since.setDate(since.getDate() - weeks * 7);
+    const sinceStr = since.toISOString().slice(0, 10);
+    const todayStr = new Date().toISOString().slice(0, 10);
+
+    const scopeFilter: Record<string, unknown> = {
+      category: { $in: this.NON_COMPETITIVE_CATS },
+    };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+    }
+    if (filters?.sport) scopeFilter['sport'] = filters.sport;
+
+    const [sessions, matches] = await Promise.all([
+      this.sessionModel.find({ ...scopeFilter, date: { $gte: sinceStr, $lte: todayStr } }).lean(),
+      this.matchModel.find({ ...scopeFilter, date: { $gte: new Date(sinceStr), $lte: new Date() } }).lean(),
+    ]);
+
+    const labels = this.generateWeekLabels(weeks);
+
+    // Aggregate per-category, per-week
+    type WeekBucket = { trainPlayerIds: Set<string>; matchPlayerIds: Set<string>; trainPresent: number; trainAttendees: number; matchPresent: number; matchAttendees: number };
+    const catWeek: Record<string, Record<string, WeekBucket>> = {};
+
+    for (const s of sessions) {
+      const cat = s.category as string;
+      const key = this.isoWeekKey(s.date);
+      if (!catWeek[cat]) catWeek[cat] = {};
+      if (!catWeek[cat][key]) catWeek[cat][key] = { trainPlayerIds: new Set(), matchPlayerIds: new Set(), trainPresent: 0, trainAttendees: 0, matchPresent: 0, matchAttendees: 0 };
+      const b = catWeek[cat][key];
+      const playerAtt = (s.attendance ?? []).filter((a: any) => !a.isStaff);
+      b.trainAttendees += playerAtt.length;
+      for (const a of playerAtt) {
+        if (a.status === 'present') {
+          b.trainPresent++;
+          if (a.player) b.trainPlayerIds.add(a.player.toString());
+        }
+      }
+    }
+
+    for (const m of matches) {
+      const cat = m.category as string;
+      const key = this.isoWeekKey(new Date(m.date).toISOString().slice(0, 10));
+      if (!catWeek[cat]) catWeek[cat] = {};
+      if (!catWeek[cat][key]) catWeek[cat][key] = { trainPlayerIds: new Set(), matchPlayerIds: new Set(), trainPresent: 0, trainAttendees: 0, matchPresent: 0, matchAttendees: 0 };
+      const b = catWeek[cat][key];
+      const playerAtt = (m.attendance ?? []).filter((a: any) => !a.isStaff);
+      b.matchAttendees += playerAtt.length;
+      for (const a of playerAtt) {
+        if (a.status === 'present') {
+          b.matchPresent++;
+          if (a.player) b.matchPlayerIds.add(a.player.toString());
+        }
+      }
+    }
+
+    // Only include categories that have actual data
+    const categoriesWithData = this.NON_COMPETITIVE_CATS.filter((cat) => catWeek[cat]);
+
+    const result = categoriesWithData.map((cat) => {
+      const weekData = catWeek[cat] ?? {};
+      return {
+        category: cat,
+        labels,
+        trainOnly: labels.map((l) => {
+          const b = weekData[l];
+          if (!b) return 0;
+          return [...b.trainPlayerIds].filter((id) => !b.matchPlayerIds.has(id)).length;
+        }),
+        both: labels.map((l) => {
+          const b = weekData[l];
+          if (!b) return 0;
+          return [...b.trainPlayerIds].filter((id) => b.matchPlayerIds.has(id)).length;
+        }),
+        matchOnly: labels.map((l) => {
+          const b = weekData[l];
+          if (!b) return 0;
+          return [...b.matchPlayerIds].filter((id) => !b.trainPlayerIds.has(id)).length;
+        }),
+        trainPresent: labels.map((l) => weekData[l]?.trainPresent ?? 0),
+        trainAttendees: labels.map((l) => weekData[l]?.trainAttendees ?? 0),
+        matchPresent: labels.map((l) => weekData[l]?.matchPresent ?? 0),
+        matchAttendees: labels.map((l) => weekData[l]?.matchAttendees ?? 0),
+      };
+    });
+
+    return { categories: result };
   }
 
   /**

@@ -62,6 +62,38 @@ export class TrainingSessionsController {
     return this.sessionsService.getAttendanceStats((req as any).user, { sport, category });
   }
 
+  @Get('stats/trend')
+  @UseGuards(JwtAuthGuard)
+  async getAttendanceTrend(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+    @Query('period') period?: string,
+    @Query('categoryGroup') categoryGroup?: 'competitive' | 'non-competitive',
+  ) {
+    return this.sessionsService.getAttendanceTrend((req as any).user, { sport, category, period, categoryGroup });
+  }
+
+  @Get('stats/participation-overlap')
+  @UseGuards(JwtAuthGuard)
+  async getParticipationOverlap(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('period') period?: string,
+  ) {
+    return this.sessionsService.getParticipationOverlap((req as any).user, { sport, period });
+  }
+
+  @Get('stats/non-competitive-by-category')
+  @UseGuards(JwtAuthGuard)
+  async getNonCompetitiveByCategory(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('period') period?: string,
+  ) {
+    return this.sessionsService.getNonCompetitiveByCategory((req as any).user, { sport, period });
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async getOne(@Param('id') id: string) {

@@ -379,6 +379,100 @@ export class PaymentsService {
     await payment.deleteOne();
   }
 
+  // ── Analytics ─────────────────────────────────────────────────────────────
+
+  async getStats(sport?: string): Promise<{
+    byMethod: { mp: number; cash: number };
+    mpAdoptionPct: number;
+    activePendingLinks: number;
+    recentEvents: {
+      linkId: string;
+      concept: string;
+      entityType: string;
+      label: string;
+      approved: number;
+      pending: number;
+      createdAt: Date;
+    }[];
+  }> {
+    // Build entity scope filter when sport is specified
+    let linkScopeFilter: Record<string, unknown> = {};
+    if (sport) {
+      const [matchIds, tripIds] = await Promise.all([
+        this.matchModel.find({ sport }).distinct('_id'),
+        this.tripModel.find({ sport }).distinct('_id'),
+      ]);
+      linkScopeFilter = {
+        $or: [
+          { entityType: PaymentEntityTypeEnum.MATCH, entityId: { $in: matchIds } },
+          { entityType: PaymentEntityTypeEnum.TRIP, entityId: { $in: tripIds } },
+        ],
+      };
+    }
+
+    const [scopedLinkIds, recentLinks, pendingLinksCount] = await Promise.all([
+      sport
+        ? this.paymentLinkModel.find(linkScopeFilter).distinct('_id')
+        : this.paymentLinkModel.find().distinct('_id'),
+      this.paymentLinkModel
+        .find(linkScopeFilter)
+        .sort({ createdAt: -1 })
+        .limit(8)
+        .lean(),
+      this.paymentLinkModel.countDocuments({ ...linkScopeFilter, status: PaymentLinkStatusEnum.ACTIVE }),
+    ]);
+
+    const paymentScopeFilter = sport ? { paymentLinkId: { $in: scopedLinkIds } } : {};
+
+    const byMethodRaw = await this.paymentModel.aggregate([
+      { $match: { ...paymentScopeFilter, status: PaymentStatusEnum.APPROVED } },
+      { $group: { _id: '$method', count: { $sum: 1 } } },
+    ]);
+
+    const mpCount: number = byMethodRaw.find((r) => r._id === PaymentMethodEnum.MERCADOPAGO)?.count ?? 0;
+    const cashCount: number = byMethodRaw.find((r) => r._id === PaymentMethodEnum.CASH)?.count ?? 0;
+    const total = mpCount + cashCount;
+    const mpAdoptionPct = total > 0 ? Math.round((mpCount / total) * 100) : 0;
+
+    // For each recent link, count approved and pending payments
+    const linkIds = recentLinks.map((l) => l._id);
+    const paymentCounts = await this.paymentModel.aggregate([
+      { $match: { paymentLinkId: { $in: linkIds }, status: { $in: [PaymentStatusEnum.APPROVED, PaymentStatusEnum.PENDING] } } },
+      { $group: { _id: { linkId: '$paymentLinkId', status: '$status' }, count: { $sum: 1 } } },
+    ]);
+
+    const countMap: Record<string, { approved: number; pending: number }> = {};
+    for (const r of paymentCounts) {
+      const key = r._id.linkId.toString();
+      if (!countMap[key]) countMap[key] = { approved: 0, pending: 0 };
+      if (r._id.status === PaymentStatusEnum.APPROVED) countMap[key].approved = r.count;
+      if (r._id.status === PaymentStatusEnum.PENDING) countMap[key].pending = r.count;
+    }
+
+    const recentEvents = await Promise.all(
+      recentLinks.map(async (link) => {
+        const label = await this.resolveEntityLabel(link.entityType, link.entityId.toString(), link.entityIds);
+        const counts = countMap[link._id.toString()] ?? { approved: 0, pending: 0 };
+        return {
+          linkId: link._id.toString(),
+          concept: link.concept,
+          entityType: link.entityType,
+          label,
+          approved: counts.approved,
+          pending: counts.pending,
+          createdAt: link.createdAt,
+        };
+      })
+    );
+
+    return {
+      byMethod: { mp: mpCount, cash: cashCount },
+      mpAdoptionPct,
+      activePendingLinks: pendingLinksCount,
+      recentEvents,
+    };
+  }
+
   // ── Reporte PDF ───────────────────────────────────────────────────────────
 
   async generatePdfReport(

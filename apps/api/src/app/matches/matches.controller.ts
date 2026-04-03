@@ -265,6 +265,18 @@ export class MatchesController {
     return this.matchesService.getAttendanceStats((req as any).user, sport, category);
   }
 
+  @Get('stats/trend')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
+  async getAttendanceTrend(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+    @Query('period') period?: string,
+    @Query('categoryGroup') categoryGroup?: 'competitive' | 'non-competitive',
+  ) {
+    return this.matchesService.getAttendanceTrend((req as any).user, { sport, category, period, categoryGroup });
+  }
+
   @Get(':id')
   async getOne(@Param('id') id: string, @Req() req: Request) {
     return this.matchesService.findOne(id, (req as any).user);

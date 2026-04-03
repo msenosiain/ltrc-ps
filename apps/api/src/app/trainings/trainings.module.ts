@@ -14,6 +14,8 @@ import { PlayerEntity } from '../players/schemas/player.entity';
 import { PlayerSchema } from '../players/schemas/player.schema';
 import { User } from '../users/schemas/user.schema';
 import { UserSchema } from '../users/schemas/user.schema';
+import { MatchEntity } from '../matches/schemas/match.entity';
+import { MatchSchema } from '../matches/schemas/match.schema';
 
 @Module({
   imports: [
@@ -38,6 +40,11 @@ import { UserSchema } from '../users/schemas/user.schema';
         name: User.name,
         schema: UserSchema,
         collection: 'users',
+      },
+      {
+        name: MatchEntity.name,
+        schema: MatchSchema,
+        collection: 'matches',
       },
     ]),
   ],

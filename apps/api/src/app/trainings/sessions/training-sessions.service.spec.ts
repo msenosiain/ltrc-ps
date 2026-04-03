@@ -4,6 +4,7 @@ import { TrainingSessionsService } from './training-sessions.service';
 import { TrainingSessionEntity } from './schemas/training-session.entity';
 import { TrainingScheduleEntity } from '../schedules/schemas/training-schedule.entity';
 import { PlayerEntity } from '../../players/schemas/player.entity';
+import { MatchEntity } from '../../matches/schemas/match.entity';
 import { User } from '../../users/schemas/user.schema';
 import { RoleEnum, SportEnum, CategoryEnum } from '@ltrc-campo/shared-api-model';
 
@@ -31,6 +32,10 @@ const mockUserModel = {
   find: jest.fn(),
 };
 
+const mockMatchModel = {
+  find: jest.fn(),
+};
+
 describe('TrainingSessionsService', () => {
   let service: TrainingSessionsService;
 
@@ -44,6 +49,7 @@ describe('TrainingSessionsService', () => {
         { provide: getModelToken(TrainingScheduleEntity.name), useValue: mockScheduleModel },
         { provide: getModelToken(PlayerEntity.name), useValue: mockPlayerModel },
         { provide: getModelToken(User.name), useValue: mockUserModel },
+        { provide: getModelToken(MatchEntity.name), useValue: mockMatchModel },
       ],
     }).compile();
 

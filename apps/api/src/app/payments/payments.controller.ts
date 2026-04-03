@@ -10,12 +10,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { RoleEnum, PaymentEntityTypeEnum } from '@ltrc-campo/shared-api-model';
+import { PaymentEntityTypeEnum, RoleEnum } from '@ltrc-campo/shared-api-model';
 import { CreatePaymentLinkDto } from './dto/create-payment-link.dto';
 import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
 
@@ -59,13 +59,22 @@ export class PaymentsController {
     return this.paymentsService.calculateFee(Number(amount));
   }
 
+  @Get('stats')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
+  getPaymentStats(@Query('sport') sport?: string) {
+    return this.paymentsService.getStats(sport);
+  }
+
   @Get('report/pdf')
   async downloadPdf(
     @Query('entityType') entityType: PaymentEntityTypeEnum,
     @Query('entityId') entityId: string,
     @Res() res: Response
   ) {
-    const buffer = await this.paymentsService.generatePdfReport(entityType, entityId);
+    const buffer = await this.paymentsService.generatePdfReport(
+      entityType,
+      entityId
+    );
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="cobros-${entityType}-${entityId}.pdf"`,
