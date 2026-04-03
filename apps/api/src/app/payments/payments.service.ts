@@ -377,6 +377,56 @@ export class PaymentsService {
     await payment.deleteOne();
   }
 
+  // ── Analytics ─────────────────────────────────────────────────────────────
+
+  async getStats(period = '6m'): Promise<{
+    byMonth: { month: string; amount: number; count: number }[];
+    byStatus: Record<string, number>;
+    totalPlayers: number;
+    playersWithPayment: number;
+  }> {
+    const months = period === '1m' ? 1 : period === '3m' ? 3 : 6;
+    const since = new Date();
+    since.setMonth(since.getMonth() - months);
+    since.setDate(1);
+    since.setHours(0, 0, 0, 0);
+
+    const [byMonthRaw, byStatusRaw, totalPlayers, playersWithPaymentRaw] = await Promise.all([
+      this.paymentModel.aggregate([
+        { $match: { status: PaymentStatusEnum.APPROVED, date: { $gte: since } } },
+        { $group: { _id: { year: { $year: '$date' }, month: { $month: '$date' } }, amount: { $sum: '$netAmount' }, count: { $sum: 1 } } },
+        { $sort: { '_id.year': 1, '_id.month': 1 } },
+      ]),
+      this.paymentModel.aggregate([
+        { $match: { date: { $gte: since } } },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+      ]),
+      this.playerModel.countDocuments({ status: { $ne: 'inactive' } }),
+      this.paymentModel.distinct('playerId', { status: PaymentStatusEnum.APPROVED, date: { $gte: since } }),
+    ]);
+
+    // Fill all months in range
+    const labels: string[] = [];
+    const now = new Date();
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+    }
+
+    const monthMap = Object.fromEntries(
+      byMonthRaw.map((r) => [`${r._id.year}-${String(r._id.month).padStart(2, '0')}`, { amount: r.amount, count: r.count }])
+    );
+
+    const byStatus = Object.fromEntries(byStatusRaw.map((r) => [r._id, r.count]));
+
+    return {
+      byMonth: labels.map((m) => ({ month: m, amount: monthMap[m]?.amount ?? 0, count: monthMap[m]?.count ?? 0 })),
+      byStatus,
+      totalPlayers,
+      playersWithPayment: playersWithPaymentRaw.length,
+    };
+  }
+
   // ── Reporte PDF ───────────────────────────────────────────────────────────
 
   async generatePdfReport(

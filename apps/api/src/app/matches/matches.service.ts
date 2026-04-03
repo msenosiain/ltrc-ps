@@ -588,6 +588,67 @@ export class MatchesService {
     return { byCategory };
   }
 
+  async getAttendanceTrend(
+    caller?: User,
+    filters?: { sport?: string; category?: string; period?: string },
+  ): Promise<{ labels: string[]; matches: number[]; present: number[]; attendees: number[]; pct: number[] }> {
+    const weeks = filters?.period === '1m' ? 5 : filters?.period === '3m' ? 13 : 26;
+    const since = new Date();
+    since.setDate(since.getDate() - weeks * 7);
+
+    const scopeFilter: Record<string, unknown> = {
+      status: MatchStatusEnum.COMPLETED,
+      date: { $lte: new Date(), $gte: since },
+    };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      const sports = caller.sports ?? [];
+      const categories = caller.categories ?? [];
+      if (sports.length) scopeFilter['sport'] = { $in: sports };
+      if (categories.length) scopeFilter['category'] = { $in: categories };
+    }
+    if (filters?.sport) scopeFilter['sport'] = filters.sport;
+    if (filters?.category) scopeFilter['category'] = filters.category;
+
+    const matchDocs = await this.matchModel.find(scopeFilter).lean();
+
+    const buckets: Record<string, { matches: number; present: number; attendees: number }> = {};
+    for (const m of matchDocs) {
+      const d = new Date(m.date);
+      const year = d.getUTCFullYear();
+      const startOfYear = new Date(Date.UTC(year, 0, 1));
+      const week = Math.ceil(((d.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getUTCDay() + 1) / 7);
+      const key = `${year}-W${String(week).padStart(2, '0')}`;
+
+      if (!buckets[key]) buckets[key] = { matches: 0, present: 0, attendees: 0 };
+      buckets[key].matches++;
+      const playerAtt = (m.attendance ?? []).filter((a: any) => !a.isStaff);
+      buckets[key].attendees += playerAtt.length;
+      buckets[key].present += playerAtt.filter((a: any) => a.status === 'present').length;
+    }
+
+    const labels: string[] = [];
+    for (let i = weeks - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i * 7);
+      const year = d.getFullYear();
+      const startOfYear = new Date(Date.UTC(year, 0, 1));
+      const week = Math.ceil(((d.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getUTCDay() + 1) / 7);
+      const key = `${year}-W${String(week).padStart(2, '0')}`;
+      if (!labels.includes(key)) labels.push(key);
+    }
+
+    return {
+      labels,
+      matches: labels.map((l) => buckets[l]?.matches ?? 0),
+      present: labels.map((l) => buckets[l]?.present ?? 0),
+      attendees: labels.map((l) => buckets[l]?.attendees ?? 0),
+      pct: labels.map((l) => {
+        const b = buckets[l];
+        return b && b.attendees > 0 ? Math.round((b.present / b.attendees) * 100) : 0;
+      }),
+    };
+  }
+
   async delete(id: string) {
     const match = await this.matchModel.findById(id);
     if (!match) throw new NotFoundException('Match not found');

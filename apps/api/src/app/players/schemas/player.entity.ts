@@ -57,6 +57,7 @@ export class PlayerEntity extends Document {
   };
   photoId?: string;
   userId?: Types.ObjectId;
+  inactivatedAt?: Date;
   createdBy?: Types.ObjectId;
   updatedBy?: Types.ObjectId;
   createdAt: Date;

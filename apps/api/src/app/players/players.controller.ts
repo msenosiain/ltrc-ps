@@ -109,6 +109,16 @@ export class PlayersController {
     return this.playersService.getStats((req as any).user);
   }
 
+  @Get('stats/growth')
+  async getGrowthStats(@Req() req: Request, @Query('period') period?: string) {
+    return this.playersService.getGrowthStats((req as any).user, period);
+  }
+
+  @Get('stats/age-distribution')
+  async getAgeDistribution(@Req() req: Request) {
+    return this.playersService.getAgeDistribution((req as any).user);
+  }
+
   @Get('field-options')
   async getFieldOptions() {
     return this.playersService.getFieldOptions();

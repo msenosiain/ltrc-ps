@@ -124,6 +124,9 @@ export class PlayersService {
       player.markModified('trialStartDate');
     }
     if (caller) player.updatedBy = (caller as any)._id;
+    if (dto.status === PlayerStatusEnum.INACTIVE && player.status !== PlayerStatusEnum.INACTIVE) {
+      (player as any).inactivatedAt = new Date();
+    }
 
     if (dto.createUser && dto.email && !player.userId) {
       const existing = await this.usersService.findOneByEmail(dto.email);
@@ -424,6 +427,84 @@ export class PlayersService {
       total += r.count;
     }
     return { byCategory, total };
+  }
+
+  async getGrowthStats(caller?: User, period = '6m'): Promise<{
+    labels: string[];
+    altas: number[];
+    bajas: number[];
+  }> {
+    const months = period === '1m' ? 1 : period === '3m' ? 3 : 6;
+    const since = new Date();
+    since.setMonth(since.getMonth() - months);
+    since.setDate(1);
+    since.setHours(0, 0, 0, 0);
+
+    const scopeFilter: Record<string, unknown> = {};
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      if (caller.sports?.length) scopeFilter['sport'] = { $in: caller.sports };
+      if (caller.categories?.length) scopeFilter['category'] = { $in: caller.categories };
+    }
+
+    const [altasRaw, bajasRaw] = await Promise.all([
+      this.playerModel.aggregate([
+        { $match: { ...scopeFilter, createdAt: { $gte: since } } },
+        { $group: { _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } }, count: { $sum: 1 } } },
+      ]),
+      this.playerModel.aggregate([
+        { $match: { ...scopeFilter, inactivatedAt: { $gte: since } } },
+        { $group: { _id: { year: { $year: '$inactivatedAt' }, month: { $month: '$inactivatedAt' } }, count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const labels: string[] = [];
+    const now = new Date();
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      labels.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+    }
+
+    const toMap = (raw: { _id: { year: number; month: number }; count: number }[]) =>
+      Object.fromEntries(raw.map((r) => [`${r._id.year}-${String(r._id.month).padStart(2, '0')}`, r.count]));
+
+    const altasMap = toMap(altasRaw);
+    const bajasMap = toMap(bajasRaw);
+
+    return {
+      labels,
+      altas: labels.map((l) => altasMap[l] ?? 0),
+      bajas: labels.map((l) => bajasMap[l] ?? 0),
+    };
+  }
+
+  async getAgeDistribution(caller?: User): Promise<{
+    all: { birthYear: number; count: number }[];
+    rugby: { birthYear: number; count: number }[];
+    hockey: { birthYear: number; count: number }[];
+  }> {
+    const scopeFilter: Record<string, unknown> = { status: { $ne: PlayerStatusEnum.INACTIVE }, birthDate: { $exists: true } };
+    if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
+      if (caller.sports?.length) scopeFilter['sport'] = { $in: caller.sports };
+      if (caller.categories?.length) scopeFilter['category'] = { $in: caller.categories };
+    }
+
+    const aggregate = (extraFilter: Record<string, unknown> = {}) =>
+      this.playerModel.aggregate([
+        { $match: { ...scopeFilter, ...extraFilter } },
+        { $group: { _id: { $year: '$birthDate' }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } },
+      ]);
+
+    const [allRaw, rugbyRaw, hockeyRaw] = await Promise.all([
+      aggregate(),
+      aggregate({ sport: SportEnum.RUGBY }),
+      aggregate({ sport: SportEnum.HOCKEY }),
+    ]);
+
+    const toRows = (raw: { _id: number; count: number }[]) =>
+      raw.map((r) => ({ birthYear: r._id, count: r.count }));
+
+    return { all: toRows(allRaw), rugby: toRows(rugbyRaw), hockey: toRows(hockeyRaw) };
   }
 
   async importFromFile(

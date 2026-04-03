@@ -118,6 +118,7 @@ export const PlayerSchema = new Schema<PlayerEntity>(
       unique: true,
       sparse: true,
     },
+    inactivatedAt: { type: Date },
     createdBy: { type: Types.ObjectId, ref: 'User' },
     updatedBy: { type: Types.ObjectId, ref: 'User' },
   },

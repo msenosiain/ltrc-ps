@@ -103,6 +103,13 @@ export class PaymentsController {
     return this.paymentsService.deleteManualPayment(id);
   }
 
+  @Get('stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(...PAYMENT_ROLES)
+  getPaymentStats(@Query('period') period?: string) {
+    return this.paymentsService.getStats(period);
+  }
+
   @Get('report/pdf')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(...PAYMENT_ROLES)
