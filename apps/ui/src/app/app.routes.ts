@@ -94,6 +94,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./calendar/calendar.routes').then((m) => m.CALENDAR_ROUTES),
       },
+      {
+        path: 'analytics',
+        loadChildren: () =>
+          import('./analytics/analytics.routes').then((m) => m.ANALYTICS_ROUTES),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },

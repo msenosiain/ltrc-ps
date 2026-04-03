@@ -590,7 +590,7 @@ export class MatchesService {
 
   async getAttendanceTrend(
     caller?: User,
-    filters?: { sport?: string; category?: string; period?: string },
+    filters?: { sport?: string; category?: string; period?: string; categoryGroup?: 'competitive' | 'non-competitive' },
   ): Promise<{ labels: string[]; matches: number[]; present: number[]; attendees: number[]; pct: number[] }> {
     const weeks = filters?.period === '1m' ? 5 : filters?.period === '3m' ? 13 : 26;
     const since = new Date();
@@ -608,6 +608,18 @@ export class MatchesService {
     }
     if (filters?.sport) scopeFilter['sport'] = filters.sport;
     if (filters?.category) scopeFilter['category'] = filters.category;
+    if (filters?.categoryGroup) {
+      const nonCompetitiveCats = [
+        ...getBlockCategories(BlockEnum.INFANTILES),
+        ...getBlockCategories(BlockEnum.CADETES),
+      ];
+      const competitiveCats = [
+        ...getBlockCategories(BlockEnum.JUVENILES),
+        ...getBlockCategories(BlockEnum.MAYORES),
+        ...getBlockCategories(BlockEnum.PLANTEL_SUPERIOR),
+      ];
+      scopeFilter['category'] = { $in: filters.categoryGroup === 'non-competitive' ? nonCompetitiveCats : competitiveCats };
+    }
 
     const matchDocs = await this.matchModel.find(scopeFilter).lean();
 

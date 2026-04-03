@@ -272,8 +272,9 @@ export class MatchesController {
     @Query('sport') sport?: string,
     @Query('category') category?: string,
     @Query('period') period?: string,
+    @Query('categoryGroup') categoryGroup?: 'competitive' | 'non-competitive',
   ) {
-    return this.matchesService.getAttendanceTrend((req as any).user, { sport, category, period });
+    return this.matchesService.getAttendanceTrend((req as any).user, { sport, category, period, categoryGroup });
   }
 
   @Get(':id')

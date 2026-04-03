@@ -61,8 +61,8 @@ export class PaymentsController {
 
   @Get('stats')
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER)
-  getPaymentStats(@Query('period') period?: string) {
-    return this.paymentsService.getStats(period);
+  getPaymentStats(@Query('sport') sport?: string) {
+    return this.paymentsService.getStats(sport);
   }
 
   @Get('report/pdf')

@@ -431,8 +431,8 @@ export class PlayersService {
 
   async getGrowthStats(caller?: User, period = '6m'): Promise<{
     labels: string[];
-    altas: number[];
-    bajas: number[];
+    rugby: { altas: number[]; bajas: number[] };
+    hockey: { altas: number[]; bajas: number[] };
   }> {
     const months = period === '1m' ? 1 : period === '3m' ? 3 : 6;
     const since = new Date();
@@ -446,15 +446,17 @@ export class PlayersService {
       if (caller.categories?.length) scopeFilter['category'] = { $in: caller.categories };
     }
 
-    const [altasRaw, bajasRaw] = await Promise.all([
+    const aggregateGrowth = (extraFilter: Record<string, unknown>, dateField: string) =>
       this.playerModel.aggregate([
-        { $match: { ...scopeFilter, createdAt: { $gte: since } } },
-        { $group: { _id: { year: { $year: '$createdAt' }, month: { $month: '$createdAt' } }, count: { $sum: 1 } } },
-      ]),
-      this.playerModel.aggregate([
-        { $match: { ...scopeFilter, inactivatedAt: { $gte: since } } },
-        { $group: { _id: { year: { $year: '$inactivatedAt' }, month: { $month: '$inactivatedAt' } }, count: { $sum: 1 } } },
-      ]),
+        { $match: { ...scopeFilter, ...extraFilter, [dateField]: { $gte: since } } },
+        { $group: { _id: { year: { $year: `$${dateField}` }, month: { $month: `$${dateField}` } }, count: { $sum: 1 } } },
+      ]);
+
+    const [rugbyAltas, rugbyBajas, hockeyAltas, hockeyBajas] = await Promise.all([
+      aggregateGrowth({ sport: SportEnum.RUGBY }, 'createdAt'),
+      aggregateGrowth({ sport: SportEnum.RUGBY }, 'inactivatedAt'),
+      aggregateGrowth({ sport: SportEnum.HOCKEY }, 'createdAt'),
+      aggregateGrowth({ sport: SportEnum.HOCKEY }, 'inactivatedAt'),
     ]);
 
     const labels: string[] = [];
@@ -467,13 +469,16 @@ export class PlayersService {
     const toMap = (raw: { _id: { year: number; month: number }; count: number }[]) =>
       Object.fromEntries(raw.map((r) => [`${r._id.year}-${String(r._id.month).padStart(2, '0')}`, r.count]));
 
-    const altasMap = toMap(altasRaw);
-    const bajasMap = toMap(bajasRaw);
-
     return {
       labels,
-      altas: labels.map((l) => altasMap[l] ?? 0),
-      bajas: labels.map((l) => bajasMap[l] ?? 0),
+      rugby: {
+        altas: labels.map((l) => toMap(rugbyAltas)[l] ?? 0),
+        bajas: labels.map((l) => toMap(rugbyBajas)[l] ?? 0),
+      },
+      hockey: {
+        altas: labels.map((l) => toMap(hockeyAltas)[l] ?? 0),
+        bajas: labels.map((l) => toMap(hockeyBajas)[l] ?? 0),
+      },
     };
   }
 

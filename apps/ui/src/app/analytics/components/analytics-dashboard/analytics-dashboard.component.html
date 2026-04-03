@@ -1,0 +1,213 @@
+<div class="analytics">
+
+  <!-- Header + controles -->
+  <div class="analytics__header">
+    <h1 class="analytics__title">Estadísticas</h1>
+    <div class="analytics__controls">
+      <mat-button-toggle-group [value]="sportFilter()" (change)="onSportChange($event.value)">
+        <mat-button-toggle value="all">Todos</mat-button-toggle>
+        <mat-button-toggle value="rugby">Rugby</mat-button-toggle>
+        <mat-button-toggle value="hockey">Hockey</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <mat-button-toggle-group [value]="period()" (change)="onPeriodChange($event.value)">
+        <mat-button-toggle value="1m">1M</mat-button-toggle>
+        <mat-button-toggle value="3m">3M</mat-button-toggle>
+        <mat-button-toggle value="6m">6M</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="analytics__loading">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else {
+
+    <!-- KPI cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-card--green">
+        <span class="kpi-card__label">Nuevos jugadores</span>
+        <span class="kpi-card__value">{{ kpiNewPlayers() }}</span>
+        <span class="kpi-card__sub">en el período</span>
+      </div>
+      <div class="kpi-card kpi-card--red">
+        <span class="kpi-card__label">Bajas</span>
+        <span class="kpi-card__value">{{ kpiLostPlayers() }}</span>
+        <span class="kpi-card__sub">en el período</span>
+      </div>
+      <div class="kpi-card kpi-card--blue">
+        <span class="kpi-card__label">Adopción MercadoPago</span>
+        <span class="kpi-card__value">{{ kpiMpAdoption() }}%</span>
+        <span class="kpi-card__sub">de los pagos aprobados</span>
+      </div>
+      <div class="kpi-card kpi-card--orange">
+        <span class="kpi-card__label">Links activos</span>
+        <span class="kpi-card__value">{{ kpiPendingLinks() }}</span>
+        <span class="kpi-card__sub">con pagos pendientes</span>
+      </div>
+    </div>
+
+    <!-- ── Sección Jugadores ── -->
+    <section class="analytics__section">
+      <h2 class="analytics__section-title">Jugadores</h2>
+      <div class="chart-row">
+
+        <!-- Crecimiento -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <span class="chart-card__title">Crecimiento</span>
+          </div>
+          <div class="chart-card__body">
+            <canvas baseChart
+              [data]="growthChartData()"
+              [options]="growthChartOptions"
+              type="bar">
+            </canvas>
+          </div>
+        </div>
+
+        <!-- Pirámide etaria con carousel -->
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <span class="chart-card__title">
+              Pirámide etaria —
+              @switch (ageCarouselIdx()) {
+                @case (0) { Todos }
+                @case (1) { Rugby }
+                @case (2) { Hockey }
+              }
+            </span>
+            @if (sportFilter() === 'all') {
+              <div class="carousel-nav">
+                <button mat-icon-button [disabled]="ageCarouselIdx() === 0" (click)="onAgeSlide(-1)">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                <span class="carousel-dots">
+                  @for (i of [0,1,2]; track i) {
+                    <span class="carousel-dot" [class.carousel-dot--active]="ageCarouselIdx() === i"></span>
+                  }
+                </span>
+                <button mat-icon-button [disabled]="ageCarouselIdx() === 2" (click)="onAgeSlide(1)">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
+          <div class="chart-card__body">
+            <canvas baseChart
+              [data]="ageChartData()"
+              [options]="ageChartOptions"
+              type="bar">
+            </canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── Sección Categorías Competitivas ── -->
+    <section class="analytics__section">
+      <h2 class="analytics__section-title">Entrenamientos — Categorías Competitivas</h2>
+      <div class="chart-row">
+        <div class="chart-card chart-card--wide">
+          <div class="chart-card__header">
+            <span class="chart-card__title">% Asistencia de jugadores — Juveniles y Mayores</span>
+          </div>
+          <div class="chart-card__body">
+            <canvas baseChart
+              [data]="trainingCompPctChartData()"
+              [options]="lineChartOptions"
+              type="line">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Sección Categorías No Competitivas ── -->
+    <section class="analytics__section">
+      <h2 class="analytics__section-title">Participación — Infantiles y Cadetes</h2>
+      @if (nonCompCatLabels().length === 0) {
+        <p class="analytics__empty">Sin datos para el período seleccionado.</p>
+      } @else {
+        <div class="chart-card chart-card--full">
+          <div class="chart-card__header">
+            <span class="chart-card__title">
+              @if (nonCompCatLabels()[nonCompCatIdx()] === 'total') {
+                Todas las categorías — entrenamiento vs partido
+              } @else {
+                {{ getCategoryLabel($any(nonCompCatLabels()[nonCompCatIdx()])) }} — entrenamiento vs partido
+              }
+            </span>
+            <div class="carousel-nav">
+              <button mat-icon-button [disabled]="nonCompCatIdx() === 0" (click)="onNonCompCatSlide(-1)">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+              <span class="carousel-dots">
+                @for (i of nonCompCatLabels(); track $index) {
+                  <span class="carousel-dot" [class.carousel-dot--active]="nonCompCatIdx() === $index"></span>
+                }
+              </span>
+              <button mat-icon-button [disabled]="nonCompCatIdx() === nonCompCatLabels().length - 1" (click)="onNonCompCatSlide(1)">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="chart-card__body">
+            @if (nonCompCatChartData()[nonCompCatIdx()]; as chartData) {
+              <canvas baseChart
+                [data]="chartData"
+                [options]="absBarChartOptions"
+                type="bar">
+              </canvas>
+            }
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- ── Sección Pagos ── -->
+    <section class="analytics__section">
+      <h2 class="analytics__section-title">Pagos</h2>
+      <div class="chart-row">
+
+        <div class="chart-card">
+          <div class="chart-card__header">
+            <span class="chart-card__title">Adopción MercadoPago</span>
+          </div>
+          <div class="chart-card__body chart-card__body--donut">
+            <canvas baseChart
+              [data]="methodChartData()"
+              [options]="doughnutChartOptions"
+              type="doughnut">
+            </canvas>
+          </div>
+          <div class="chart-card__footer">
+            <span class="adoption-stat">
+              <strong>{{ kpiMpAdoption() }}%</strong> de los pagos aprobados son por MercadoPago
+            </span>
+          </div>
+        </div>
+
+        <div class="chart-card chart-card--wide-events">
+          <div class="chart-card__header">
+            <span class="chart-card__title">Cobertura por evento (últimos 8)</span>
+            @if (kpiPendingLinks()) {
+              <span class="pending-badge">{{ kpiPendingLinks() }} links activos</span>
+            }
+          </div>
+          <div class="chart-card__body chart-card__body--events">
+            <canvas baseChart
+              [data]="eventsChartData()"
+              [options]="eventsChartOptions"
+              type="bar">
+            </canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  }
+</div>
