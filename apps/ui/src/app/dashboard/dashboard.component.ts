@@ -24,9 +24,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { PlayersService } from '../players/services/players.service';
 import { SidenavService } from '../common/services/sidenav.service';
-import { UpcomingTrainingsWidgetComponent } from '../trainings/components/upcoming-trainings-widget/upcoming-trainings-widget.component';
-import { UpcomingMatchesWidgetComponent } from '../matches/components/upcoming-matches-widget/upcoming-matches-widget.component';
-import { MyMatchesWidgetComponent } from '../matches/components/my-matches-widget/my-matches-widget.component';
+import { CalendarWeekWidgetComponent } from '../calendar/components/calendar-week-widget/calendar-week-widget.component';
+import { InjuredPlayersWidgetComponent } from '../players/components/injured-players-widget/injured-players-widget.component';
 import { PlayerStatsWidgetComponent } from '../players/components/player-stats-widget/player-stats-widget.component';
 import { AttendanceStatsWidgetComponent } from '../trainings/components/attendance-stats-widget/attendance-stats-widget.component';
 import { MatchAttendanceStatsWidgetComponent } from '../matches/components/match-attendance-stats-widget/match-attendance-stats-widget.component';
@@ -44,9 +43,8 @@ import { MyWorkoutWidgetComponent } from '../physical-training/components/my-wor
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
-    UpcomingTrainingsWidgetComponent,
-    UpcomingMatchesWidgetComponent,
-    MyMatchesWidgetComponent,
+    CalendarWeekWidgetComponent,
+    InjuredPlayersWidgetComponent,
     PlayerStatsWidgetComponent,
     AttendanceStatsWidgetComponent,
     MatchAttendanceStatsWidgetComponent,
@@ -69,9 +67,11 @@ export class DashboardComponent implements OnInit {
 
   private readonly currentUser = toSignal(this.authService.user$);
 
-  readonly isAdmin = computed(
-    () => this.currentUser()?.roles?.includes(RoleEnum.ADMIN) ?? false
-  );
+  private check(r: RoleEnum): boolean {
+    const viewAs = this.viewAsService.viewAsRole();
+    const roles = this.currentUser()?.roles ?? [];
+    return viewAs ? viewAs === r : roles.includes(r);
+  }
 
   readonly isPlayer = computed(() => {
     const viewAs = this.viewAsService.viewAsRole();
@@ -99,6 +99,34 @@ export class DashboardComponent implements OnInit {
     const role = this.viewAsService.viewAsRole();
     return role ? getRoleLabel(role) : null;
   });
+
+  // Widget visibility per role
+  readonly showCalendar = computed(() =>
+    this.check(RoleEnum.ADMIN) || this.check(RoleEnum.MANAGER) || this.check(RoleEnum.COORDINATOR) ||
+    this.check(RoleEnum.COACH) || this.check(RoleEnum.TRAINER) || this.check(RoleEnum.ANALYST) ||
+    this.check(RoleEnum.KINE) || this.check(RoleEnum.PLAYER)
+  );
+
+  readonly showInjured = computed(() =>
+    this.check(RoleEnum.ADMIN) || this.check(RoleEnum.MANAGER) || this.check(RoleEnum.COORDINATOR) ||
+    this.check(RoleEnum.COACH) || this.check(RoleEnum.TRAINER) || this.check(RoleEnum.ANALYST) ||
+    this.check(RoleEnum.KINE)
+  );
+
+  readonly showPlayerStats = computed(() =>
+    this.check(RoleEnum.ADMIN) || this.check(RoleEnum.MANAGER) ||
+    this.check(RoleEnum.COORDINATOR) || this.check(RoleEnum.COACH)
+  );
+
+  readonly showTrainingStats = computed(() =>
+    this.check(RoleEnum.ADMIN) || this.check(RoleEnum.MANAGER) ||
+    this.check(RoleEnum.COORDINATOR) || this.check(RoleEnum.COACH) || this.check(RoleEnum.TRAINER)
+  );
+
+  readonly showMatchStats = computed(() =>
+    this.check(RoleEnum.ADMIN) || this.check(RoleEnum.MANAGER) ||
+    this.check(RoleEnum.COORDINATOR) || this.check(RoleEnum.COACH)
+  );
 
   myPlayerId = signal<string | null>(null);
   private myPlayerCategory = signal<CategoryEnum | null>(null);
@@ -136,7 +164,7 @@ export class DashboardComponent implements OnInit {
           this.myPlayerCategory.set((player.category as CategoryEnum) ?? null);
         },
         error: () => {
-          /* jugador sin perfil vinculado, se queda en dashboard */
+          /* jugador sin perfil vinculado */
         },
       });
     }

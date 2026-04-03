@@ -20,12 +20,28 @@
     <div class="dates-row">
       <mat-form-field appearance="outline">
         <mat-label>Desde</mat-label>
-        <input matInput type="date" formControlName="since" />
+        <input matInput [matDatepicker]="sincePicker" formControlName="since" />
+        @if (form.get('since')?.value) {
+          <button mat-icon-button matIconSuffix type="button" (click)="clearField('since')">
+            <mat-icon>close</mat-icon>
+          </button>
+        } @else {
+          <mat-datepicker-toggle matIconSuffix [for]="sincePicker" />
+        }
+        <mat-datepicker #sincePicker />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Retorno estimado</mat-label>
-        <input matInput type="date" formControlName="estimatedReturn" />
+        <input matInput [matDatepicker]="returnPicker" formControlName="estimatedReturn" />
+        @if (form.get('estimatedReturn')?.value) {
+          <button mat-icon-button matIconSuffix type="button" (click)="clearField('estimatedReturn')">
+            <mat-icon>close</mat-icon>
+          </button>
+        } @else {
+          <mat-datepicker-toggle matIconSuffix [for]="returnPicker" />
+        }
+        <mat-datepicker #returnPicker />
       </mat-form-field>
     </div>
     }

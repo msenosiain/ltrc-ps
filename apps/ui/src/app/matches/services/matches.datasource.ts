@@ -60,6 +60,10 @@ export class MatchesDataSource implements DataSource<Match> {
     this.load();
   }
 
+  refresh(): void {
+    this.load();
+  }
+
   private load(): void {
     this.loadingSubject.next(true);
 

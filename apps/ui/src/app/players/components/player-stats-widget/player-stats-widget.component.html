@@ -1,46 +1,53 @@
-<div class="stats-widget">
-  <h3 class="widget-title">Jugadores por categoría</h3>
+<app-widget-shell icon="group" title="Jugadores" [loading]="loading" height="460px">
+  <ng-container widget-actions>
+    @if (showFilterButton) {
+      <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
+        <mat-icon>tune</mat-icon>
+        Filtros
+      </button>
+    }
+    <button class="widget-link" (click)="goToPlayers()">Ver jugadores</button>
+  </ng-container>
 
-  @if (loading) {
-    <mat-progress-bar mode="indeterminate" />
-  } @else if (!blocks.length) {
-    <p class="no-data">Sin datos disponibles.</p>
-  } @else {
-    @for (block of blocks; track block.block) {
-      <div class="block-section">
-        <div class="block-header">
-          <span class="block-name">{{ block.label }}</span>
-          <span class="block-total">{{ block.total }}</span>
+  @if (!loading) {
+    @if (!blocks.length) {
+      <p class="empty">Sin datos disponibles.</p>
+    } @else {
+      @for (block of blocks; track block.block) {
+        <div class="block-section">
+          <div class="block-header">
+            <span class="block-name">{{ block.label }}</span>
+            <span class="block-total">{{ block.total }}</span>
+          </div>
+          @if (block.isPlantelSuperior) {
+            @for (group of block.sportGroups; track group.sport) {
+              <div class="sport-row">
+                <span class="sport-label">{{ group.label }}</span>
+                <span class="sport-count">{{ group.subtotal }}</span>
+              </div>
+            }
+          } @else {
+            @for (group of block.sportGroups; track group.sport) {
+              @for (cat of group.categories; track cat.category) {
+                <div class="category-row">
+                  <span class="category-label">{{ cat.label }}</span>
+                  <span class="category-count">{{ cat.count }}</span>
+                </div>
+              }
+              @if (block.showSportSubtotals) {
+                <div class="sport-subtotal-row">
+                  <span class="sport-subtotal-label">{{ group.label }}</span>
+                  <span class="sport-subtotal-count">{{ group.subtotal }}</span>
+                </div>
+              }
+            }
+          }
         </div>
-
-        @if (block.isPlantelSuperior) {
-          @for (group of block.sportGroups; track group.sport) {
-            <div class="sport-row">
-              <span class="sport-label">{{ group.label }}</span>
-              <span class="sport-count">{{ group.subtotal }}</span>
-            </div>
-          }
-        } @else {
-          @for (group of block.sportGroups; track group.sport) {
-            @for (cat of group.categories; track cat.category) {
-              <div class="category-row">
-                <span class="category-label">{{ cat.label }}</span>
-                <span class="category-count">{{ cat.count }}</span>
-              </div>
-            }
-            @if (block.showSportSubtotals) {
-              <div class="sport-subtotal-row">
-                <span class="sport-subtotal-label">{{ group.label }}</span>
-                <span class="sport-subtotal-count">{{ group.subtotal }}</span>
-              </div>
-            }
-          }
-        }
+      }
+      <div class="total-row">
+        <span>Total</span>
+        <span class="total-count">{{ total }}</span>
       </div>
     }
-    <div class="total-row">
-      <span>Total</span>
-      <span class="total-count">{{ total }}</span>
-    </div>
   }
-</div>
+</app-widget-shell>

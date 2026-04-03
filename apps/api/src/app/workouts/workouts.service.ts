@@ -96,7 +96,7 @@ export class WorkoutsService {
 
   async create(dto: CreateWorkoutDto, callerId?: string) {
     return this.workoutModel.create({
-      ...dto,
+      ...(dto as any),
       createdBy: callerId,
       updatedBy: callerId,
     });

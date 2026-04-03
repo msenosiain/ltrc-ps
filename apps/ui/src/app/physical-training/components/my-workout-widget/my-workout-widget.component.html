@@ -1,28 +1,23 @@
-<div class="workout-widget">
-  <h3 class="widget-title">
-    <mat-icon class="widget-title__icon" fontSet="material-symbols-outlined">exercise</mat-icon>
-    Mis rutinas
-  </h3>
-
-  @if (loading) {
-    <mat-progress-bar mode="indeterminate" />
-  } @else if (workouts.length === 0) {
-    <p class="workout-widget__empty">No tenés rutinas asignadas este período.</p>
-  } @else {
-    @for (workout of workouts; track workout.id) {
-      <div class="workout-widget__card" (click)="goToWorkout(workout.id!)" tabindex="0" (keydown.enter)="goToWorkout(workout.id!)">
-        <div class="workout-widget__info">
-          <span class="workout-widget__name">{{ workout.name }}</span>
-          <span class="workout-widget__meta">
-            <mat-icon class="workout-widget__meta-icon">fitness_center</mat-icon>
-            {{ exerciseCount(workout) }} {{ exerciseCount(workout) === 1 ? 'ejercicio' : 'ejercicios' }}
-            @if (daysLabel(workout)) {
-              &nbsp;·&nbsp;{{ daysLabel(workout) }}
-            }
-          </span>
+<app-widget-shell icon="exercise" iconFontSet="material-symbols-outlined" title="Mis rutinas" [loading]="loading" height="460px">
+  @if (!loading) {
+    @if (workouts.length === 0) {
+      <p class="workout-widget__empty">No tenés rutinas asignadas este período.</p>
+    } @else {
+      @for (workout of workouts; track workout.id) {
+        <div class="workout-widget__card" (click)="goToWorkout(workout.id!)" tabindex="0" (keydown.enter)="goToWorkout(workout.id!)">
+          <div class="workout-widget__info">
+            <span class="workout-widget__name">{{ workout.name }}</span>
+            <span class="workout-widget__meta">
+              <mat-icon class="workout-widget__meta-icon">fitness_center</mat-icon>
+              {{ exerciseCount(workout) }} {{ exerciseCount(workout) === 1 ? 'ejercicio' : 'ejercicios' }}
+              @if (daysLabel(workout)) {
+                &nbsp;·&nbsp;{{ daysLabel(workout) }}
+              }
+            </span>
+          </div>
+          <mat-icon class="workout-widget__arrow">chevron_right</mat-icon>
         </div>
-        <mat-icon class="workout-widget__arrow">chevron_right</mat-icon>
-      </div>
+      }
     }
   }
-</div>
+</app-widget-shell>

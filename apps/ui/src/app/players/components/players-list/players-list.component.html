@@ -132,6 +132,18 @@
       </td>
     </ng-container>
 
+    <!-- Acciones -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let player" class="actions-cell" (click)="$event.stopPropagation()">
+        <div *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]">
+          <button mat-icon-button [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{ player: player }">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr
       mat-row
@@ -141,6 +153,29 @@
       [class.player-row--inactive]="row.status === PlayerStatusEnum.INACTIVE"
     ></tr>
   </table>
+
+  <mat-menu #actionsMenu="matMenu">
+    <ng-template matMenuContent let-player="player">
+      @if (player.status === PlayerStatusEnum.TRIAL) {
+        <button mat-menu-item (click)="approveTrial($event, player)">
+          <mat-icon>how_to_reg</mat-icon>
+          Finalizar período de prueba
+        </button>
+      }
+      <button mat-menu-item (click)="openAvailabilityDialog($event, player)">
+        <mat-icon>medical_information</mat-icon>
+        Disponibilidad
+      </button>
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
+        mat-menu-item
+        (click)="openChangeCategoryDialog($event, player)"
+      >
+        <mat-icon>category</mat-icon>
+        Cambiar categoría
+      </button>
+    </ng-template>
+  </mat-menu>
 
   <mat-paginator
     [length]="dataSource.total"

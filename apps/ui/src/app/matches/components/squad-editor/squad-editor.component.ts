@@ -38,6 +38,7 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import {
+  CategoryEnum,
   Match,
   Player,
   SportEnum,
@@ -155,6 +156,13 @@ export class SquadEditorComponent implements OnInit {
       : this.rugbyFormationShirts;
   }
 
+  private getEligibleCategories(sport?: SportEnum | null, category?: CategoryEnum): CategoryEnum[] {
+    if (category !== CategoryEnum.PLANTEL_SUPERIOR) return category ? [category] : [];
+    if (sport === SportEnum.RUGBY) return [CategoryEnum.PLANTEL_SUPERIOR, CategoryEnum.M19];
+    if (sport === SportEnum.HOCKEY) return [CategoryEnum.PLANTEL_SUPERIOR, CategoryEnum.QUINTA];
+    return [CategoryEnum.PLANTEL_SUPERIOR];
+  }
+
   get opponentLabel(): string {
     if (!this.match) return '';
     const prefix = this.match.division ? `${this.match.division} ` : '';
@@ -224,13 +232,18 @@ export class SquadEditorComponent implements OnInit {
         distinctUntilChanged(),
         switchMap((term) => {
           this.searchingPlayers = true;
+          const sport = this.match?.tournament?.sport ?? this.match?.sport;
+          const category = this.match?.category as CategoryEnum | undefined;
+          const eligibleCategories = this.getEligibleCategories(sport, category);
           return this.playersService.getPlayers({
             page: 1,
             size: 20,
             filters: {
               searchTerm: term,
-              ...((this.match?.tournament?.sport ?? this.match?.sport) && { sport: this.match!.tournament?.sport ?? this.match!.sport }),
-              ...(this.match?.category && { category: this.match.category }),
+              ...(sport && { sport }),
+              ...(eligibleCategories.length > 1
+                ? { categories: eligibleCategories }
+                : category ? { category } : {}),
             },
           });
         }),

@@ -100,4 +100,130 @@ describe('UsersService', () => {
       expect(result.email).toBe(userData.email);
     });
   });
+
+  describe('findAll', () => {
+    it('should return paginated users', async () => {
+      const items = [mockUser];
+      (model as any).find = jest.fn().mockReturnValue({
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue(items),
+      });
+      (model as any).countDocuments = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(1),
+      });
+
+      const result = await service.findAll({ page: 1, size: 10 });
+
+      expect(result.items).toEqual(items);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+    });
+
+    it('should apply searchTerm and role filters', async () => {
+      (model as any).find = jest.fn().mockReturnValue({
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockReturnThis(),
+        sort: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockResolvedValue([]),
+      });
+      (model as any).countDocuments = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(0),
+      });
+
+      await service.findAll({ page: 1, size: 10, filters: { searchTerm: 'test', role: 'admin' as any } });
+
+      expect((model as any).find).toHaveBeenCalledWith(
+        expect.objectContaining({ $or: expect.any(Array), roles: 'admin' })
+      );
+    });
+  });
+
+  describe('update', () => {
+    it('should call findByIdAndUpdate', async () => {
+      (model as any).findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockUser),
+      });
+
+      const result = await service.update('someId', { name: 'Updated' } as any);
+      expect((model as any).findByIdAndUpdate).toHaveBeenCalledWith(
+        'someId',
+        { name: 'Updated' },
+        { returnDocument: 'after' },
+      );
+      expect(result).toEqual(mockUser);
+    });
+  });
+
+  describe('delete', () => {
+    it('should call findByIdAndDelete', async () => {
+      (model as any).findByIdAndDelete = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockUser),
+      });
+
+      const result = await service.delete('someId');
+      expect((model as any).findByIdAndDelete).toHaveBeenCalledWith('someId');
+      expect(result).toEqual(mockUser);
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should call findByIdAndUpdate to unset password', async () => {
+      (model as any).findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(mockUser),
+      });
+
+      const result = await service.resetPassword('someId');
+      expect((model as any).findByIdAndUpdate).toHaveBeenCalledWith(
+        'someId',
+        { $unset: { password: 1 } },
+        { returnDocument: 'after' },
+      );
+      expect(result).toEqual(mockUser);
+    });
+  });
+
+  describe('setResetToken', () => {
+    it('should call findByIdAndUpdate with token and expiry', async () => {
+      const expires = new Date();
+      (model as any).findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await service.setResetToken('someId', 'token123', expires);
+      expect((model as any).findByIdAndUpdate).toHaveBeenCalledWith('someId', {
+        resetPasswordToken: 'token123',
+        resetPasswordExpires: expires,
+      });
+    });
+  });
+
+  describe('findByResetToken', () => {
+    it('should call findOne with token filter', async () => {
+      (model as any).findOne = jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          exec: jest.fn().mockResolvedValue(mockUser),
+        }),
+      });
+
+      const result = await service.findByResetToken('token123');
+      expect((model as any).findOne).toHaveBeenCalledWith({ resetPasswordToken: 'token123' });
+      expect(result).toEqual(mockUser);
+    });
+  });
+
+  describe('applyNewPassword', () => {
+    it('should call findByIdAndUpdate to set password and unset token fields', async () => {
+      (model as any).findByIdAndUpdate = jest.fn().mockReturnValue({
+        exec: jest.fn().mockResolvedValue(null),
+      });
+
+      await service.applyNewPassword('someId', 'hashedPw');
+      expect((model as any).findByIdAndUpdate).toHaveBeenCalledWith('someId', {
+        password: 'hashedPw',
+        $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 },
+      });
+    });
+  });
 });

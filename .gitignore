@@ -51,3 +51,6 @@ test-output
 error.log
 .angular
 /.env.render
+
+.claude/worktrees
+.claude/settings.local.json

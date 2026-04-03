@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsEnum, IsIn, IsBoolean } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsIn, IsBoolean, IsArray } from 'class-validator';
 import { Transform } from 'class-transformer';
 import {
   CategoryEnum,
@@ -32,6 +32,11 @@ export class PlayerFiltersDto {
   @IsOptional()
   @IsEnum(CategoryEnum)
   category?: CategoryEnum;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(CategoryEnum, { each: true })
+  categories?: CategoryEnum[];
 
   @IsOptional()
   @IsEnum(HockeyBranchEnum)

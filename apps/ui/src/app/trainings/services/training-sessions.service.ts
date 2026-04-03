@@ -83,12 +83,15 @@ export class TrainingSessionsService {
     );
   }
 
-  getAttendanceStats(): Observable<{
+  getAttendanceStats(filters?: { sport?: string; category?: string }): Observable<{
     byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
   }> {
+    let params = new HttpParams();
+    if (filters?.sport) params = params.set('sport', filters.sport);
+    if (filters?.category) params = params.set('category', filters.category);
     return this.httpClient.get<{
       byCategory: Record<string, { sessions: number; totalPresent: number; totalAttendees: number; pct: number }>;
-    }>(`${this.apiUrl}/stats/attendance`);
+    }>(`${this.apiUrl}/stats/attendance`, { params });
   }
 
   updateSession(

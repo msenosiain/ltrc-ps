@@ -54,8 +54,12 @@ export class TrainingSessionsController {
 
   @Get('stats/attendance')
   @UseGuards(JwtAuthGuard)
-  async getAttendanceStats(@Req() req: Request) {
-    return this.sessionsService.getAttendanceStats((req as any).user);
+  async getAttendanceStats(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+  ) {
+    return this.sessionsService.getAttendanceStats((req as any).user, { sport, category });
   }
 
   @Get(':id')

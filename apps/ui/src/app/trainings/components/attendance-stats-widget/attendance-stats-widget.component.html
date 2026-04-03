@@ -1,27 +1,49 @@
-<div class="stats-widget">
-  <h3 class="widget-title">Asistencia a entrenamientos <span class="subtitle">(últimas 4 semanas)</span></h3>
+<app-widget-shell
+  icon="leaderboard"
+  title="Asistencia entrenamientos"
+  subtitle="(últimas 4 semanas)"
+  [loading]="loading"
+  height="460px"
+>
+  <ng-container widget-actions>
+    @if (showFilterButton) {
+      <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
+        <mat-icon>tune</mat-icon>
+        Filtros
+      </button>
+    }
+    @if (blocks.length) {
+      <button mat-icon-button [title]="showChart ? 'Ver lista' : 'Ver gráfico'" (click)="showChart = !showChart">
+        <mat-icon>{{ showChart ? 'list' : 'bar_chart' }}</mat-icon>
+      </button>
+    }
+  </ng-container>
 
-  @if (loading) {
-    <mat-progress-bar mode="indeterminate" />
-  } @else if (!blocks.length) {
-    <p class="no-data">Sin datos de asistencia.</p>
-  } @else {
-    @for (block of blocks; track block.block) {
-      <div class="block-section">
-        <div class="block-header">
-          <span class="block-name">{{ block.label }}</span>
-          <span class="block-avg" [class]="getPctClass(block.avgPct)">{{ block.avgPct }}%</span>
-        </div>
-        @for (cat of block.categories; track cat.category) {
-          <div class="category-row">
-            <span class="category-label">{{ cat.label }}</span>
-            <div class="category-stats">
-              <span class="sessions-count">{{ cat.sessions }} ses.</span>
-              <span class="pct-badge" [class]="getPctClass(cat.pct)">{{ cat.pct }}%</span>
-            </div>
-          </div>
-        }
+  @if (!loading) {
+    @if (!blocks.length) {
+      <p class="no-data">Sin datos de asistencia.</p>
+    } @else if (showChart) {
+      <div class="chart-container">
+        <canvas baseChart type="bar" [data]="chartData" [options]="chartOptions"></canvas>
       </div>
+    } @else {
+      @for (block of blocks; track block.block) {
+        <div class="block-section">
+          <div class="block-header">
+            <span class="block-name">{{ block.label }}</span>
+            <span class="block-avg" [class]="getPctClass(block.avgPct)">{{ block.avgPct }}%</span>
+          </div>
+          @for (cat of block.categories; track cat.category) {
+            <div class="category-row">
+              <span class="category-label">{{ cat.label }}</span>
+              <div class="category-stats">
+                <span class="sessions-count">{{ cat.sessions }} ses.</span>
+                <span class="pct-badge" [class]="getPctClass(cat.pct)">{{ cat.pct }}%</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
     }
   }
-</div>
+</app-widget-shell>

@@ -17,30 +17,42 @@
       </a>
 
       <a
+        mat-list-item
+        routerLink="calendar"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>calendar_month</mat-icon>
+        <span matListItemTitle>Calendario</span>
+      </a>
+
+      <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
           RoleEnum.MANAGER,
           RoleEnum.COORDINATOR,
-          { role: RoleEnum.COACH, sport: SportEnum.RUGBY }
+          RoleEnum.COACH,
+          RoleEnum.TRAINER,
+          RoleEnum.PLAYER
         ]"
         mat-list-item
-        routerLink="players"
+        routerLink="trainings"
         routerLinkActive="active-link"
         (click)="onNavClick()"
       >
-        <mat-icon matListItemIcon>group</mat-icon>
-        <span matListItemTitle>Jugadores</span>
+        <mat-icon matListItemIcon style="transform: rotate(180deg)">network_wifi_3_bar</mat-icon>
+        <span matListItemTitle>Entrenamientos</span>
       </a>
 
       <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
         mat-list-item
-        routerLink="tournaments"
+        routerLink="physical"
         routerLinkActive="active-link"
         (click)="onNavClick()"
       >
-        <mat-icon matListItemIcon>emoji_events</mat-icon>
-        <span matListItemTitle>Torneos</span>
+        <mat-icon matListItemIcon fontSet="material-symbols-outlined">exercise</mat-icon>
+        <span matListItemTitle>Gimnasio</span>
       </a>
 
       <a
@@ -64,6 +76,22 @@
       <a
         *ltrcAllowedRoles="[
           RoleEnum.ADMIN,
+          RoleEnum.MANAGER,
+          RoleEnum.COORDINATOR,
+          { role: RoleEnum.COACH, sport: SportEnum.RUGBY }
+        ]"
+        mat-list-item
+        routerLink="players"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>group</mat-icon>
+        <span matListItemTitle>Jugadores</span>
+      </a>
+
+      <a
+        *ltrcAllowedRoles="[
+          RoleEnum.ADMIN,
           { role: RoleEnum.MANAGER, sport: SportEnum.HOCKEY },
           { role: RoleEnum.COACH, sport: SportEnum.HOCKEY }
         ]"
@@ -77,31 +105,14 @@
       </a>
 
       <a
-        *ltrcAllowedRoles="[
-          RoleEnum.ADMIN,
-          RoleEnum.MANAGER,
-          RoleEnum.COORDINATOR,
-          RoleEnum.COACH,
-          RoleEnum.TRAINER,
-          RoleEnum.PLAYER
-        ]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]"
         mat-list-item
-        routerLink="trainings"
+        routerLink="tournaments"
         routerLinkActive="active-link"
         (click)="onNavClick()"
       >
-        <mat-icon matListItemIcon style="transform: rotate(180deg)">network_wifi_3_bar</mat-icon>
-        <span matListItemTitle>Entrenamientos</span>
-      </a>
-
-      <a
-        mat-list-item
-        routerLink="calendar"
-        routerLinkActive="active-link"
-        (click)="onNavClick()"
-      >
-        <mat-icon matListItemIcon>calendar_month</mat-icon>
-        <span matListItemTitle>Calendario</span>
+        <mat-icon matListItemIcon>emoji_events</mat-icon>
+        <span matListItemTitle>Torneos</span>
       </a>
 
       <a
@@ -119,17 +130,6 @@
       >
         <mat-icon matListItemIcon>luggage</mat-icon>
         <span matListItemTitle>Viajes</span>
-      </a>
-
-      <a
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.TRAINER]"
-        mat-list-item
-        routerLink="physical"
-        routerLinkActive="active-link"
-        (click)="onNavClick()"
-      >
-        <mat-icon matListItemIcon fontSet="material-symbols-outlined">exercise</mat-icon>
-        <span matListItemTitle>Gimnasio</span>
       </a>
 
       <mat-divider class="sidenav-divider" />
@@ -184,18 +184,23 @@
       } @else {
       <div class="dashboard-home">
         <div class="widget-grid">
-          <ltrc-upcoming-matches-widget />
-          <ltrc-upcoming-trainings-widget />
+          @if (showCalendar()) {
+            <ltrc-calendar-week-widget />
+          }
           @if (isPlayer()) {
-          @if (!isInfantil()) {
-          <ltrc-my-matches-widget />
+            <ltrc-my-workout-widget />
           }
-          <ltrc-my-workout-widget />
+          @if (showInjured()) {
+            <ltrc-injured-players-widget />
           }
-          @if (isCoordinator()) {
-          <ltrc-player-stats-widget />
-          <ltrc-attendance-stats-widget />
-          <ltrc-match-attendance-stats-widget />
+          @if (showPlayerStats()) {
+            <ltrc-player-stats-widget />
+          }
+          @if (showTrainingStats()) {
+            <ltrc-attendance-stats-widget />
+          }
+          @if (showMatchStats()) {
+            <ltrc-match-attendance-stats-widget />
           }
         </div>
       </div>

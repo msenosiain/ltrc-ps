@@ -1,0 +1,22 @@
+.pct-badge {
+  display: inline-block;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.pct-high {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.pct-mid {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.pct-low {
+  background: #ffebee;
+  color: #c62828;
+}

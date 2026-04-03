@@ -1,6 +1,7 @@
 /* Angular Material Theme - @use must come first */
 @use '@angular/material' as mat;
 @use 'app/users/styles/role-chips';
+@use 'styles/widget-tokens';
 
 @include mat.core();
 
@@ -125,6 +126,18 @@ ltrc-dashboard {
   display: block;
   height: 100%;
   width: 100%;
+}
+
+/* Sticky toolbar: wrap to two rows on mobile */
+@media (max-width: 480px) {
+  .sticky-toolbar {
+    flex-wrap: wrap;
+  }
+  .sticky-toolbar__actions {
+    width: 100%;
+    flex-shrink: 1 !important;
+    justify-content: flex-end;
+  }
 }
 
 /* Material Icons fix */

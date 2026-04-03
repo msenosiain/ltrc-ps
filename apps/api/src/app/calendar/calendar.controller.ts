@@ -12,8 +12,10 @@ export class CalendarController {
   getEvents(
     @Query('fromDate') fromDate: string,
     @Query('toDate') toDate: string,
+    @Query('sport') sport: string | undefined,
+    @Query('category') category: string | undefined,
     @Req() req: Request,
   ) {
-    return this.calendarService.getEvents(fromDate, toDate, (req as any).user);
+    return this.calendarService.getEvents(fromDate, toDate, (req as any).user, sport, category);
   }
 }

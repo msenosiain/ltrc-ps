@@ -21,6 +21,7 @@ import { MatchesService } from './matches.service';
 import { PaginationDto } from '../shared/pagination.dto';
 import { MatchFiltersDto } from './match-filter.dto';
 import { CreateMatchDto } from './dto/create-match.dto';
+import { CreateMatchBulkDto } from './dto/create-match-bulk.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
 import { UpdateMatchSquadDto } from './dto/update-players.dto';
 import { RecordMatchAttendanceDto } from './dto/record-match-attendance.dto';
@@ -49,6 +50,12 @@ export class MatchesController {
     return this.matchesService.create(dto, (req as any).user);
   }
 
+  @Post('bulk')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
+  async createBulk(@Body() dto: CreateMatchBulkDto, @Req() req: Request) {
+    return this.matchesService.createBulk(dto, (req as any).user);
+  }
+
   @Patch(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
   async update(
@@ -66,7 +73,7 @@ export class MatchesController {
   }
 
   @Patch(':id/attendance')
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
   async recordAttendance(
     @Param('id') id: string,
     @Body() dto: RecordMatchAttendanceDto,
@@ -250,8 +257,12 @@ export class MatchesController {
 
   @Get('stats/attendance')
   @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
-  async getAttendanceStats(@Req() req: Request) {
-    return this.matchesService.getAttendanceStats((req as any).user);
+  async getAttendanceStats(
+    @Req() req: Request,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+  ) {
+    return this.matchesService.getAttendanceStats((req as any).user, sport, category);
   }
 
   @Get(':id')

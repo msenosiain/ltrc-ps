@@ -1,7 +1,10 @@
 @use '../../../common/styles/list-layout';
 
 .branch-list {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
 }
 
 .tab-count {
@@ -20,11 +23,13 @@
 
 .tab-filters {
   display: flex;
-  gap: 12px;
-  padding: 12px 0 0;
+  gap: 8px;
+  flex-wrap: nowrap;
 
   .filter-field {
-    width: 240px;
+    flex: 1;
+    min-width: 0;
+    max-width: 320px;
   }
 }
 

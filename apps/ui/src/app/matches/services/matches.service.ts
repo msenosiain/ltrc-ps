@@ -3,10 +3,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   AttendanceStatusEnum,
+  CategoryEnum,
+  HockeyBranchEnum,
   Match,
   MatchAttachment,
+  MatchStatusEnum,
   PaginatedResponse,
   PaginationQuery,
+  SportEnum,
   VideoClip,
   VideoVisibility,
 } from '@ltrc-campo/shared-api-model';
@@ -14,7 +18,6 @@ import { API_CONFIG_TOKEN } from '../../app.config';
 import { MatchFormValue } from '../forms/match-form.types';
 import { mapFormToCreateMatchDto } from '../forms/match-form.mapper';
 import { matchStatusOptions } from '../match-options';
-import { MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
 @Injectable({
   providedIn: 'root',
@@ -76,9 +79,34 @@ export class MatchesService {
     return this.httpClient.post<Match>(this.matchesApiUrl, dto);
   }
 
+  createMatchesBulk(dto: {
+    categories: CategoryEnum[];
+    opponent?: string;
+    date: string;
+    name?: string;
+    venue: string;
+    isHome?: boolean;
+    status?: MatchStatusEnum;
+    sport?: SportEnum;
+    branch?: HockeyBranchEnum | null;
+    tournament?: string;
+    notes?: string;
+  }): Observable<Match[]> {
+    const payload = { ...dto, branch: dto.branch || undefined };
+    return this.httpClient.post<Match[]>(`${this.matchesApiUrl}/bulk`, payload);
+  }
+
   updateMatch(id: string, formValue: MatchFormValue): Observable<Match> {
     const dto = mapFormToCreateMatchDto(formValue);
     return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, dto);
+  }
+
+  patchStatus(id: string, status: MatchStatusEnum): Observable<Match> {
+    return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, { status });
+  }
+
+  patchResult(id: string, homeScore: number, awayScore: number): Observable<Match> {
+    return this.httpClient.patch<Match>(`${this.matchesApiUrl}/${id}`, { result: { homeScore, awayScore } });
   }
 
   deleteMatch(id: string): Observable<void> {
@@ -101,6 +129,13 @@ export class MatchesService {
 
   getAttachmentUrl(matchId: string, fileId: string): string {
     return `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`;
+  }
+
+  fetchAttachmentBlob(matchId: string, fileId: string) {
+    return this.httpClient.get(
+      `${this.matchesApiUrl}/${matchId}/attachments/${fileId}`,
+      { responseType: 'blob' }
+    );
   }
 
   addVideo(matchId: string, dto: { url: string; name: string; description?: string; visibility: VideoVisibility; targetPlayers?: string[] }): Observable<VideoClip> {
@@ -140,12 +175,15 @@ export class MatchesService {
     );
   }
 
-  getAttendanceStats(): Observable<{
+  getAttendanceStats(filters?: { sport?: SportEnum; category?: CategoryEnum }): Observable<{
     byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
   }> {
+    let params = new HttpParams();
+    if (filters?.sport) params = params.set('sport', filters.sport);
+    if (filters?.category) params = params.set('category', filters.category);
     return this.httpClient.get<{
       byCategory: Record<string, { matches: number; totalPresent: number; totalAttendees: number; pct: number }>;
-    }>(`${this.matchesApiUrl}/stats/attendance`);
+    }>(`${this.matchesApiUrl}/stats/attendance`, { params });
   }
 
   applySquadFromTemplate(matchId: string, squadId: string): Observable<Match> {

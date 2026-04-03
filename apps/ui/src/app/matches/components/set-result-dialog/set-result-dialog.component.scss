@@ -1,0 +1,17 @@
+.result-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+
+  mat-form-field {
+    width: 100px;
+  }
+
+  .separator {
+    font-size: 24px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 20px;
+  }
+}

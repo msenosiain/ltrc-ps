@@ -25,8 +25,8 @@
     mat-table
     [dataSource]="dataSource"
     matSort
-    [matSortActive]="savedState?.sortBy || 'date'"
-    [matSortDirection]="savedState?.sortOrder || 'desc'"
+    [matSortActive]="savedState?.sortBy || ''"
+    [matSortDirection]="savedState?.sortOrder || ''"
     class="matches-table mat-elevation-z2"
   >
     <!-- Fecha -->
@@ -128,6 +128,18 @@
       </td>
     </ng-container>
 
+    <!-- Acciones -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let match" class="actions-cell" (click)="$event.stopPropagation()">
+        <div *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH]">
+          <button mat-icon-button [matMenuTriggerFor]="actionsMenu" [matMenuTriggerData]="{ match: match }">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+        </div>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr
       mat-row
@@ -136,6 +148,50 @@
       class="match-row"
     ></tr>
   </table>
+
+  <mat-menu #actionsMenu="matMenu">
+    <ng-template matMenuContent let-match="match">
+      @if (match.status === MatchStatusEnum.COMPLETED) {
+        <div *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]">
+          <button mat-menu-item (click)="openResultDialog($event, match)">
+            <mat-icon>scoreboard</mat-icon>
+            {{ match.result ? 'Editar resultado' : 'Cargar resultado' }}
+          </button>
+        </div>
+      }
+      <button mat-menu-item (click)="goToSquad($event, match.id)">
+        <mat-icon>group</mat-icon>
+        Gestionar plantel
+      </button>
+      @if (match.status === MatchStatusEnum.COMPLETED) {
+        <mat-divider *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]" />
+      }
+      <div *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR]">
+        @if (match.status === MatchStatusEnum.UPCOMING) {
+          <button mat-menu-item (click)="changeStatus($event, match, MatchStatusEnum.COMPLETED)">
+            <mat-icon>check_circle</mat-icon>
+            Finalizar
+          </button>
+          <button mat-menu-item (click)="changeStatus($event, match, MatchStatusEnum.CANCELLED)">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+          </button>
+        }
+        @if (match.status === MatchStatusEnum.COMPLETED) {
+          <button mat-menu-item (click)="changeStatus($event, match, MatchStatusEnum.UPCOMING)">
+            <mat-icon>undo</mat-icon>
+            Reabrir
+          </button>
+        }
+        @if (match.status === MatchStatusEnum.CANCELLED) {
+          <button mat-menu-item (click)="changeStatus($event, match, MatchStatusEnum.UPCOMING)">
+            <mat-icon>restore</mat-icon>
+            Reactivar
+          </button>
+        }
+      </div>
+    </ng-template>
+  </mat-menu>
 
   <mat-paginator
     [length]="dataSource.total"

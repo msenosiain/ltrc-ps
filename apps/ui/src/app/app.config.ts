@@ -16,6 +16,7 @@ import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
 import { es } from 'date-fns/locale';
 import { authInterceptor } from './auth/auth.interceptor';
 import { environment } from '../environments/environment';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 function getEsArPaginatorIntl(): MatPaginatorIntl {
   const intl = new MatPaginatorIntl();
@@ -61,6 +62,7 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'es-AR' },
     { provide: MAT_DATE_LOCALE, useValue: es },
     { provide: MatPaginatorIntl, useFactory: getEsArPaginatorIntl },
+    provideCharts(withDefaultRegisterables()),
     provideDateFnsAdapter({
       parse: {
         dateInput: 'dd/MM/yyyy',

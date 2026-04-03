@@ -1,0 +1,87 @@
+.widget-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--mat-app-primary, #1976d2);
+  padding: 0;
+  text-decoration: underline;
+}
+
+.empty {
+  color: var(--mat-app-on-surface-variant, #888);
+  font-size: 0.9rem;
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--mat-app-outline-variant, #eee);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--mat-app-surface-variant, #f5f5f5);
+  }
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.player-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.player-meta {
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
+.injury-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.injury-reason {
+  font-size: 0.78rem;
+  color: #b71c1c;
+  text-align: right;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.injury-return {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
+.return-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+}

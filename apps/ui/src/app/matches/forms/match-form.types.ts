@@ -9,11 +9,13 @@ import {
 export interface MatchFormValue {
   date: Date | null;
   opponent: string;
+  opponents: string[];
   venue: string;
   isHome: boolean;
   status: MatchStatusEnum;
   sport: SportEnum | null;
   category: CategoryEnum | null;
+  categories: CategoryEnum[];
   name: string;
   division: string;
   branch: HockeyBranchEnum | null;

@@ -232,7 +232,9 @@ export class PlayersService {
     }
 
     // category
-    if (filters.category) {
+    if (filters.categories?.length) {
+      queryFilters['category'] = { $in: filters.categories };
+    } else if (filters.category) {
       queryFilters['category'] = filters.category;
     }
 
