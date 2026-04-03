@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PaymentsController } from './payments.controller';
+import { PaymentsPublicController } from './payments-public.controller';
 import { PaymentsService } from './payments.service';
 import { PaymentLinkEntity } from './schemas/payment-link.entity';
 import { PaymentLinkSchema } from './schemas/payment-link.schema';
@@ -31,7 +32,7 @@ import { TripSchema } from '../trips/schemas/trip.schema';
       { name: TripEntity.name, schema: TripSchema },
     ]),
   ],
-  controllers: [PaymentsController],
+  controllers: [PaymentsController, PaymentsPublicController],
   providers: [PaymentsService],
   exports: [PaymentsService],
 })

@@ -13,7 +13,7 @@ export default {
     ],
   },
   // Allow transforming @angular packages in node_modules (locales are ESM .js files)
-  transformIgnorePatterns: ['node_modules/(?!@angular)'],
+  transformIgnorePatterns: ['node_modules/(?!(@angular|ng2-charts|chart.js|@kurkle))'],
   snapshotSerializers: [
     'jest-preset-angular/build/serializers/no-ng-attributes',
     'jest-preset-angular/build/serializers/ng-snapshot',
