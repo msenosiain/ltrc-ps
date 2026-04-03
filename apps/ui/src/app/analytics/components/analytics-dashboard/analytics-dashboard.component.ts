@@ -223,20 +223,31 @@ export class AnalyticsDashboardComponent implements OnInit {
     payments: PaymentStats,
     sport?: string
   ): void {
-    // Growth — rugby vs hockey (trim leading empty months)
+    // Growth — filter series by selected sport
     const rugbyAltas = growth.rugby?.altas ?? [];
     const rugbyBajas = growth.rugby?.bajas ?? [];
     const hockeyAltas = growth.hockey?.altas ?? [];
     const hockeyBajas = growth.hockey?.bajas ?? [];
-    const growthTrimmed = this.trimLeadingZeros(growth.labels, rugbyAltas, rugbyBajas, hockeyAltas, hockeyBajas);
-    this.growthChartData.set({
-      labels: growthTrimmed.labels.map((l) => this.formatMonthLabel(l)),
-      datasets: [
+    const showRugby = !sport || sport === SportEnum.RUGBY;
+    const showHockey = !sport || sport === SportEnum.HOCKEY;
+    const growthSeries = [
+      ...(showRugby  ? [rugbyAltas, rugbyBajas]   : []),
+      ...(showHockey ? [hockeyAltas, hockeyBajas] : []),
+    ];
+    const growthTrimmed = this.trimLeadingZeros(growth.labels, ...growthSeries);
+    const growthDatasets = [
+      ...(showRugby  ? [
         { label: 'Rugby altas', data: growthTrimmed.series[0], backgroundColor: COLOR_RUGBY, borderRadius: 4 },
         { label: 'Rugby bajas', data: growthTrimmed.series[1], backgroundColor: `${COLOR_RUGBY}66`, borderRadius: 4 },
-        { label: 'Hockey altas', data: growthTrimmed.series[2], backgroundColor: COLOR_HOCKEY, borderRadius: 4 },
-        { label: 'Hockey bajas', data: growthTrimmed.series[3], backgroundColor: `${COLOR_HOCKEY}66`, borderRadius: 4 },
-      ],
+      ] : []),
+      ...(showHockey ? [
+        { label: 'Hockey altas', data: growthTrimmed.series[showRugby ? 2 : 0], backgroundColor: COLOR_HOCKEY, borderRadius: 4 },
+        { label: 'Hockey bajas', data: growthTrimmed.series[showRugby ? 3 : 1], backgroundColor: `${COLOR_HOCKEY}66`, borderRadius: 4 },
+      ] : []),
+    ];
+    this.growthChartData.set({
+      labels: growthTrimmed.labels.map((l) => this.formatMonthLabel(l)),
+      datasets: growthDatasets,
     });
 
     // Age distribution — build by selected slide
