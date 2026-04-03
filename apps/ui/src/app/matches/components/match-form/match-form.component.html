@@ -131,23 +131,9 @@
       </mat-form-field>
       }
 
-      @if (match) {
       <mat-form-field appearance="outline">
-        <mat-label>Rival</mat-label>
-        <input matInput formControlName="opponent" [matAutocomplete]="opponentAc" />
-        <mat-autocomplete #opponentAc="matAutocomplete">
-          @for (opt of filteredOpponents$ | async; track opt) {
-          <mat-option [value]="opt">{{ opt }}</mat-option>
-          }
-        </mat-autocomplete>
-        @if (matchForm.get('opponent')?.invalid) {
-        <mat-error>El rival es obligatorio</mat-error>
-        }
-      </mat-form-field>
-      } @else {
-      <mat-form-field appearance="outline">
-        <mat-label>Rivales</mat-label>
-        <mat-chip-grid #opponentChipGrid>
+        <mat-label>{{ match ? 'Rival' : 'Rivales' }}</mat-label>
+        <mat-chip-grid #opponentChipGrid class="rivals-chip-grid">
           @for (opp of opponents; track opp) {
           <mat-chip-row (removed)="removeOpponent(opp)">
             {{ opp }}
@@ -173,7 +159,6 @@
         <mat-error>Agregá al menos un rival</mat-error>
         }
       </mat-form-field>
-      }
 
       @if (isCompetitive) {
       <div class="toggle-field">

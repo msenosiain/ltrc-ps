@@ -57,6 +57,12 @@ $gap: 12px;
   }
 }
 
+// Single-row chip grid for rivals
+::ng-deep .rivals-chip-grid .mat-mdc-chip-set {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
 .notes-field {
   width: 100%;
   margin-top: 12px;

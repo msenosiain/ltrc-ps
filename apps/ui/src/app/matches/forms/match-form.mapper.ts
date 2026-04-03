@@ -6,7 +6,7 @@ export function mapFormToCreateMatchDto(value: MatchFormValue) {
 
   return {
     date: value.date!.toISOString(),
-    opponent: value.opponent || undefined,
+    opponent: value.opponents?.length ? value.opponents.join(', ') : (value.opponent || undefined),
     venue: value.venue,
     isHome: value.isHome,
     status: value.status,

@@ -134,22 +134,25 @@ export class MatchFormComponent implements OnInit, OnChanges {
   private justSelectedFromAc = false;
 
   ngOnInit(): void {
+    // Always clear opponent FormControl validators — rivals are managed as chips array
+    this.matchForm.get('opponent')!.clearValidators();
+    this.matchForm.get('opponent')!.updateValueAndValidity({ emitEvent: false });
+
+    // Chip autocomplete for rivals (both create and edit)
+    this.filteredOpponentsForChips$ = this.opponentChipInputControl.valueChanges.pipe(
+      startWith(''),
+      map((v) => filterOptions(this.allOpponents, v ?? '')),
+      takeUntilDestroyed(this.destroyRef)
+    );
+
     if (!this.match) {
-      // Create mode: use categories (multi-select) and opponents (chips)
+      // Create mode: use categories (multi-select)
       this.matchForm.get('category')!.clearValidators();
       this.matchForm.get('category')!.updateValueAndValidity({ emitEvent: false });
-      this.matchForm.get('opponent')!.clearValidators();
-      this.matchForm.get('opponent')!.updateValueAndValidity({ emitEvent: false });
 
       this.matchForm.get('categories')!.valueChanges
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => this.updateCompetitive());
-
-      this.filteredOpponentsForChips$ = this.opponentChipInputControl.valueChanges.pipe(
-        startWith(''),
-        map((v) => filterOptions(this.allOpponents, v ?? '')),
-        takeUntilDestroyed(this.destroyRef)
-      );
     }
     this.updateCategoryGroups();
 
@@ -249,6 +252,9 @@ export class MatchFormComponent implements OnInit, OnChanges {
         : '';
       this.timeControl.setValue(timeStr, { emitEvent: false });
 
+      const storedOpponent = (this.match as any).opponent as string | undefined;
+      this.opponents = storedOpponent ? storedOpponent.split(', ').filter(Boolean) : [];
+
       this.matchForm.patchValue({
         ...this.match,
         date: matchDate,
@@ -279,10 +285,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
 
   get formInvalid(): boolean {
     if (this.matchForm.invalid || this.timeControl.invalid) return true;
-    if (!this.match) {
-      if ((this.matchForm.get('categories')?.value?.length ?? 0) === 0) return true;
-      if (this.isCompetitive && this.opponents.length === 0) return true;
-    }
+    if (!this.match && (this.matchForm.get('categories')?.value?.length ?? 0) === 0) return true;
+    if (this.isCompetitive && this.opponents.length === 0) return true;
     return false;
   }
 
@@ -416,14 +420,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
   }
 
   private updateOpponentValidation(): void {
-    if (!this.match) return; // create mode: validated via formInvalid getter
-    const opponent = this.matchForm.get('opponent')!;
-    if (this.isCompetitive) {
-      opponent.setValidators(Validators.required);
-    } else {
-      opponent.clearValidators();
-    }
-    opponent.updateValueAndValidity();
+    // Rivals are managed as chips array; validated via formInvalid getter
   }
 
   private applyTimeToDate(time: string): void {
