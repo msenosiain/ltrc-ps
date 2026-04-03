@@ -37,11 +37,13 @@ import {
   HockeyBranchEnum,
   Match,
   MatchStatusEnum,
+  RoleEnum,
   SportEnum,
   Tournament,
   getBlockCategories,
   isCompetitiveCategory,
 } from '@ltrc-campo/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import {
   getCategoryOptionsBySport,
   matchStatusOptions,
@@ -83,6 +85,7 @@ function filterOptions(options: string[], value: string): string[] {
     MatSlideToggleModule,
     MatAutocompleteModule,
     MatChipsModule,
+    AllowedRolesDirective,
   ],
   templateUrl: './match-form.component.html',
   styleUrl: './match-form.component.scss',
@@ -103,6 +106,7 @@ export class MatchFormComponent implements OnInit, OnChanges {
   readonly statusOptions = matchStatusOptions;
   readonly sportOptions = sportOptions;
   readonly MatchStatusEnum = MatchStatusEnum;
+  readonly RoleEnum = RoleEnum;
   readonly SportEnum = SportEnum;
   readonly branchOptions = Object.values(HockeyBranchEnum);
 

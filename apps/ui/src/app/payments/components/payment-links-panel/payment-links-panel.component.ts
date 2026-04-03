@@ -19,7 +19,9 @@ import {
   PaymentLinkStatusEnum,
   PaymentMethodEnum,
   PaymentStatusEnum,
+  RoleEnum,
 } from '@ltrc-campo/shared-api-model';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 
 @Component({
   selector: 'ltrc-payment-links-panel',
@@ -35,6 +37,7 @@ import {
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatMenuModule,
+    AllowedRolesDirective,
   ],
   templateUrl: './payment-links-panel.component.html',
   styleUrl: './payment-links-panel.component.scss',
@@ -57,6 +60,7 @@ export class PaymentLinksPanelComponent implements OnInit {
   readonly paymentColumns = ['player', 'concept', 'method', 'amount', 'date', 'status', 'actions'];
 
   readonly PaymentLinkStatusEnum = PaymentLinkStatusEnum;
+  readonly RoleEnum = RoleEnum;
   readonly PaymentMethodEnum = PaymentMethodEnum;
   readonly PaymentStatusEnum = PaymentStatusEnum;
 
