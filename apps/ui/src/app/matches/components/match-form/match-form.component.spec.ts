@@ -2,7 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatchFormComponent } from './match-form.component';
 import { TournamentsService } from '../../../tournaments/services/tournaments.service';
 import { MatchesService } from '../../services/matches.service';
+import { PaymentsService } from '../../../payments/services/payments.service';
+import { API_CONFIG_TOKEN } from '../../../app.config';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { provideHttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { CategoryEnum, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 
@@ -33,6 +36,14 @@ describe('MatchFormComponent', () => {
               ),
           },
         },
+        {
+          provide: PaymentsService,
+          useValue: {
+            getConfig: jest.fn().mockReturnValue(of({ mpFeeRate: 0.0483 })),
+          },
+        },
+        { provide: API_CONFIG_TOKEN, useValue: { baseUrl: 'http://localhost:3000/api/v1' } },
+        provideHttpClient(),
       ],
     }).compileComponents();
 
@@ -68,11 +79,11 @@ describe('MatchFormComponent', () => {
       date: new Date(),
       venue: 'El Monumental',
       tournament: '507f1f77bcf86cd799439011',
-      category: CategoryEnum.PLANTEL_SUPERIOR,
+      categories: [CategoryEnum.PLANTEL_SUPERIOR],
       status: MatchStatusEnum.UPCOMING,
       isHome: true,
     });
-    component.timeControl.setValue(new Date(2000, 0, 1, 15, 0));
+    component.timeControl.setValue('15:00');
     component.onSubmit();
     expect(spy).toHaveBeenCalled();
   });

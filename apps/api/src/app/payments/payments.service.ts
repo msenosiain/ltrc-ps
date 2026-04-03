@@ -21,10 +21,12 @@ import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 import { User } from '../users/schemas/user.schema';
 import {
+  CategoryEnum,
   PaymentEntityTypeEnum,
   PaymentLinkStatusEnum,
   PaymentMethodEnum,
   PaymentStatusEnum,
+  getCategoryLabel,
 } from '@ltrc-campo/shared-api-model';
 
 @Injectable()
@@ -495,7 +497,7 @@ export class PaymentsService {
           p.concept,
           p.method,
           `$${p.amount.toFixed(2)}`,
-          new Date(p.date).toLocaleDateString('es-AR'),
+          this.formatDate(p.date),
           p.status,
         ];
 
@@ -551,6 +553,11 @@ export class PaymentsService {
     }
   }
 
+  private formatDate(date: Date | string): string {
+    const d = new Date(date);
+    return `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()}`;
+  }
+
   private readonly CATEGORY_ORDER = [
     'm5','m6','m7','m8','m9','m10','m11','m12','m13','m14','m15','m16','m17','m19',
     'pre_decima','decima','novena','octava','septima','sexta','quinta','cuarta','master','plantel_superior',
@@ -569,7 +576,7 @@ export class PaymentsService {
         .select('date opponent category')
         .lean();
       if (!matches.length) return null;
-      const date = new Date(matches[0].date).toLocaleDateString('es-AR');
+      const date = this.formatDate(matches[0].date);
       const categories = matches
         .map((m) => m.category)
         .filter(Boolean) as string[];
@@ -584,7 +591,7 @@ export class PaymentsService {
       .select('date opponent name category')
       .lean();
     if (!match) return null;
-    const date = new Date(match.date).toLocaleDateString('es-AR');
+    const date = this.formatDate(match.date);
     return {
       date,
       opponents: match.opponent ?? 'Rival',
@@ -605,7 +612,7 @@ export class PaymentsService {
           .sort({ category: 1 })
           .lean();
         if (!matches.length) return 'Encuentro';
-        const date = new Date(matches[0].date).toLocaleDateString('es-AR');
+        const date = this.formatDate(matches[0].date);
         const categories = matches.map((m) => m.category).join(', ');
         const opponent = matches[0].opponent ?? 'Rival';
         return `${categories} vs ${opponent} (${date})`;
@@ -615,10 +622,12 @@ export class PaymentsService {
         .select('date opponent name category')
         .lean();
       if (!match) return 'Partido';
-      const date = new Date(match.date).toLocaleDateString('es-AR');
+      const date = this.formatDate(match.date);
+      const opponent = match.opponent ? ` vs ${match.opponent}` : '';
+      const catLabel = match.category ? `${getCategoryLabel(match.category as CategoryEnum)} ` : '';
       return match.name
-        ? `${match.name} (${date})`
-        : `vs ${match.opponent ?? 'Rival'} — ${date}`;
+        ? `${match.name}${opponent} (${date})`
+        : `${catLabel}${opponent.trimStart()} (${date})`;
     }
     if (entityType === PaymentEntityTypeEnum.TRIP) {
       const trip = await this.tripModel
@@ -626,7 +635,7 @@ export class PaymentsService {
         .select('name destination departureDate')
         .lean();
       if (!trip) return 'Viaje';
-      const date = new Date(trip.departureDate).toLocaleDateString('es-AR');
+      const date = this.formatDate(trip.departureDate);
       return `${trip.name} — ${trip.destination} (${date})`;
     }
     return entityId;

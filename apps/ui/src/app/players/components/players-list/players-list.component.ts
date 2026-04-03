@@ -77,7 +77,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
   readonly PlayerStatusEnum = PlayerStatusEnum;
   readonly PlayerAvailabilityEnum = PlayerAvailabilityEnum;
 
-  private readonly baseColumns = ['photoId', 'name', 'nickName', 'category'];
+  private readonly baseColumns = ['photoId', 'name', 'nickName', 'idNumber', 'category'];
   private readonly afterCategoryColumns = ['positions', 'actions'];
   displayedColumns = [...this.baseColumns, ...this.afterCategoryColumns];
 
