@@ -1,5 +1,4 @@
 import {
-  applyDecorators,
   Body,
   Controller,
   Delete,
@@ -20,25 +19,19 @@ import { RoleEnum, PaymentEntityTypeEnum } from '@ltrc-campo/shared-api-model';
 import { CreatePaymentLinkDto } from './dto/create-payment-link.dto';
 import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
 
-const ALL = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH];
-const LINK_CREATE = [RoleEnum.ADMIN, RoleEnum.COORDINATOR];
-const MANUAL_PAYMENT = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR];
-
-const Protected = (...roles: RoleEnum[]) =>
-  applyDecorators(UseGuards(JwtAuthGuard, RolesGuard), Roles(...roles));
-
 @Controller('payments')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH)
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('links')
-  @Protected(...LINK_CREATE)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR)
   createLink(@Body() dto: CreatePaymentLinkDto, @Req() req: Request) {
     return this.paymentsService.createLink(dto, (req as any).user);
   }
 
   @Get('links')
-  @Protected(...ALL)
   getLinks(
     @Query('entityType') entityType: PaymentEntityTypeEnum,
     @Query('entityId') entityId: string
@@ -47,31 +40,26 @@ export class PaymentsController {
   }
 
   @Delete('links/:id')
-  @Protected(...ALL)
   cancelLink(@Param('id') id: string) {
     return this.paymentsService.cancelLink(id);
   }
 
   @Get('config')
-  @Protected(...ALL)
   getConfig() {
     return this.paymentsService.getConfig();
   }
 
   @Get('field-options')
-  @Protected(...ALL)
   getFieldOptions() {
     return this.paymentsService.getFieldOptions();
   }
 
   @Get('fee-preview')
-  @Protected(...ALL)
   getFeePreview(@Query('amount') amount: string) {
     return this.paymentsService.calculateFee(Number(amount));
   }
 
   @Get('report/pdf')
-  @Protected(...ALL)
   async downloadPdf(
     @Query('entityType') entityType: PaymentEntityTypeEnum,
     @Query('entityId') entityId: string,
@@ -87,13 +75,11 @@ export class PaymentsController {
   }
 
   @Get('internal/players/by-dni/:dni')
-  @Protected(...ALL)
   findPlayerByDni(@Param('dni') dni: string) {
     return this.paymentsService.findPlayerByDni(dni);
   }
 
   @Get()
-  @Protected(...ALL)
   getPayments(
     @Query('entityType') entityType: PaymentEntityTypeEnum,
     @Query('entityId') entityId: string
@@ -102,13 +88,12 @@ export class PaymentsController {
   }
 
   @Post()
-  @Protected(...MANUAL_PAYMENT)
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
   recordManual(@Body() dto: RecordManualPaymentDto, @Req() req: Request) {
     return this.paymentsService.recordManualPayment(dto, (req as any).user);
   }
 
   @Delete(':id')
-  @Protected(...ALL)
   deleteManual(@Param('id') id: string) {
     return this.paymentsService.deleteManualPayment(id);
   }
