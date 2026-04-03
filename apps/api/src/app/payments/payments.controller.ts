@@ -21,12 +21,9 @@ import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
 import { ValidateDniDto } from './dto/validate-dni.dto';
 import { ConfirmPaymentDto } from './dto/confirm-payment.dto';
 
-const PAYMENT_ROLES = [
-  RoleEnum.ADMIN,
-  RoleEnum.MANAGER,
-  RoleEnum.COORDINATOR,
-  RoleEnum.COACH,
-];
+const PAYMENT_ROLES = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH];
+const LINK_CREATE_ROLES = [RoleEnum.ADMIN, RoleEnum.COORDINATOR];
+const MANUAL_PAYMENT_ROLES = [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR];
 
 @Controller('payments')
 export class PaymentsController {
@@ -36,7 +33,7 @@ export class PaymentsController {
 
   @Post('links')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(...PAYMENT_ROLES)
+  @Roles(...LINK_CREATE_ROLES)
   createLink(@Body() dto: CreatePaymentLinkDto, @Req() req: Request) {
     return this.paymentsService.createLink(dto, (req as any).user);
   }
@@ -91,7 +88,7 @@ export class PaymentsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(...PAYMENT_ROLES)
+  @Roles(...MANUAL_PAYMENT_ROLES)
   recordManual(@Body() dto: RecordManualPaymentDto, @Req() req: Request) {
     return this.paymentsService.recordManualPayment(dto, (req as any).user);
   }
