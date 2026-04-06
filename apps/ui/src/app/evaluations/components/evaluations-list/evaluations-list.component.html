@@ -1,12 +1,11 @@
 <div class="evaluations-list">
-  <div class="sticky-toolbar">
-    <div class="sticky-toolbar__title">
-      <span class="sticky-toolbar__name">Evaluaciones</span>
-    </div>
-    <div class="sticky-toolbar__actions">
+  <div class="list-header">
+    <h2 class="list-header__title">Evaluaciones</h2>
+    <div class="list-header__actions">
       <button
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER]"
         mat-stroked-button
+        type="button"
         (click)="goToSettings()"
       >
         <mat-icon>settings</mat-icon>
@@ -15,112 +14,113 @@
     </div>
   </div>
 
-  <mat-card>
-    <mat-card-content>
-      <div class="filters-row">
-        <mat-form-field appearance="outline">
-          <mat-label>Deporte</mat-label>
-          <mat-select [(ngModel)]="sport" (ngModelChange)="onSportChange()">
-            @for (s of sportOptions; track s.id) {
-              <mat-option [value]="s.id">{{ s.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+  <form class="search-form" [formGroup]="filterForm">
+    <div class="search-row">
+      <button mat-stroked-button type="button" class="filters-toggle" (click)="filtersExpanded = !filtersExpanded">
+        <mat-icon>tune</mat-icon>
+        {{ filtersExpanded ? 'Ocultar' : 'Filtros' }}
+      </button>
+      <button mat-flat-button color="primary" type="button" (click)="search()" [disabled]="!filterForm.get('category')?.value">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+    </div>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Categoría</mat-label>
-          <mat-select [(ngModel)]="category">
-            @for (cat of categoryOptions; track cat.id) {
-              <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+    <div class="filters-row" [class.filters-row--open]="filtersExpanded">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport" (ngModelChange)="onSportChange()">
+          @for (s of sportOptions; track s.id) {
+            <mat-option [value]="s.id">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Período</mat-label>
-          <mat-select [(ngModel)]="period">
-            @for (p of periodOptions; track p.value) {
-              <mat-option [value]="p.value">{{ p.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category">
+          @for (cat of categoryOptions; track cat.id) {
+            <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-        <button mat-flat-button color="primary" (click)="search()" [disabled]="!category">
-          <mat-icon>search</mat-icon>
-          Buscar
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Período</mat-label>
+        <mat-select formControlName="period">
+          @for (p of periodOptions; track p.value) {
+            <mat-option [value]="p.value">{{ p.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="button" class="search-btn--desktop" (click)="search()" [disabled]="!filterForm.get('category')?.value">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+    </div>
+  </form>
 
   @if (loading) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && evaluations.length === 0 && category) {
-    <mat-card>
-      <mat-card-content>
-        <p class="empty-state">No hay evaluaciones para el período y categoría seleccionados.</p>
-      </mat-card-content>
-    </mat-card>
+  @if (!loading && searched && evaluations.length === 0) {
+    <p class="empty-state">No hay evaluaciones para el período y categoría seleccionados.</p>
   }
 
   @if (evaluations.length > 0) {
-    <mat-card class="table-card">
-      <mat-card-content>
-        <div class="table-wrapper">
-          <table mat-table [dataSource]="evaluations">
-            <ng-container matColumnDef="player">
-              <th mat-header-cell *matHeaderCellDef>Jugador</th>
-              <td mat-cell *matCellDef="let e">{{ getPlayerName(e) }}</td>
-            </ng-container>
+    <div class="table-wrapper mat-elevation-z2">
+      <table mat-table [dataSource]="evaluations" class="evaluations-table">
+        <ng-container matColumnDef="player">
+          <th mat-header-cell *matHeaderCellDef>Jugador</th>
+          <td mat-cell *matCellDef="let e">{{ getPlayerName(e) }}</td>
+        </ng-container>
 
-            @for (skill of skills; track skill) {
-              <ng-container [matColumnDef]="skill">
-                <th mat-header-cell *matHeaderCellDef>{{ skillLabels[skill] }}</th>
-                <td mat-cell *matCellDef="let e">
-                  @if (getSkillLevel(e, skill); as level) {
-                    <span class="level-badge level-{{ level }}" [matTooltip]="(getSkillTotal(e, skill) | number:'1.1-1') ?? ''">
-                      {{ level }}
-                    </span>
-                  } @else {
-                    <span class="no-data">—</span>
-                  }
-                </td>
-              </ng-container>
-            }
-
-            <ng-container matColumnDef="overall">
-              <th mat-header-cell *matHeaderCellDef>General</th>
-              <td mat-cell *matCellDef="let e">
-                <span class="level-badge level-{{ e.overallLevel }}">
-                  {{ e.overallLevel }} {{ e.overallTotal | number:'1.1-1' }}
+        @for (skill of skills; track skill) {
+          <ng-container [matColumnDef]="skill">
+            <th mat-header-cell *matHeaderCellDef>{{ skillLabels[skill] }}</th>
+            <td mat-cell *matCellDef="let e">
+              @if (getSkillLevel(e, skill); as level) {
+                <span class="level-badge level-{{ level }}" [matTooltip]="(getSkillTotal(e, skill) | number:'1.1-1') ?? ''">
+                  {{ level }}
                 </span>
-              </td>
-            </ng-container>
+              } @else {
+                <span class="no-data">—</span>
+              }
+            </td>
+          </ng-container>
+        }
 
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef></th>
-              <td mat-cell *matCellDef="let e">
-                <button mat-icon-button matTooltip="Ver historial" (click)="goToHistory(e)">
-                  <mat-icon>history</mat-icon>
-                </button>
-                <button
-                  *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
-                  mat-icon-button
-                  matTooltip="Eliminar"
-                  (click)="delete(e)"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
+        <ng-container matColumnDef="overall">
+          <th mat-header-cell *matHeaderCellDef>General</th>
+          <td mat-cell *matCellDef="let e">
+            <span class="level-badge level-{{ e.overallLevel }}">
+              {{ e.overallLevel }} {{ e.overallTotal | number:'1.1-1' }}
+            </span>
+          </td>
+        </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </div>
-      </mat-card-content>
-    </mat-card>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let e" class="actions-cell" (click)="$event.stopPropagation()">
+            <button mat-icon-button matTooltip="Ver historial" (click)="goToHistory(e)">
+              <mat-icon>history</mat-icon>
+            </button>
+            <button
+              *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER]"
+              mat-icon-button
+              matTooltip="Eliminar"
+              (click)="delete(e)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="eval-row" (click)="goToHistory(row)"></tr>
+      </table>
+    </div>
   }
 </div>

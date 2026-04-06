@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,7 +28,7 @@ import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.di
   selector: 'ltrc-evaluations-list',
   standalone: true,
   imports: [
-    FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -49,9 +49,9 @@ export class EvaluationsListComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly fb = inject(FormBuilder);
 
   readonly RoleEnum = RoleEnum;
-  readonly EvaluationSkillEnum = EvaluationSkillEnum;
   readonly skills = Object.values(EvaluationSkillEnum);
   readonly skillLabels: Record<EvaluationSkillEnum, string> = {
     [EvaluationSkillEnum.TACKLE]: 'Tackle',
@@ -61,57 +61,61 @@ export class EvaluationsListComponent implements OnInit {
     [EvaluationSkillEnum.FISICO]: 'Físico',
   };
 
-  sport: SportEnum = SportEnum.RUGBY;
-  category: CategoryEnum | '' = '';
-  period: string = this.currentPeriod();
+  filterForm: FormGroup = this.fb.group({
+    sport: [SportEnum.RUGBY],
+    category: [null],
+    period: [this.currentPeriod()],
+  });
+
   evaluations: PlayerEvaluation[] = [];
   loading = false;
+  searched = false;
+  filtersExpanded = false;
 
-  sportOptions = [
+  readonly sportOptions = [
     { id: SportEnum.RUGBY, label: 'Rugby' },
     { id: SportEnum.HOCKEY, label: 'Hockey' },
   ];
 
   get categoryOptions() {
-    return getCategoryOptionsBySport(this.sport);
+    return getCategoryOptionsBySport(this.filterForm.get('sport')?.value);
+  }
+
+  get periodOptions(): { value: string; label: string }[] {
+    const now = new Date();
+    return Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+      return { value, label };
+    });
   }
 
   get displayedColumns(): string[] {
     return ['player', ...this.skills, 'overall', 'actions'];
   }
 
-  get periodOptions(): { value: string; label: string }[] {
-    const now = new Date();
-    const options = [];
-    for (let i = 0; i < 12; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      const label = d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
-      options.push({ value, label });
-    }
-    return options;
-  }
-
   ngOnInit(): void {
-    // default to first available category for rugby
     const cats = getCategoryOptionsBySport(SportEnum.RUGBY);
-    if (cats.length) this.category = cats[0].id;
+    if (cats.length) this.filterForm.get('category')?.setValue(cats[0].id);
     this.search();
   }
 
   onSportChange(): void {
-    this.category = '';
+    this.filterForm.get('category')?.setValue(null);
     this.evaluations = [];
+    this.searched = false;
   }
 
   search(): void {
-    if (!this.category || !this.sport || !this.period) return;
+    const { sport, category, period } = this.filterForm.value;
+    if (!category || !sport || !period) return;
     this.loading = true;
     this.evaluationsService
-      .getByCategory(this.category as CategoryEnum, this.sport, this.period)
+      .getByCategory(category, sport, period)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => { this.evaluations = data; this.loading = false; },
+        next: (data) => { this.evaluations = data; this.loading = false; this.searched = true; },
         error: () => { this.loading = false; },
       });
   }
@@ -126,14 +130,12 @@ export class EvaluationsListComponent implements OnInit {
 
   getPlayerName(eval_: PlayerEvaluation): string {
     const p = eval_.player as any;
-    if (!p) return '—';
-    return p.name ?? p.nickName ?? '—';
+    return p?.name ?? p?.nickName ?? '—';
   }
 
   goToHistory(eval_: PlayerEvaluation): void {
     const p = eval_.player as any;
-    const id = p?.id ?? p?._id ?? p;
-    this.router.navigate(['/dashboard/evaluations/player', id]);
+    this.router.navigate(['/dashboard/evaluations/player', p?.id ?? p?._id ?? p]);
   }
 
   goToSettings(): void {
