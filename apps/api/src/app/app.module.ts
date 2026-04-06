@@ -19,6 +19,7 @@ import { WorkoutsModule } from './workouts/workouts.module';
 import { WorkoutLogsModule } from './workout-logs/workout-logs.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { PaymentsModule } from './payments/payments.module';
+import { EvaluationsModule } from './evaluations/evaluations.module';
 
 export const configSchema = Joi.object({
   API_PORT: Joi.number().integer().default(3000),
@@ -75,6 +76,7 @@ export const configSchema = Joi.object({
     WorkoutLogsModule,
     CalendarModule,
     PaymentsModule,
+    EvaluationsModule,
     HealthModule,
   ],
 })

@@ -33,6 +33,17 @@
         <mat-icon>how_to_reg</mat-icon>
         Pasar lista
       </button>
+      @if (evaluationsEnabled) {
+      <button
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH]"
+        mat-stroked-button
+        type="button"
+        (click)="goToEvaluate()"
+      >
+        <mat-icon>star_rate</mat-icon>
+        Evaluar jugadores
+      </button>
+      }
       }
     </div>
   </div>

@@ -1,0 +1,91 @@
+<div class="session-evaluate">
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">Evaluar jugadores — {{ getCategoryLabel() }} {{ period }}</span>
+    </div>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading && players.length === 0) {
+    <mat-card>
+      <mat-card-content>
+        <p class="empty-state">No hay jugadores presentes para evaluar.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @for (player of players; track player.playerId) {
+    <mat-card class="player-card" [class.player-card--saved]="player.saved">
+      <mat-card-content>
+        <div class="player-header">
+          <div class="player-header__info">
+            <span class="player-name">{{ player.playerName }}</span>
+            <span class="overall-chip level-{{ player.overallLevel }}">
+              {{ player.overallLevel }} — {{ player.overallTotal | number:'1.1-1' }}
+            </span>
+          </div>
+          <button
+            mat-flat-button
+            color="primary"
+            [disabled]="player.saving"
+            (click)="savePlayer(player)"
+          >
+            @if (player.saving) {
+              <mat-icon>hourglass_empty</mat-icon>
+            } @else if (player.saved) {
+              <mat-icon>check_circle</mat-icon>
+            } @else {
+              <mat-icon>save</mat-icon>
+            }
+            {{ player.saved ? 'Guardado' : 'Guardar' }}
+          </button>
+        </div>
+
+        <mat-accordion>
+          @for (skill of player.skills; track skill.skill) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ skill.label }}</mat-panel-title>
+                <mat-panel-description>
+                  <span class="level-chip level-{{ skill.level }}">{{ skill.level }}</span>
+                  <span class="skill-total">{{ skill.total | number:'1.1-1' }}</span>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              @for (criterion of skill.subcriteria; track criterion.name) {
+                <div class="criterion-row">
+                  <span class="criterion-name">{{ criterion.name }}</span>
+                  <div class="score-control">
+                    @for (s of [0, 1, 2, 3]; track s) {
+                      <button
+                        mat-mini-fab
+                        [color]="criterion.score === s ? 'primary' : ''"
+                        class="score-btn score-btn--{{ s }}"
+                        [class.score-btn--active]="criterion.score === s"
+                        (click)="criterion.score = $any(s); onScoreChange(player, skill)"
+                      >
+                        {{ s }}
+                      </button>
+                    }
+                    <span class="score-label">{{ scoreLabel(criterion.score) }}</span>
+                  </div>
+                </div>
+              }
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+
+        <mat-form-field class="notes-field" appearance="outline">
+          <mat-label>Notas (opcional)</mat-label>
+          <textarea matInput [(ngModel)]="player.notes" rows="2"></textarea>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

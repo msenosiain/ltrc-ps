@@ -14,6 +14,7 @@ import {
   TrainingSessionStatusEnum,
 } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
+import { EvaluationsService } from '../../../evaluations/services/evaluations.service';
 import {
   getAttendanceStatusLabel,
   getCategoryLabel,
@@ -54,12 +55,14 @@ export class SessionViewerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly sessionsService = inject(TrainingSessionsService);
+  private readonly evaluationsService = inject(EvaluationsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
 
   session?: TrainingSession;
   loading = false;
+  evaluationsEnabled = false;
   readonly RoleEnum = RoleEnum;
   readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
@@ -76,7 +79,11 @@ export class SessionViewerComponent implements OnInit {
       .getSessionById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (session) => { this.session = session; this.loading = false; },
+        next: (session) => {
+          this.session = session;
+          this.loading = false;
+          this.checkEvaluationsEnabled(session);
+        },
         error: () => { this.loading = false; this.router.navigate(['/dashboard/trainings/sessions']); },
       });
   }
@@ -127,6 +134,29 @@ export class SessionViewerComponent implements OnInit {
     const player = entry.player as any;
     if (!player) return '—';
     return player.name ?? `${player.lastName}, ${player.firstName}`;
+  }
+
+  goToEvaluate(): void {
+    this.router.navigate([
+      '/dashboard/trainings/sessions',
+      this.session!.id,
+      'evaluate',
+    ]);
+  }
+
+  private checkEvaluationsEnabled(session: TrainingSession): void {
+    this.evaluationsService
+      .getAllSettings()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (settings) => {
+          const match = settings.find(
+            (s) => s.category === session.category && s.sport === session.sport
+          );
+          this.evaluationsEnabled = match?.evaluationsEnabled ?? false;
+        },
+        error: () => { this.evaluationsEnabled = false; },
+      });
   }
 
   goToAttendance(): void {
