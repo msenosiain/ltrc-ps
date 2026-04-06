@@ -21,8 +21,10 @@ import {
   SportEnum,
 } from '@ltrc-campo/shared-api-model';
 import { EvaluationsService } from '../../services/evaluations.service';
-import { getCategoryOptionsBySport } from '../../../common/category-options';
+import { CategoryOption, getCategoryOptionsBySport } from '../../../common/category-options';
+import { SportOption } from '../../../common/sport-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
+import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 
 @Component({
   selector: 'ltrc-evaluations-list',
@@ -50,6 +52,7 @@ export class EvaluationsListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
+  private readonly filterContext = inject(UserFilterContextService);
 
   readonly RoleEnum = RoleEnum;
   readonly skills = Object.values(EvaluationSkillEnum);
@@ -72,14 +75,10 @@ export class EvaluationsListComponent implements OnInit {
   searched = false;
   filtersExpanded = false;
 
-  readonly sportOptions = [
-    { id: SportEnum.RUGBY, label: 'Rugby' },
-    { id: SportEnum.HOCKEY, label: 'Hockey' },
-  ];
-
-  get categoryOptions() {
-    return getCategoryOptionsBySport(this.filterForm.get('sport')?.value);
-  }
+  showSportFilter = true;
+  showCategoryFilter = true;
+  sportOptions: SportOption[] = [];
+  categoryOptions: CategoryOption[] = [];
 
   get periodOptions(): { value: string; label: string }[] {
     const now = new Date();
@@ -96,12 +95,32 @@ export class EvaluationsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cats = getCategoryOptionsBySport(SportEnum.RUGBY);
-    if (cats.length) this.filterForm.get('category')?.setValue(cats[0].id);
-    this.search();
+    this.filterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.showSportFilter = ctx.showSportFilter;
+        this.showCategoryFilter = ctx.showCategoryFilter;
+        this.sportOptions = ctx.sportOptions;
+        this.categoryOptions = ctx.categoryOptions;
+
+        if (ctx.forcedSport) {
+          this.filterForm.get('sport')!.setValue(ctx.forcedSport, { emitEvent: false });
+        }
+        if (ctx.forcedCategory) {
+          this.filterForm.get('category')!.setValue(ctx.forcedCategory, { emitEvent: false });
+        } else if (!this.filterForm.get('category')?.value && this.categoryOptions.length) {
+          this.filterForm.get('category')!.setValue(this.categoryOptions[0].id, { emitEvent: false });
+        }
+
+        this.search();
+      });
   }
 
   onSportChange(): void {
+    const sport = this.filterForm.get('sport')?.value;
+    this.categoryOptions = getCategoryOptionsBySport(sport).filter((c) =>
+      this.categoryOptions.length === 0 || this.categoryOptions.some((o) => o.id === c.id)
+    );
     this.filterForm.get('category')?.setValue(null);
     this.evaluations = [];
     this.searched = false;

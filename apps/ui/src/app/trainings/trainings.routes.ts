@@ -90,6 +90,7 @@ export const TRAININGS_ROUTES: Routes = [
         RoleEnum.MANAGER,
         RoleEnum.COORDINATOR,
         RoleEnum.COACH,
+        RoleEnum.TRAINER,
       ],
     },
   },

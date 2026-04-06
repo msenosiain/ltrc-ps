@@ -35,7 +35,7 @@
       </button>
       @if (evaluationsEnabled) {
       <button
-        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH]"
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER]"
         mat-stroked-button
         type="button"
         (click)="goToEvaluate()"

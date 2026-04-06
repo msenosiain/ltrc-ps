@@ -59,7 +59,7 @@ export class EvaluationsController {
   }
 
   @Post()
-  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER)
   @UseGuards(RolesGuard)
   async upsert(@Body() dto: UpsertEvaluationDto, @Req() req: Request) {
     return this.evaluationsService.upsert(dto, (req as any).user.id);
