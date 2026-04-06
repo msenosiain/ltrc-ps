@@ -492,10 +492,10 @@ export class TrainingSessionsService {
       }
 
       if (existing) {
-        if (record.status) {
-          existing.status = record.status;
-          existing.markedAt = now;
-          existing.markedBy = callerId;
+        if (record.status !== undefined) {
+          existing.status = record.status ?? undefined;
+          existing.markedAt = record.status ? now : undefined;
+          existing.markedBy = record.status ? callerId : undefined;
         }
         if (record.confirmed !== undefined) {
           existing.confirmed = record.confirmed;

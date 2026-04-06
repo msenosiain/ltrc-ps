@@ -1,0 +1,110 @@
+.session-evaluate {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.player-card {
+  &--saved {
+    border-left: 4px solid var(--mat-sys-primary);
+  }
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
+
+.player-name {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.overall-chip {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.level-chip {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-right: 8px;
+}
+
+.level-EVALUAR     { background: #e0e0e0; color: #616161; }
+.level-PRINCIPIANTE { background: #ffcdd2; color: #c62828; }
+.level-INTERMEDIO   { background: #fff9c4; color: #f57f17; }
+.level-AVANZADO     { background: #c8e6c9; color: #2e7d32; }
+
+.skill-total {
+  font-weight: 500;
+  min-width: 30px;
+  text-align: right;
+}
+
+.criterion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.criterion-name {
+  font-size: 0.875rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.score-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  font-size: 0.8rem;
+  line-height: 32px;
+}
+
+.score-label {
+  font-size: 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  min-width: 70px;
+}
+
+.notes-field {
+  width: 100%;
+  margin-top: 12px;
+}

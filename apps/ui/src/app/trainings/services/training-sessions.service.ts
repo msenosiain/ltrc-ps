@@ -73,7 +73,7 @@ export class TrainingSessionsService {
       userId?: string;
       userName?: string;
       isStaff: boolean;
-      status?: string;
+      status?: string | null;
       confirmed?: boolean;
     }[]
   ): Observable<TrainingSession> {

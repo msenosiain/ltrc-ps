@@ -235,21 +235,17 @@ export class AttendanceRollCallComponent implements OnInit {
     this.saving = true;
 
     const records = [
-      ...this.staffRows
-        .filter((r) => r.status || r.confirmed !== undefined)
-        .map((r) => ({
+      ...this.staffRows.map((r) => ({
           userId: r.userId,
           userName: r.userName,
           isStaff: true,
-          ...(r.status ? { status: r.status } : {}),
+          status: r.status,
           confirmed: r.confirmed,
         })),
-      ...[...this.playerRows, ...this.injuredRows]
-        .filter((r) => r.status || r.confirmed !== undefined)
-        .map((r) => ({
+      ...[...this.playerRows, ...this.injuredRows].map((r) => ({
           playerId: r.playerId,
           isStaff: false,
-          ...(r.status ? { status: r.status } : {}),
+          status: r.status,
           confirmed: r.confirmed,
         })),
     ];

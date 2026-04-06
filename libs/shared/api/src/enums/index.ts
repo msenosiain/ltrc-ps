@@ -24,3 +24,4 @@ export * from './payment-status.enum';
 export * from './payment-entity-type.enum';
 export * from './payment-link-status.enum';
 export * from './payment-type.enum';
+export * from './evaluation-skill.enum';

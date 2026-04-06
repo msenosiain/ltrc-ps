@@ -87,7 +87,7 @@
       @if (session.status !== TrainingSessionStatusEnum.CANCELLED) {
         <button mat-menu-item (click)="goToRollCall($event, session.id)">
           <mat-icon>fact_check</mat-icon>
-          Pasar lista
+          Asistencia
         </button>
       }
       @if (session.status === TrainingSessionStatusEnum.SCHEDULED) {

@@ -1,0 +1,31 @@
+<div class="evaluation-settings">
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">Configuración de evaluaciones</span>
+    </div>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  <mat-card>
+    <mat-card-content>
+      <p class="settings-hint">Activá las evaluaciones para las categorías que querés evaluar. Los entrenadores podrán cargar evaluaciones desde el detalle de cada entrenamiento.</p>
+
+      @for (row of rows; track row.category + row.sport) {
+        <div class="settings-row" [class.saving]="row.saving">
+          <span class="settings-row__label">{{ row.label }}</span>
+          <mat-slide-toggle
+            [checked]="row.enabled"
+            [disabled]="row.saving"
+            (change)="toggle(row, $event.checked)"
+          />
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

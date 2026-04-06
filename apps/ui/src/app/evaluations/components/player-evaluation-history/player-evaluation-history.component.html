@@ -1,0 +1,62 @@
+<div class="player-history">
+  <div class="sticky-toolbar">
+    <div class="sticky-toolbar__title">
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="sticky-toolbar__name">
+        Historial de evaluaciones{{ getPlayerName() ? ' — ' + getPlayerName() : '' }}
+      </span>
+    </div>
+  </div>
+
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+
+  @if (!loading && evaluations.length === 0) {
+    <mat-card>
+      <mat-card-content>
+        <p class="empty-state">No hay evaluaciones registradas.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @for (evaluation of evaluations; track evaluation.id) {
+    <mat-card>
+      <mat-card-content>
+        <div class="eval-header">
+          <span class="eval-period">{{ formatPeriod(evaluation.period) }}</span>
+          <span class="level-badge level-{{ evaluation.overallLevel }}">
+            {{ evaluation.overallLevel }} — {{ evaluation.overallTotal | number:'1.1-1' }}
+          </span>
+        </div>
+
+        <mat-accordion>
+          @for (skill of evaluation.skills; track skill.skill) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ skillLabels[skill.skill] }}</mat-panel-title>
+                <mat-panel-description>
+                  <span class="level-badge level-{{ skill.level }}">{{ skill.level }}</span>
+                  <span class="skill-total">{{ skill.total | number:'1.1-1' }}</span>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              @for (criterion of skill.subcriteria; track criterion.name) {
+                <div class="criterion-row">
+                  <span class="criterion-name">{{ criterion.name }}</span>
+                  <span class="score-badge score-{{ criterion.score }}">{{ criterion.score }}</span>
+                </div>
+              }
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+
+        @if (evaluation.notes) {
+          <p class="notes">{{ evaluation.notes }}</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

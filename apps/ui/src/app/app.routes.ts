@@ -99,6 +99,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./analytics/analytics.routes').then((m) => m.ANALYTICS_ROUTES),
       },
+      {
+        path: 'evaluations',
+        loadChildren: () =>
+          import('./evaluations/evaluations.routes').then((m) => m.EVALUATIONS_ROUTES),
+      },
       { path: 'set-password', component: SetPasswordComponent },
     ],
   },

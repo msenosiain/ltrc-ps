@@ -1,0 +1,110 @@
+@use '../../../common/styles/list-layout';
+
+.evaluations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// Filters — same pattern as session-search
+.search-form {
+  margin-bottom: 4px;
+}
+
+.search-row {
+  display: none;
+}
+
+.filters-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.filter-field {
+  width: 180px;
+}
+
+.search-btn--desktop {
+  margin-top: 4px;
+}
+
+// Table
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.evaluations-table {
+  width: 100%;
+
+  .eval-row {
+    @include list-layout.clickable-row;
+  }
+
+  .mat-column-actions {
+    width: 96px;
+    padding: 0;
+    text-align: right;
+  }
+
+  .actions-cell {
+    padding: 0;
+  }
+}
+
+.level-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.level-EVALUAR      { background: #e0e0e0; color: #616161; }
+.level-PRINCIPIANTE { background: #ffcdd2; color: #c62828; }
+.level-INTERMEDIO   { background: #fff9c4; color: #f57f17; }
+.level-AVANZADO     { background: #c8e6c9; color: #2e7d32; }
+
+.no-data {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+  padding: 24px 0;
+}
+
+// Mobile
+@media (max-width: 767px) {
+  .search-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .filters-toggle {
+    flex: 1;
+  }
+
+  .filters-row {
+    display: none;
+    margin-top: 4px;
+
+    &--open {
+      display: flex;
+    }
+  }
+
+  .filter-field {
+    flex: 1 1 calc(50% - 6px);
+    width: auto;
+  }
+
+  .search-btn--desktop {
+    display: none;
+  }
+}

@@ -8,6 +8,7 @@ import { SessionViewerComponent } from './components/session-viewer/session-view
 import { AttendanceRollCallComponent } from './components/attendance-roll-call/attendance-roll-call.component';
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
+import { SessionEvaluateComponent } from '../evaluations/components/session-evaluate/session-evaluate.component';
 
 export const TRAININGS_ROUTES: Routes = [
   {
@@ -69,10 +70,25 @@ export const TRAININGS_ROUTES: Routes = [
     component: AttendanceRollCallComponent,
     canActivate: [hasRoleGuard],
     data: {
-      title: 'Pasar lista',
+      title: 'Asistencia',
       allowedRoles: [
         RoleEnum.ADMIN,
         RoleEnum.MANAGER,
+        RoleEnum.COACH,
+        RoleEnum.TRAINER,
+      ],
+    },
+  },
+  {
+    path: 'sessions/:id/evaluate',
+    component: SessionEvaluateComponent,
+    canActivate: [hasRoleGuard],
+    data: {
+      title: 'Evaluar jugadores',
+      allowedRoles: [
+        RoleEnum.ADMIN,
+        RoleEnum.MANAGER,
+        RoleEnum.COORDINATOR,
         RoleEnum.COACH,
         RoleEnum.TRAINER,
       ],
