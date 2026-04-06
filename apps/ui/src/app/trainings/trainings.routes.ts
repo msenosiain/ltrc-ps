@@ -70,7 +70,7 @@ export const TRAININGS_ROUTES: Routes = [
     component: AttendanceRollCallComponent,
     canActivate: [hasRoleGuard],
     data: {
-      title: 'Pasar lista',
+      title: 'Asistencia',
       allowedRoles: [
         RoleEnum.ADMIN,
         RoleEnum.MANAGER,

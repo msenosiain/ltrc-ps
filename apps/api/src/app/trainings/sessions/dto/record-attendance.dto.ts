@@ -27,8 +27,8 @@ export class AttendanceRecordDto {
   readonly isStaff!: boolean;
 
   @IsOptional()
-  @IsEnum(AttendanceStatusEnum)
-  readonly status?: AttendanceStatusEnum;
+  @IsEnum([...Object.values(AttendanceStatusEnum), null])
+  readonly status?: AttendanceStatusEnum | null;
 
   @IsOptional()
   @IsBoolean()
