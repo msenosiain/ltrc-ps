@@ -212,8 +212,8 @@ export class PlayerFormComponent implements OnInit, OnChanges {
   filteredHealthInsurances$!: Observable<string[]>;
 
   ngOnInit(): void {
-    // Manager restriction: pre-fill and lock sport, filter categories
-    if (this.isManager() && !this.isAdmin() && !this.player) {
+    // Non-admin: pre-fill and lock sport/category based on user assignments
+    if (!this.isAdmin() && !this.player) {
       const sports = this.managerSports();
       const allowedCategories = new Set(this.managerCategories());
 
@@ -226,12 +226,16 @@ export class PlayerFormComponent implements OnInit, OnChanges {
         this.playerForm.get('sport')?.setValue(sports[0]);
         this.playerForm.get('sport')?.disable();
       }
-      // Apply initial category filter — subscription isn't active yet at this point
+      // Apply initial category filter
       if (allowedCategories.size > 0) {
         const sport = sports.length === 1 ? sports[0] : null;
         this.categories = getCategoryOptionsBySport(sport).filter((c) =>
           allowedCategories.has(c.id)
         );
+        if (this.categories.length === 1) {
+          this.playerForm.get('category')?.setValue(this.categories[0].id);
+          this.playerForm.get('category')?.disable();
+        }
       }
     }
 
@@ -283,11 +287,17 @@ export class PlayerFormComponent implements OnInit, OnChanges {
       .subscribe((sport: SportEnum | null) => {
         this.positions = getPositionOptionsBySport(sport);
         let cats = getCategoryOptionsBySport(sport);
-        if (this.isManager() && !this.isAdmin()) {
+        if (!this.isAdmin()) {
           const allowed = new Set(this.managerCategories());
           if (allowed.size > 0) cats = cats.filter((c) => allowed.has(c.id));
         }
         this.categories = cats;
+        if (!this.isAdmin() && cats.length === 1 && !this.player) {
+          this.playerForm.get('category')?.setValue(cats[0].id);
+          this.playerForm.get('category')?.disable();
+        } else if (!this.player) {
+          this.playerForm.get('category')?.enable();
+        }
         // Clear positions if they no longer match the new sport
         const validIds = new Set(this.positions.map((p) => p.id));
         this.positionsArray.controls.forEach((ctrl) => {

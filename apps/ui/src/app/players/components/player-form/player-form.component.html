@@ -68,7 +68,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
-        <input matInput type="email" formControlName="email" required />
+        <input matInput type="email" formControlName="email" />
         @if (playerForm.get('email')?.invalid) {
         <mat-error>Correo electronico invalido</mat-error>
         }

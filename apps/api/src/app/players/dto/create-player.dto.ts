@@ -152,9 +152,9 @@ export class CreatePlayerDto {
   @IsDate({ message: '$property must be a valid date (dd/MM/yyyy)' })
   readonly birthDate!: Date;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  readonly email!: string;
+  readonly email?: string;
 
   @IsNotEmpty()
   @IsEnum(SportEnum)

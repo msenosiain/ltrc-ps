@@ -36,7 +36,7 @@ export function buildCreatePlayerForm(fb: FormBuilder) {
       Validators.pattern(/^\d{7,8}$/),
     ]),
     birthDate: fb.control<Date | null>(null, Validators.required),
-    email: fb.nonNullable.control('', [Validators.required, Validators.email]),
+    email: fb.nonNullable.control('', [Validators.email]),
 
     sport: fb.control<SportEnum | null>(null, Validators.required),
     category: fb.control<CategoryEnum | null>(null, Validators.required),
