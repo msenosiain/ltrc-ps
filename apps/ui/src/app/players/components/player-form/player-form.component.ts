@@ -181,6 +181,10 @@ export class PlayerFormComponent implements OnInit, OnChanges {
     const group = buildParentContactGroup(this.fb);
     if (this.isMinor() && this.parentContactsArray.length === 0) {
       this.setParentContactRequired(group);
+      group.patchValue({
+        phone: this.playerForm.get('address.phoneNumber')?.value || '',
+        email: this.playerForm.get('email')?.value || '',
+      });
     }
     this.parentContactsArray.push(group);
   }
