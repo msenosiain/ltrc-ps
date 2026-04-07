@@ -58,6 +58,7 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   private filterContext: FilterContext | null = null;
+  private allowedCategories: CategoryEnum[] | null = null;
   selected: ScopeFilterSelection = {};
 
   get showFilterButton(): boolean {
@@ -103,6 +104,10 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((ctx) => {
         this.filterContext = ctx;
+        // Track allowed categories for filtering blocks (null = all allowed)
+        this.allowedCategories = ctx.categoryOptions.length < Object.values(CategoryEnum).length
+          ? ctx.categoryOptions.map((c) => c.id)
+          : null;
         if (ctx.forcedSport) this.selected = { ...this.selected, sport: ctx.forcedSport };
         if (ctx.forcedCategory) this.selected = { ...this.selected, category: ctx.forcedCategory };
         this.loadStats();
@@ -140,7 +145,7 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
     const result: BlockAttStat[] = [];
     for (const block of Object.values(BlockEnum)) {
       const cats = getBlockCategories(block)
-        .filter((cat) => byCategory[cat] !== undefined)
+        .filter((cat) => byCategory[cat] !== undefined && (!this.allowedCategories || this.allowedCategories.includes(cat)))
         .map((cat) => ({
           category: cat,
           label: getCategoryLabel(cat),

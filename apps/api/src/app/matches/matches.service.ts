@@ -547,20 +547,15 @@ export class MatchesService {
     const since = new Date();
     since.setDate(since.getDate() - 28);
 
-    const infantilesCategories = getBlockCategories(BlockEnum.INFANTILES);
     const scopeFilter: Record<string, unknown> = {
       status: MatchStatusEnum.COMPLETED,
       date: { $lte: new Date(), $gte: since },
-      category: { $in: infantilesCategories },
     };
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       const sports = caller.sports ?? [];
       const categories = caller.categories ?? [];
       if (sports.length) scopeFilter['sport'] = { $in: sports };
-      if (categories.length) {
-        const callerInfantiles = categories.filter((c) => infantilesCategories.includes(c as CategoryEnum));
-        scopeFilter['category'] = { $in: callerInfantiles.length ? callerInfantiles : infantilesCategories };
-      }
+      if (categories.length) scopeFilter['category'] = { $in: categories };
     }
     if (sport) scopeFilter['sport'] = sport;
     if (category) scopeFilter['category'] = category;
