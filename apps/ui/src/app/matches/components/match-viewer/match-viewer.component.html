@@ -17,6 +17,15 @@
           <mat-icon>picture_as_pdf</mat-icon>
           PDF Plantel
         </button>
+        <button
+          *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH]"
+          mat-stroked-button
+          type="button"
+          (click)="shareSquad()"
+        >
+          <mat-icon>share</mat-icon>
+          Compartir
+        </button>
       }
       <button
         *ltrcAllowedRoles="[RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.ADMIN]"

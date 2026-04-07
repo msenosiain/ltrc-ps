@@ -38,6 +38,7 @@ import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlayersService } from '../../../players/services/players.service';
 import { SquadPdfService } from '../../services/squad-pdf.service';
+import { ShareSquadDialogComponent, ShareSquadDialogData } from '../share-squad-dialog/share-squad-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { UploadAttachmentDialogComponent, UploadAttachmentDialogData, UploadAttachmentResult } from '../upload-attachment-dialog/upload-attachment-dialog.component';
 import { VideoDialogComponent, VideoDialogData, VideoDialogResult } from '../video-dialog/video-dialog.component';
@@ -203,6 +204,18 @@ export class MatchViewerComponent implements OnInit {
     if (this.match) {
       this.squadPdf.generate(this.match, this.match.squad ?? []);
     }
+  }
+
+  shareSquad(): void {
+    if (!this.match) return;
+    this.dialog.open(ShareSquadDialogComponent, {
+      width: '360px',
+      data: {
+        match: this.match,
+        starters: this.titulares,
+        subs: this.suplentes,
+      } satisfies ShareSquadDialogData,
+    });
   }
 
   manageAttendance(): void {

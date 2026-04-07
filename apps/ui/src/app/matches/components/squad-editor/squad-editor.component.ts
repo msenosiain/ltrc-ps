@@ -35,18 +35,21 @@ import {
   debounceTime,
   distinctUntilChanged,
   filter,
+  map,
   switchMap,
 } from 'rxjs/operators';
 import {
   CategoryEnum,
   Match,
   Player,
+  PlayerPosition,
   SportEnum,
   Squad,
   SquadEntry,
   SquadPlayerTemplate,
   Tournament,
 } from '@ltrc-campo/shared-api-model';
+import { getPositionOptionsBySport } from '../../../players/position-options';
 import { ConfirmDialogComponent } from '../../../common/components/confirm-dialog/confirm-dialog.component';
 import { PlayersService } from '../../../players/services/players.service';
 import { MatchesService } from '../../services/matches.service';
@@ -235,26 +238,33 @@ export class SquadEditorComponent implements OnInit {
           const sport = this.match?.tournament?.sport ?? this.match?.sport;
           const category = this.match?.category as CategoryEnum | undefined;
           const eligibleCategories = this.getEligibleCategories(sport, category);
+          const matchedPosition = this.findMatchingPosition(term);
           return this.playersService.getPlayers({
             page: 1,
             size: 20,
             filters: {
-              searchTerm: term,
+              ...(matchedPosition ? { position: matchedPosition } : { searchTerm: term }),
               ...(sport && { sport }),
               ...(eligibleCategories.length > 1
                 ? { categories: eligibleCategories }
                 : category ? { category } : {}),
             },
-          });
+          }).pipe(map((result) => ({ result, matchedPosition })));
         }),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((result) => {
+      .subscribe(({ result, matchedPosition }) => {
         this.searchingPlayers = false;
         const existingIds = new Set(this.squadRows.map((e) => e.player?.id));
-        this.playerSuggestions = result.items.filter(
-          (p) => !existingIds.has(p.id)
-        );
+        let players = result.items.filter((p) => !existingIds.has(p.id));
+        if (matchedPosition) {
+          players = [...players].sort((a, b) => {
+            const aFirst = a.positions?.[0] === matchedPosition ? 0 : 1;
+            const bFirst = b.positions?.[0] === matchedPosition ? 0 : 1;
+            return aFirst - bFirst;
+          });
+        }
+        this.playerSuggestions = players;
       });
 
     this.addForm
@@ -446,6 +456,18 @@ export class SquadEditorComponent implements OnInit {
         },
         error: () => (this.saving = false),
       });
+  }
+
+  private findMatchingPosition(term: string): PlayerPosition | null {
+    const normalized = term.toLowerCase().trim();
+    if (normalized.length < 2) return null;
+    const options = getPositionOptionsBySport(this.matchSport);
+    const match = options.find(
+      (opt) =>
+        opt.name.toLowerCase().includes(normalized) ||
+        opt.id.toLowerCase().includes(normalized)
+    );
+    return match?.id ?? null;
   }
 
   getFirstPositionLabel(player: Player): string | null {
