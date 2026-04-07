@@ -12,6 +12,7 @@ import { PaginationDto } from '../../shared/pagination.dto';
 import { TrainingSessionFiltersDto } from './training-session-filter.dto';
 import {
   BlockEnum,
+  CATEGORY_AGE_RANK,
   PaginatedResponse,
   RoleEnum,
   TrainingSessionStatusEnum,
@@ -133,49 +134,39 @@ export class TrainingSessionsService {
     skip: number,
     size: number
   ) {
-    const now = new Date();
-    const todayStr = now.toISOString().slice(0, 10);
+    // Use Argentina timezone offset (UTC-3) to determine today's date server-side
+    const nowUtc = new Date();
+    const AR_OFFSET_MS = -3 * 60 * 60 * 1000;
+    const nowAr = new Date(nowUtc.getTime() + AR_OFFSET_MS);
+    const todayStr = nowAr.toISOString().slice(0, 10);
+
+    const categoryRankSwitch = {
+      $switch: {
+        branches: Object.entries(CATEGORY_AGE_RANK).map(([cat, rank]) => ({
+          case: { $eq: ['$category', cat] },
+          then: rank,
+        })),
+        default: -1,
+      },
+    };
+
     const pipeline: any[] = [
       { $match: queryFilters },
       {
         $addFields: {
-          _dateObj: {
-            $dateFromString: {
-              dateString: {
-                $concat: [
-                  '$date',
-                  'T',
-                  { $ifNull: ['$startTime', '00:00'] },
-                  ':00Z',
-                ],
-              },
-            },
+          // 0 = today/future, 1 = past — sort date string directly (local time, no TZ issues)
+          _isPast: {
+            $cond: [{ $lt: ['$date', todayStr] }, 1, 0],
           },
+          _categoryRank: categoryRankSwitch,
         },
       },
-      {
-        $addFields: {
-          // 0 = today, 1 = future (other days), 2 = past (other days)
-          _group: {
-            $cond: [
-              { $eq: ['$date', todayStr] },
-              0,
-              { $cond: [{ $gt: ['$date', todayStr] }, 1, 2] },
-            ],
-          },
-          _distanceMs: {
-            $cond: [
-              { $gte: ['$_dateObj', now] },
-              { $subtract: ['$_dateObj', now] },
-              { $subtract: [now, '$_dateObj'] },
-            ],
-          },
-        },
-      },
-      { $sort: { _group: 1, _distanceMs: 1 } },
+      // today+future: date ASC, startTime ASC, category ASC, location ASC
+      // past: date DESC (most recent first), same secondary sorts
+      { $sort: { _isPast: 1, date: 1, startTime: 1, _categoryRank: 1, location: 1 } },
       { $skip: skip },
       { $limit: size },
-      { $project: { _group: 0, _distanceMs: 0, _dateObj: 0 } },
+      { $project: { _isPast: 0, _categoryRank: 0 } },
     ];
 
     const rawItems = await this.sessionModel.aggregate(pipeline).exec();
@@ -306,6 +297,30 @@ export class TrainingSessionsService {
             a.user === userId)
       ),
     }));
+  }
+
+  /**
+   * Update sport/category/division on existing SCHEDULED future sessions for a given schedule.
+   * Called when a schedule is edited so existing sessions reflect the new values.
+   */
+  async updateScheduledSessions(
+    scheduleId: string,
+    fromDate: string,
+    fields: { sport?: string; category?: string; division?: string }
+  ) {
+    const update: Record<string, unknown> = {};
+    if (fields.sport !== undefined) update['sport'] = fields.sport;
+    if (fields.category !== undefined) update['category'] = fields.category;
+    if (fields.division !== undefined) update['division'] = fields.division;
+    if (!Object.keys(update).length) return;
+    await this.sessionModel.updateMany(
+      {
+        schedule: scheduleId,
+        date: { $gte: fromDate },
+        status: TrainingSessionStatusEnum.SCHEDULED,
+      },
+      { $set: update }
+    );
   }
 
   /**

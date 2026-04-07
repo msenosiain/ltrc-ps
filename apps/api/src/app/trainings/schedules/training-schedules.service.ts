@@ -83,6 +83,11 @@ export class TrainingSchedulesService {
     const saved = await schedule.save();
     // Regenerate future sessions from today onwards
     const today = new Date().toISOString().slice(0, 10);
+    await this.sessionsService.updateScheduledSessions(saved.id, today, {
+      sport: saved.sport,
+      category: saved.category,
+      division: saved.division,
+    });
     await this.sessionsService.generateForSchedule(saved.id, today);
     return saved;
   }
