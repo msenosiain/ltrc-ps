@@ -246,6 +246,16 @@ export class PlayersService {
       queryFilters['positions'] = filters.position;
     }
 
+    // noPosition → jugadores sin posición cargada
+    if (filters.noPosition) {
+      andConditions.push({
+        $or: [
+          { positions: { $exists: false } },
+          { positions: { $size: 0 } },
+        ],
+      });
+    }
+
     // sport
     if (filters.sport) {
       queryFilters['sport'] = filters.sport;

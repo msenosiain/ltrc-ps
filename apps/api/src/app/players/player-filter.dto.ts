@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsEnum, IsIn, IsBoolean, IsArray } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsIn, IsBoolean, IsArray, IsInt } from 'class-validator';
 import { Transform } from 'class-transformer';
 import {
   CategoryEnum,
@@ -54,4 +54,9 @@ export class PlayerFiltersDto {
   @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean()
   availableForTraining?: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @IsBoolean()
+  noPosition?: boolean;
 }

@@ -58,10 +58,13 @@ export class PlayerSearchComponent implements OnInit {
 
   @Input() initialFilters?: Record<string, unknown>;
 
+  readonly NO_POSITION_SENTINEL = '__no_position__';
+
   @Output() readonly filtersChange = new EventEmitter<{
     searchTerm?: string;
     sport?: SportEnum;
     position?: PlayerPosition;
+    noPosition?: boolean;
     category?: CategoryEnum;
     branch?: HockeyBranchEnum;
     status?: PlayerStatusEnum;
@@ -168,6 +171,12 @@ export class PlayerSearchComponent implements OnInit {
   }
 
   private emitFilters(): void {
-    this.filtersChange.emit(nullToUndefined(this.searchForm.value));
+    const raw = nullToUndefined(this.searchForm.value);
+    if ((raw.position as unknown as string) === this.NO_POSITION_SENTINEL) {
+      const { position, ...rest } = raw as any;
+      this.filtersChange.emit({ ...rest, noPosition: true });
+    } else {
+      this.filtersChange.emit(raw);
+    }
   }
 }

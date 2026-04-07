@@ -72,6 +72,7 @@
       <mat-label>Posición</mat-label>
       <mat-select formControlName="position">
         <mat-option [value]="undefined">Todas</mat-option>
+        <mat-option [value]="NO_POSITION_SENTINEL">Sin posición</mat-option>
         @for (option of positionOptions; track $index) {
         <mat-option [value]="option.id">{{ option.name }}</mat-option>
         }

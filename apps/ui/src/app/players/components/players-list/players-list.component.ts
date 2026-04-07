@@ -125,6 +125,7 @@ export class PlayersListComponent implements AfterViewInit, OnDestroy {
     searchTerm?: string;
     sport?: SportEnum;
     position?: PlayerPosition;
+    noPosition?: boolean;
     category?: CategoryEnum;
     availability?: PlayerAvailabilityEnum;
   }): void {
