@@ -202,26 +202,43 @@ export class PlayersService {
     // no filter: show all players regardless of status
 
     // searchTerm → name o nickName
-    // Non-letter chars (apostrophes, backticks, etc.) are ignored between letters,
-    // so "dan" matches "D'an", "D`An", etc.
+    // Each word in the term is matched independently (AND) against name or nickName.
+    // The fuzzy pattern allows extra chars between letters AND tolerates 1 wrong char
+    // by also trying each word with each letter deleted (handles typos like "bnildo" → "Bildosola").
     if (filters.searchTerm) {
-      const buildFuzzyPattern = (term: string) =>
-        term
-          .replace(/[^a-záéíóúüñ\s]/gi, '')
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean)
-          .map((word) => word.split('').join('[^a-záéíóúüñ]*'))
-          .join('.*');
+      const makeSubseq = (s: string) =>
+        s.split('').join('[^a-záéíóúüñ]*');
 
-      const pattern = buildFuzzyPattern(filters.searchTerm);
-      const regex = new RegExp(pattern || filters.searchTerm, 'i');
-      andConditions.push({
-        $or: [
-          { name: { $regex: regex } },
-          { nickName: { $regex: regex } },
-        ],
-      });
+      const buildVariants = (word: string): string[] => {
+        const cleaned = word.replace(/[^a-záéíóúüñ]/gi, '').toLowerCase();
+        if (!cleaned) return [];
+        const variants = [makeSubseq(cleaned)];
+        if (cleaned.length >= 4) {
+          for (let i = 0; i < cleaned.length; i++) {
+            const shortened = cleaned.slice(0, i) + cleaned.slice(i + 1);
+            if (shortened.length >= 3) variants.push(makeSubseq(shortened));
+          }
+        }
+        return [...new Set(variants)];
+      };
+
+      const words = filters.searchTerm
+        .replace(/[^a-záéíóúüñ\s]/gi, '')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+      for (const word of words) {
+        const variants = buildVariants(word);
+        if (!variants.length) continue;
+        const regex = new RegExp(`(${variants.join('|')})`, 'i');
+        andConditions.push({
+          $or: [
+            { name: { $regex: regex } },
+            { nickName: { $regex: regex } },
+          ],
+        });
+      }
     }
 
     // position → busca en el array positions

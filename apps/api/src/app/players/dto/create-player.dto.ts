@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 
 import { Transform, Type, plainToInstance } from 'class-transformer';
+import { parse as dateFnsParse } from 'date-fns';
 import {
   CategoryEnum,
   ClothingSizesEnum,
@@ -117,12 +118,23 @@ export class PlayerAvailabilityDto {
   reason?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    if (value instanceof Date) return value;
+    // Accept dd/MM/yyyy or ISO formats
+    const ddMM = dateFnsParse(value, 'dd/MM/yyyy', new Date());
+    return isNaN(ddMM.getTime()) ? new Date(value) : ddMM;
+  })
   @IsDate()
   since?: Date;
 
   @IsOptional()
-  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    if (value instanceof Date) return value;
+    const ddMM = dateFnsParse(value, 'dd/MM/yyyy', new Date());
+    return isNaN(ddMM.getTime()) ? new Date(value) : ddMM;
+  })
   @IsDate()
   estimatedReturn?: Date;
 }
