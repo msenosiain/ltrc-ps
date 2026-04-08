@@ -1,0 +1,32 @@
+<div class="qr-page">
+
+  <div class="qr-box">
+
+    @if (loading()) {
+      <div class="qr-spinner">
+        <mat-spinner diameter="56" />
+      </div>
+    }
+
+    @if (error()) {
+      <p class="qr-error">{{ error() }}</p>
+      <button mat-stroked-button (click)="loadQr()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
+      </button>
+    }
+
+    <canvas #qrCanvas [class.hidden]="loading() || !!error()"></canvas>
+
+    @if (!loading() && !error()) {
+      <p class="validity">
+        Válido de {{ validFrom() | date:'HH:mm' : 'UTC-3' }} a {{ validUntil() | date:'HH:mm' : 'UTC-3' }}
+      </p>
+      <p class="countdown">Nuevo QR en {{ secondsLeft() }}s</p>
+    }
+
+  </div>
+
+  <p class="instruction">Escaneá el QR con tu celular para registrar tu asistencia</p>
+
+</div>

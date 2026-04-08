@@ -6,7 +6,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RoleEnum, TrainingSchedule } from '@ltrc-campo/shared-api-model';
+import { DayOfWeekEnum, RoleEnum, TimeSlot, TrainingSchedule } from '@ltrc-campo/shared-api-model';
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { getCategoryLabel, getDayLabel } from '../../training-options';
 import { getSportLabel } from '../../../common/sport-options';
@@ -43,6 +43,25 @@ export class ScheduleViewerComponent implements OnInit {
   schedule?: TrainingSchedule;
   loading = false;
   readonly RoleEnum = RoleEnum;
+
+  private static readonly DAY_ORDER: Record<DayOfWeekEnum, number> = {
+    [DayOfWeekEnum.MONDAY]: 0,
+    [DayOfWeekEnum.TUESDAY]: 1,
+    [DayOfWeekEnum.WEDNESDAY]: 2,
+    [DayOfWeekEnum.THURSDAY]: 3,
+    [DayOfWeekEnum.FRIDAY]: 4,
+    [DayOfWeekEnum.SATURDAY]: 5,
+    [DayOfWeekEnum.SUNDAY]: 6,
+  };
+
+  get sortedTimeSlots(): TimeSlot[] {
+    return [...(this.schedule?.timeSlots ?? [])].sort((a, b) => {
+      const dayDiff =
+        (ScheduleViewerComponent.DAY_ORDER[a.day as DayOfWeekEnum] ?? 9) -
+        (ScheduleViewerComponent.DAY_ORDER[b.day as DayOfWeekEnum] ?? 9);
+      return dayDiff !== 0 ? dayDiff : a.startTime.localeCompare(b.startTime);
+    });
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

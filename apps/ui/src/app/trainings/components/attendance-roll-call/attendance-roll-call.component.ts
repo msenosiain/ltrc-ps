@@ -26,6 +26,7 @@ import {
   SortOrder,
   TrainingSession,
   getCategoryBlock,
+  CategoryEnum,
 } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from '../../services/training-sessions.service';
 import { PlayersService } from '../../../players/services/players.service';
@@ -73,6 +74,7 @@ export class AttendanceRollCallComponent implements OnInit {
 
   session?: TrainingSession;
   isInfantiles = false;
+  showQrButton = false;
   staffRows: AttendanceRow[] = [];
   playerRows: AttendanceRow[] = [];
   injuredRows: AttendanceRow[] = [];
@@ -95,7 +97,9 @@ export class AttendanceRollCallComponent implements OnInit {
         next: (session) => {
           this.session = session;
           if (session.category) {
-            this.isInfantiles = getCategoryBlock(session.category as any) === BlockEnum.INFANTILES;
+            const block = getCategoryBlock(session.category as CategoryEnum);
+            this.isInfantiles = block === BlockEnum.INFANTILES;
+            this.showQrButton = block !== BlockEnum.INFANTILES && block !== BlockEnum.CADETES;
           }
           forkJoin({
             players: this.playersService.getPlayers({
@@ -279,6 +283,10 @@ export class AttendanceRollCallComponent implements OnInit {
   onEscapeKey(): void {
     if (this.dialog.openDialogs.length > 0) return;
     this.goBack();
+  }
+
+  openQr(): void {
+    window.open(`/dashboard/trainings/sessions/${this.session!.id}/qr`, '_blank');
   }
 
   goBack(): void {

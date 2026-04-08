@@ -19,6 +19,12 @@
       <mat-icon>done_all</mat-icon>
       Todos presentes
     </button>
+    @if (showQrButton) {
+    <button mat-stroked-button type="button" (click)="openQr()">
+      <mat-icon>qr_code</mat-icon>
+      QR Asistencia
+    </button>
+    }
   </div>
 
   <mat-accordion multi>

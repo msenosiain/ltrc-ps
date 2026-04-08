@@ -17,6 +17,7 @@ import { TrainingSessionFiltersDto } from './training-session-filter.dto';
 import { CreateTrainingSessionDto } from './dto/create-training-session.dto';
 import { UpdateTrainingSessionDto } from './dto/update-training-session.dto';
 import { RecordAttendanceDto } from './dto/record-attendance.dto';
+import { CheckinDto } from './dto/checkin.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -133,6 +134,24 @@ export class TrainingSessionsController {
   @UseGuards(JwtAuthGuard)
   async getStaffForSession(@Param('id') id: string) {
     return this.sessionsService.getStaffForSession(id);
+  }
+
+  @Get(':id/checkin-token')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getCheckinToken(@Param('id') id: string) {
+    return this.sessionsService.generateCheckinToken(id);
+  }
+
+  @Post(':id/checkin')
+  @UseGuards(JwtAuthGuard)
+  async checkin(
+    @Param('id') id: string,
+    @Body() dto: CheckinDto,
+    @Req() req: Request
+  ) {
+    await this.sessionsService.checkin(id, dto.token, (req as any).user);
+    return { message: 'Asistencia confirmada' };
   }
 
   @Patch(':id/attendance')

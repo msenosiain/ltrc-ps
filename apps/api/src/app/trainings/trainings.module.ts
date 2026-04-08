@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TrainingScheduleEntity } from './schedules/schemas/training-schedule.entity';
 import { TrainingScheduleSchema } from './schedules/schemas/training-schedule.schema';
 import { TrainingSessionEntity } from './sessions/schemas/training-session.entity';
@@ -20,6 +22,17 @@ import { MatchSchema } from '../matches/schemas/match.schema';
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret:
+          configService.get<string>('AUTH_JWT_SECRET') ||
+          configService.get<string>('GOOGLE_AUTH_JWT_SECRET') ||
+          'super-secret-key',
+        signOptions: { expiresIn: '1h' },
+      }),
+    }),
     MongooseModule.forFeature([
       {
         name: TrainingScheduleEntity.name,

@@ -5,6 +5,7 @@ import { TrainingScheduleEntity } from './schemas/training-schedule.entity';
 import { PaginationDto } from '../../shared/pagination.dto';
 import { TrainingScheduleFiltersDto } from './training-schedule-filter.dto';
 import {
+  CATEGORY_AGE_RANK,
   PaginatedResponse,
   RoleEnum,
 } from '@ltrc-campo/shared-api-model';
@@ -49,24 +50,37 @@ export class TrainingSchedulesService {
         queryFilters['category'] = { $in: caller.categories };
     }
 
-    const sort: Record<string, 1 | -1> = {};
-    if (sortBy) {
-      sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
-    } else {
-      sort['sport'] = 1;
-    }
-
     const [items, total] = await Promise.all([
-      this.scheduleModel
-        .find(queryFilters)
-        .skip(skip)
-        .limit(size)
-        .sort(sort)
-        .exec(),
+      this.findSortedByCategory(queryFilters, skip, size),
       this.scheduleModel.countDocuments(queryFilters).exec(),
     ]);
 
     return { items, total, page, size };
+  }
+
+  private async findSortedByCategory(
+    queryFilters: Record<string, unknown>,
+    skip: number,
+    size: number,
+  ) {
+    const categoryRankSwitch = {
+      $switch: {
+        branches: Object.entries(CATEGORY_AGE_RANK).map(([cat, rank]) => ({
+          case: { $eq: ['$category', cat] },
+          then: rank,
+        })),
+        default: 99,
+      },
+    };
+
+    return this.scheduleModel.aggregate([
+      { $match: queryFilters },
+      { $addFields: { _categoryRank: categoryRankSwitch } },
+      { $sort: { sport: 1, _categoryRank: 1 } },
+      { $skip: skip },
+      { $limit: size },
+      { $project: { _categoryRank: 0 } },
+    ]).exec();
   }
 
   async findOne(id: string) {

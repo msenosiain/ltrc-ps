@@ -9,6 +9,7 @@ import { AttendanceRollCallComponent } from './components/attendance-roll-call/a
 import { hasRoleGuard } from '../auth/guards/has-role.guard';
 import { RoleEnum } from '@ltrc-campo/shared-api-model';
 import { SessionEvaluateComponent } from '../evaluations/components/session-evaluate/session-evaluate.component';
+import { QrDisplayPageComponent } from './components/qr-display-page/qr-display-page.component';
 
 export const TRAININGS_ROUTES: Routes = [
   {
@@ -64,6 +65,15 @@ export const TRAININGS_ROUTES: Routes = [
     path: 'sessions/:id',
     component: SessionViewerComponent,
     data: { title: 'Detalle de sesión' },
+  },
+  {
+    path: 'sessions/:id/qr',
+    component: QrDisplayPageComponent,
+    canActivate: [hasRoleGuard],
+    data: {
+      title: 'QR Asistencia',
+      allowedRoles: [RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR, RoleEnum.COACH, RoleEnum.TRAINER],
+    },
   },
   {
     path: 'sessions/:id/attendance',

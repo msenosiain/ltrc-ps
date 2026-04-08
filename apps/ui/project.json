@@ -33,7 +33,7 @@
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1.5mb",
+              "maximumWarning": "1.7mb",
               "maximumError": "2.5mb"
             },
             {
@@ -47,6 +47,7 @@
             "core-js",
             "jspdf",
             "html2canvas",
+            "qrcode",
             "raf",
             "rgbcolor"
           ],
@@ -70,6 +71,7 @@
             "core-js",
             "jspdf",
             "html2canvas",
+            "qrcode",
             "raf",
             "rgbcolor"
           ]

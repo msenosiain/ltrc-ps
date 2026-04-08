@@ -16,10 +16,21 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import {
+  DayOfWeekEnum,
   RoleEnum,
   SortOrder,
   TrainingSchedule,
 } from '@ltrc-campo/shared-api-model';
+
+const DAY_ORDER: Record<DayOfWeekEnum, number> = {
+  [DayOfWeekEnum.MONDAY]: 0,
+  [DayOfWeekEnum.TUESDAY]: 1,
+  [DayOfWeekEnum.WEDNESDAY]: 2,
+  [DayOfWeekEnum.THURSDAY]: 3,
+  [DayOfWeekEnum.FRIDAY]: 4,
+  [DayOfWeekEnum.SATURDAY]: 5,
+  [DayOfWeekEnum.SUNDAY]: 6,
+};
 import { TrainingSchedulesService } from '../../services/training-schedules.service';
 import { SchedulesDataSource } from '../../services/schedules.datasource';
 import { ScheduleFilters } from '../../forms/schedule-form.types';
@@ -73,7 +84,7 @@ export class ScheduleListComponent implements AfterViewInit, OnDestroy {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
     const pageSize = s?.pageSize ?? 25;
-    const sortBy = s?.sortBy || 'sport';
+    const sortBy = s?.sortBy || 'category';
     const sortOrder = s?.sortOrder || SortOrder.ASC;
 
     this.paginator.pageIndex = pageIndex;
@@ -142,7 +153,11 @@ export class ScheduleListComponent implements AfterViewInit, OnDestroy {
   }
 
   getTimeSlotsLabel(schedule: TrainingSchedule): string {
-    return schedule.timeSlots
+    return [...schedule.timeSlots]
+      .sort((a, b) => {
+        const dayDiff = (DAY_ORDER[a.day as DayOfWeekEnum] ?? 9) - (DAY_ORDER[b.day as DayOfWeekEnum] ?? 9);
+        return dayDiff !== 0 ? dayDiff : a.startTime.localeCompare(b.startTime);
+      })
       .map((s) => {
         const base = `${getDayLabel(s.day)} ${s.startTime}-${s.endTime}`;
         return s.location ? `${base} (${s.location})` : base;
