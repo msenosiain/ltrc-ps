@@ -51,7 +51,7 @@ export class TrainingSchedulesService {
     }
 
     const [items, total] = await Promise.all([
-      this.findSortedByCategory(queryFilters, skip, size, sortBy, sortOrder),
+      this.findSortedByCategory(queryFilters, skip, size),
       this.scheduleModel.countDocuments(queryFilters).exec(),
     ]);
 
@@ -62,34 +62,21 @@ export class TrainingSchedulesService {
     queryFilters: Record<string, unknown>,
     skip: number,
     size: number,
-    sortBy?: string,
-    sortOrder: string = 'asc'
   ) {
-    const dir = sortOrder === 'asc' ? 1 : -1;
-
-    if (sortBy && sortBy !== 'category') {
-      return this.scheduleModel
-        .find(queryFilters)
-        .skip(skip)
-        .limit(size)
-        .sort({ [sortBy]: dir })
-        .exec();
-    }
-
     const categoryRankSwitch = {
       $switch: {
         branches: Object.entries(CATEGORY_AGE_RANK).map(([cat, rank]) => ({
           case: { $eq: ['$category', cat] },
           then: rank,
         })),
-        default: -1,
+        default: 99,
       },
     };
 
     return this.scheduleModel.aggregate([
       { $match: queryFilters },
       { $addFields: { _categoryRank: categoryRankSwitch } },
-      { $sort: { sport: 1, _categoryRank: dir } },
+      { $sort: { sport: 1, _categoryRank: 1 } },
       { $skip: skip },
       { $limit: size },
       { $project: { _categoryRank: 0 } },
