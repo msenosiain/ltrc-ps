@@ -84,10 +84,26 @@
           <span class="info-value">{{ session.location }}</span>
         </div>
         }
+        @if (isRugby) {
+        <div class="info-item confirmed-breakdown">
+          <span class="info-label">Confirmados</span>
+          <span class="info-value">
+            {{ confirmedCount }}
+            @if (confirmedCount > 0) {
+              <span class="breakdown-detail">
+                Forwards: {{ confirmedBreakdown.forwards }} · Backs: {{ confirmedBreakdown.backs }}
+                @if (confirmedBreakdown.injured > 0) { · Lesionados: {{ confirmedBreakdown.injured }} }
+                @if (confirmedBreakdown.others > 0) { · Otros: {{ confirmedBreakdown.others }} }
+              </span>
+            }
+          </span>
+        </div>
+        } @else {
         <div class="info-item">
           <span class="info-label">Confirmados</span>
           <span class="info-value">{{ confirmedCount }}</span>
         </div>
+        }
         <div class="info-item">
           <span class="info-label">Presentes</span>
           <span class="info-value">{{ presentCount }}</span>

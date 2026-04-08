@@ -46,6 +46,18 @@
   gap: 24px 40px;
 }
 
+.confirmed-breakdown .info-value {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.breakdown-detail {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--mat-app-on-surface-variant, #888);
+}
+
 .info-item {
   display: flex;
   flex-direction: column;

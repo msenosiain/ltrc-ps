@@ -16,4 +16,5 @@ export interface CalendarEvent {
   opponent?: string;
   isHome?: boolean;
   location?: string;
+  userConfirmed?: boolean;
 }

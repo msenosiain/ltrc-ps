@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
@@ -6,8 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { CalendarEvent, CategoryEnum, HockeyBranchEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CalendarEvent, CategoryEnum, HockeyBranchEnum, RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
+import { TrainingSessionsService } from '../../../trainings/services/training-sessions.service';
 import { getCategoryLabel } from '../../../common/category-options';
 import { getBranchLabel } from '../../../common/branch-options';
 import { UserFilterContextService, FilterContext } from '../../../common/services/user-filter-context.service';
@@ -17,6 +19,7 @@ import {
   ScopeFilterSelection,
 } from '../../../common/components/scope-filter-dialog/scope-filter-dialog.component';
 import { WidgetShellComponent } from '../../../common/components/widget-shell/widget-shell.component';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -46,21 +49,26 @@ function getWeekBounds(): { weekStart: Date; weekEnd: Date } {
 @Component({
   selector: 'ltrc-calendar-week-widget',
   standalone: true,
-  imports: [MatIconModule, MatButtonModule, MatExpansionModule, WidgetShellComponent],
+  imports: [MatIconModule, MatButtonModule, MatExpansionModule, MatSnackBarModule, WidgetShellComponent, AllowedRolesDirective],
   templateUrl: './calendar-week-widget.component.html',
   styleUrl: './calendar-week-widget.component.scss',
 })
 export class CalendarWeekWidgetComponent implements OnInit {
   private readonly calendarService = inject(CalendarService);
+  private readonly sessionsService = inject(TrainingSessionsService);
   private readonly filterContextService = inject(UserFilterContextService);
   private readonly dialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly SportEnum = SportEnum;
+  readonly confirmRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
 
   loading = true;
   days: DayGroup[] = [];
+  confirmedIds = signal(new Set<string>());
+  confirmingId = signal<string | null>(null);
 
   private filterContext: FilterContext | null = null;
   private selected: ScopeFilterSelection = {};
@@ -112,6 +120,9 @@ export class CalendarWeekWidgetComponent implements OnInit {
       .subscribe({
         next: (events) => {
           this.days = this.groupByDay(events, weekStart, weekEnd);
+          this.confirmedIds.set(new Set(
+            events.filter((e) => e.type === 'training' && e.userConfirmed).map((e) => e.id)
+          ));
           this.loading = false;
         },
         error: () => {
@@ -119,6 +130,32 @@ export class CalendarWeekWidgetComponent implements OnInit {
           this.loading = false;
         },
       });
+  }
+
+  isConfirmed(eventId: string): boolean {
+    return this.confirmedIds().has(eventId);
+  }
+
+  toggleConfirm(event: CalendarEvent, $event: Event): void {
+    $event.stopPropagation();
+    if (this.confirmingId()) return;
+    this.confirmingId.set(event.id);
+    const action = this.isConfirmed(event.id)
+      ? this.sessionsService.cancelConfirmation(event.id)
+      : this.sessionsService.confirmAttendance(event.id);
+    action.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        const next = new Set(this.confirmedIds());
+        if (this.isConfirmed(event.id)) next.delete(event.id);
+        else next.add(event.id);
+        this.confirmedIds.set(next);
+        this.confirmingId.set(null);
+      },
+      error: () => {
+        this.snackBar.open('Error al actualizar la confirmación', 'Cerrar', { duration: 4000 });
+        this.confirmingId.set(null);
+      },
+    });
   }
 
   private groupByDay(events: CalendarEvent[], from: Date, to: Date): DayGroup[] {

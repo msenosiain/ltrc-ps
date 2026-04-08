@@ -5,10 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { CalendarEvent, CategoryEnum, SportEnum } from '@ltrc-campo/shared-api-model';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CalendarEvent, CategoryEnum, RoleEnum, SportEnum } from '@ltrc-campo/shared-api-model';
 import { CalendarService } from '../../services/calendar.service';
+import { TrainingSessionsService } from '../../../trainings/services/training-sessions.service';
+import { AuthService } from '../../../auth/auth.service';
 import { getCategoryLabel } from '../../../common/category-options';
+import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 
 const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -39,20 +42,26 @@ function toDateStr(d: Date): string {
 @Component({
   selector: 'ltrc-calendar',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatTooltipModule],
+  imports: [MatButtonModule, MatCardModule, MatIconModule, MatProgressBarModule, MatSnackBarModule, AllowedRolesDirective],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
 })
 export class CalendarComponent implements OnInit {
   private readonly calendarService = inject(CalendarService);
+  private readonly sessionsService = inject(TrainingSessionsService);
+  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly SportEnum = SportEnum;
+  readonly confirmRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
 
   loading = signal(false);
-  weekAnchor = signal(new Date()); // any date in the displayed week
+  weekAnchor = signal(new Date());
   days = signal<DayGroup[]>([]);
+  confirmedIds = signal(new Set<string>());
+  confirmingId = signal<string | null>(null);
 
   get weekLabel(): string {
     const { from, to } = getWeekBounds(this.weekAnchor());
@@ -93,6 +102,10 @@ export class CalendarComponent implements OnInit {
       .subscribe({
         next: (events) => {
           this.days.set(this.groupByDay(events, from));
+          const confirmed = new Set(
+            events.filter((e) => e.type === 'training' && e.userConfirmed).map((e) => e.id)
+          );
+          this.confirmedIds.set(confirmed);
           this.loading.set(false);
         },
         error: () => {
@@ -100,6 +113,32 @@ export class CalendarComponent implements OnInit {
           this.loading.set(false);
         },
       });
+  }
+
+  isConfirmed(eventId: string): boolean {
+    return this.confirmedIds().has(eventId);
+  }
+
+  toggleConfirm(event: CalendarEvent, $event: Event): void {
+    $event.stopPropagation();
+    if (this.confirmingId()) return;
+    this.confirmingId.set(event.id);
+    const action = this.isConfirmed(event.id)
+      ? this.sessionsService.cancelConfirmation(event.id)
+      : this.sessionsService.confirmAttendance(event.id);
+    action.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        const next = new Set(this.confirmedIds());
+        if (this.isConfirmed(event.id)) next.delete(event.id);
+        else next.add(event.id);
+        this.confirmedIds.set(next);
+        this.confirmingId.set(null);
+      },
+      error: () => {
+        this.snackBar.open('Error al actualizar la confirmación', 'Cerrar', { duration: 4000 });
+        this.confirmingId.set(null);
+      },
+    });
   }
 
   private groupByDay(events: CalendarEvent[], weekStart: Date): DayGroup[] {

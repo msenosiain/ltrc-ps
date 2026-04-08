@@ -152,3 +152,25 @@
   gap: 4px;
   flex-wrap: wrap;
 }
+
+.confirm-btn {
+  flex-shrink: 0;
+  min-width: 0 !important;
+  padding: 0 6px !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  letter-spacing: normal !important;
+  line-height: 32px !important;
+  color: #757575 !important;
+
+  mat-icon {
+    font-size: 18px !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-right: 2px;
+  }
+
+  &.confirmed {
+    color: #2e7d32 !important;
+  }
+}

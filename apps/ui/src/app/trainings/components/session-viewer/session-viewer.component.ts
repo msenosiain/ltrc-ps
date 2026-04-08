@@ -8,8 +8,11 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AttendanceEntry,
+  PlayerAvailabilityEnum,
   PlayerStatusEnum,
   RoleEnum,
+  RugbyPositions,
+  SportEnum,
   TrainingSession,
   TrainingSessionStatusEnum,
 } from '@ltrc-campo/shared-api-model';
@@ -105,15 +108,39 @@ export class SessionViewerComponent implements OnInit {
   }
 
   get playerAttendance(): AttendanceEntry[] {
-    return (this.session?.attendance ?? []).filter((a) => !a.isStaff);
+    return (this.session?.attendance ?? []).filter((a) => !a.isStaff && !!a.status);
   }
 
   get staffAttendance(): AttendanceEntry[] {
-    return (this.session?.attendance ?? []).filter((a) => a.isStaff);
+    return (this.session?.attendance ?? []).filter((a) => a.isStaff && !!a.status);
   }
 
   get confirmedCount(): number {
     return (this.session?.attendance ?? []).filter((a) => a.confirmed).length;
+  }
+
+  get isRugby(): boolean {
+    return this.session?.sport === SportEnum.RUGBY;
+  }
+
+  get confirmedBreakdown(): { forwards: number; backs: number; injured: number; others: number } {
+    const confirmed = (this.session?.attendance ?? []).filter((a) => !a.isStaff && a.confirmed);
+    let forwards = 0, backs = 0, injured = 0, others = 0;
+    const forwardPositions = new Set<string>([
+      RugbyPositions.LOOSE_HEAD_PROP, RugbyPositions.HOOKER, RugbyPositions.TIGHT_HEAD_PROP,
+      RugbyPositions.LEFT_SECOND_ROW, RugbyPositions.RIGHT_SECOND_ROW,
+      RugbyPositions.BLINDSIDE_FLANKER, RugbyPositions.OPEN_SIDE_FLANKER, RugbyPositions.NUMBER_8,
+    ]);
+    for (const entry of confirmed) {
+      const player = entry.player as any;
+      if (!player) { others++; continue; }
+      if (player.availability?.status === PlayerAvailabilityEnum.INJURED) { injured++; continue; }
+      const primaryPos = player.positions?.[0];
+      if (!primaryPos) { others++; continue; }
+      if (forwardPositions.has(primaryPos)) forwards++;
+      else backs++;
+    }
+    return { forwards, backs, injured, others };
   }
 
   get dayName(): string {

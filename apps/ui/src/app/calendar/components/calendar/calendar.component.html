@@ -58,6 +58,20 @@
             @if (event.location) {<span>· {{ event.location }}</span>}
           </div>
         </div>
+
+        @if (event.type === 'training') {
+          <button
+            *ltrcAllowedRoles="confirmRoles"
+            mat-button
+            class="confirm-btn"
+            [class.confirmed]="isConfirmed(event.id)"
+            [disabled]="confirmingId() === event.id"
+            (click)="toggleConfirm(event, $event)"
+          >
+            <mat-icon>{{ isConfirmed(event.id) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+            {{ isConfirmed(event.id) ? 'Voy' : 'Confirmar' }}
+          </button>
+        }
       </div>
       }
     </mat-card-content>
