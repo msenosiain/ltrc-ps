@@ -57,7 +57,7 @@
   <mat-card>
     <mat-card-title>Horarios de entrenamiento</mat-card-title>
     <div class="time-slots" formArrayName="timeSlots">
-      @for (slot of timeSlotsArray.controls; track $index; let i = $index) {
+      @for (slot of timeSlotsArray.controls; track slot; let i = $index) {
       <div class="time-slot-row" [formGroupName]="i">
         <mat-form-field appearance="outline" class="day-field">
           <mat-label>Día</mat-label>
