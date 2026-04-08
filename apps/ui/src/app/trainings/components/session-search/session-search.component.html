@@ -69,6 +69,16 @@
       }
     </mat-form-field>
 
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Ubicación</mat-label>
+      <input matInput formControlName="location" placeholder="Ej: Cancha principal" />
+      @if (searchForm.get('location')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('location')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="filter-field filter-field--date">
       <mat-label>Desde</mat-label>
       <input matInput [matDatepicker]="fromPicker" formControlName="fromDate" />

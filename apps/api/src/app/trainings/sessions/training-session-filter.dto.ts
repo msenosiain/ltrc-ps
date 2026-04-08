@@ -25,4 +25,8 @@ export class TrainingSessionFiltersDto {
   @IsOptional()
   @IsString()
   toDate?: string;
+
+  @IsOptional()
+  @IsString()
+  location?: string;
 }

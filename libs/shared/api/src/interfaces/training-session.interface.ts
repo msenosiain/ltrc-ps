@@ -32,6 +32,7 @@ export interface TrainingSessionFilters {
   status?: TrainingSessionStatusEnum;
   fromDate?: string;
   toDate?: string;
+  location?: string;
 }
 
 export interface UpcomingTraining {

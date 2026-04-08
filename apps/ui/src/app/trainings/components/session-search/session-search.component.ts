@@ -69,6 +69,7 @@ export class SessionSearchComponent implements OnInit {
     status: [undefined as TrainingSessionStatusEnum | undefined],
     fromDate: [null as Date | null],
     toDate: [null as Date | null],
+    location: [undefined as string | undefined],
   });
 
   ngOnInit(): void {

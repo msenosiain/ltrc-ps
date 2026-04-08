@@ -87,6 +87,7 @@ export class TrainingSessionsService {
     if (filters.sport) queryFilters['sport'] = filters.sport;
     if (filters.category) queryFilters['category'] = filters.category;
     if (filters.status) queryFilters['status'] = filters.status;
+    if (filters.location) queryFilters['location'] = { $regex: filters.location, $options: 'i' };
 
     if (filters.fromDate || filters.toDate) {
       const dateFilter: Record<string, string> = {};
