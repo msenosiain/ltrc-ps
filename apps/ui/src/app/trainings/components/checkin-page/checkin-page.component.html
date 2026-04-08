@@ -1,0 +1,50 @@
+<div class="checkin-page">
+  <mat-card class="checkin-card">
+
+    @switch (state()) {
+
+      @case ('confirming') {
+        <mat-card-content>
+          <mat-icon class="checkin-icon">qr_code_scanner</mat-icon>
+          <h2>Registrar asistencia</h2>
+          <p class="hint">Confirmá tu presencia en el entrenamiento de hoy.</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button color="primary" (click)="confirm()">
+            Confirmar asistencia
+          </button>
+        </mat-card-actions>
+      }
+
+      @case ('loading') {
+        <mat-card-content class="centered">
+          <mat-spinner diameter="48" />
+        </mat-card-content>
+      }
+
+      @case ('success') {
+        <mat-card-content>
+          <mat-icon class="checkin-icon success">check_circle</mat-icon>
+          <h2>¡Asistencia confirmada!</h2>
+          <p class="hint">Tu presencia fue registrada correctamente.</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-stroked-button (click)="goToDashboard()">Ir al inicio</button>
+        </mat-card-actions>
+      }
+
+      @case ('error') {
+        <mat-card-content>
+          <mat-icon class="checkin-icon error">error_outline</mat-icon>
+          <h2>No se pudo registrar</h2>
+          <p class="hint">{{ errorMessage() }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-stroked-button (click)="goToDashboard()">Ir al inicio</button>
+        </mat-card-actions>
+      }
+
+    }
+
+  </mat-card>
+</div>

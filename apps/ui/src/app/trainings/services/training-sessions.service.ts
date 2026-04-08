@@ -104,4 +104,17 @@ export class TrainingSessionsService {
   deleteSession(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  checkin(sessionId: string, token: string): Observable<{ message: string }> {
+    return this.httpClient.post<{ message: string }>(
+      `${this.apiUrl}/${sessionId}/checkin`,
+      { token }
+    );
+  }
+
+  getCheckinToken(sessionId: string): Observable<{ token: string; validFrom: string; validUntil: string }> {
+    return this.httpClient.get<{ token: string; validFrom: string; validUntil: string }>(
+      `${this.apiUrl}/${sessionId}/checkin-token`
+    );
+  }
 }

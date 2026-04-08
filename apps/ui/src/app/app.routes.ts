@@ -108,5 +108,13 @@ export const routes: Routes = [
     ],
   },
   // Fallback to dashboard for any unknown route
+  {
+    path: 'checkin/:sessionId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./trainings/components/checkin-page/checkin-page.component').then(
+        (m) => m.CheckinPageComponent
+      ),
+  },
   { path: '**', redirectTo: '/dashboard' },
 ];

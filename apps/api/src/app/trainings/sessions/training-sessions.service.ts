@@ -2,7 +2,10 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TrainingSessionEntity } from './schemas/training-session.entity';
@@ -64,7 +67,98 @@ export class TrainingSessionsService {
     private readonly userModel: Model<User>,
     @InjectModel(MatchEntity.name)
     private readonly matchModel: Model<MatchEntity>,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
+
+  private get checkinSecret(): string {
+    return (
+      this.configService.get<string>('AUTH_JWT_SECRET') ||
+      this.configService.get<string>('GOOGLE_AUTH_JWT_SECRET') ||
+      'super-secret-key'
+    );
+  }
+
+  /**
+   * Generates a short-lived QR token for check-in. Only staff can call this.
+   * Valid ±30 min from the session's scheduled start time.
+   */
+  async generateCheckinToken(sessionId: string): Promise<{ token: string; validFrom: string; validUntil: string }> {
+    const session = await this.sessionModel.findById(sessionId);
+    if (!session) throw new NotFoundException('Training session not found');
+
+    const sessionStart = new Date(`${session.date}T${session.startTime}:00-03:00`);
+    const validFrom = new Date(sessionStart.getTime() - 30 * 60 * 1000);
+    const validUntil = new Date(sessionStart.getTime() + 30 * 60 * 1000);
+
+    const token = this.jwtService.sign(
+      {
+        sub: sessionId,
+        type: 'checkin',
+        validFrom: validFrom.toISOString(),
+        validUntil: validUntil.toISOString(),
+      },
+      { secret: this.checkinSecret, expiresIn: '90m' }
+    );
+
+    return { token, validFrom: validFrom.toISOString(), validUntil: validUntil.toISOString() };
+  }
+
+  /**
+   * Player checks in via QR token. Marks status PRESENT and confirmed.
+   */
+  async checkin(sessionId: string, token: string, caller: User): Promise<void> {
+    let payload: { sub: string; type: string; validFrom: string; validUntil: string };
+    try {
+      payload = this.jwtService.verify(token, { secret: this.checkinSecret });
+    } catch {
+      throw new UnauthorizedException('Token inválido o expirado');
+    }
+
+    if (payload.type !== 'checkin' || payload.sub !== sessionId) {
+      throw new UnauthorizedException('Token inválido para esta sesión');
+    }
+
+    const now = new Date();
+    if (now < new Date(payload.validFrom)) {
+      throw new BadRequestException('El QR todavía no está activo');
+    }
+    if (now > new Date(payload.validUntil)) {
+      throw new BadRequestException('El QR expiró');
+    }
+
+    const session = await this.sessionModel.findById(sessionId);
+    if (!session) throw new NotFoundException('Training session not found');
+
+    const player = await this.playerModel.findOne({ userId: String(caller._id) }).exec();
+    if (!player) throw new BadRequestException('No se encontró un jugador vinculado a tu cuenta');
+
+    const existing = session.attendance.find(
+      (a) => !a.isStaff && a.player?.toString() === player._id.toString()
+    );
+
+    if (existing?.status === 'present' as any) {
+      throw new BadRequestException('Ya registraste tu asistencia para esta sesión');
+    }
+
+    const checkinAt = new Date();
+    if (existing) {
+      existing.status = 'present' as any;
+      existing.markedAt = checkinAt;
+      existing.markedBy = String(caller._id);
+    } else {
+      session.attendance.push({
+        player: player._id as any,
+        isStaff: false,
+        status: 'present' as any,
+        confirmed: false,
+        markedAt: checkinAt,
+        markedBy: String(caller._id),
+      } as any);
+    }
+
+    await session.save();
+  }
 
   async create(dto: CreateTrainingSessionDto, caller?: User) {
     const callerId = caller ? (caller as any)._id : undefined;

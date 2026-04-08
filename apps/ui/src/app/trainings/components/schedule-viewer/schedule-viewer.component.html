@@ -76,7 +76,7 @@
 
       <h3 class="section-title">Horarios</h3>
       <div class="time-slots-list">
-        @for (slot of schedule.timeSlots; track $index) {
+        @for (slot of sortedTimeSlots; track $index) {
         <div class="time-slot-item">
           <span class="day-name">{{ getDayLabel(slot.day) }}</span>
           <span class="time-range"

@@ -73,7 +73,7 @@ export class ScheduleListComponent implements AfterViewInit, OnDestroy {
     const s = this.savedState;
     const pageIndex = s?.pageIndex ?? 0;
     const pageSize = s?.pageSize ?? 25;
-    const sortBy = s?.sortBy || 'sport';
+    const sortBy = s?.sortBy || 'category';
     const sortOrder = s?.sortOrder || SortOrder.ASC;
 
     this.paginator.pageIndex = pageIndex;
