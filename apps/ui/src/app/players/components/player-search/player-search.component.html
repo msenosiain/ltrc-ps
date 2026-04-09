@@ -53,6 +53,16 @@
 
     <div class="filter-row-break"></div>
 
+    <mat-form-field appearance="outline" class="search-field search-field--desktop">
+      <mat-label>Apellido o Apodo</mat-label>
+      <input matInput placeholder="Ej: Perez o Pepe" formControlName="searchTerm" />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+
     @if (showBranchFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Rama</mat-label>

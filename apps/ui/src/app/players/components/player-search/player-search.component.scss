@@ -3,9 +3,7 @@
 }
 
 .search-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  display: none;
 }
 
 .search-field {
@@ -13,8 +11,11 @@
   min-width: 0;
 }
 
+.search-field--desktop {
+  width: 200px;
+}
+
 .filters-toggle {
-  display: none;
   flex-shrink: 0;
   margin-bottom: 20px;
 }
@@ -35,8 +36,14 @@
 }
 
 @media (max-width: 767px) {
-  .filters-toggle {
-    display: inline-flex;
+  .search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .search-field--desktop {
+    display: none;
   }
 
   .filters-row {

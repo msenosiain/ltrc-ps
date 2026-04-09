@@ -7,15 +7,6 @@
   </div>
 
   <div class="filters-row" [formGroup]="searchForm" [class.filters-row--open]="filtersExpanded">
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Temporada</mat-label>
-      <mat-select formControlName="season">
-        @for (year of seasonOptions; track year) {
-          <mat-option [value]="year">{{ year }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
     @if (showCategoryFilter) {
       <mat-form-field appearance="outline" class="filter-field">
         <mat-label>Categoría</mat-label>
@@ -27,6 +18,37 @@
         </mat-select>
       </mat-form-field>
     }
+
+    <div class="filter-row-break"></div>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--search">
+      <mat-label>Buscar por nombre o apodo</mat-label>
+      <input matInput formControlName="searchTerm" />
+      @if (searchForm.get('searchTerm')?.value) {
+        <button mat-icon-button matSuffix type="button" (click)="searchForm.get('searchTerm')!.setValue('')">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Posición</mat-label>
+      <mat-select formControlName="position">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (pos of positionOptions; track pos.id) {
+          <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Temporada</mat-label>
+      <mat-select formControlName="season">
+        @for (year of seasonOptions; track year) {
+          <mat-option [value]="year">{{ year }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
     @if (showBranchFilter) {
       <mat-form-field appearance="outline" class="filter-field">

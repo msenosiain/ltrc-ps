@@ -14,4 +14,6 @@ export type UserFormValue = {
 export type UserFilters = {
   searchTerm?: string;
   role?: RoleEnum;
+  sport?: SportEnum;
+  category?: CategoryEnum;
 };

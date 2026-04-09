@@ -22,30 +22,6 @@
     </div>
   </div>
 
-  @if (tabs.length > 0) {
-    <div class="tab-filters">
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Buscar por nombre o apodo</mat-label>
-        <input matInput [(ngModel)]="searchTerm" />
-        @if (searchTerm) {
-          <button matSuffix mat-icon-button (click)="searchTerm = ''">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Posición</mat-label>
-        <mat-select [(ngModel)]="positionFilter">
-          <mat-option [value]="undefined">Todas</mat-option>
-          @for (pos of positionOptions; track pos.id) {
-            <mat-option [value]="pos.id">{{ pos.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-  }
-
   <ltrc-branch-search [initialFilters]="savedState?.filters" (filtersChange)="onFiltersChange($event)" />
 
   @if ((loading$ | async) || importing) {

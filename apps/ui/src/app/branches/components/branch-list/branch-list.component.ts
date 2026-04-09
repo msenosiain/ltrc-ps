@@ -1,6 +1,5 @@
 import { Component, inject, OnDestroy } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,9 +8,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { BehaviorSubject, finalize } from 'rxjs';
 import {
@@ -31,11 +27,7 @@ import {
   getCategoryOptionsBySport,
 } from '../../../common/category-options';
 import { getBranchLabel } from '../../../common/branch-options';
-import {
-  getPositionLabel,
-  hockeyPositionOptions,
-  PositionOption,
-} from '../../../players/position-options';
+import { getPositionLabel } from '../../../players/position-options';
 import { AllowedRolesDirective } from '../../../auth/directives/allowed-roles.directive';
 import {
   ImportResultDialogComponent,
@@ -57,16 +49,12 @@ const ALL_BRANCHES = Object.values(HockeyBranchEnum);
   standalone: true,
   imports: [
     AsyncPipe,
-    FormsModule,
     MatProgressBarModule,
     MatIconModule,
     MatButtonModule,
     MatTableModule,
     MatTabsModule,
     MatSnackBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     MatSortModule,
     BranchSearchComponent,
     AllowedRolesDirective,
@@ -91,15 +79,11 @@ export class BranchListComponent implements OnDestroy {
     'idNumber',
     'birthDate',
   ];
-  readonly positionOptions: PositionOption[] = hockeyPositionOptions;
-
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
   importing = false;
   tabs: BranchTab[] = [];
-  searchTerm = '';
-  positionFilter: string | undefined;
   private currentSort: Sort = { active: '', direction: '' };
   private currentFilters: BranchSearchFilters = this.savedState?.filters ?? {
     season: new Date().getFullYear(),
@@ -113,8 +97,14 @@ export class BranchListComponent implements OnDestroy {
   }
 
   onFiltersChange(filters: BranchSearchFilters): void {
+    const needsReload =
+      filters.season !== this.currentFilters.season ||
+      filters.category !== this.currentFilters.category ||
+      filters.branch !== this.currentFilters.branch;
     this.currentFilters = filters;
-    this.load();
+    if (needsReload) {
+      this.load();
+    }
     this.saveState();
   }
 
@@ -129,8 +119,8 @@ export class BranchListComponent implements OnDestroy {
   getFilteredAssignments(tab: BranchTab): BranchAssignment[] {
     let result = tab.assignments;
 
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
+    if (this.currentFilters.searchTerm) {
+      const term = this.currentFilters.searchTerm.toLowerCase();
       result = result.filter((a) => {
         const player = a.player as any;
         if (!player) return false;
@@ -140,10 +130,11 @@ export class BranchListComponent implements OnDestroy {
       });
     }
 
-    if (this.positionFilter) {
+    if (this.currentFilters.position) {
+      const pos = this.currentFilters.position;
       result = result.filter((a) => {
         const player = a.player as any;
-        return player?.positions?.includes(this.positionFilter);
+        return player?.positions?.includes(pos);
       });
     }
 

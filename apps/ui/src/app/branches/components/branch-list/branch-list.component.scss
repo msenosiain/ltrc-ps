@@ -21,18 +21,6 @@
   font-weight: 500;
 }
 
-.tab-filters {
-  display: flex;
-  gap: 8px;
-  flex-wrap: nowrap;
-
-  .filter-field {
-    flex: 1;
-    min-width: 0;
-    max-width: 320px;
-  }
-}
-
 .tab-actions {
   display: flex;
   justify-content: flex-end;

@@ -12,6 +12,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { debounceTime } from 'rxjs';
 import {
@@ -28,17 +29,20 @@ import {
   getCategoryOptionsBySport,
 } from '../../../common/category-options';
 import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
+import { hockeyPositionOptions, PositionOption } from '../../../players/position-options';
 
 export interface BranchSearchFilters {
   season: number;
   category?: CategoryEnum;
   branch?: HockeyBranchEnum;
+  searchTerm?: string;
+  position?: string;
 }
 
 @Component({
   selector: 'ltrc-branch-search',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatIconModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule],
   templateUrl: './branch-search.component.html',
   styleUrl: './branch-search.component.scss',
 })
@@ -55,11 +59,14 @@ export class BranchSearchComponent implements OnInit {
   readonly seasonOptions = Array.from({ length: 5 }, (_, i) => this.currentYear - i);
   filteredBranchOptions: BranchOption[] = branchOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport(SportEnum.HOCKEY);
+  readonly positionOptions: PositionOption[] = hockeyPositionOptions;
 
   searchForm = this.fb.group({
     season: [this.currentYear],
     category: [undefined as CategoryEnum | undefined],
     branch: [undefined as HockeyBranchEnum | undefined],
+    searchTerm: [''],
+    position: [undefined as string | undefined],
   });
 
   filtersExpanded = false;
@@ -100,6 +107,8 @@ export class BranchSearchComponent implements OnInit {
       season: v.season ?? this.currentYear,
       category: v.category ?? undefined,
       branch: v.branch ?? undefined,
+      searchTerm: v.searchTerm ?? '',
+      position: v.position ?? undefined,
     });
   }
 }

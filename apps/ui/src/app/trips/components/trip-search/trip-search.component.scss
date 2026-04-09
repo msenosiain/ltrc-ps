@@ -3,18 +3,19 @@
 }
 
 .search-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  display: none;
 }
 
 .search-field {
   flex: 2;
   min-width: 0;
+
+  &--desktop {
+    width: 240px;
+  }
 }
 
 .filters-toggle {
-  display: none;
   flex-shrink: 0;
   margin-bottom: 20px;
 }
@@ -35,8 +36,14 @@
 }
 
 @media (max-width: 767px) {
-  .filters-toggle {
-    display: inline-flex;
+  .search-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .search-field--desktop {
+    display: none;
   }
 
   .filters-row {

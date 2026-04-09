@@ -35,6 +35,18 @@
 
     <div class="filter-row-break"></div>
 
+    <mat-form-field appearance="outline" class="search-field search-field--desktop">
+      <mat-label>Buscar</mat-label>
+      <input matInput formControlName="searchTerm" placeholder="Nombre o destino..." />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      } @else {
+      <mat-icon matSuffix>search</mat-icon>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Estado</mat-label>
       <mat-select formControlName="status">

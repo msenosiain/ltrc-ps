@@ -2,11 +2,7 @@
   <div class="search-row">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar</mat-label>
-      <input
-        matInput
-        formControlName="searchTerm"
-        placeholder="Apellido, nombre o email"
-      />
+      <input matInput formControlName="searchTerm" placeholder="Apellido, nombre o email" />
       @if (searchForm.get('searchTerm')?.value) {
       <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
         <mat-icon>close</mat-icon>
@@ -22,6 +18,54 @@
   </div>
 
   <div class="filters-row" [class.filters-row--open]="filtersExpanded">
+    @if (showSportFilter) {
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Deporte</mat-label>
+      <mat-select formControlName="sport" (selectionChange)="onSportChange()">
+        <mat-option [value]="undefined">Todos</mat-option>
+        @for (s of sportOptions; track s.id) {
+        <mat-option [value]="s.id">{{ s.label }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('sport')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('sport')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+    }
+
+    @if (showCategoryFilter) {
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Categoría</mat-label>
+      <mat-select formControlName="category">
+        <mat-option [value]="undefined">Todas</mat-option>
+        @for (cat of categoryOptions; track cat.id) {
+        <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
+        }
+      </mat-select>
+      @if (searchForm.get('category')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('category')">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+    }
+
+    <div class="filter-row-break"></div>
+
+    <mat-form-field appearance="outline" class="search-field search-field--desktop">
+      <mat-label>Buscar</mat-label>
+      <input matInput formControlName="searchTerm" placeholder="Apellido, nombre o email" />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearField('searchTerm')">
+        <mat-icon>close</mat-icon>
+      </button>
+      } @else {
+      <mat-icon matSuffix>search</mat-icon>
+      }
+    </mat-form-field>
+
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Rol</mat-label>
       <mat-select formControlName="role">

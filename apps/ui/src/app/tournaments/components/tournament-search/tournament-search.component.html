@@ -55,5 +55,17 @@
       </button>
       }
     </mat-form-field>
+
+    <div class="filter-row-break"></div>
+
+    <mat-form-field appearance="outline" class="search-field search-field--desktop">
+      <mat-label>Nombre o temporada</mat-label>
+      <input matInput placeholder="Ej: Copa o 2024" formControlName="searchTerm" />
+      @if (searchForm.get('searchTerm')?.value) {
+      <button mat-icon-button matSuffix type="button" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
   </div>
 </form>

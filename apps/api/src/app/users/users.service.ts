@@ -56,6 +56,14 @@ export class UsersService {
       queryFilters['roles'] = filters.role;
     }
 
+    if (filters.sport) {
+      queryFilters['sports'] = filters.sport;
+    }
+
+    if (filters.category) {
+      queryFilters['categories'] = filters.category;
+    }
+
     const sort: Record<string, 1 | -1> = {};
     if (sortBy) {
       sort[sortBy] = sortOrder === 'asc' ? 1 : -1;

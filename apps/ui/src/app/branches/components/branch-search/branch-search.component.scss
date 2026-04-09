@@ -19,8 +19,17 @@
   flex-wrap: wrap;
 }
 
+.filter-row-break {
+  width: 100%;
+  height: 0;
+}
+
 .filter-field {
   width: 200px;
+
+  &--search {
+    width: 240px;
+  }
 }
 
 @media (max-width: 767px) {
