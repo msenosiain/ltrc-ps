@@ -157,7 +157,7 @@ export class MatchesService {
       if (filters.tournament === '__none__') {
         queryFilters['tournament'] = null;
       } else {
-        queryFilters['tournament'] = filters.tournament;
+        queryFilters['tournament'] = new Types.ObjectId(filters.tournament);
       }
     }
 
@@ -199,7 +199,7 @@ export class MatchesService {
     }
 
     if (filters.playerId) {
-      queryFilters['squad.player'] = filters.playerId;
+      queryFilters['squad.player'] = new Types.ObjectId(filters.playerId);
     }
 
     // Server-side restriction: limit results to user's assigned scope
