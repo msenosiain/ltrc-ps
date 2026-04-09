@@ -167,25 +167,20 @@ export class MatchesService {
       if (isFriendlyFilter) {
         // Already filtered to tournament=null above; just restrict sport
         queryFilters['sport'] = filters.sport;
-      } else {
+      } else if (!filters.tournament) {
+        // No specific tournament selected: filter by sport across tournaments + friendly matches
         const tournamentIds = await this.tournamentModel
           .find({ sport: filters.sport })
           .distinct('_id')
           .exec();
-        if (filters.tournament) {
-          const matches = tournamentIds.some(
-            (id) => id.toString() === filters.tournament
-          );
-          if (!matches) {
-            return { items: [], total: 0, page, size };
-          }
-        } else {
-          queryFilters['$or'] = [
-            { tournament: { $in: tournamentIds } },
-            { tournament: { $exists: false }, sport: filters.sport },
-          ];
-        }
+        queryFilters['$or'] = [
+          { tournament: { $in: tournamentIds } },
+          { tournament: { $exists: false }, sport: filters.sport },
+        ];
       }
+      // When a specific tournament is already selected, skip sport cross-validation:
+      // the tournament filter already scopes results correctly regardless of whether
+      // the tournament document has the sport field populated.
     }
 
     if (filters.category) {
