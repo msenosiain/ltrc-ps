@@ -91,23 +91,23 @@
         </button>
       }
       @if (session.status === TrainingSessionStatusEnum.SCHEDULED) {
-        <button mat-menu-item (click)="changeStatus($event, session, TrainingSessionStatusEnum.COMPLETED)">
+        <button mat-menu-item (click)="changeStatus(session, TrainingSessionStatusEnum.COMPLETED)">
           <mat-icon>check_circle</mat-icon>
           Completar
         </button>
-        <button mat-menu-item (click)="changeStatus($event, session, TrainingSessionStatusEnum.CANCELLED)">
+        <button mat-menu-item (click)="changeStatus(session, TrainingSessionStatusEnum.CANCELLED)">
           <mat-icon>cancel</mat-icon>
           Cancelar
         </button>
       }
       @if (session.status === TrainingSessionStatusEnum.CANCELLED) {
-        <button mat-menu-item (click)="changeStatus($event, session, TrainingSessionStatusEnum.SCHEDULED)">
+        <button mat-menu-item (click)="changeStatus(session, TrainingSessionStatusEnum.SCHEDULED)">
           <mat-icon>restore</mat-icon>
           Reactivar
         </button>
       }
       @if (session.status === TrainingSessionStatusEnum.COMPLETED) {
-        <button mat-menu-item (click)="changeStatus($event, session, TrainingSessionStatusEnum.SCHEDULED)">
+        <button mat-menu-item (click)="changeStatus(session, TrainingSessionStatusEnum.SCHEDULED)">
           <mat-icon>undo</mat-icon>
           Reabrir
         </button>

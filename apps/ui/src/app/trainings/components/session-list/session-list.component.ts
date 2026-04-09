@@ -147,14 +147,15 @@ export class SessionListComponent implements AfterViewInit, OnDestroy {
     this.router.navigate(['/dashboard/trainings/sessions', id, 'attendance']);
   }
 
-  changeStatus(event: Event, session: TrainingSession, status: TrainingSessionStatusEnum): void {
-    event.stopPropagation();
+  changeStatus(session: TrainingSession, status: TrainingSessionStatusEnum): void {
+    const previous = session.status;
+    this.dataSource.patchStatus(session.id!, status);
     this.sessionsService.updateSession(session.id!, { status }).subscribe({
-      next: () => {
-        this.dataSource.setPage(this.paginator.pageIndex, this.paginator.pageSize);
-        this.snackBar.open('Estado actualizado', 'Cerrar', { duration: 3000 });
+      next: () => this.snackBar.open('Estado actualizado', '', { duration: 2500 }),
+      error: () => {
+        this.dataSource.patchStatus(session.id!, previous);
+        this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 4000 });
       },
-      error: () => this.snackBar.open('Error al actualizar el estado', 'Cerrar', { duration: 4000 }),
     });
   }
 

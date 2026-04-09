@@ -24,6 +24,18 @@ export class TrainingsSchedulerService implements OnModuleInit {
     await this.generateUpcomingSessions();
   }
 
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async autoCompletePastSessions() {
+    const today = new Date().toISOString().slice(0, 10);
+    const result = await this.sessionModel.updateMany(
+      { status: 'scheduled', date: { $lt: today } },
+      { $set: { status: 'completed' } }
+    );
+    if (result.modifiedCount > 0) {
+      this.logger.log(`Auto-completed ${result.modifiedCount} past training sessions`);
+    }
+  }
+
   @Cron(CronExpression.EVERY_DAY_AT_2AM)
   async generateUpcomingSessions() {
     this.logger.log('Generating upcoming training sessions...');

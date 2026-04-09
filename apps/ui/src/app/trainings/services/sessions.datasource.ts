@@ -11,6 +11,7 @@ import {
   SortOrder,
   TrainingSession,
   TrainingSessionFilters,
+  TrainingSessionStatusEnum,
 } from '@ltrc-campo/shared-api-model';
 import { TrainingSessionsService } from './training-sessions.service';
 
@@ -66,6 +67,13 @@ export class SessionsDataSource implements DataSource<TrainingSession> {
     this.pageIndex = pageIndex;
     this.pageSize = pageSize;
     this.load();
+  }
+
+  patchStatus(id: string, status: TrainingSessionStatusEnum): void {
+    const current = this.sessionsSubject.getValue();
+    this.sessionsSubject.next(
+      current.map((s) => (s.id === id ? { ...s, status } : s))
+    );
   }
 
   load(): void {
