@@ -357,6 +357,18 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.formSubmit.emit({ ...value, opponents: this.opponents });
   }
 
+  addOpponentOnBlur(): void {
+    // Small delay to let autocomplete selection fire first
+    setTimeout(() => {
+      const value = (this.opponentChipInputControl.value ?? '').trim();
+      if (value && !this.opponents.includes(value)) {
+        this.opponents = [...this.opponents, value];
+        this.opponentChipInputControl.setValue('');
+        this.updateCompetitive();
+      }
+    }, 150);
+  }
+
   addOpponentFromInput(event: MatChipInputEvent): void {
     if (this.justSelectedFromAc) {
       this.justSelectedFromAc = false;

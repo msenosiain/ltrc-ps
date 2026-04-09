@@ -147,6 +147,7 @@
             [formControl]="opponentChipInputControl"
             [matAutocomplete]="opponentAcChips"
             (matChipInputTokenEnd)="addOpponentFromInput($event)"
+            (blur)="addOpponentOnBlur()"
           />
         </mat-chip-grid>
         <mat-autocomplete #opponentAcChips="matAutocomplete"
