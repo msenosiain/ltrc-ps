@@ -217,7 +217,11 @@ export class MatchesService {
         if (!categories.length && player?.category) categories = [player.category as any];
       }
 
-      if (sports.length) {
+      // When a specific tournament is already selected, skip the sport $or restriction:
+      // the tournament was already validated via fieldOptions scope, so the filter is trusted.
+      const hasSpecificTournament =
+        queryFilters['tournament'] != null && queryFilters['tournament'] !== null;
+      if (sports.length && !hasSpecificTournament) {
         const sportTournamentIds = await this.tournamentModel
           .find({ sport: { $in: sports } })
           .distinct('_id')
