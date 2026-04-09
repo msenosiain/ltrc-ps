@@ -632,11 +632,13 @@ export class TrainingSessionsService {
       }
     >;
   }> {
+    const today = new Date().toISOString().slice(0, 10);
     const since = new Date();
     since.setDate(since.getDate() - 28);
+    const sinceStr = since.toISOString().slice(0, 10);
 
     const scopeFilter: Record<string, unknown> = {
-      date: { $lte: new Date(), $gte: since },
+      date: { $lte: today, $gte: sinceStr },
     };
     if (caller && !caller.roles?.includes(RoleEnum.ADMIN)) {
       const sports = caller.sports ?? [];
