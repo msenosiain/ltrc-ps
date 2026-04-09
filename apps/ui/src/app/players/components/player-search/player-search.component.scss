@@ -22,12 +22,17 @@
 .filters-row {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+}
+
+.filter-row-break {
+  width: 100%;
+  height: 0;
 }
 
 .filter-field {
   flex: 1;
-  min-width: 0;
+  min-width: 160px;
 }
 
 @media (max-width: 767px) {

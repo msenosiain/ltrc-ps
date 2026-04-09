@@ -16,6 +16,11 @@
   width: 200px;
 }
 
+.filter-row-break {
+  width: 100%;
+  height: 0;
+}
+
 @media (max-width: 767px) {
   .search-row {
     display: flex;

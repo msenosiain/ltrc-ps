@@ -17,17 +17,13 @@
         }
       </mat-select>
       @if (searchForm.get('sport')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('sport')"
-      >
+      <button mat-icon-button matSuffix type="button" (click)="clearField('sport')">
         <mat-icon>close</mat-icon>
       </button>
       }
     </mat-form-field>
-    } @if (showCategoryFilter) {
+    }
+    @if (showCategoryFilter) {
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Categoría</mat-label>
       <mat-select formControlName="category">
@@ -37,17 +33,14 @@
         }
       </mat-select>
       @if (searchForm.get('category')?.value) {
-      <button
-        mat-icon-button
-        matSuffix
-        type="button"
-        (click)="clearField('category')"
-      >
+      <button mat-icon-button matSuffix type="button" (click)="clearField('category')">
         <mat-icon>close</mat-icon>
       </button>
       }
     </mat-form-field>
     }
+
+    <div class="filter-row-break"></div>
 
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Estado</mat-label>
