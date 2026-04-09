@@ -21,7 +21,7 @@
 
 .filters-row {
   display: flex;
-  gap: 8px;
+s  gap: 12px;
   flex-wrap: wrap;
 }
 
@@ -31,8 +31,7 @@
 }
 
 .filter-field {
-  flex: 1;
-  min-width: 160px;
+  width: 200px;
 }
 
 @media (max-width: 767px) {
@@ -51,6 +50,7 @@
   }
 
   .filter-field {
-    flex: 1 1 calc(50% - 4px);
+    flex: 1 1 calc(50% - 6px);
+    width: auto;
   }
 }
