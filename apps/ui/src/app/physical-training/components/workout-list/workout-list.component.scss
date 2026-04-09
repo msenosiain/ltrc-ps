@@ -27,14 +27,13 @@
     margin-bottom: 1rem;
   }
 
-  &__filter-field {
-    flex: 1;
-    min-width: 140px;
+  &__filter-break {
+    width: 100%;
+    height: 0;
+  }
 
-    &--player {
-      min-width: 200px;
-      flex: 2;
-    }
+  &__filter-field {
+    width: 200px;
   }
 
   &__table {

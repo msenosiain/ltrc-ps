@@ -21,13 +21,12 @@
 
 .filters-row {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .filter-field {
-  flex: 1;
-  min-width: 0;
+  width: 200px;
 }
 
 @media (max-width: 767px) {

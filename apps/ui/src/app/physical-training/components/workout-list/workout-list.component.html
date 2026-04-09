@@ -43,6 +43,8 @@
       </mat-select>
     </mat-form-field>
 
+    <div class="workout-list__filter-break"></div>
+
     <mat-form-field appearance="outline" class="workout-list__filter-field">
       <mat-label>Estado</mat-label>
       <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
