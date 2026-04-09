@@ -22,8 +22,13 @@
   align-items: flex-start;
 }
 
+.filter-row-break {
+  width: 100%;
+  height: 0;
+}
+
 .filter-field {
-  width: 180px;
+  width: 200px;
 }
 
 .search-btn--desktop {
