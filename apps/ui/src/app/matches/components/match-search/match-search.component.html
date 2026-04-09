@@ -128,5 +128,31 @@
       </button>
       }
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--date">
+      <mat-label>Desde</mat-label>
+      <input matInput [matDatepicker]="fromPicker" formControlName="fromDate" />
+      @if (searchForm.get('fromDate')?.value) {
+        <button mat-icon-button matIconSuffix type="button" (click)="clearField('fromDate')">
+          <mat-icon>close</mat-icon>
+        </button>
+      } @else {
+        <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+      }
+      <mat-datepicker #fromPicker />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--date">
+      <mat-label>Hasta</mat-label>
+      <input matInput [matDatepicker]="toPicker" formControlName="toDate" />
+      @if (searchForm.get('toDate')?.value) {
+        <button mat-icon-button matIconSuffix type="button" (click)="clearField('toDate')">
+          <mat-icon>close</mat-icon>
+        </button>
+      } @else {
+        <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+      }
+      <mat-datepicker #toPicker />
+    </mat-form-field>
   </div>
 </form>

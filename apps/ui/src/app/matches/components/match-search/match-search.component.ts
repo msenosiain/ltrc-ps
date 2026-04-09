@@ -14,8 +14,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { format } from 'date-fns';
 import {
   CategoryEnum,
   MatchStatusEnum,
@@ -43,6 +45,7 @@ import { SportOption } from '../../../common/sport-options';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
+    MatDatepickerModule,
     MatButtonModule,
     MatIconModule,
   ],
@@ -81,11 +84,18 @@ export class MatchSearchComponent implements OnInit {
     division: [undefined as string | undefined],
     opponent: [undefined as string | undefined],
     tournament: [undefined as string | undefined],
+    fromDate: [null as Date | null],
+    toDate: [null as Date | null],
   });
 
   ngOnInit(): void {
     if (this.initialFilters) {
-      this.searchForm.patchValue(this.initialFilters, { emitEvent: false });
+      const { fromDate, toDate, ...rest } = this.initialFilters as MatchFilters;
+      this.searchForm.patchValue({
+        ...rest,
+        fromDate: fromDate ? new Date(fromDate + 'T12:00:00Z') : null,
+        toDate: toDate ? new Date(toDate + 'T12:00:00Z') : null,
+      }, { emitEvent: false });
     }
 
     forkJoin({
@@ -152,7 +162,8 @@ export class MatchSearchComponent implements OnInit {
   }
 
   clearField(field: string): void {
-    this.searchForm.get(field)?.setValue(undefined);
+    const isDate = field === 'fromDate' || field === 'toDate';
+    this.searchForm.get(field)?.setValue(isDate ? null : undefined);
   }
 
   private applySportFilter(sport: SportEnum | undefined | null): void {
@@ -168,8 +179,12 @@ export class MatchSearchComponent implements OnInit {
   }
 
   private emitFilters(): void {
-    this.filtersChange.emit(
-      nullToUndefined(this.searchForm.value) as MatchFilters
-    );
+    const v = this.searchForm.value;
+    const filters: MatchFilters = {
+      ...(nullToUndefined(v) as MatchFilters),
+      fromDate: v.fromDate ? format(v.fromDate, 'yyyy-MM-dd') : undefined,
+      toDate: v.toDate ? format(v.toDate, 'yyyy-MM-dd') : undefined,
+    };
+    this.filtersChange.emit(filters);
   }
 }
