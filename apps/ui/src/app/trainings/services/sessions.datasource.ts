@@ -72,7 +72,7 @@ export class SessionsDataSource implements DataSource<TrainingSession> {
   patchStatus(id: string, status: TrainingSessionStatusEnum): void {
     const current = this.sessionsSubject.getValue();
     this.sessionsSubject.next(
-      current.map((s) => (s.id === id ? { ...s, status } : s))
+      current.map((s) => (s.id === id ? { ...s, status } : s)) as TrainingSession[]
     );
   }
 
