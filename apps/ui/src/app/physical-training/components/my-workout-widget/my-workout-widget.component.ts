@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -29,15 +29,15 @@ export class MyWorkoutWidgetComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   workouts: Workout[] = [];
-  loading = true;
+  loading = signal(true);
 
   ngOnInit(): void {
     this.workoutsService
       .getMyWorkouts()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (list) => { this.workouts = list; this.loading = false; },
-        error: () => { this.loading = false; },
+        next: (list) => { this.workouts = list; this.loading.set(false); },
+        error: () => { this.loading.set(false); },
       });
   }
 

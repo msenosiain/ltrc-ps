@@ -67,11 +67,11 @@
     </div>
   </form>
 
-  @if (loading) {
+  @if (loading()) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && searched && evaluations.length === 0) {
+  @if (!loading() && searched && evaluations.length === 0) {
     <p class="empty-state">No hay evaluaciones para el período y categoría seleccionados.</p>
   }
 

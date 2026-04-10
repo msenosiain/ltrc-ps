@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
   <ltrc-form-skeleton [rows]="8" />
   } @else {
   <ltrc-trip-form

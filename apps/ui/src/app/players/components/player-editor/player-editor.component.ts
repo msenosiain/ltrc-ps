@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,18 +51,18 @@ export class PlayerEditorComponent implements OnInit {
   player?: Player;
   editing = false;
   submitting = false;
-  loading = false;
+  loading = signal(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
-      this.loading = true;
+      this.loading.set(true);
       this.playersService
         .getPlayerById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: (player) => { this.player = player; this.loading = false; }, error: () => { this.loading = false; } });
+        .subscribe({ next: (player) => { this.player = player; this.loading.set(false); }, error: () => { this.loading.set(false); } });
     }
   }
 

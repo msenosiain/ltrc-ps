@@ -1,4 +1,4 @@
-<app-widget-shell icon="calendar_month" title="Calendario" [loading]="loading" height="460px">
+<app-widget-shell icon="calendar_month" title="Calendario" [loading]="loading()" height="460px">
   <ng-container widget-actions>
     @if (showFilterButton) {
       <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
@@ -9,7 +9,7 @@
     <button class="widget-link" (click)="goToCalendar()">Ver todo</button>
   </ng-container>
 
-  @if (!loading) {
+  @if (!loading()) {
     @if (days.length === 0) {
       <p class="empty">Sin actividad esta semana.</p>
     } @else {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -92,7 +92,7 @@ export class SessionEvaluateComponent implements OnInit {
 
   session?: TrainingSession;
   players: PlayerEvalState[] = [];
-  loading = false;
+  loading = signal(false);
   period = '';
 
   readonly EvaluationLevelEnum = EvaluationLevelEnum;
@@ -106,7 +106,7 @@ export class SessionEvaluateComponent implements OnInit {
     }
 
     // period = YYYY-MM from session date
-    this.loading = true;
+    this.loading.set(true);
     this.sessionsService
       .getSessionById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -115,9 +115,9 @@ export class SessionEvaluateComponent implements OnInit {
           this.session = session;
           this.period = (session.date as unknown as string).substring(0, 7);
           this.players = this.buildPlayerStates(session);
-          this.loading = false;
+          this.loading.set(false);
         },
-        error: () => { this.loading = false; this.goBack(); },
+        error: () => { this.loading.set(false); this.goBack(); },
       });
   }
 

@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { TrainingSessionsService } from './training-sessions.service';
 import { TrainingSessionEntity } from './schemas/training-session.entity';
 import { TrainingScheduleEntity } from '../schedules/schemas/training-schedule.entity';
@@ -50,6 +52,8 @@ describe('TrainingSessionsService', () => {
         { provide: getModelToken(PlayerEntity.name), useValue: mockPlayerModel },
         { provide: getModelToken(User.name), useValue: mockUserModel },
         { provide: getModelToken(MatchEntity.name), useValue: mockMatchModel },
+        { provide: JwtService, useValue: { sign: jest.fn(), verify: jest.fn() } },
+        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('secret') } },
       ],
     }).compile();
 

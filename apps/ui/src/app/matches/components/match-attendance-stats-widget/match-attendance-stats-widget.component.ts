@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -70,7 +70,7 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
     return !!(this.selected.sport || this.selected.category);
   }
 
-  loading = true;
+  loading = signal(true);
   showChart = false;
   blocks: BlockAttStat[] = [];
 
@@ -127,7 +127,7 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
   }
 
   private loadStats(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.matchesService
       .getAttendanceStats({ sport: this.selected.sport, category: this.selected.category })
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -135,9 +135,9 @@ export class MatchAttendanceStatsWidgetComponent implements OnInit {
         next: (stats) => {
           this.blocks = this.buildBlocks(stats.byCategory);
           this.buildChartData();
-          this.loading = false;
+          this.loading.set(false);
         },
-        error: () => { this.loading = false; },
+        error: () => { this.loading.set(false); },
       });
   }
 

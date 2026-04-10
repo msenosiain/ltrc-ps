@@ -1,6 +1,6 @@
 <div class="activate-container">
   <mat-card class="activate-card">
-    @if (isLoading) {
+    @if (isLoading()) {
     <mat-progress-bar mode="indeterminate" />
     }
     <mat-card-title>Configurar contraseña</mat-card-title>
@@ -53,7 +53,7 @@
           mat-flat-button
           color="primary"
           type="submit"
-          [disabled]="isLoading || activateForm.invalid"
+          [disabled]="isLoading() || activateForm.invalid"
         >
           <mat-icon>lock_open</mat-icon>
           Activar cuenta

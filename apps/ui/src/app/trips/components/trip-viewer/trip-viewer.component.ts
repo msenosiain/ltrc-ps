@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -93,7 +94,7 @@ export class TripViewerComponent implements OnInit {
   readonly participantStatusOptions = participantStatusOptions;
 
   trip?: Trip;
-  loading = false;
+  loading = signal(false);
 
   readonly participantColumns = [
     'name',
@@ -139,14 +140,14 @@ export class TripViewerComponent implements OnInit {
   }
 
   private loadTrip(id: string): void {
-    this.loading = true;
+    this.loading.set(true);
     this.tripsService
       .getTripById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (trip) => {
           this.trip = trip;
-          this.loading = false;
+          this.loading.set(false);
           // Inicializar costo por defecto en form
           this.addParticipantForm.patchValue({ costAssigned: trip.costPerPerson });
         },

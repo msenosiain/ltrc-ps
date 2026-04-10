@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -111,7 +111,7 @@ export class PlayerStatsWidgetComponent implements OnInit {
     return !!(this.selected.sport || this.selected.category);
   }
 
-  loading = true;
+  loading = signal(true);
   blocks: BlockStat[] = [];
   total = 0;
 
@@ -147,7 +147,7 @@ export class PlayerStatsWidgetComponent implements OnInit {
   }
 
   private loadStats(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.playersService
       .getStats()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -169,10 +169,10 @@ export class PlayerStatsWidgetComponent implements OnInit {
             effectiveCategories,
             effectiveSport
           );
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }

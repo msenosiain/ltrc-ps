@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -43,18 +44,18 @@ export class TripEditorComponent implements OnInit {
   trip?: Trip;
   editing = false;
   submitting = false;
-  loading = false;
+  loading = signal(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
-      this.loading = true;
+      this.loading.set(true);
       this.tripsService
         .getTripById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: (trip) => { this.trip = trip; this.loading = false; }, error: () => { this.loading = false; } });
+        .subscribe({ next: (trip) => { this.trip = trip; this.loading.set(false); }, error: () => { this.loading.set(false); } });
     }
   }
 

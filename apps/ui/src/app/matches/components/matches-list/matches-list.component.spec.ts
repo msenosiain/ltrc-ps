@@ -6,6 +6,7 @@ import { TournamentsService } from '../../../tournaments/services/tournaments.se
 import { of, Subject } from 'rxjs';
 import { Match, MatchStatusEnum } from '@ltrc-campo/shared-api-model';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 describe('MatchesListComponent', () => {
   let component: MatchesListComponent;
@@ -33,6 +34,7 @@ describe('MatchesListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [MatchesListComponent, RouterModule.forRoot([]), NoopAnimationsModule],
       providers: [
+        provideNativeDateAdapter(),
         { provide: MatchesService, useValue: matchesServiceMock },
         { provide: TournamentsService, useValue: tournamentsServiceMock },
       ],

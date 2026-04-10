@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -30,12 +30,12 @@ export class ForgotPasswordComponent {
   private readonly snackBar = inject(MatSnackBar);
 
   emailControl = new FormControl('', [Validators.required, Validators.email]);
-  isLoading = false;
+  isLoading = signal(false);
   errorMessage = '';
 
   onSubmit(): void {
     if (this.emailControl.invalid) return;
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.errorMessage = '';
 
     this.authService.forgotPassword(this.emailControl.value!).subscribe({
@@ -44,7 +44,7 @@ export class ForgotPasswordComponent {
         this.router.navigate(['/login']);
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorMessage = 'Error al enviar el email. Intentá de nuevo.';
       },
     });

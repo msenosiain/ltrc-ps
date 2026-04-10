@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,7 +45,7 @@ export class ScheduleEditorComponent implements OnInit {
   schedule?: TrainingSchedule;
   editing = false;
   submitting = false;
-  loading = false;
+  loading = signal(false);
   clearCategory = false;
 
   ngOnInit(): void {
@@ -53,11 +54,11 @@ export class ScheduleEditorComponent implements OnInit {
     this.clearCategory = this.route.snapshot.queryParamMap.get('newDuplicate') === '1';
 
     if (id) {
-      this.loading = true;
+      this.loading.set(true);
       this.schedulesService
         .getScheduleById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: (schedule) => { this.schedule = schedule; this.loading = false; }, error: () => { this.loading = false; } });
+        .subscribe({ next: (schedule) => { this.schedule = schedule; this.loading.set(false); }, error: () => { this.loading.set(false); } });
     }
   }
 

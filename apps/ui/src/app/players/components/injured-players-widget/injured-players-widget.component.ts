@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,7 +41,7 @@ export class InjuredPlayersWidgetComponent implements OnInit {
     return !!(this.selected.sport || this.selected.category);
   }
 
-  loading = true;
+  loading = signal(true);
   players: Player[] = [];
 
   ngOnInit(): void {
@@ -68,7 +68,7 @@ export class InjuredPlayersWidgetComponent implements OnInit {
   }
 
   private load(): void {
-    this.loading = true;
+    this.loading.set(true);
     const filters: Record<string, unknown> = {
       availability: PlayerAvailabilityEnum.INJURED,
       status: PlayerStatusEnum.ACTIVE,
@@ -84,11 +84,11 @@ export class InjuredPlayersWidgetComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.players = res.items;
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
           this.players = [];
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }

@@ -10,11 +10,11 @@
     </div>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && evaluations.length === 0) {
+  @if (!loading() && evaluations.length === 0) {
     <mat-card>
       <mat-card-content>
         <p class="empty-state">No hay evaluaciones registradas.</p>

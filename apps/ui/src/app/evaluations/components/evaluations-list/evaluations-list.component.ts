@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -71,7 +71,7 @@ export class EvaluationsListComponent implements OnInit {
   });
 
   evaluations: PlayerEvaluation[] = [];
-  loading = false;
+  loading = signal(false);
   searched = false;
   filtersExpanded = false;
 
@@ -129,13 +129,13 @@ export class EvaluationsListComponent implements OnInit {
   search(): void {
     const { sport, category, period } = this.filterForm.value;
     if (!category || !sport || !period) return;
-    this.loading = true;
+    this.loading.set(true);
     this.evaluationsService
       .getByCategory(category, sport, period)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => { this.evaluations = data; this.loading = false; this.searched = true; },
-        error: () => { this.loading = false; },
+        next: (data) => { this.evaluations = data; this.loading.set(false); this.searched = true; },
+        error: () => { this.loading.set(false); },
       });
   }
 

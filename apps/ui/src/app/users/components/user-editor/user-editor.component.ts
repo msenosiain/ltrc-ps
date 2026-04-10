@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,18 +49,18 @@ export class UserEditorComponent implements OnInit {
   user?: User;
   editing = false;
   submitting = false;
-  loading = false;
+  loading = signal(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.editing = !!id;
 
     if (id) {
-      this.loading = true;
+      this.loading.set(true);
       this.usersService
         .getUserById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: (user) => { this.user = user; this.loading = false; }, error: () => { this.loading = false; } });
+        .subscribe({ next: (user) => { this.user = user; this.loading.set(false); }, error: () => { this.loading.set(false); } });
     }
   }
 

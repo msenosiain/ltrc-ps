@@ -8,11 +8,11 @@
     </div>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && players.length === 0) {
+  @if (!loading() && players.length === 0) {
     <mat-card>
       <mat-card-content>
         <p class="empty-state">No hay jugadores presentes para evaluar.</p>

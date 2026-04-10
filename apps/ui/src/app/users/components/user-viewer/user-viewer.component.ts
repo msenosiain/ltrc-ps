@@ -4,6 +4,7 @@ import {
   HostListener,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -50,7 +51,7 @@ export class UserViewerComponent implements OnInit {
   private static readonly SPORT_ROLES: RoleEnum[] = [RoleEnum.COACH, RoleEnum.MANAGER, RoleEnum.TRAINER];
 
   user?: User;
-  loading = false;
+  loading = signal(false);
   linkedPlayer?: Player | null;
   readonly RoleEnum = RoleEnum;
 
@@ -65,17 +66,17 @@ export class UserViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.usersService
       .getUserById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
           this.user = user;
-          this.loading = false;
+          this.loading.set(false);
           this.loadLinkedPlayer(id);
         },
-        error: () => { this.loading = false; this.router.navigate(['/dashboard/users']); },
+        error: () => { this.loading.set(false); this.router.navigate(['/dashboard/users']); },
       });
   }
 

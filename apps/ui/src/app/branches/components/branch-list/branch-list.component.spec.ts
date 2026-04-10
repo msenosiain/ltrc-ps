@@ -190,7 +190,7 @@ describe('BranchListComponent', () => {
         makeAssignment('Maria Lopez'),
         makeAssignment('Ana Garcia'),
       ]);
-      component.searchTerm = 'maria';
+      component.onFiltersChange({ season: new Date().getFullYear(), searchTerm: 'maria' });
 
       const result = component.getFilteredAssignments(tab);
       expect(result).toHaveLength(1);
@@ -202,7 +202,7 @@ describe('BranchListComponent', () => {
         makeAssignment('Maria Lopez', undefined, 'Maru'),
         makeAssignment('Ana Garcia', undefined, 'Ani'),
       ]);
-      component.searchTerm = 'ani';
+      component.onFiltersChange({ season: new Date().getFullYear(), searchTerm: 'ani' });
 
       const result = component.getFilteredAssignments(tab);
       expect(result).toHaveLength(1);
@@ -214,7 +214,7 @@ describe('BranchListComponent', () => {
         makeAssignment('Player A', HockeyPositions.GOALKEEPER),
         makeAssignment('Player B', HockeyPositions.DEFENDER_LEFT),
       ]);
-      component.positionFilter = HockeyPositions.GOALKEEPER;
+      component.onFiltersChange({ season: new Date().getFullYear(), position: HockeyPositions.GOALKEEPER });
 
       const result = component.getFilteredAssignments(tab);
       expect(result).toHaveLength(1);
@@ -227,8 +227,7 @@ describe('BranchListComponent', () => {
         makeAssignment('Ana Garcia', HockeyPositions.GOALKEEPER),
         makeAssignment('Lucia Perez', HockeyPositions.DEFENDER_LEFT),
       ]);
-      component.searchTerm = 'maria';
-      component.positionFilter = HockeyPositions.GOALKEEPER;
+      component.onFiltersChange({ season: new Date().getFullYear(), searchTerm: 'maria', position: HockeyPositions.GOALKEEPER });
 
       const result = component.getFilteredAssignments(tab);
       expect(result).toHaveLength(1);

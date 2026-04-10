@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -54,7 +54,7 @@ export class PaymentLinksPanelComponent implements OnInit {
 
   links: IPaymentLink[] = [];
   payments: IPayment[] = [];
-  loading = true;
+  loading = signal(true);
 
   readonly linkColumns = ['concept', 'amount', 'type', 'expires', 'status', 'actions'];
   readonly paymentColumns = ['player', 'concept', 'method', 'amount', 'date', 'status', 'actions'];
@@ -69,16 +69,16 @@ export class PaymentLinksPanelComponent implements OnInit {
   }
 
   loadAll() {
-    this.loading = true;
+    this.loading.set(true);
     this.paymentsService.getLinks(this.entityType, this.entityId).subscribe({
       next: (links) => (this.links = links),
     });
     this.paymentsService.getPayments(this.entityType, this.entityId).subscribe({
       next: (payments) => {
         this.payments = payments;
-        this.loading = false;
+        this.loading.set(false);
       },
-      error: () => (this.loading = false),
+      error: () => (this.loading.set(false)),
     });
   }
 

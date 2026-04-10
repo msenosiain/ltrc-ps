@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -81,7 +81,7 @@ export class WorkoutBlocksEditorComponent implements OnInit {
   blocks: BlockDraft[] = [];
   allExercises: Exercise[] = [];
 
-  loading = true;
+  loading = signal(true);
   saving = false;
 
   private saveSubject = new Subject<void>();
@@ -109,10 +109,10 @@ export class WorkoutBlocksEditorComponent implements OnInit {
           this.blocks = (workout.blocks ?? [])
             .sort((a, b) => a.order - b.order)
             .map((b) => this.blockToModel(b));
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
-          this.loading = false;
+          this.loading.set(false);
           this.router.navigate(['/dashboard/physical/workouts']);
         },
       });

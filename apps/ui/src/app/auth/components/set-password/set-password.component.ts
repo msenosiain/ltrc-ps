@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -47,7 +47,7 @@ export class SetPasswordComponent {
   private readonly currentUser = toSignal(this.authService.user$);
   readonly email = computed(() => this.currentUser()?.email ?? '');
 
-  isLoading = false;
+  isLoading = signal(false);
   errorMessage = '';
 
   form = new FormGroup(
@@ -63,7 +63,7 @@ export class SetPasswordComponent {
 
   onSubmit(): void {
     if (this.form.invalid) return;
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.errorMessage = '';
     const { password } = this.form.value;
 
@@ -72,7 +72,7 @@ export class SetPasswordComponent {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         if (err.status === 400) {
           this.errorMessage = 'Tu cuenta ya tiene una contraseña configurada.';
         } else {

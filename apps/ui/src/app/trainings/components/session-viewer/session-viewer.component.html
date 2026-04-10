@@ -1,5 +1,5 @@
 <div class="session-viewer">
-  @if (loading) {
+  @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
   }
   @if (session) {

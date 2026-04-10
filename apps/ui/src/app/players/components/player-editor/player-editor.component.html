@@ -39,7 +39,7 @@
   <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (loading) {
+  @if (loading()) {
   <ltrc-form-skeleton [rows]="8" />
   } @else {
   <ltrc-player-form

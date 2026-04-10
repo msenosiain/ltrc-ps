@@ -65,7 +65,7 @@ export class CalendarWeekWidgetComponent implements OnInit {
   readonly SportEnum = SportEnum;
   readonly confirmRoles = [RoleEnum.PLAYER, RoleEnum.COACH, RoleEnum.TRAINER, RoleEnum.MANAGER];
 
-  loading = true;
+  loading = signal(true);
   days: DayGroup[] = [];
   confirmedIds = signal(new Set<string>());
   confirmingId = signal<string | null>(null);
@@ -113,7 +113,7 @@ export class CalendarWeekWidgetComponent implements OnInit {
 
   private load(): void {
     const { weekStart, weekEnd } = getWeekBounds();
-    this.loading = true;
+    this.loading.set(true);
     this.calendarService
       .getEvents(toDateStr(weekStart), toDateStr(weekEnd), this.selected.sport, this.selected.category)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -123,11 +123,11 @@ export class CalendarWeekWidgetComponent implements OnInit {
           this.confirmedIds.set(new Set(
             events.filter((e) => e.type === 'training' && e.userConfirmed).map((e) => e.id)
           ));
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
           this.days = [];
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }

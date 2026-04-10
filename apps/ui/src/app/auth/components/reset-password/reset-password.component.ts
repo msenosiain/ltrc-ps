@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -41,7 +41,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   token = '';
-  isLoading = false;
+  isLoading = signal(false);
   errorMessage = '';
 
   form = new FormGroup(
@@ -61,16 +61,16 @@ export class ResetPasswordComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) return;
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.errorMessage = '';
 
     this.authService.resetPassword(this.token, this.form.value.password!).subscribe({
       next: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorMessage =
           err.status === 400
             ? 'El enlace es inválido o ya expiró. Solicitá uno nuevo.'

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -39,22 +39,22 @@ export class EvaluationSettingsComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  loading = false;
+  loading = signal(false);
   rows: CategorySettingsRow[] = [];
 
   ngOnInit(): void {
-    this.loading = true;
+    this.loading.set(true);
     this.evaluationsService
       .getAllSettings()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (settings) => {
           this.rows = this.buildRows(settings);
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
           this.rows = this.buildRows([]);
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }

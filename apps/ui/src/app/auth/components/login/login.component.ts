@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -40,12 +40,12 @@ export class LoginComponent {
     pass: new FormControl('', [Validators.required]),
   });
 
-  isLoading = false;
+  isLoading = signal(false);
   errorMessage = '';
 
   onSubmit() {
     if (this.loginForm.valid) {
-      this.isLoading = true;
+      this.isLoading.set(true);
       this.errorMessage = '';
       const { email, pass } = this.loginForm.value;
       this.authService.login(email!, pass!).subscribe({
@@ -54,7 +54,7 @@ export class LoginComponent {
           this.router.navigateByUrl(returnUrl ?? '/dashboard');
         },
         error: (err) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           if (
             err.status === 403 &&
             err.error?.code === 'ACCOUNT_PENDING_ACTIVATION'
@@ -72,7 +72,7 @@ export class LoginComponent {
   }
 
   loginWithGoogle() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.authService.loginWithGoogle();
   }
 }

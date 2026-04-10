@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TournamentsService } from '../../services/tournaments.service';
@@ -51,7 +52,7 @@ export class TournamentViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   tournament?: Tournament;
-  loading = false;
+  loading = signal(false);
   readonly RoleEnum = RoleEnum;
 
   getSportLabel(sport?: SportEnum): string {
@@ -92,13 +93,13 @@ export class TournamentViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.tournamentsService
       .getTournamentById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (tournament) => { this.tournament = tournament; this.loading = false; },
-        error: () => { this.loading = false; this.router.navigate(['/dashboard/tournaments']); },
+        next: (tournament) => { this.tournament = tournament; this.loading.set(false); },
+        error: () => { this.loading.set(false); this.router.navigate(['/dashboard/tournaments']); },
       });
   }
 

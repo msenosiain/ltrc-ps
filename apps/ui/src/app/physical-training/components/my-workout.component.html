@@ -6,18 +6,18 @@
     <h2 class="my-workout__title">Mi entrenamiento de hoy</h2>
   </div>
 
-  @if (loading) {
+  @if (loading()) {
     <mat-progress-bar mode="indeterminate" />
   }
 
-  @if (!loading && noWorkout && !activeLog) {
+  @if (!loading() && noWorkout && !activeLog) {
     <div class="my-workout__empty">
       <mat-icon class="my-workout__empty-icon">fitness_center</mat-icon>
       <p>No tenés una rutina asignada para hoy.</p>
     </div>
   }
 
-  @if (!loading && todayWorkout && !activeLog) {
+  @if (!loading() && todayWorkout && !activeLog) {
     <mat-card class="my-workout__card">
       <mat-card-header>
         <mat-card-title>{{ todayWorkout.name }}</mat-card-title>

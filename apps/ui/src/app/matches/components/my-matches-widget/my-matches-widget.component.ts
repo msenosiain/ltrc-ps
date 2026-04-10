@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { Match, MatchStatusEnum, SortOrder } from '@ltrc-campo/shared-api-model';
@@ -28,7 +28,7 @@ export class MyMatchesWidgetComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   grouped: GroupedMatches[] = [];
-  loading = true;
+  loading = signal(true);
 
   ngOnInit(): void {
     const today = new Date();
@@ -43,11 +43,11 @@ export class MyMatchesWidgetComponent implements OnInit {
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.grouped = this.groupByDate(res.items);
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
         this.grouped = [];
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }

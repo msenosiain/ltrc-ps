@@ -1,4 +1,4 @@
-<app-widget-shell icon="local_hospital" iconColor="#b71c1c" title="Lesionados" [loading]="loading" height="460px">
+<app-widget-shell icon="local_hospital" iconColor="#b71c1c" title="Lesionados" [loading]="loading()" height="460px">
   <ng-container widget-actions>
     @if (showFilterButton) {
       <button mat-stroked-button (click)="openFilters()" [class.active]="hasFilters">
@@ -9,7 +9,7 @@
     <button class="widget-link" (click)="goToPlayers()">Ver jugadores</button>
   </ng-container>
 
-  @if (!loading) {
+  @if (!loading()) {
     @if (players.length === 0) {
       <p class="empty">Sin lesionados actualmente.</p>
     } @else {

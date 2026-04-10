@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -55,8 +56,8 @@ export class TournamentEditorComponent implements OnInit {
   tournament?: Tournament;
   editing = false;
   submitting = false;
-  uploading = false;
-  loading = false;
+  uploading = signal(false);
+  loading = signal(false);
 
   /** Files queued for upload (used in create mode before tournament exists) */
   pendingFiles: File[] = [];
@@ -66,11 +67,11 @@ export class TournamentEditorComponent implements OnInit {
     this.editing = !!id;
 
     if (id) {
-      this.loading = true;
+      this.loading.set(true);
       this.tournamentsService
         .getTournamentById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({ next: (tournament) => { this.tournament = tournament; this.loading = false; }, error: () => { this.loading = false; } });
+        .subscribe({ next: (tournament) => { this.tournament = tournament; this.loading.set(false); }, error: () => { this.loading.set(false); } });
     }
   }
 
@@ -168,17 +169,17 @@ export class TournamentEditorComponent implements OnInit {
 
     if (this.editing && this.tournament?.id) {
       // Edit mode: upload immediately
-      this.uploading = true;
+      this.uploading.set(true);
       this.tournamentsService
         .uploadAttachment(this.tournament.id, file)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (tournament) => {
             this.tournament = tournament;
-            this.uploading = false;
+            this.uploading.set(false);
           },
           error: (err) => {
-            this.uploading = false;
+            this.uploading.set(false);
             this.snackBar.open(
               getErrorMessage(err, 'Error al subir archivo'),
               'Cerrar',

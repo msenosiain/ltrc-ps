@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatchesService } from '../../services/matches.service';
@@ -79,8 +80,8 @@ export class MatchViewerComponent implements OnInit {
   match?: Match;
   isCompetitive = false;
   isInfantiles = false;
-  loading = false;
-  uploadingAttachment = false;
+  loading = signal(false);
+  uploadingAttachment = signal(false);
   readonly MatchStatusEnum = MatchStatusEnum;
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
@@ -102,14 +103,14 @@ export class MatchViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.matchesService
       .getMatchById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (match) => {
           this.match = match;
-          this.loading = false;
+          this.loading.set(false);
           const tournament = match.tournament as Tournament | undefined;
           const sport = tournament?.sport ?? match.sport;
           if (match.category && sport) {
@@ -125,7 +126,7 @@ export class MatchViewerComponent implements OnInit {
               if (links.length > 0) this.showPaymentsPanel = true;
             });
         },
-        error: () => { this.loading = false; this.router.navigate(['/dashboard/matches']); },
+        error: () => { this.loading.set(false); this.router.navigate(['/dashboard/matches']); },
       });
   }
 
@@ -244,15 +245,15 @@ export class MatchViewerComponent implements OnInit {
     });
     ref.afterClosed().subscribe((result: UploadAttachmentResult | undefined) => {
       if (!result) return;
-      this.uploadingAttachment = true;
+      this.uploadingAttachment.set(true);
       this.matchesService.uploadAttachment(this.match!.id!, result.file!, result.name, result.visibility, result.targetPlayers).subscribe({
         next: (att) => {
           (this.match as any).attachments = [...(this.match!.attachments ?? []), att];
-          this.uploadingAttachment = false;
+          this.uploadingAttachment.set(false);
           this.snackBar.open('Archivo adjuntado', 'Cerrar', { duration: 3000 });
         },
         error: () => {
-          this.uploadingAttachment = false;
+          this.uploadingAttachment.set(false);
           this.snackBar.open('Error al subir el archivo', 'Cerrar', { duration: 4000 });
         },
       });

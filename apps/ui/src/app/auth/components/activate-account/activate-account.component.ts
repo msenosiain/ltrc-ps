@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -45,7 +45,7 @@ export class ActivateAccountComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   email = '';
-  isLoading = false;
+  isLoading = signal(false);
   errorMessage = '';
 
   activateForm = new FormGroup(
@@ -68,7 +68,7 @@ export class ActivateAccountComponent implements OnInit {
 
   onSubmit(): void {
     if (this.activateForm.invalid) return;
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.errorMessage = '';
     const { password } = this.activateForm.value;
 
@@ -77,7 +77,7 @@ export class ActivateAccountComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         if (err.status === 400) {
           this.errorMessage =
             'La cuenta ya fue activada. Ingresá con tu contraseña.';

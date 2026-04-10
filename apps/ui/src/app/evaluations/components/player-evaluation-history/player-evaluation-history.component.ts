@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -42,20 +42,20 @@ export class PlayerEvaluationHistoryComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   evaluations: PlayerEvaluation[] = [];
-  loading = false;
+  loading = signal(false);
   readonly skillLabels = SKILL_LABELS;
   readonly skills = Object.values(EvaluationSkillEnum);
 
   ngOnInit(): void {
     const playerId = this.route.snapshot.paramMap.get('playerId');
     if (!playerId) { this.goBack(); return; }
-    this.loading = true;
+    this.loading.set(true);
     this.evaluationsService
       .getByPlayer(playerId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => { this.evaluations = data; this.loading = false; },
-        error: () => { this.loading = false; },
+        next: (data) => { this.evaluations = data; this.loading.set(false); },
+        error: () => { this.loading.set(false); },
       });
   }
 

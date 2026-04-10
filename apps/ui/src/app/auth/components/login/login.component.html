@@ -1,6 +1,6 @@
 <div class="login-container">
   <mat-card class="login-card">
-    @if (isLoading) {
+    @if (isLoading()) {
     <div class="loading-overlay">
       <mat-spinner diameter="48"></mat-spinner>
     </div>
@@ -49,9 +49,9 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="loginForm.invalid || isLoading"
+          [disabled]="loginForm.invalid || isLoading()"
         >
-          {{ isLoading ? 'Cargando...' : 'Entrar' }}
+          {{ isLoading() ? 'Cargando...' : 'Entrar' }}
         </button>
 
         <a routerLink="/auth/forgot-password" class="forgot-password-link">¿Olvidaste tu contraseña?</a>
@@ -64,7 +64,7 @@
           mat-stroked-button
           type="button"
           (click)="loginWithGoogle()"
-          [disabled]="isLoading"
+          [disabled]="isLoading()"
           class="google-button"
         >
           <img

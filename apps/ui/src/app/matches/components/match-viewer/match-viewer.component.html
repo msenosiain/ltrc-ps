@@ -1,5 +1,5 @@
 <div class="match-viewer">
-  @if (loading) {
+  @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
   }
   @if (match) {
@@ -236,11 +236,11 @@
     <mat-card-content>
       <p class="section-title">Planilla y adjuntos</p>
 
-      @if (uploadingAttachment) {
+      @if (uploadingAttachment()) {
       <mat-progress-bar mode="indeterminate" class="upload-progress" />
       }
 
-      @if (!match.attachments?.length && !uploadingAttachment) {
+      @if (!match.attachments?.length && !uploadingAttachment()) {
       <p class="empty-state">Sin archivos adjuntos.</p>
       }
 
@@ -287,7 +287,7 @@
           mat-stroked-button
           type="button"
           (click)="openUploadDialog()"
-          [disabled]="uploadingAttachment"
+          [disabled]="uploadingAttachment()"
         >
           <mat-icon>attach_file</mat-icon>
           Adjuntar archivo

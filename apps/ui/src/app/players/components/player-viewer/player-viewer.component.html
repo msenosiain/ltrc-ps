@@ -1,5 +1,5 @@
 <div class="player-viewer">
-  @if (loading) {
+  @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
   }
   @if (player) {
@@ -279,7 +279,7 @@
   <mat-card class="section-card">
     <mat-card-content>
       <p class="section-title">Historial de partidos</p>
-      @if (matchHistoryLoading) {
+      @if (matchHistoryLoading()) {
       <mat-progress-bar mode="indeterminate" />
       } @else if (matchHistory.length === 0) {
       <p class="no-history">Sin partidos registrados.</p>

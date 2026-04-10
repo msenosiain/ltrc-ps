@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,7 +39,7 @@ export class ExerciseViewerComponent implements OnInit {
   readonly RoleEnum = RoleEnum;
 
   exercise?: Exercise;
-  loading = true;
+  loading = signal(true);
   selectedVideoIndex = 0;
 
   ngOnInit(): void {
@@ -50,10 +50,10 @@ export class ExerciseViewerComponent implements OnInit {
       .subscribe({
         next: (exercise) => {
           this.exercise = exercise;
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
-          this.loading = false;
+          this.loading.set(false);
           this.router.navigate(['/dashboard/physical/exercises']);
         },
       });

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -45,7 +45,7 @@ export class MyWorkoutComponent implements OnInit {
 
   todayWorkout: Workout | null = null;
   activeLog: WorkoutLog | null = null;
-  loading = true;
+  loading = signal(true);
   saving = false;
   noWorkout = false;
 
@@ -62,7 +62,7 @@ export class MyWorkoutComponent implements OnInit {
       .subscribe({
         next: (routine) => {
           this.todayWorkout = routine;
-          this.loading = false;
+          this.loading.set(false);
           if (!routine) { this.noWorkout = true; return; }
           // Build map of exerciseId → videos from the populated workout
           for (const block of routine.blocks ?? []) {
@@ -75,7 +75,7 @@ export class MyWorkoutComponent implements OnInit {
           }
         },
         error: () => {
-          this.loading = false;
+          this.loading.set(false);
           this.noWorkout = true;
         },
       });

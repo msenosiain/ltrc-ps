@@ -12,6 +12,7 @@ const authServiceMock = {
 
 const routerMock = {
   navigate: jest.fn(),
+  navigateByUrl: jest.fn().mockResolvedValue(true),
   events: EMPTY,
   createUrlTree: jest.fn().mockReturnValue({}),
   serializeUrl: jest.fn().mockReturnValue(''),
@@ -29,7 +30,7 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
-        { provide: ActivatedRoute, useValue: { snapshot: {}, paramMap: { get: () => null } } },
+        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: () => null } }, paramMap: { get: () => null } } },
       ],
     }).compileComponents();
 
@@ -44,7 +45,7 @@ describe('LoginComponent', () => {
 
   it('should initialize with empty form and no error', () => {
     expect(component.loginForm.value).toEqual({ email: '', pass: '' });
-    expect(component.isLoading).toBe(false);
+    expect(component.isLoading()).toBe(false);
     expect(component.errorMessage).toBe('');
   });
 
@@ -66,7 +67,7 @@ describe('LoginComponent', () => {
         'user@test.com',
         '123456'
       );
-      expect(routerMock.navigate).toHaveBeenCalledWith(['/dashboard']);
+      expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
 
     it('should set errorMessage and stop loading on login failure', () => {
@@ -77,7 +78,7 @@ describe('LoginComponent', () => {
       component.loginForm.setValue({ email: 'user@test.com', pass: 'wrong' });
       component.onSubmit();
 
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
       expect(component.errorMessage).toBe(
         'Credenciales inválidas o error de conexión'
       );
@@ -87,8 +88,8 @@ describe('LoginComponent', () => {
       (authServiceMock.login as jest.Mock).mockReturnValueOnce(of({}));
       component.loginForm.setValue({ email: 'user@test.com', pass: '123456' });
       component.onSubmit();
-      // After observable completes synchronously, navigate is called
-      expect(routerMock.navigate).toHaveBeenCalled();
+      // After observable completes synchronously, navigateByUrl is called
+      expect(routerMock.navigateByUrl).toHaveBeenCalled();
     });
   });
 

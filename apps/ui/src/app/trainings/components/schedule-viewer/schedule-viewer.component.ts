@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DayOfWeekEnum, RoleEnum, TimeSlot, TrainingSchedule } from '@ltrc-campo/shared-api-model';
@@ -41,7 +42,7 @@ export class ScheduleViewerComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   schedule?: TrainingSchedule;
-  loading = false;
+  loading = signal(false);
   readonly RoleEnum = RoleEnum;
 
   private static readonly DAY_ORDER: Record<DayOfWeekEnum, number> = {
@@ -70,13 +71,13 @@ export class ScheduleViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.schedulesService
       .getScheduleById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (schedule) => { this.schedule = schedule; this.loading = false; },
-        error: () => { this.loading = false; this.router.navigate(['/dashboard/trainings/schedules']); },
+        next: (schedule) => { this.schedule = schedule; this.loading.set(false); },
+        error: () => { this.loading.set(false); this.router.navigate(['/dashboard/trainings/schedules']); },
       });
   }
 

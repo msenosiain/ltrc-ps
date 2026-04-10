@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -37,7 +37,7 @@ export class MyProfileEditorComponent implements OnInit {
 
   readonly sizeOptions = Object.values(ClothingSizesEnum);
 
-  loading = true;
+  loading = signal(true);
   saving = false;
 
   form: FormGroup = this.fb.group({
@@ -58,10 +58,10 @@ export class MyProfileEditorComponent implements OnInit {
           sweater: player.clothingSizes?.sweater ?? null,
           pants: player.clothingSizes?.pants ?? null,
         });
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }

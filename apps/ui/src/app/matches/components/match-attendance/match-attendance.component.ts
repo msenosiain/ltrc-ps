@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -75,7 +76,7 @@ export class MatchAttendanceComponent implements OnInit {
   playerRows: AttendanceRow[] = [];
   injuredRows: AttendanceRow[] = [];
   saving = false;
-  loading = true;
+  loading = signal(true);
 
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
 
@@ -108,7 +109,7 @@ export class MatchAttendanceComponent implements OnInit {
 
     if (!sport || !category) {
       this.buildRows(match, []);
-      this.loading = false;
+      this.loading.set(false);
       return;
     }
 
@@ -128,11 +129,11 @@ export class MatchAttendanceComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.buildRows(match, res.items);
-          this.loading = false;
+          this.loading.set(false);
         },
         error: () => {
           this.buildRows(match, []);
-          this.loading = false;
+          this.loading.set(false);
         },
       });
   }

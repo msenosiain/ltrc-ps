@@ -72,9 +72,9 @@ export class PlayerViewerComponent implements OnInit {
   RoleEnum = RoleEnum;
   readonly PlayerStatusEnum = PlayerStatusEnum;
   player?: Player;
-  loading = false;
+  loading = signal(false);
   matchHistory: Match[] = [];
-  matchHistoryLoading = false;
+  matchHistoryLoading = signal(false);
   isOwnProfile = signal(false);
 
   ngOnInit(): void {
@@ -85,18 +85,18 @@ export class PlayerViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.playersService
       .getPlayerById(playerId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (player) => {
           this.player = player;
-          this.loading = false;
+          this.loading.set(false);
           this.loadMatchHistory(playerId);
           this.checkOwnProfile(player);
         },
-        error: () => { this.loading = false; this.router.navigate(['/players']); },
+        error: () => { this.loading.set(false); this.router.navigate(['/players']); },
       });
   }
 
@@ -113,7 +113,7 @@ export class PlayerViewerComponent implements OnInit {
   }
 
   private loadMatchHistory(playerId: string): void {
-    this.matchHistoryLoading = true;
+    this.matchHistoryLoading.set(true);
     this.matchesService.getMatches({
       page: 1,
       size: 10,
@@ -123,9 +123,9 @@ export class PlayerViewerComponent implements OnInit {
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.matchHistory = res.items;
-        this.matchHistoryLoading = false;
+        this.matchHistoryLoading.set(false);
       },
-      error: () => { this.matchHistoryLoading = false; },
+      error: () => { this.matchHistoryLoading.set(false); },
     });
   }
 

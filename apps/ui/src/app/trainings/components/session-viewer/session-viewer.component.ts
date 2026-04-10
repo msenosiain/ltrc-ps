@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -64,7 +65,7 @@ export class SessionViewerComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
 
   session?: TrainingSession;
-  loading = false;
+  loading = signal(false);
   evaluationsEnabled = false;
   readonly RoleEnum = RoleEnum;
   readonly TrainingSessionStatusEnum = TrainingSessionStatusEnum;
@@ -77,17 +78,17 @@ export class SessionViewerComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.sessionsService
       .getSessionById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (session) => {
           this.session = session;
-          this.loading = false;
+          this.loading.set(false);
           this.checkEvaluationsEnabled(session);
         },
-        error: () => { this.loading = false; this.router.navigate(['/dashboard/trainings/sessions']); },
+        error: () => { this.loading.set(false); this.router.navigate(['/dashboard/trainings/sessions']); },
       });
   }
 

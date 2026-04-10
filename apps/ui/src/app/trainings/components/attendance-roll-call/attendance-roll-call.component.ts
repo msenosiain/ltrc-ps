@@ -4,6 +4,7 @@ import {
   inject,
   OnInit,
   DestroyRef,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -79,7 +80,7 @@ export class AttendanceRollCallComponent implements OnInit {
   playerRows: AttendanceRow[] = [];
   injuredRows: AttendanceRow[] = [];
   saving = false;
-  loading = true;
+  loading = signal(true);
 
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
 
@@ -115,11 +116,11 @@ export class AttendanceRollCallComponent implements OnInit {
             .subscribe({
               next: ({ players, staff }) => {
                 this.buildRows(session, players.items, staff);
-                this.loading = false;
+                this.loading.set(false);
               },
               error: () => {
                 this.buildRows(session, [], []);
-                this.loading = false;
+                this.loading.set(false);
               },
             });
         },

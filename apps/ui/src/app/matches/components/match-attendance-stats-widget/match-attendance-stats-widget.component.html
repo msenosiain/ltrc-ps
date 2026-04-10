@@ -2,7 +2,7 @@
   icon="leaderboard"
   title="Asistencia partidos"
   subtitle="(últimas 4 semanas)"
-  [loading]="loading"
+  [loading]="loading()"
   height="460px"
 >
   <ng-container widget-actions>
@@ -19,7 +19,7 @@
     }
   </ng-container>
 
-  @if (!loading) {
+  @if (!loading()) {
     @if (!blocks.length) {
       <p class="no-data">Sin datos de asistencia.</p>
     } @else if (showChart) {
