@@ -40,6 +40,7 @@ export class PaymentsController {
   }
 
   @Delete('links/:id')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR)
   cancelLink(@Param('id') id: string) {
     return this.paymentsService.cancelLink(id);
   }

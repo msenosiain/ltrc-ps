@@ -72,7 +72,8 @@
             <button mat-icon-button matTooltip="Compartir link" [matMenuTriggerFor]="shareMenu" [matMenuTriggerData]="{ link: link }">
               <mat-icon>share</mat-icon>
             </button>
-            <button mat-icon-button matTooltip="Cancelar link" color="warn" (click)="cancelLink(link)">
+            <button mat-icon-button matTooltip="Cancelar link" color="warn" (click)="cancelLink(link)"
+              *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR]">
               <mat-icon>delete</mat-icon>
             </button>
           }
