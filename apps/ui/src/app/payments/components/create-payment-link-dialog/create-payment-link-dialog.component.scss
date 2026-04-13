@@ -10,6 +10,16 @@
   width: 100%;
 }
 
+.expires-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: start;
+
+  .expires-date { width: 100%; }
+  .expires-time { width: 130px; }
+}
+
 .installment-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

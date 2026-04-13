@@ -30,6 +30,7 @@ export interface MatchFormValue {
     concept: string;
     amount: number | null;
     expiresAt: Date | null;
+    expiresAtTime: string;
   };
 }
 

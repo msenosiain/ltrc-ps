@@ -429,14 +429,24 @@ export class MatchFormComponent implements OnInit, OnChanges {
     }
     this.updateSportValidation();
 
-    // Auto-select if only one option
-    if (this.categoryOptions.length === 1) {
-      this.matchForm.get('category')?.setValue(this.categoryOptions[0].id);
+    if (!this.match) {
+      // Create mode: pre-fill categories multi-select from tournament
+      if (tournament?.categories?.length) {
+        this.matchForm.get('categories')?.setValue(tournament.categories);
+      } else if (this.categoryOptions.length === 1) {
+        this.matchForm.get('categories')?.setValue([this.categoryOptions[0].id]);
+      } else {
+        this.matchForm.get('categories')?.setValue([]);
+      }
     } else {
-      // Clear if current value is no longer valid
-      const currentCat = this.matchForm.get('category')?.value;
-      if (currentCat && !this.categoryOptions.find((c) => c.id === currentCat)) {
-        this.matchForm.get('category')?.setValue(null);
+      // Edit mode: auto-select single category if only one option
+      if (this.categoryOptions.length === 1) {
+        this.matchForm.get('category')?.setValue(this.categoryOptions[0].id);
+      } else {
+        const currentCat = this.matchForm.get('category')?.value;
+        if (currentCat && !this.categoryOptions.find((c) => c.id === currentCat)) {
+          this.matchForm.get('category')?.setValue(null);
+        }
       }
     }
 

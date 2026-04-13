@@ -109,7 +109,7 @@ export class PaymentsService {
       paymentType: dto.paymentType,
       installmentNumber: dto.installmentNumber,
       installmentTotal: dto.installmentTotal,
-      expiresAt: this.endOfDay(dto.expiresAt),
+      expiresAt: new Date(dto.expiresAt),
       status: PaymentLinkStatusEnum.ACTIVE,
       createdBy: (caller as any)._id,
     });
@@ -569,17 +569,11 @@ export class PaymentsService {
     if (link.status === PaymentLinkStatusEnum.CANCELLED) {
       throw new GoneException('Este link de pago fue cancelado');
     }
-    if (link.status === PaymentLinkStatusEnum.EXPIRED || new Date() > this.endOfDay(link.expiresAt)) {
+    if (link.status === PaymentLinkStatusEnum.EXPIRED || new Date() > link.expiresAt) {
       throw new GoneException('Este link de pago ha expirado');
     }
   }
 
-  // Devuelve el último instante del día UTC de la fecha dada
-  private endOfDay(date: string | Date): Date {
-    const d = new Date(date);
-    d.setUTCHours(23, 59, 59, 999);
-    return d;
-  }
 
   private mapMpStatus(mpStatus: string): PaymentStatusEnum {
     switch (mpStatus) {

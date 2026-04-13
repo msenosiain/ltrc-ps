@@ -42,6 +42,10 @@ import {
   tripStatusOptions,
 } from '../../trip-options';
 import { CreateTripPayload } from '../../services/trips.service';
+import {
+  FilterContext,
+  UserFilterContextService,
+} from '../../../common/services/user-filter-context.service';
 
 @Component({
   selector: 'ltrc-trip-form',
@@ -63,6 +67,7 @@ import { CreateTripPayload } from '../../services/trips.service';
 export class TripFormComponent implements OnInit, OnChanges {
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly userFilterContext = inject(UserFilterContextService);
 
   @Input() trip?: Trip;
   @Input() submitting = false;
@@ -70,9 +75,10 @@ export class TripFormComponent implements OnInit, OnChanges {
   @Output() readonly formSubmit = new EventEmitter<CreateTripPayload>();
   @Output() readonly cancel = new EventEmitter<void>();
 
-  readonly sportOptions: SportOption[] = sportOptions;
+  sportOptions: SportOption[] = sportOptions;
   readonly statusOptions: TripOption<TripStatusEnum>[] = tripStatusOptions;
   categoryOptions: CategoryOption[] = getCategoryOptionsBySport();
+  private filterCtx?: FilterContext;
 
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
@@ -89,23 +95,51 @@ export class TripFormComponent implements OnInit, OnChanges {
   });
 
   ngOnInit(): void {
+    this.userFilterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => this.applyFilterContext(ctx));
+
     this.form
       .get('sport')!
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((sport: SportEnum | null) => {
-        this.categoryOptions = getCategoryOptionsBySport(sport);
-        const selected: CategoryEnum[] = this.form.get('categories')?.value ?? [];
-        const validIds = new Set(this.categoryOptions.map((c) => c.id));
-        const stillValid = selected.filter((c) => validIds.has(c));
-        if (stillValid.length !== selected.length) {
-          this.form.get('categories')?.setValue(stillValid);
-        }
+        this.updateCategoryOptions(sport);
       });
+  }
+
+  private applyFilterContext(ctx: FilterContext): void {
+    this.filterCtx = ctx;
+    this.sportOptions = ctx.sportOptions;
+
+    if (!this.trip) {
+      const patch: Record<string, unknown> = {};
+      if (ctx.forcedSport) patch['sport'] = ctx.forcedSport;
+      if (ctx.forcedCategory) patch['categories'] = [ctx.forcedCategory];
+      if (Object.keys(patch).length) this.form.patchValue(patch);
+    }
+
+    this.updateCategoryOptions(this.form.get('sport')?.value);
+  }
+
+  private updateCategoryOptions(sport: SportEnum | null): void {
+    const allOptions = getCategoryOptionsBySport(sport);
+    if (this.filterCtx?.categoryOptions.length) {
+      const allowed = new Set(this.filterCtx.categoryOptions.map((c) => c.id));
+      this.categoryOptions = allOptions.filter((o) => allowed.has(o.id));
+    } else {
+      this.categoryOptions = allOptions;
+    }
+    const selected: CategoryEnum[] = this.form.get('categories')?.value ?? [];
+    const validIds = new Set(this.categoryOptions.map((c) => c.id));
+    const stillValid = selected.filter((c) => validIds.has(c));
+    if (stillValid.length !== selected.length) {
+      this.form.get('categories')?.setValue(stillValid);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['trip'] && this.trip) {
-      this.categoryOptions = getCategoryOptionsBySport(this.trip.sport);
+      this.updateCategoryOptions(this.trip.sport ?? null);
       this.form.patchValue({
         ...this.trip,
         departureDate: this.trip.departureDate ? new Date(this.trip.departureDate) : null,

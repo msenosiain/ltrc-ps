@@ -29,6 +29,7 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
       concept: ['Tercer tiempo'],
       amount: [null as number | null],
       expiresAt: [null as Date | null],
+      expiresAtTime: ['23:59'],
     }),
   });
 }

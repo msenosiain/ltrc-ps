@@ -90,13 +90,15 @@ export class MatchEditorComponent implements OnInit {
     const createPaymentLink = (matchIds: string[]) => {
       const p = payload.payment;
       if (!p?.enabled || !p.amount || !p.expiresAt) { onSuccess(); return; }
+      const time = p.expiresAtTime || '23:59';
+      const expiresAt = `${format(p.expiresAt, 'yyyy-MM-dd')}T${time}:00`;
       this.paymentsService.createLink({
         entityType: PaymentEntityTypeEnum.MATCH,
         ...(matchIds.length === 1 ? { entityId: matchIds[0] } : { entityIds: matchIds }),
         concept: p.concept || 'Tercer tiempo',
         amount: p.amount,
         paymentType: PaymentTypeEnum.FULL,
-        expiresAt: format(p.expiresAt, 'yyyy-MM-dd'),
+        expiresAt,
       }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (link) => {
           this.submitting = false;

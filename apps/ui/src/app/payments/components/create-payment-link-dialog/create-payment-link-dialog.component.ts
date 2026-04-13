@@ -72,6 +72,7 @@ export class CreatePaymentLinkDialogComponent implements OnInit {
     installmentNumber: new FormControl<number | null>(null),
     installmentTotal: new FormControl<number | null>(null),
     expiresAt: new FormControl<Date | null>(null, [Validators.required]),
+    expiresAtTime: new FormControl('23:59', [Validators.required]),
   });
 
   ngOnInit() {
@@ -150,7 +151,7 @@ export class CreatePaymentLinkDialogComponent implements OnInit {
         paymentType: value.paymentType!,
         installmentNumber: this.isInstallment ? value.installmentNumber ?? undefined : undefined,
         installmentTotal: this.isInstallment ? value.installmentTotal ?? undefined : undefined,
-        expiresAt: format(value.expiresAt!, 'yyyy-MM-dd'),
+        expiresAt: `${format(value.expiresAt!, 'yyyy-MM-dd')}T${value.expiresAtTime || '23:59'}:00`,
       })
       .subscribe({
         next: (link) => this.dialogRef.close(link),

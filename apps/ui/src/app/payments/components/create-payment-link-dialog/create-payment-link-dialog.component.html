@@ -83,15 +83,21 @@
       </div>
     }
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Fecha de vencimiento</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="expiresAt" />
-      <mat-datepicker-toggle matIconSuffix [for]="picker" />
-      <mat-datepicker #picker />
-      @if (form.get('expiresAt')!.hasError('required')) {
-        <mat-error>La fecha de vencimiento es obligatoria</mat-error>
-      }
-    </mat-form-field>
+    <div class="expires-row">
+      <mat-form-field appearance="outline" class="expires-date">
+        <mat-label>Fecha de vencimiento</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="expiresAt" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
+        @if (form.get('expiresAt')!.hasError('required')) {
+          <mat-error>La fecha es obligatoria</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="expires-time">
+        <mat-label>Hora</mat-label>
+        <input matInput type="time" formControlName="expiresAtTime" />
+      </mat-form-field>
+    </div>
 
   </form>
 </mat-dialog-content>

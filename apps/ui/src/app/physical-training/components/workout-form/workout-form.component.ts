@@ -36,6 +36,7 @@ import { workoutStatusOptions } from '../../physical-training-options';
 import { getCategoryOptionsBySport } from '../../../common/category-options';
 import { getErrorMessage } from '../../../common/utils/error-message';
 import { getPositionOptionsBySport, PositionOption } from '../../../players/position-options';
+import { UserFilterContextService } from '../../../common/services/user-filter-context.service';
 
 @Component({
   selector: 'ltrc-workout-form',
@@ -62,9 +63,10 @@ export class WorkoutFormComponent implements OnInit {
   private readonly playersService = inject(PlayersService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly userFilterContext = inject(UserFilterContextService);
 
   readonly statusOptions = workoutStatusOptions;
-  readonly sportOptions = Object.values(SportEnum).map((v) => ({
+  sportOptions = Object.values(SportEnum).map((v) => ({
     value: v,
     label: v === SportEnum.RUGBY ? 'Rugby' : 'Hockey',
   }));
@@ -133,6 +135,21 @@ export class WorkoutFormComponent implements OnInit {
     if (id) {
       this.editing = true;
       this.workoutId = id;
+    }
+
+    this.userFilterContext.filterContext$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((ctx) => {
+        this.sportOptions = ctx.sportOptions.map((s) => ({ value: s.id, label: s.label }));
+        if (!this.editing) {
+          const patch: Record<string, unknown> = {};
+          if (ctx.forcedSport) patch['sport'] = ctx.forcedSport;
+          if (ctx.forcedCategory) patch['category'] = ctx.forcedCategory;
+          if (Object.keys(patch).length) this.form.patchValue(patch);
+        }
+      });
+
+    if (id) {
       this.workoutsService
         .getWorkoutById(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
