@@ -156,8 +156,10 @@ export class PaymentsService {
       entityType: link.entityType,
       entityLabel,
       matchDate: matchInfo?.date,
+      matchTime: matchInfo?.time,
       matchOpponents: matchInfo?.opponents,
       matchCategories: matchInfo?.categories,
+      matchTournamentName: matchInfo?.tournamentName,
     };
   }
 
@@ -596,6 +598,14 @@ export class PaymentsService {
     return `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()}`;
   }
 
+  private formatTime(date: Date | string): string | undefined {
+    const d = new Date(date);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    if (h === 0 && m === 0) return undefined;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
   private readonly CATEGORY_ORDER = [
     'm5','m6','m7','m8','m9','m10','m11','m12','m13','m14','m15','m16','m17','m19',
     'pre_decima','decima','novena','octava','septima','sexta','quinta','cuarta','master','plantel_superior',
@@ -605,35 +615,46 @@ export class PaymentsService {
     entityType: PaymentEntityTypeEnum,
     entityId: string,
     entityIds?: Types.ObjectId[]
-  ): Promise<{ date: string; opponents: string; categories: string[] } | null> {
+  ): Promise<{ date: string; time?: string; opponents: string; categories: string[]; tournamentName?: string } | null> {
     if (entityType !== PaymentEntityTypeEnum.MATCH) return null;
 
     if (entityIds && entityIds.length > 1) {
       const matches = await this.matchModel
         .find({ _id: { $in: entityIds } })
-        .select('date opponent category')
+        .select('date opponent category name tournament')
+        .populate('tournament', 'name')
         .lean();
       if (!matches.length) return null;
-      const date = this.formatDate(matches[0].date);
+      const first = matches[0] as any;
+      const date = this.formatDate(first.date);
+      const time = this.formatTime(first.date);
       const categories = matches
         .map((m) => m.category)
         .filter(Boolean) as string[];
       categories.sort(
         (a, b) => this.CATEGORY_ORDER.indexOf(a) - this.CATEGORY_ORDER.indexOf(b)
       );
-      return { date, opponents: matches[0].opponent ?? 'Rival', categories };
+      const tournamentName: string | undefined =
+        first.name || first.tournament?.name || undefined;
+      return { date, time, opponents: first.opponent ?? 'Rival', categories, tournamentName };
     }
 
     const match = await this.matchModel
       .findById(entityId)
-      .select('date opponent name category')
-      .lean();
+      .select('date opponent name category tournament')
+      .populate('tournament', 'name')
+      .lean() as any;
     if (!match) return null;
     const date = this.formatDate(match.date);
+    const time = this.formatTime(match.date);
+    const tournamentName: string | undefined =
+      match.name || match.tournament?.name || undefined;
     return {
       date,
+      time,
       opponents: match.opponent ?? 'Rival',
       categories: match.category ? [match.category] : [],
+      tournamentName,
     };
   }
 

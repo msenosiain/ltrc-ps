@@ -65,6 +65,8 @@ export interface IPaymentLinkPublicInfo {
   entityType: PaymentEntityTypeEnum;
   entityLabel: string;
   matchDate?: string;
+  matchTime?: string;
   matchOpponents?: string;
   matchCategories?: string[];
+  matchTournamentName?: string;
 }

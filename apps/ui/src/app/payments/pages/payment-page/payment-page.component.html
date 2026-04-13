@@ -33,10 +33,19 @@
 
       @if (linkInfo && (state === 'ready' || state === 'validating' || state === 'validated' || state === 'redirecting')) {
         <div class="payment-info">
+          @if (linkInfo.matchTournamentName) {
+            <p class="tournament-name">{{ linkInfo.matchTournamentName }}</p>
+          }
           <p class="concept">{{ linkInfo.concept }}</p>
-          @if (linkInfo.matchDate || linkInfo.matchOpponents) {
+          @if (linkInfo.matchOpponents || linkInfo.matchDate) {
             <p class="match-description">
-              {{ linkInfo.matchDate }}{{ linkInfo.matchOpponents ? ' vs ' + linkInfo.matchOpponents : '' }}
+              @if (linkInfo.matchOpponents) {<span>vs {{ linkInfo.matchOpponents }}</span>}
+              @if (linkInfo.matchDate) {
+                <span class="match-date">
+                  {{ linkInfo.matchDate }}
+                  @if (linkInfo.matchTime) { · {{ linkInfo.matchTime }}hs }
+                </span>
+              }
             </p>
           }
           @if (linkInfo.matchCategories?.length) {
