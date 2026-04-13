@@ -21,6 +21,22 @@
     font-size: 0.9rem;
     color: var(--mat-app-on-surface-variant, #666);
   }
+
+  .attendance-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mat-app-primary, #1976d2);
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
 }
 
 .roll-call-actions-top {

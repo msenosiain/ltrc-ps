@@ -7,10 +7,26 @@
       @if (match.opponent) { — vs. {{ match.opponent }} }
     </span>
     }
+    @if (!loading()) {
+    <span class="attendance-counter">
+      <mat-icon>group</mat-icon>
+      {{ presentCount }} / {{ totalCount }} presentes
+    </span>
+    }
   </div>
 
   @if (loading()) {
   <mat-progress-bar mode="indeterminate" />
+  } @else if (missingConfig) {
+  <mat-card>
+    <mat-card-content>
+      <p>Este partido no tiene deporte asignado. Editá el partido y completá el campo <strong>Deporte</strong> para poder gestionar la asistencia.</p>
+      <button mat-stroked-button type="button" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+    </mat-card-content>
+  </mat-card>
   } @else {
 
   <div class="roll-call-actions-top">

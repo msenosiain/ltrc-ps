@@ -8,6 +8,12 @@
       }}
     </span>
     }
+    @if (!loading()) {
+    <span class="attendance-counter">
+      <mat-icon>group</mat-icon>
+      {{ presentCount }} / {{ totalCount }} presentes
+    </span>
+    }
   </div>
 
   @if (loading()) {

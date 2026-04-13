@@ -218,6 +218,16 @@ export class AttendanceRollCallComponent implements OnInit {
     }
   }
 
+  get presentCount(): number {
+    return [...this.playerRows, ...this.injuredRows].filter(
+      (r) => r.status === AttendanceStatusEnum.PRESENT
+    ).length;
+  }
+
+  get totalCount(): number {
+    return this.playerRows.length + this.injuredRows.length;
+  }
+
   getTrialClass(days: number): string {
     if (days <= 0) return 'trial-expired';
     if (days <= 3) return 'trial-expiring';

@@ -408,13 +408,10 @@ export class MatchFormComponent implements OnInit, OnChanges {
   }
 
   private updateSportValidation(): void {
-    const tournament = this.matchForm.get('tournament')?.value;
+    // Sport is always required. When a tournament is selected, the control is
+    // disabled (sport comes from the tournament) but the validator stays.
     const sportCtrl = this.matchForm.get('sport')!;
-    if (!tournament) {
-      sportCtrl.setValidators(Validators.required);
-    } else {
-      sportCtrl.clearValidators();
-    }
+    sportCtrl.setValidators(Validators.required);
     sportCtrl.updateValueAndValidity({ emitEvent: false });
   }
 

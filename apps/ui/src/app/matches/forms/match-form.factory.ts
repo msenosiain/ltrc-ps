@@ -13,7 +13,7 @@ export function buildCreateMatchForm(fb: FormBuilder): FormGroup {
     venue: ['', Validators.required],
     isHome: [true],
     status: [MatchStatusEnum.UPCOMING],
-    sport: [null as SportEnum | null],
+    sport: [null as SportEnum | null, Validators.required],
     category: [null as CategoryEnum | null, Validators.required],
     categories: [[] as CategoryEnum[]],
     division: [''],

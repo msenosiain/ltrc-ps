@@ -93,9 +93,8 @@ export class CreateMatchDto {
   @IsEnum(MatchStatusEnum)
   readonly status?: MatchStatusEnum;
 
-  @IsOptional()
   @IsEnum(SportEnum)
-  readonly sport?: SportEnum;
+  readonly sport!: SportEnum;
 
   @IsNotEmpty()
   @IsEnum(CategoryEnum)

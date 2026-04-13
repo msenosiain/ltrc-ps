@@ -77,6 +77,7 @@ export class MatchAttendanceComponent implements OnInit {
   injuredRows: AttendanceRow[] = [];
   saving = false;
   loading = signal(true);
+  missingConfig = false;
 
   readonly AttendanceStatusEnum = AttendanceStatusEnum;
 
@@ -104,10 +105,11 @@ export class MatchAttendanceComponent implements OnInit {
 
   private loadPlayersForMatch(match: Match): void {
     const tournament = match.tournament as Tournament | undefined;
-    const sport = tournament?.sport;
+    const sport = tournament?.sport ?? match.sport;
     const category = match.category;
 
     if (!sport || !category) {
+      this.missingConfig = true;
       this.buildRows(match, []);
       this.loading.set(false);
       return;
@@ -208,6 +210,16 @@ export class MatchAttendanceComponent implements OnInit {
         });
       }
     }
+  }
+
+  get presentCount(): number {
+    return [...this.playerRows, ...this.injuredRows].filter(
+      (r) => r.status === AttendanceStatusEnum.PRESENT
+    ).length;
+  }
+
+  get totalCount(): number {
+    return this.playerRows.length + this.injuredRows.length;
   }
 
   getTrialClass(days: number): string {
