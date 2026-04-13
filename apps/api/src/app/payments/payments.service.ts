@@ -615,7 +615,7 @@ export class PaymentsService {
     entityType: PaymentEntityTypeEnum,
     entityId: string,
     entityIds?: Types.ObjectId[]
-  ): Promise<{ date: string; time?: string; opponents: string; categories: string[]; tournamentName?: string } | null> {
+  ): Promise<{ date: string; time?: string; opponents?: string; categories: string[]; tournamentName?: string } | null> {
     if (entityType !== PaymentEntityTypeEnum.MATCH) return null;
 
     if (entityIds && entityIds.length > 1) {
@@ -636,7 +636,7 @@ export class PaymentsService {
       );
       const tournamentName: string | undefined =
         first.name || first.tournament?.name || undefined;
-      return { date, time, opponents: first.opponent ?? 'Rival', categories, tournamentName };
+      return { date, time, opponents: first.opponent || undefined, categories, tournamentName };
     }
 
     const match = await this.matchModel
@@ -652,7 +652,7 @@ export class PaymentsService {
     return {
       date,
       time,
-      opponents: match.opponent ?? 'Rival',
+      opponents: match.opponent || undefined,
       categories: match.category ? [match.category] : [],
       tournamentName,
     };
