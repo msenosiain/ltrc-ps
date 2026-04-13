@@ -29,6 +29,12 @@
       }
       Buscar
     </button>
+
+    @if (encounters().length > 0 || report()) {
+      <button mat-stroked-button type="button" (click)="clearAll()">
+        <mat-icon>restart_alt</mat-icon> Nueva búsqueda
+      </button>
+    }
   </form>
 
   @if (encounters().length > 0) {

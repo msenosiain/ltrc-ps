@@ -170,6 +170,13 @@ export class EncounterReportComponent implements OnInit {
     });
   }
 
+  clearAll() {
+    this.filterForm.reset();
+    this.encounters.set([]);
+    this.report.set(null);
+    this.selectedEncounter.set(null);
+  }
+
   downloadPdf() {
     const encounter = this.selectedEncounter();
     if (!encounter) return;
