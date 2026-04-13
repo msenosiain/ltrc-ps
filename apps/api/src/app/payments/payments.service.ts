@@ -565,6 +565,184 @@ export class PaymentsService {
     });
   }
 
+  async getEncounterReport(matchIds: string[]): Promise<{
+    encounterLabel: string;
+    categories: { category: string; categoryLabel: string; count: number; total: number }[];
+    grandTotal: number;
+    grandCount: number;
+  }> {
+    const objectIds = matchIds.map((id) => new Types.ObjectId(id));
+    const [matches, payments] = await Promise.all([
+      this.matchModel
+        .find({ _id: { $in: objectIds } })
+        .select('category name date opponent tournament')
+        .populate('tournament', 'name')
+        .lean(),
+      this.paymentModel
+        .find({ entityType: PaymentEntityTypeEnum.MATCH, entityId: { $in: objectIds }, status: PaymentStatusEnum.APPROVED })
+        .lean(),
+    ]);
+
+    const first = matches[0] as any;
+    const encounterLabel = first?.name || (first?.tournament as any)?.name
+      || (first?.opponent ? `vs ${first.opponent}` : 'Encuentro');
+
+    const categoryMap = new Map<string, { count: number; total: number }>();
+    for (const match of matches) {
+      const cat = match.category || 'sin_categoria';
+      if (!categoryMap.has(cat)) categoryMap.set(cat, { count: 0, total: 0 });
+    }
+    for (const p of payments) {
+      const match = matches.find((m) => (m as any)._id.equals(p.entityId));
+      const cat = match?.category || 'sin_categoria';
+      const entry = categoryMap.get(cat) ?? { count: 0, total: 0 };
+      entry.count++;
+      entry.total += p.amount;
+      categoryMap.set(cat, entry);
+    }
+
+    const categoryOrder = this.CATEGORY_ORDER;
+    const categories = Array.from(categoryMap.entries())
+      .sort(([a], [b]) => {
+        const ia = categoryOrder.indexOf(a);
+        const ib = categoryOrder.indexOf(b);
+        return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+      })
+      .map(([category, { count, total }]) => ({
+        category,
+        categoryLabel: getCategoryLabel(category as CategoryEnum),
+        count,
+        total,
+      }));
+
+    const grandTotal = categories.reduce((s, c) => s + c.total, 0);
+    const grandCount = categories.reduce((s, c) => s + c.count, 0);
+    return { encounterLabel, categories, grandTotal, grandCount };
+  }
+
+  async generateEncounterPdfReport(matchIds: string[]): Promise<Buffer> {
+    const objectIds = matchIds.map((id) => new Types.ObjectId(id));
+    const [matches, payments] = await Promise.all([
+      this.matchModel
+        .find({ _id: { $in: objectIds } })
+        .select('category name date time opponent tournament')
+        .populate('tournament', 'name')
+        .lean(),
+      this.paymentModel
+        .find({ entityType: PaymentEntityTypeEnum.MATCH, entityId: { $in: objectIds }, status: PaymentStatusEnum.APPROVED })
+        .populate({ path: 'playerId', select: 'name idNumber' })
+        .sort({ entityId: 1, date: 1 })
+        .lean(),
+    ]);
+
+    const first = matches[0] as any;
+    const encounterLabel = first?.name || (first?.tournament as any)?.name
+      || (first?.opponent ? `vs ${first.opponent}` : 'Encuentro');
+    const dateLabel = first ? this.formatDate(first.date) : '';
+    const timeLabel = first?.time ? ` · ${first.time}hs` : '';
+    const opponentLabel = first?.opponent ? ` vs ${first.opponent}` : '';
+
+    const categoryOrder = this.CATEGORY_ORDER;
+    const categoryGroups = new Map<string, typeof payments>();
+    for (const match of matches) {
+      const cat = match.category || 'sin_categoria';
+      if (!categoryGroups.has(cat)) categoryGroups.set(cat, []);
+    }
+    for (const p of payments) {
+      const match = matches.find((m) => (m as any)._id.equals(p.entityId));
+      const cat = match?.category || 'sin_categoria';
+      const group = categoryGroups.get(cat) ?? [];
+      group.push(p);
+      categoryGroups.set(cat, group);
+    }
+    const sortedCategories = Array.from(categoryGroups.keys()).sort((a, b) => {
+      const ia = categoryOrder.indexOf(a);
+      const ib = categoryOrder.indexOf(b);
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+    });
+
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      const doc = new PDFDocument({ margin: 40, size: 'A4' });
+      doc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
+
+      const startX = 40;
+      const pageWidth = 515;
+
+      doc.fontSize(16).text('Los Tordos RC — Informe de Encuentro', { align: 'center' });
+      doc.fontSize(12).text(`${encounterLabel}${opponentLabel}`, { align: 'center' });
+      doc.fontSize(10).text(`${dateLabel}${timeLabel}`, { align: 'center' }).moveDown();
+
+      const grandTotal = payments.reduce((s, p) => s + p.amount, 0);
+      doc.fontSize(10).text(`Total cobrado: $${grandTotal.toFixed(2)}   |   Total pagos: ${payments.length}`, { align: 'center' }).moveDown();
+
+      const cols = [140, 60, 90, 80, 80, 65];
+      const headers = ['Jugador', 'DNI', 'Concepto', 'Método', 'Monto', 'Fecha'];
+
+      let y = doc.y;
+
+      for (const cat of sortedCategories) {
+        const group = categoryGroups.get(cat) ?? [];
+        const catTotal = group.reduce((s, p) => s + p.amount, 0);
+        const catLabel = getCategoryLabel(cat as CategoryEnum);
+
+        if (y > 700) { doc.addPage(); y = 40; }
+
+        // Encabezado de categoría
+        doc.fontSize(11).font('Helvetica-Bold')
+          .fillColor('#1976d2')
+          .text(`${catLabel}   —   ${group.length} pago(s)   $${catTotal.toFixed(2)}`, startX, y);
+        y += 16;
+        doc.fillColor('black');
+
+        if (group.length === 0) {
+          doc.fontSize(8).font('Helvetica').fillColor('#888').text('Sin pagos registrados', startX + 10, y);
+          y += 14;
+          doc.fillColor('black');
+          continue;
+        }
+
+        // Cabecera de tabla
+        doc.fontSize(8).font('Helvetica-Bold');
+        headers.forEach((h, i) => {
+          doc.text(h, startX + cols.slice(0, i).reduce((a, b) => a + b, 0), y, { width: cols[i], align: 'left' });
+        });
+        y += 12;
+        doc.moveTo(startX, y).lineTo(startX + pageWidth, y).stroke();
+        y += 3;
+
+        // Filas
+        doc.font('Helvetica');
+        group.forEach((p) => {
+          if (y > 750) { doc.addPage(); y = 40; }
+          const player = p.playerId as any;
+          const row = [
+            player?.name ?? '-',
+            player?.idNumber ?? '-',
+            p.concept,
+            p.method,
+            `$${p.amount.toFixed(2)}`,
+            this.formatDate(p.date),
+          ];
+          row.forEach((cell, i) => {
+            doc.fontSize(8).text(cell, startX + cols.slice(0, i).reduce((a, b) => a + b, 0), y, { width: cols[i], align: 'left' });
+          });
+          y += 13;
+        });
+
+        // Subtotal
+        y += 2;
+        doc.fontSize(8).font('Helvetica-Bold').text(`Subtotal ${catLabel}: $${catTotal.toFixed(2)}`, startX, y, { align: 'right', width: pageWidth });
+        y += 16;
+        doc.font('Helvetica');
+      }
+
+      doc.end();
+    });
+  }
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   private assertLinkActive(link: { status: PaymentLinkStatusEnum; expiresAt: Date }) {
@@ -621,13 +799,13 @@ export class PaymentsService {
     if (entityIds && entityIds.length > 1) {
       const matches = await this.matchModel
         .find({ _id: { $in: entityIds } })
-        .select('date opponent category name tournament')
+        .select('date time opponent category name tournament')
         .populate('tournament', 'name')
         .lean();
       if (!matches.length) return null;
       const first = matches[0] as any;
       const date = this.formatDate(first.date);
-      const time = this.formatTime(first.date);
+      const time: string | undefined = first.time || undefined;
       const categories = matches
         .map((m) => m.category)
         .filter(Boolean) as string[];
@@ -641,12 +819,12 @@ export class PaymentsService {
 
     const match = await this.matchModel
       .findById(entityId)
-      .select('date opponent name category tournament')
+      .select('date time opponent name category tournament')
       .populate('tournament', 'name')
       .lean() as any;
     if (!match) return null;
     const date = this.formatDate(match.date);
-    const time = this.formatTime(match.date);
+    const time: string | undefined = match.time || undefined;
     const tournamentName: string | undefined =
       match.name || match.tournament?.name || undefined;
     return {

@@ -115,6 +115,24 @@ export class PaymentsService {
     });
   }
 
+  getEncounterReport(matchIds: string[]) {
+    const params = new HttpParams().set('matchIds', matchIds.join(','));
+    return this.http.get<{
+      encounterLabel: string;
+      categories: { category: string; categoryLabel: string; count: number; total: number }[];
+      grandTotal: number;
+      grandCount: number;
+    }>(`${this.apiUrl}/report/encounter`, { params });
+  }
+
+  downloadEncounterPdf(matchIds: string[]) {
+    const params = new HttpParams().set('matchIds', matchIds.join(','));
+    return this.http.get(`${this.apiUrl}/report/encounter/pdf`, {
+      params,
+      responseType: 'blob',
+    });
+  }
+
   // ── Públicos ──────────────────────────────────────────────────────────────
 
   getPublicLinkInfo(token: string) {

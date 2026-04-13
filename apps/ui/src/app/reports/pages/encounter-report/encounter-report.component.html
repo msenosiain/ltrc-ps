@@ -1,0 +1,102 @@
+<div class="report-page">
+  <div class="report-header">
+    <h2 class="report-title">Informe de Encuentro</h2>
+    <p class="report-subtitle">Pagos por categoría participante</p>
+  </div>
+
+  <form [formGroup]="filterForm" class="filter-form" (ngSubmit)="searchEncounters()">
+    <mat-form-field appearance="outline">
+      <mat-label>Torneo</mat-label>
+      <mat-select formControlName="tournament">
+        @for (t of tournaments(); track t.id) {
+          <mat-option [value]="t.id">{{ t.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha (opcional)</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" placeholder="dd/MM/yyyy" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker />
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!filterForm.value.tournament || loadingEncounters()">
+      @if (loadingEncounters()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <mat-icon>search</mat-icon>
+      }
+      Buscar
+    </button>
+  </form>
+
+  @if (encounters().length > 0) {
+    <div class="encounters-section">
+      <h3 class="section-label">Encuentros encontrados</h3>
+      <div class="encounter-list">
+        @for (enc of encounters(); track enc.date + enc.label) {
+          <button
+            class="encounter-card"
+            [class.encounter-card--selected]="selectedEncounter() === enc"
+            (click)="selectEncounter(enc)"
+          >
+            <span class="encounter-card__label">{{ enc.label }}</span>
+            <span class="encounter-card__meta">
+              {{ enc.date }}
+              @if (enc.time) { · {{ enc.time }}hs }
+              · {{ enc.matchIds.length }} categoría(s)
+            </span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (loadingReport()) {
+    <div class="loading-center">
+      <mat-spinner diameter="40" />
+    </div>
+  }
+
+  @if (report(); as r) {
+    <div class="report-section">
+      <div class="report-section__header">
+        <div>
+          <h3 class="report-section__title">{{ r.encounterLabel }}</h3>
+          <p class="report-section__meta">{{ r.grandCount }} pago(s) · Total: ${{ r.grandTotal | number:'1.2-2' }}</p>
+        </div>
+        <button mat-raised-button color="primary" (click)="downloadPdf()">
+          <mat-icon>picture_as_pdf</mat-icon> Descargar PDF
+        </button>
+      </div>
+
+      <mat-divider />
+
+      <table mat-table [dataSource]="r.categories" class="category-table">
+        <ng-container matColumnDef="categoryLabel">
+          <th mat-header-cell *matHeaderCellDef>Categoría</th>
+          <td mat-cell *matCellDef="let c">{{ c.categoryLabel }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="count">
+          <th mat-header-cell *matHeaderCellDef>Pagos</th>
+          <td mat-cell *matCellDef="let c">{{ c.count }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total cobrado</th>
+          <td mat-cell *matCellDef="let c">${{ c.total | number:'1.2-2' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="categoryColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: categoryColumns;"></tr>
+      </table>
+
+      <div class="grand-total">
+        <span>Total general</span>
+        <span>${{ r.grandTotal | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  }
+</div>

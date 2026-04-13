@@ -66,6 +66,29 @@ export class PaymentsController {
     return this.paymentsService.getStats(sport);
   }
 
+  @Get('report/encounter')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR)
+  getEncounterReport(@Query('matchIds') matchIds: string) {
+    const ids = matchIds?.split(',').filter(Boolean) ?? [];
+    return this.paymentsService.getEncounterReport(ids);
+  }
+
+  @Get('report/encounter/pdf')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR)
+  async downloadEncounterPdf(
+    @Query('matchIds') matchIds: string,
+    @Res() res: Response
+  ) {
+    const ids = matchIds?.split(',').filter(Boolean) ?? [];
+    const buffer = await this.paymentsService.generateEncounterPdfReport(ids);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="informe-encuentro.pdf"`,
+      'Content-Length': buffer.length,
+    });
+    res.end(buffer);
+  }
+
   @Get('report/pdf')
   async downloadPdf(
     @Query('entityType') entityType: PaymentEntityTypeEnum,
@@ -98,7 +121,7 @@ export class PaymentsController {
   }
 
   @Post()
-  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR)
   recordManual(@Body() dto: RecordManualPaymentDto, @Req() req: Request) {
     return this.paymentsService.recordManualPayment(dto, (req as any).user);
   }

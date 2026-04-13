@@ -144,6 +144,17 @@
       </a>
 
       <a
+        *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR]"
+        mat-list-item
+        routerLink="reports"
+        routerLinkActive="active-link"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>summarize</mat-icon>
+        <span matListItemTitle>Reportes</span>
+      </a>
+
+      <a
         *ltrcAllowedRoles="[RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH, RoleEnum.TRAINER]"
         mat-list-item
         routerLink="evaluations"
