@@ -37,6 +37,7 @@ import {
   HockeyBranchEnum,
   Match,
   MatchStatusEnum,
+  MatchTypeEnum,
   RoleEnum,
   SportEnum,
   Tournament,
@@ -430,8 +431,8 @@ export class MatchFormComponent implements OnInit, OnChanges {
     this.updateSportValidation();
 
     if (!this.match) {
-      // Create mode: pre-fill categories multi-select from tournament
-      if (tournament?.categories?.length) {
+      // Create mode: pre-fill categories only if tournament type is encounter
+      if (tournament?.type === MatchTypeEnum.ENCOUNTER && tournament.categories?.length) {
         this.matchForm.get('categories')?.setValue(tournament.categories);
       } else if (this.categoryOptions.length === 1) {
         this.matchForm.get('categories')?.setValue([this.categoryOptions[0].id]);
