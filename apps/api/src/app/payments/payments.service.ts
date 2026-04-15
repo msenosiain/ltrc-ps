@@ -34,6 +34,7 @@ export class PaymentsService {
   private readonly mpClient: MercadoPagoConfig;
   private readonly appBaseUrl: string;
   private readonly mpFeeRate: number;
+  private readonly mpWebhookSecret: string;
 
   constructor(
     @InjectModel(PaymentLinkEntity.name)
@@ -58,6 +59,7 @@ export class PaymentsService {
       'APP_BASE_URL',
       'http://localhost:4200'
     );
+    this.mpWebhookSecret = this.configService.get<string>('MP_WEBHOOK_SECRET', '');
   }
 
   // ── Cálculo de comisión ────────────────────────────────────────────────────
@@ -859,6 +861,28 @@ export class PaymentsService {
       default:
         return PaymentStatusEnum.PENDING;
     }
+  }
+
+  validateMpWebhookSignature(
+    signature: string | undefined,
+    requestId: string | undefined,
+    dataId: string,
+    ts: string,
+  ): boolean {
+    if (!this.mpWebhookSecret) return true; // si no está configurado, se omite la validación
+    if (!signature || !requestId) return false;
+
+    const v1Match = signature.match(/v1=([a-f0-9]+)/);
+    if (!v1Match) return false;
+    const receivedHash = v1Match[1];
+
+    const template = `id:${dataId};request-id:${requestId};ts:${ts}`;
+    const expectedHash = require('crypto')
+      .createHmac('sha256', this.mpWebhookSecret)
+      .update(template)
+      .digest('hex');
+
+    return receivedHash === expectedHash;
   }
 
   private formatMoney(amount: number): string {
