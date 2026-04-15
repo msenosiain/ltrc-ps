@@ -58,6 +58,7 @@ export interface EncounterPaymentRow {
 }
 
 export interface EncounterCategorySummary {
+  matchId: string;
   category: string;
   categoryLabel: string;
   count: number;

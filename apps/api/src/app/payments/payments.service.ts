@@ -637,6 +637,7 @@ export class PaymentsService {
     time?: string;
     opponent?: string;
     categories: {
+      matchId: string;
       category: string;
       categoryLabel: string;
       count: number;
@@ -668,18 +669,19 @@ export class PaymentsService {
     const opponent: string | undefined = first?.opponent || undefined;
 
     const categoryMap = new Map<string, {
+      matchId: string;
       count: number;
       total: number;
       payments: { playerName: string; playerDni: string; concept: string; method: string; amount: number; date: string }[];
     }>();
     for (const match of matches) {
       const cat = match.category || 'sin_categoria';
-      if (!categoryMap.has(cat)) categoryMap.set(cat, { count: 0, total: 0, payments: [] });
+      if (!categoryMap.has(cat)) categoryMap.set(cat, { matchId: (match as any)._id.toString(), count: 0, total: 0, payments: [] });
     }
     for (const p of payments) {
       const match = matches.find((m) => (m as any)._id.equals(p.entityId));
       const cat = match?.category || 'sin_categoria';
-      const entry = categoryMap.get(cat) ?? { count: 0, total: 0, payments: [] };
+      const entry = categoryMap.get(cat) ?? { matchId: (match as any)?._id?.toString() ?? '', count: 0, total: 0, payments: [] };
       const player = p.playerId as any;
       entry.count++;
       entry.total += p.amount;
@@ -702,9 +704,12 @@ export class PaymentsService {
         return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
       })
       .map(([category, data]) => ({
+        matchId: data.matchId,
         category,
         categoryLabel: getCategoryLabel(category as CategoryEnum),
-        ...data,
+        count: data.count,
+        total: data.total,
+        payments: data.payments,
       }));
 
     const grandTotal = categories.reduce((s, c) => s + c.total, 0);
