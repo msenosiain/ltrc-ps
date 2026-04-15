@@ -91,7 +91,7 @@ export class MatchEditorComponent implements OnInit {
       const p = payload.payment;
       if (!p?.enabled || !p.amount || !p.expiresAt) { onSuccess(); return; }
       const time = p.expiresAtTime || '23:59';
-      const expiresAt = `${format(p.expiresAt, 'yyyy-MM-dd')}T${time}:00`;
+      const expiresAt = this.toLocalIso(p.expiresAt, time);
       this.paymentsService.createLink({
         entityType: PaymentEntityTypeEnum.MATCH,
         ...(matchIds.length === 1 ? { entityId: matchIds[0] } : { entityIds: matchIds }),
@@ -179,5 +179,15 @@ export class MatchEditorComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['..'], { relativeTo: this.route });
+  }
+
+  private toLocalIso(date: Date, time: string): string {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const offsetMin = new Date().getTimezoneOffset();
+    const sign = offsetMin <= 0 ? '+' : '-';
+    const absMin = Math.abs(offsetMin);
+    const hh = String(Math.floor(absMin / 60)).padStart(2, '0');
+    const mm = String(absMin % 60).padStart(2, '0');
+    return `${dateStr}T${time}:00${sign}${hh}:${mm}`;
   }
 }

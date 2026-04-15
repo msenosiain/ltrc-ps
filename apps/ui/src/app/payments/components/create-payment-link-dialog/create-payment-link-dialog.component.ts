@@ -151,11 +151,21 @@ export class CreatePaymentLinkDialogComponent implements OnInit {
         paymentType: value.paymentType!,
         installmentNumber: this.isInstallment ? value.installmentNumber ?? undefined : undefined,
         installmentTotal: this.isInstallment ? value.installmentTotal ?? undefined : undefined,
-        expiresAt: `${format(value.expiresAt!, 'yyyy-MM-dd')}T${value.expiresAtTime || '23:59'}:00`,
+        expiresAt: this.toLocalIso(value.expiresAt!, value.expiresAtTime || '23:59'),
       })
       .subscribe({
         next: (link) => this.dialogRef.close(link),
         error: () => (this.saving = false),
       });
+  }
+
+  private toLocalIso(date: Date, time: string): string {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    const offsetMin = new Date().getTimezoneOffset();
+    const sign = offsetMin <= 0 ? '+' : '-';
+    const absMin = Math.abs(offsetMin);
+    const hh = String(Math.floor(absMin / 60)).padStart(2, '0');
+    const mm = String(absMin % 60).padStart(2, '0');
+    return `${dateStr}T${time}:00${sign}${hh}:${mm}`;
   }
 }
