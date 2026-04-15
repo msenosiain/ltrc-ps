@@ -54,6 +54,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 272px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .encounter-card {
