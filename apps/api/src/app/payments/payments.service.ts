@@ -511,7 +511,7 @@ export class PaymentsService {
 
       doc
         .fontSize(10)
-        .text(`Total aprobado: $${totalApproved.toFixed(2)}   |   Pendiente: $${totalPending.toFixed(2)}   |   Total pagos: ${payments.length}`)
+        .text(`Total aprobado: ${this.formatMoney(totalApproved)}   |   Pendiente: ${this.formatMoney(totalPending)}   |   Total pagos: ${payments.length}`)
         .moveDown();
 
       // Tabla
@@ -542,7 +542,7 @@ export class PaymentsService {
           player?.idNumber ?? '-',
           p.concept,
           p.method,
-          `$${p.amount.toFixed(2)}`,
+          this.formatMoney(p.amount),
           this.formatDate(p.date),
           p.status,
         ];
@@ -702,7 +702,7 @@ export class PaymentsService {
       doc.fontSize(10).text(`${dateLabel}${timeLabel}`, { align: 'center' }).moveDown();
 
       const grandTotal = payments.reduce((s, p) => s + p.amount, 0);
-      doc.fontSize(10).text(`Total cobrado: $${grandTotal.toFixed(2)}   |   Total pagos: ${payments.length}`, { align: 'center' }).moveDown();
+      doc.fontSize(10).text(`Total cobrado: ${this.formatMoney(grandTotal)}   |   Total pagos: ${payments.length}`, { align: 'center' }).moveDown();
 
       const cols = [140, 60, 90, 80, 80, 65];
       const headers = ['Jugador', 'DNI', 'Concepto', 'Método', 'Monto', 'Fecha'];
@@ -719,7 +719,7 @@ export class PaymentsService {
         // Encabezado de categoría
         doc.fontSize(11).font('Helvetica-Bold')
           .fillColor('#1976d2')
-          .text(`${catLabel}   —   ${group.length} pago(s)   $${catTotal.toFixed(2)}`, startX, y);
+          .text(`${catLabel}   —   ${group.length} pago(s)   ${this.formatMoney(catTotal)}`, startX, y);
         y += 16;
         doc.fillColor('black');
 
@@ -749,7 +749,7 @@ export class PaymentsService {
             player?.idNumber ?? '-',
             p.concept,
             p.method,
-            `$${p.amount.toFixed(2)}`,
+            this.formatMoney(p.amount),
             this.formatDate(p.date),
           ];
           row.forEach((cell, i) => {
@@ -760,7 +760,7 @@ export class PaymentsService {
 
         // Subtotal
         y += 2;
-        doc.fontSize(8).font('Helvetica-Bold').text(`Subtotal ${catLabel}: $${catTotal.toFixed(2)}`, startX, y, { align: 'right', width: pageWidth });
+        doc.fontSize(8).font('Helvetica-Bold').text(`Subtotal ${catLabel}: ${this.formatMoney(catTotal)}`, startX, y, { align: 'right', width: pageWidth });
         y += 16;
         doc.font('Helvetica');
       }
@@ -795,6 +795,10 @@ export class PaymentsService {
       default:
         return PaymentStatusEnum.PENDING;
     }
+  }
+
+  private formatMoney(amount: number): string {
+    return '$' + amount.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   private formatDate(date: Date | string): string {

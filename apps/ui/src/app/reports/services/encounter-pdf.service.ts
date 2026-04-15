@@ -30,7 +30,7 @@ export class EncounterPdfService {
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(255, 255, 255);
       doc.text(
-        `${cat.categoryLabel.toUpperCase()}   ·   ${cat.count} pago(s)   ·   $${cat.total.toFixed(2)}`,
+        `${cat.categoryLabel.toUpperCase()}   ·   ${cat.count} pago(s)   ·   $${this.formatMoney(cat.total)}`,
         marginL + 3,
         y + 5
       );
@@ -53,7 +53,7 @@ export class EncounterPdfService {
           p.playerDni,
           p.concept,
           this.methodLabel(p.method),
-          `$${p.amount.toFixed(2)}`,
+          this.formatMoney(p.amount),
           p.date,
         ]),
         theme: 'grid',
@@ -93,7 +93,7 @@ export class EncounterPdfService {
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
     doc.text('TOTAL GENERAL', marginL + 3, y + 5.5);
-    doc.text(`$${report.grandTotal.toFixed(2)}`, pageW - marginL - 3, y + 5.5, { align: 'right' });
+    doc.text(this.formatMoney(report.grandTotal), pageW - marginL - 3, y + 5.5, { align: 'right' });
 
     const filename = `informe-encuentro-${report.date.replace(/\//g, '-')}.pdf`;
     doc.save(filename);
@@ -148,7 +148,7 @@ export class EncounterPdfService {
     row('Categorías', report.categories.map((c) => c.categoryLabel).join(', '), col2x, y);
     y += lineH;
 
-    row('Total cobrado', `$${report.grandTotal.toFixed(2)}`, col1x, y);
+    row('Total cobrado', this.formatMoney(report.grandTotal), col1x, y);
     row('Cantidad de pagos', String(report.grandCount), col2x, y);
     y += lineH;
 
@@ -156,6 +156,10 @@ export class EncounterPdfService {
     doc.line(marginL, y + 1, pageW - marginL, y + 1);
 
     return y + 7;
+  }
+
+  private formatMoney(amount: number): string {
+    return '$' + amount.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   private methodLabel(method: string): string {
