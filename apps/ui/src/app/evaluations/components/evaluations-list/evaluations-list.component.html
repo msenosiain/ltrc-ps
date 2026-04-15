@@ -27,22 +27,22 @@
     </div>
 
     <div class="filters-row" [class.filters-row--open]="filtersExpanded">
-      @if (showSportFilter) {
+      @if (availableSports().length > 1) {
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Deporte</mat-label>
-          <mat-select formControlName="sport" (selectionChange)="onSportChange()">
-            @for (s of sportOptions; track s.id) {
+          <mat-select formControlName="sport">
+            @for (s of availableSports(); track s.id) {
               <mat-option [value]="s.id">{{ s.label }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       }
 
-      @if (showCategoryFilter) {
+      @if (availableCategories().length > 1) {
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Categoría</mat-label>
           <mat-select formControlName="category">
-            @for (cat of categoryOptions; track cat.id) {
+            @for (cat of availableCategories(); track cat.id) {
               <mat-option [value]="cat.id">{{ cat.label }}</mat-option>
             }
           </mat-select>
