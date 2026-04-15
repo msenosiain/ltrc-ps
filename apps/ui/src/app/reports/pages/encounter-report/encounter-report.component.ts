@@ -126,14 +126,6 @@ export class EncounterReportComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      const ctrl = this.filterForm.get('sport')!;
-      this.availableSports().length <= 1 ? ctrl.disable({ emitEvent: false }) : ctrl.enable({ emitEvent: false });
-    });
-    effect(() => {
-      const ctrl = this.filterForm.get('category')!;
-      this.availableCategories().length <= 1 ? ctrl.disable({ emitEvent: false }) : ctrl.enable({ emitEvent: false });
-    });
-    effect(() => {
       const ctrl = this.filterForm.get('date')!;
       const matches = this.allMatches();
       const uniqueDates = new Set(matches.map(m => m.date?.toString().substring(0, 10)));
@@ -155,7 +147,9 @@ export class EncounterReportComponent implements OnInit {
     // Cuando cambia el torneo, auto-setear sport y buscar partidos
     this.filterForm.get('tournament')!.valueChanges.subscribe((tournamentId) => {
       const tournament = this.tournaments().find(t => t.id === tournamentId);
-      this.filterForm.get('sport')!.setValue(tournament?.sport ?? null);
+      const sports = this.availableSports();
+      const effectiveSport = tournament?.sport ?? (sports.length === 1 ? sports[0].value : null);
+      this.filterForm.get('sport')!.setValue(effectiveSport);
       if (tournamentId) this.searchEncounters();
     });
     // Re-aplicar filtros cuando cambia sport o category

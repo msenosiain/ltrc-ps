@@ -19,14 +19,18 @@
 }
 
 .filter-form {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  display: flex;
   gap: 12px;
   align-items: flex-start;
   margin-bottom: 24px;
 
   mat-form-field {
-    width: 100%;
+    flex: 1;
+    min-width: 160px;
+
+    &:first-child {
+      flex: 2;
+    }
   }
 
   button {

@@ -19,31 +19,33 @@
       }
     </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Deporte</mat-label>
-      <mat-select formControlName="sport">
-        @if (availableSports().length > 1) {
+    @if (availableSports().length > 1) {
+      <mat-form-field appearance="outline">
+        <mat-label>Deporte</mat-label>
+        <mat-select formControlName="sport">
           <mat-option [value]="null">Todos</mat-option>
-        }
-        @for (s of availableSports(); track s.value) {
-          <mat-option [value]="s.value">{{ s.label }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+          @for (s of availableSports(); track s.value) {
+            <mat-option [value]="s.value">{{ s.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    }
 
-    <mat-form-field appearance="outline">
-      <mat-label>Categoría</mat-label>
-      <mat-select formControlName="category" multiple>
-        @for (c of availableCategories(); track c.id) {
-          <mat-option [value]="c.id">{{ c.label }}</mat-option>
+    @if (availableCategories().length > 1) {
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="category" multiple>
+          @for (c of availableCategories(); track c.id) {
+            <mat-option [value]="c.id">{{ c.label }}</mat-option>
+          }
+        </mat-select>
+        @if (filterForm.get('category')?.value?.length) {
+          <button mat-icon-button matIconSuffix type="button" (click)="filterForm.get('category')!.setValue(null); $event.stopPropagation()">
+            <mat-icon>close</mat-icon>
+          </button>
         }
-      </mat-select>
-      @if (filterForm.get('category')?.value?.length) {
-        <button mat-icon-button matIconSuffix type="button" (click)="filterForm.get('category')!.setValue(null); $event.stopPropagation()">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-    </mat-form-field>
+      </mat-form-field>
+    }
 
     <mat-form-field appearance="outline">
       <mat-label>Fecha</mat-label>
