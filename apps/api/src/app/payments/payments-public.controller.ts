@@ -26,4 +26,13 @@ export class PaymentsPublicController {
   confirmPayment(@Body() dto: ConfirmPaymentDto) {
     return this.paymentsService.confirmPayment(dto);
   }
+
+  // IPN de MercadoPago — MP llama este endpoint cuando cambia el estado de un pago
+  @Post('webhook/mp')
+  async handleMpWebhook(@Body() body: any) {
+    if (body?.type === 'payment' && body?.data?.id) {
+      await this.paymentsService.syncPaymentByMpId(String(body.data.id));
+    }
+    return { received: true };
+  }
 }

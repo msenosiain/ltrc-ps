@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 import { PaymentsController } from './payments.controller';
 import { PaymentsPublicController } from './payments-public.controller';
 import { PaymentsService } from './payments.service';
+import { PaymentsSyncService } from './payments-sync.service';
 import { PaymentLinkEntity } from './schemas/payment-link.entity';
 import { PaymentLinkSchema } from './schemas/payment-link.schema';
 import { PaymentEntity } from './schemas/payment.entity';
@@ -16,6 +18,7 @@ import { TripSchema } from '../trips/schemas/trip.schema';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MongooseModule.forFeature([
       {
         name: PaymentLinkEntity.name,
@@ -33,7 +36,7 @@ import { TripSchema } from '../trips/schemas/trip.schema';
     ]),
   ],
   controllers: [PaymentsController, PaymentsPublicController],
-  providers: [PaymentsService],
+  providers: [PaymentsService, PaymentsSyncService],
   exports: [PaymentsService],
 })
 export class PaymentsModule {}

@@ -132,6 +132,10 @@ export class PaymentsService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  syncPayment(id: string) {
+    return this.http.post<{ status: string; updated: boolean }>(`${this.apiUrl}/${id}/sync`, {});
+  }
+
   downloadPdfReport(entityType: PaymentEntityTypeEnum, entityId: string) {
     const params = new HttpParams()
       .set('entityType', entityType)

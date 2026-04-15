@@ -126,6 +126,12 @@ export class PaymentsController {
     return this.paymentsService.recordManualPayment(dto, (req as any).user);
   }
 
+  @Post(':id/sync')
+  @Roles(RoleEnum.ADMIN, RoleEnum.COORDINATOR, RoleEnum.MANAGER, RoleEnum.COACH)
+  syncPayment(@Param('id') id: string) {
+    return this.paymentsService.syncPaymentById(id);
+  }
+
   @Delete(':id')
   deleteManual(@Param('id') id: string) {
     return this.paymentsService.deleteManualPayment(id);

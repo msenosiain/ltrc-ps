@@ -381,6 +381,70 @@ export class PaymentsService {
     await payment.deleteOne();
   }
 
+  // ── MP Sync ───────────────────────────────────────────────────────────────
+
+  async syncPaymentById(id: string) {
+    const payment = await this.paymentModel.findById(id);
+    if (!payment) throw new NotFoundException('Pago no encontrado');
+    if (payment.method !== PaymentMethodEnum.MERCADOPAGO) {
+      throw new BadRequestException('Solo se pueden sincronizar pagos de Mercado Pago');
+    }
+    return this.syncWithMp(payment);
+  }
+
+  async syncPaymentByMpId(mpPaymentId: string) {
+    const payment = await this.paymentModel.findOne({ mpPaymentId });
+    if (!payment) return;
+    await this.syncWithMp(payment);
+  }
+
+  async syncAllPending(): Promise<{ synced: number; updated: number }> {
+    const pending = await this.paymentModel.find({
+      method: PaymentMethodEnum.MERCADOPAGO,
+      status: PaymentStatusEnum.PENDING,
+    });
+    let updated = 0;
+    for (const payment of pending) {
+      const result = await this.syncWithMp(payment);
+      if (result.updated) updated++;
+    }
+    return { synced: pending.length, updated };
+  }
+
+  private async syncWithMp(payment: PaymentEntity): Promise<{ status: string; updated: boolean }> {
+    const previousStatus = payment.status;
+    const mpPaymentApi = new MpPayment(this.mpClient);
+
+    try {
+      let mpData: Awaited<ReturnType<typeof mpPaymentApi.get>> | undefined;
+
+      if (payment.mpPaymentId) {
+        mpData = await mpPaymentApi.get({ id: payment.mpPaymentId });
+      } else if (payment.mpExternalReference) {
+        const search = await mpPaymentApi.search({
+          options: { external_reference: payment.mpExternalReference },
+        });
+        mpData = search.results?.[0] as unknown as typeof mpData;
+      }
+
+      if (!mpData) return { status: payment.status, updated: false };
+
+      payment.mpPaymentId = String(mpData.id);
+      payment.mpStatusDetail = (mpData as any).status_detail ?? undefined;
+      payment.status = this.mapMpStatus((mpData as any).status ?? 'pending');
+      if ((mpData as any).status === 'approved' && !payment.date) {
+        payment.date = (mpData as any).date_approved
+          ? new Date((mpData as any).date_approved)
+          : new Date();
+      }
+      await payment.save();
+
+      return { status: payment.status, updated: payment.status !== previousStatus };
+    } catch {
+      return { status: payment.status, updated: false };
+    }
+  }
+
   // ── Analytics ─────────────────────────────────────────────────────────────
 
   async getStats(sport?: string): Promise<{
