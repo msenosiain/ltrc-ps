@@ -567,7 +567,16 @@ export class PaymentsService {
 
   async getEncounterReport(matchIds: string[]): Promise<{
     encounterLabel: string;
-    categories: { category: string; categoryLabel: string; count: number; total: number }[];
+    date: string;
+    time?: string;
+    opponent?: string;
+    categories: {
+      category: string;
+      categoryLabel: string;
+      count: number;
+      total: number;
+      payments: { playerName: string; playerDni: string; concept: string; method: string; amount: number; date: string }[];
+    }[];
     grandTotal: number;
     grandCount: number;
   }> {
@@ -575,29 +584,47 @@ export class PaymentsService {
     const [matches, payments] = await Promise.all([
       this.matchModel
         .find({ _id: { $in: objectIds } })
-        .select('category name date opponent tournament')
+        .select('category name date time opponent tournament')
         .populate('tournament', 'name')
         .lean(),
       this.paymentModel
         .find({ entityType: PaymentEntityTypeEnum.MATCH, entityId: { $in: objectIds }, status: PaymentStatusEnum.APPROVED })
+        .populate({ path: 'playerId', select: 'name idNumber' })
+        .sort({ entityId: 1, date: 1 })
         .lean(),
     ]);
 
     const first = matches[0] as any;
     const encounterLabel = first?.name || (first?.tournament as any)?.name
       || (first?.opponent ? `vs ${first.opponent}` : 'Encuentro');
+    const date = first ? this.formatDate(first.date) : '';
+    const time: string | undefined = first?.time || undefined;
+    const opponent: string | undefined = first?.opponent || undefined;
 
-    const categoryMap = new Map<string, { count: number; total: number }>();
+    const categoryMap = new Map<string, {
+      count: number;
+      total: number;
+      payments: { playerName: string; playerDni: string; concept: string; method: string; amount: number; date: string }[];
+    }>();
     for (const match of matches) {
       const cat = match.category || 'sin_categoria';
-      if (!categoryMap.has(cat)) categoryMap.set(cat, { count: 0, total: 0 });
+      if (!categoryMap.has(cat)) categoryMap.set(cat, { count: 0, total: 0, payments: [] });
     }
     for (const p of payments) {
       const match = matches.find((m) => (m as any)._id.equals(p.entityId));
       const cat = match?.category || 'sin_categoria';
-      const entry = categoryMap.get(cat) ?? { count: 0, total: 0 };
+      const entry = categoryMap.get(cat) ?? { count: 0, total: 0, payments: [] };
+      const player = p.playerId as any;
       entry.count++;
       entry.total += p.amount;
+      entry.payments.push({
+        playerName: player?.name ?? '-',
+        playerDni: player?.idNumber ?? '-',
+        concept: p.concept,
+        method: p.method,
+        amount: p.amount,
+        date: this.formatDate(p.date),
+      });
       categoryMap.set(cat, entry);
     }
 
@@ -608,16 +635,15 @@ export class PaymentsService {
         const ib = categoryOrder.indexOf(b);
         return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
       })
-      .map(([category, { count, total }]) => ({
+      .map(([category, data]) => ({
         category,
         categoryLabel: getCategoryLabel(category as CategoryEnum),
-        count,
-        total,
+        ...data,
       }));
 
     const grandTotal = categories.reduce((s, c) => s + c.total, 0);
     const grandCount = categories.reduce((s, c) => s + c.count, 0);
-    return { encounterLabel, categories, grandTotal, grandCount };
+    return { encounterLabel, date, time, opponent, categories, grandTotal, grandCount };
   }
 
   async generateEncounterPdfReport(matchIds: string[]): Promise<Buffer> {

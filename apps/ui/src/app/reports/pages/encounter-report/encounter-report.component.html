@@ -72,8 +72,13 @@
           <h3 class="report-section__title">{{ r.encounterLabel }}</h3>
           <p class="report-section__meta">{{ r.grandCount }} pago(s) · Total: ${{ r.grandTotal | number:'1.2-2' }}</p>
         </div>
-        <button mat-raised-button color="primary" (click)="downloadPdf()">
-          <mat-icon>picture_as_pdf</mat-icon> Descargar PDF
+        <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="generatingPdf()">
+          @if (generatingPdf()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>picture_as_pdf</mat-icon>
+          }
+          Descargar PDF
         </button>
       </div>
 

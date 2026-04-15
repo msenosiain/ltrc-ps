@@ -48,6 +48,33 @@ export interface CheckoutResult {
   checkoutUrl: string;
 }
 
+export interface EncounterPaymentRow {
+  playerName: string;
+  playerDni: string;
+  concept: string;
+  method: string;
+  amount: number;
+  date: string;
+}
+
+export interface EncounterCategorySummary {
+  category: string;
+  categoryLabel: string;
+  count: number;
+  total: number;
+  payments: EncounterPaymentRow[];
+}
+
+export interface EncounterReport {
+  encounterLabel: string;
+  date: string;
+  time?: string;
+  opponent?: string;
+  categories: EncounterCategorySummary[];
+  grandTotal: number;
+  grandCount: number;
+}
+
 export interface ConfirmResult {
   status: string;
 }
@@ -117,12 +144,7 @@ export class PaymentsService {
 
   getEncounterReport(matchIds: string[]) {
     const params = new HttpParams().set('matchIds', matchIds.join(','));
-    return this.http.get<{
-      encounterLabel: string;
-      categories: { category: string; categoryLabel: string; count: number; total: number }[];
-      grandTotal: number;
-      grandCount: number;
-    }>(`${this.apiUrl}/report/encounter`, { params });
+    return this.http.get<EncounterReport>(`${this.apiUrl}/report/encounter`, { params });
   }
 
   downloadEncounterPdf(matchIds: string[]) {

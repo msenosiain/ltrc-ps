@@ -12,13 +12,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import {
-  Match,
-  PaginatedResponse,
-  Tournament,
-} from '@ltrc-campo/shared-api-model';
+import { Match, PaginatedResponse, Tournament } from '@ltrc-campo/shared-api-model';
 import { API_CONFIG_TOKEN } from '../../../app.config';
-import { PaymentsService } from '../../../payments/services/payments.service';
+import { EncounterReport, PaymentsService } from '../../../payments/services/payments.service';
+import { EncounterPdfService } from '../../services/encounter-pdf.service';
 import { format } from 'date-fns';
 
 interface EncounterGroup {
@@ -27,20 +24,6 @@ interface EncounterGroup {
   time?: string;
   opponent?: string;
   matchIds: string[];
-}
-
-interface CategorySummary {
-  category: string;
-  categoryLabel: string;
-  count: number;
-  total: number;
-}
-
-interface EncounterReport {
-  encounterLabel: string;
-  categories: CategorySummary[];
-  grandTotal: number;
-  grandCount: number;
 }
 
 @Component({
@@ -67,6 +50,7 @@ export class EncounterReportComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly paymentsService = inject(PaymentsService);
+  private readonly pdfService = inject(EncounterPdfService);
   private readonly snackBar = inject(MatSnackBar);
 
   private readonly tournamentsApiUrl = `${this.config.baseUrl}/tournaments`;
@@ -80,6 +64,7 @@ export class EncounterReportComponent implements OnInit {
   loadingTournaments = signal(false);
   loadingEncounters = signal(false);
   loadingReport = signal(false);
+  generatingPdf = signal(false);
 
   readonly filterForm = new FormGroup({
     tournament: new FormControl<string>('', Validators.required),
@@ -177,19 +162,16 @@ export class EncounterReportComponent implements OnInit {
     this.selectedEncounter.set(null);
   }
 
-  downloadPdf() {
-    const encounter = this.selectedEncounter();
-    if (!encounter) return;
-    this.paymentsService.downloadEncounterPdf(encounter.matchIds).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob as Blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `informe-encuentro-${encounter.date.replace(/\//g, '-')}.pdf`;
-        a.click();
-        URL.revokeObjectURL(url);
-      },
-      error: () => this.snackBar.open('Error al generar el PDF', '', { duration: 3000 }),
-    });
+  async downloadPdf() {
+    const r = this.report();
+    if (!r) return;
+    this.generatingPdf.set(true);
+    try {
+      await this.pdfService.generate(r);
+    } catch {
+      this.snackBar.open('Error al generar el PDF', '', { duration: 3000 });
+    } finally {
+      this.generatingPdf.set(false);
+    }
   }
 }
