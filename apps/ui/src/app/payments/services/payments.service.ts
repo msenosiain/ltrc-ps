@@ -115,6 +115,8 @@ export interface GlobalReportFilters {
   dateTo?: string;
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortDir?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -196,6 +198,8 @@ export class PaymentsService {
     if (filters.dateTo) params = params.set('dateTo', filters.dateTo);
     if (filters.page) params = params.set('page', String(filters.page));
     if (filters.limit) params = params.set('limit', String(filters.limit));
+    if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
+    if (filters.sortDir) params = params.set('sortDir', filters.sortDir);
     return this.http.get<GlobalPaymentsReport>(`${this.apiUrl}/report/global`, { params });
   }
 

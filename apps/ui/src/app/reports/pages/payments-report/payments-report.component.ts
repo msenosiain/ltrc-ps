@@ -1,11 +1,12 @@
 import {
   Component,
   computed,
+  DestroyRef,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -16,13 +17,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
-import { startWith } from 'rxjs';
+import { debounceTime, startWith } from 'rxjs';
 import { format } from 'date-fns';
 import {
   CategoryEnum,
@@ -63,6 +65,7 @@ import {
     MatTableModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatSortModule,
     MatChipsModule,
     MatTooltipModule,
     MatSnackBarModule,
@@ -78,6 +81,7 @@ export class PaymentsReportComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly config = inject(API_CONFIG_TOKEN);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly currentUser = toSignal(this.authService.user$);
   private readonly isAdmin = computed(
@@ -91,6 +95,8 @@ export class PaymentsReportComponent implements OnInit {
   generatingPdf = signal(false);
   page = signal(1);
   readonly pageSize = 50;
+  sortBy = signal('date');
+  sortDir = signal<'asc' | 'desc'>('desc');
 
   readonly filterForm = new FormGroup({
     tournament: new FormControl<string | null>(null),
@@ -160,13 +166,17 @@ export class PaymentsReportComponent implements OnInit {
       this.filterForm.get('sport')!.setValue(sports[0].value, { emitEvent: false });
     }
 
-    this.filterForm.get('sport')!.valueChanges.subscribe(() => {
-      this.filterForm.get('category')!.setValue(null, { emitEvent: false });
-      this.filterForm.get('tournament')!.setValue(null, { emitEvent: false });
-    });
-    this.filterForm.get('tournament')!.valueChanges.subscribe(() => {
-      this.search();
-    });
+    this.filterForm.get('sport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.filterForm.get('category')!.setValue(null, { emitEvent: false });
+        this.filterForm.get('tournament')!.setValue(null, { emitEvent: false });
+      });
+
+    this.filterForm.valueChanges
+      .pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.search());
+
     this.loadTournaments();
     this.search();
   }
@@ -195,7 +205,23 @@ export class PaymentsReportComponent implements OnInit {
       category: v.category ?? undefined,
       dateFrom: v.dateFrom ? format(v.dateFrom, 'yyyy-MM-dd') : undefined,
       dateTo: v.dateTo ? format(v.dateTo, 'yyyy-MM-dd') : undefined,
+      sortBy: this.sortBy(),
+      sortDir: this.sortDir(),
     };
+  }
+
+  onSortChange(event: { active: string; direction: string }) {
+    if (!event.direction) return;
+    this.sortBy.set(event.active);
+    this.sortDir.set(event.direction as 'asc' | 'desc');
+    this.search();
+  }
+
+  clearControl(name: string) {
+    const ctrl = this.filterForm.get(name);
+    if (!ctrl) return;
+    const isMulti = Array.isArray(ctrl.value);
+    ctrl.setValue(isMulti ? [] : null);
   }
 
   private selectedTournamentName(): string | null {

@@ -568,29 +568,44 @@ export class PaymentsService {
     dateTo?: string;
     page?: number;
     limit?: number;
+    sortBy?: string;
+    sortDir?: string;
   }) {
     const page = Math.max(1, filters.page ?? 1);
     const limit = Math.min(filters.limit ?? 50, 1000);
     const skip = (page - 1) * limit;
 
-    const query = await this.buildGlobalQuery(filters);
+    const SORTABLE_FIELDS: Record<string, string> = {
+      date: 'date',
+      amount: 'amount',
+      status: 'status',
+      method: 'method',
+      concept: 'concept',
+    };
+    const sortField = SORTABLE_FIELDS[filters.sortBy ?? ''] ?? 'date';
+    const sortOrder = filters.sortDir === 'asc' ? 1 : -1;
 
-    const [total, payments] = await Promise.all([
+    const query = await this.buildGlobalQuery(filters);
+    const approvedQuery = { ...query, status: PaymentStatusEnum.APPROVED };
+
+    const [total, payments, approvedAgg] = await Promise.all([
       this.paymentModel.countDocuments(query),
       this.paymentModel
         .find(query)
         .populate('playerId', 'name idNumber sport category')
-        .sort({ date: -1, createdAt: -1 })
+        .sort({ [sortField]: sortOrder, createdAt: -1 })
         .skip(skip)
         .limit(limit)
         .lean(),
+      this.paymentModel.aggregate([
+        { $match: approvedQuery },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
     ]);
 
     const { matchLabelMap, tripLabelMap } = await this.resolveEntityLabels(payments);
     const data = payments.map((p) => this.mapPaymentRow(p, matchLabelMap, tripLabelMap));
-    const totalApproved = data
-      .filter((r) => r.status === PaymentStatusEnum.APPROVED)
-      .reduce((s, r) => s + r.amount, 0);
+    const totalApproved = approvedAgg[0]?.total ?? 0;
 
     return { data, total, page, limit, totalApproved };
   }

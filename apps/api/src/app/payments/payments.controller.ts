@@ -102,11 +102,15 @@ export class PaymentsController {
     @Query('dateTo') dateTo?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('sortDir') sortDir?: string,
   ) {
     return this.paymentsService.getGlobalReport({
       status, method, entityType, sport, category, tournamentId, dateFrom, dateTo,
       page: page ? Number(page) : undefined,
       limit: limit ? Number(limit) : undefined,
+      sortBy,
+      sortDir,
     });
   }
 
