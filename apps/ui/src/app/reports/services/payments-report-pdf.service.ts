@@ -29,28 +29,58 @@ export class PaymentsReportPdfService {
 
     let y = await this.drawHeader(doc, report, ctx, pageW, marginL);
 
-    const rows = report.data.map((p) => [
-      this.formatDate(p.date),
-      p.playerName,
-      p.playerDni,
-      this.sportCatLabel(p.playerSport, p.playerCategory),
-      p.entityLabel,
-      p.concept,
-      this.methodLabel(p.method),
-      this.formatMoney(p.amount),
-      this.statusLabel(p.status),
-    ]);
+    // Agrupar pagos por evento
+    const grouped = new Map<string, GlobalPaymentRow[]>();
+    for (const p of report.data) {
+      const key = p.entityLabel ?? '—';
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key)!.push(p);
+    }
+
+    const COLS = 8;
+    const GROUP_BG: [number, number, number] = [55, 71, 99];
+    const body: any[] = [];
+
+    for (const [label, payments] of grouped) {
+      // Fila de agrupación
+      body.push([
+        {
+          content: label,
+          colSpan: COLS,
+          styles: {
+            fillColor: GROUP_BG,
+            textColor: 255,
+            fontStyle: 'bold',
+            fontSize: 8,
+            cellPadding: { top: 2.5, bottom: 2.5, left: 3, right: 3 },
+          },
+        },
+      ]);
+      // Filas de pagos del grupo
+      for (const p of payments) {
+        body.push([
+          this.formatDate(p.date),
+          p.playerName,
+          p.playerDni,
+          this.sportCatLabel(p.playerSport, p.playerCategory),
+          p.concept,
+          this.methodLabel(p.method),
+          this.formatMoney(p.amount),
+          this.statusLabel(p.status),
+        ]);
+      }
+    }
 
     autoTable(doc, {
       startY: y,
-      head: [['Fecha', 'Jugador', 'DNI', 'Deporte / Cat.', 'Evento', 'Concepto', 'Método', 'Monto', 'Estado']],
-      body: rows,
+      head: [['Fecha', 'Jugador', 'DNI', 'Deporte / Cat.', 'Concepto', 'Método', 'Monto', 'Estado']],
+      body,
       theme: 'grid',
       headStyles: {
         fillColor: this.HEADER_BG,
         textColor: 255,
         fontStyle: 'bold',
-        fontSize: 7.5,
+        fontSize: 8,
         halign: 'center',
       },
       bodyStyles: {
@@ -61,19 +91,17 @@ export class PaymentsReportPdfService {
       },
       alternateRowStyles: { fillColor: this.SECTION_BG },
       columnStyles: {
-        0: { cellWidth: 18, halign: 'center' },   // Fecha
-        1: { cellWidth: 38 },                      // Jugador
+        0: { cellWidth: 16, halign: 'center' },   // Fecha
+        1: { cellWidth: 'auto' },                  // Jugador
         2: { cellWidth: 20, halign: 'center' },    // DNI
         3: { cellWidth: 22 },                      // Deporte/Cat
-        4: { cellWidth: 'auto' },                  // Evento
-        5: { cellWidth: 28 },                      // Concepto
-        6: { cellWidth: 22, halign: 'center' },    // Método
-        7: { cellWidth: 20, halign: 'right' },     // Monto
-        8: { cellWidth: 20, halign: 'center' },    // Estado
+        4: { cellWidth: 24 },                      // Concepto
+        5: { cellWidth: 20, halign: 'center' },    // Método
+        6: { cellWidth: 18, halign: 'right' },     // Monto
+        7: { cellWidth: 18, halign: 'center' },    // Estado
       },
       margin: { left: marginL, right: marginL },
-      didDrawPage: (data) => {
-        // Footer con número de página
+      didDrawPage: () => {
         doc.setFontSize(7);
         doc.setTextColor(150, 150, 150);
         doc.text(
