@@ -80,6 +80,43 @@ export interface ConfirmResult {
   status: string;
 }
 
+export interface GlobalPaymentRow {
+  id: string;
+  playerName: string;
+  playerDni: string;
+  playerSport: string | null;
+  playerCategory: string | null;
+  entityType: PaymentEntityTypeEnum;
+  entityLabel: string;
+  concept: string;
+  method: string;
+  amount: number;
+  status: string;
+  date: string;
+  notes?: string;
+}
+
+export interface GlobalPaymentsReport {
+  data: GlobalPaymentRow[];
+  total: number;
+  page: number;
+  limit: number;
+  totalApproved: number;
+}
+
+export interface GlobalReportFilters {
+  status?: string;
+  method?: string;
+  entityType?: string;
+  sport?: string;
+  category?: string;
+  tournamentId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+  limit?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PaymentsService {
   private readonly http = inject(HttpClient);
@@ -145,6 +182,21 @@ export class PaymentsService {
       params,
       responseType: 'blob',
     });
+  }
+
+  getGlobalReport(filters: GlobalReportFilters) {
+    let params = new HttpParams();
+    if (filters.status) params = params.set('status', filters.status);
+    if (filters.method) params = params.set('method', filters.method);
+    if (filters.entityType) params = params.set('entityType', filters.entityType);
+    if (filters.sport) params = params.set('sport', filters.sport);
+    if (filters.category) params = params.set('category', filters.category);
+    if (filters.tournamentId) params = params.set('tournamentId', filters.tournamentId);
+    if (filters.dateFrom) params = params.set('dateFrom', filters.dateFrom);
+    if (filters.dateTo) params = params.set('dateTo', filters.dateTo);
+    if (filters.page) params = params.set('page', String(filters.page));
+    if (filters.limit) params = params.set('limit', String(filters.limit));
+    return this.http.get<GlobalPaymentsReport>(`${this.apiUrl}/report/global`, { params });
   }
 
   getEncounterReport(matchIds: string[]) {

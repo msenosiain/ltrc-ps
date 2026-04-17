@@ -15,7 +15,7 @@ import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { PaymentEntityTypeEnum, RoleEnum } from '@ltrc-campo/shared-api-model';
+import { PaymentEntityTypeEnum, PaymentMethodEnum, PaymentStatusEnum, RoleEnum } from '@ltrc-campo/shared-api-model';
 import { CreatePaymentLinkDto } from './dto/create-payment-link.dto';
 import { RecordManualPaymentDto } from './dto/record-manual-payment.dto';
 
@@ -88,6 +88,28 @@ export class PaymentsController {
     });
     res.end(buffer);
   }
+
+  @Get('report/global')
+  @Roles(RoleEnum.ADMIN, RoleEnum.MANAGER, RoleEnum.COORDINATOR)
+  getGlobalReport(
+    @Query('status') status?: string,
+    @Query('method') method?: string,
+    @Query('entityType') entityType?: PaymentEntityTypeEnum,
+    @Query('sport') sport?: string,
+    @Query('category') category?: string,
+    @Query('tournamentId') tournamentId?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.paymentsService.getGlobalReport({
+      status, method, entityType, sport, category, tournamentId, dateFrom, dateTo,
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+    });
+  }
+
 
   @Get('report/pdf')
   async downloadPdf(

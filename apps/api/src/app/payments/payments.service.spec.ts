@@ -254,8 +254,10 @@ describe('PaymentsService', () => {
     it('should return link info for an active link', async () => {
       const link = makeLink();
       mockLinkModel.findOne.mockReturnValue({ lean: jest.fn().mockResolvedValue(link) });
-      mockMatchModel.findById.mockReturnValue({ select: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue(mockMatch) }) });
-      mockMatchModel.find.mockReturnValue({ select: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue([mockMatch]) }) });
+      const selectResult = { lean: jest.fn().mockResolvedValue(mockMatch), populate: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue(mockMatch) }) };
+      mockMatchModel.findById.mockReturnValue({ select: jest.fn().mockReturnValue(selectResult) });
+      const findSelectResult = { lean: jest.fn().mockResolvedValue([mockMatch]), populate: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue([mockMatch]) }) };
+      mockMatchModel.find.mockReturnValue({ select: jest.fn().mockReturnValue(findSelectResult) });
 
       const result = await service.getPublicLinkInfo('tok-1');
       expect(result.linkToken).toBe('tok-1');

@@ -447,6 +447,154 @@ export class PaymentsService {
     }
   }
 
+  // ── Reporte global ────────────────────────────────────────────────────────
+
+  private async buildGlobalQuery(filters: {
+    status?: string;
+    method?: string;
+    entityType?: PaymentEntityTypeEnum;
+    sport?: string;
+    category?: string;
+    tournamentId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+  }): Promise<Record<string, unknown>> {
+    const query: Record<string, unknown> = {};
+
+    if (filters.status) {
+      const statuses = filters.status.split(',').filter(Boolean);
+      query['status'] = statuses.length === 1 ? statuses[0] : { $in: statuses };
+    }
+    if (filters.method) {
+      const methods = filters.method.split(',').filter(Boolean);
+      query['method'] = methods.length === 1 ? methods[0] : { $in: methods };
+    }
+    if (filters.entityType) query['entityType'] = filters.entityType;
+
+    if (filters.sport || filters.category) {
+      const playerQuery: Record<string, unknown> = {};
+      if (filters.sport) playerQuery['sport'] = filters.sport;
+      if (filters.category) playerQuery['category'] = filters.category;
+      const players = await this.playerModel.find(playerQuery).select('_id').lean();
+      query['playerId'] = { $in: players.map((p) => p._id) };
+    }
+
+    if (filters.tournamentId) {
+      const matchIds = await this.matchModel
+        .find({ tournament: new Types.ObjectId(filters.tournamentId) })
+        .distinct('_id');
+      query['entityType'] = PaymentEntityTypeEnum.MATCH;
+      query['entityId'] = { $in: matchIds };
+    }
+
+    if (filters.dateFrom || filters.dateTo) {
+      const dateFilter: Record<string, Date> = {};
+      if (filters.dateFrom) dateFilter['$gte'] = new Date(filters.dateFrom);
+      if (filters.dateTo) {
+        const to = new Date(filters.dateTo);
+        to.setHours(23, 59, 59, 999);
+        dateFilter['$lte'] = to;
+      }
+      query['date'] = dateFilter;
+    }
+
+    return query;
+  }
+
+  private async resolveEntityLabels(payments: any[]): Promise<{ matchLabelMap: Map<string, string>; tripLabelMap: Map<string, string> }> {
+    const matchIds = new Set<string>();
+    const tripIds = new Set<string>();
+    for (const p of payments) {
+      if (p.entityType === PaymentEntityTypeEnum.MATCH) matchIds.add(p.entityId.toString());
+      else tripIds.add(p.entityId.toString());
+    }
+
+    const [rawMatches, rawTrips] = await Promise.all([
+      matchIds.size
+        ? this.matchModel.find({ _id: { $in: [...matchIds] } }).select('date opponent name tournament').populate('tournament', 'name').lean()
+        : [],
+      tripIds.size
+        ? this.tripModel.find({ _id: { $in: [...tripIds] } }).select('name destination date').lean()
+        : [],
+    ]);
+
+    const matchLabelMap = new Map<string, string>();
+    for (const m of rawMatches as any[]) {
+      const date = this.formatDate(m.date);
+      const opponent = m.opponent ? ` vs ${m.opponent}` : '';
+      const name: string = m.name || m.tournament?.name || '';
+      matchLabelMap.set(m._id.toString(), name ? `${name}${opponent} (${date})` : `${opponent.trimStart() || 'Partido'} (${date})`);
+    }
+
+    const tripLabelMap = new Map<string, string>();
+    for (const t of rawTrips as any[]) {
+      tripLabelMap.set(t._id.toString(), t.name || t.destination || 'Viaje');
+    }
+
+    return { matchLabelMap, tripLabelMap };
+  }
+
+  private mapPaymentRow(p: any, matchLabelMap: Map<string, string>, tripLabelMap: Map<string, string>) {
+    const player = p.playerId as any;
+    const entityLabel =
+      p.entityType === PaymentEntityTypeEnum.MATCH
+        ? (matchLabelMap.get(p.entityId.toString()) ?? 'Partido')
+        : (tripLabelMap.get(p.entityId.toString()) ?? 'Viaje');
+    return {
+      id: p._id.toString(),
+      playerName: player?.name ?? '—',
+      playerDni: player?.idNumber ?? '—',
+      playerSport: player?.sport ?? null,
+      playerCategory: player?.category ?? null,
+      entityType: p.entityType as PaymentEntityTypeEnum,
+      entityLabel,
+      concept: p.concept,
+      method: p.method as PaymentMethodEnum,
+      amount: p.amount,
+      status: p.status as PaymentStatusEnum,
+      date: p.date,
+      notes: p.notes,
+    };
+  }
+
+  async getGlobalReport(filters: {
+    status?: string;
+    method?: string;
+    entityType?: PaymentEntityTypeEnum;
+    sport?: string;
+    category?: string;
+    tournamentId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = Math.max(1, filters.page ?? 1);
+    const limit = Math.min(filters.limit ?? 50, 1000);
+    const skip = (page - 1) * limit;
+
+    const query = await this.buildGlobalQuery(filters);
+
+    const [total, payments] = await Promise.all([
+      this.paymentModel.countDocuments(query),
+      this.paymentModel
+        .find(query)
+        .populate('playerId', 'name idNumber sport category')
+        .sort({ date: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
+
+    const { matchLabelMap, tripLabelMap } = await this.resolveEntityLabels(payments);
+    const data = payments.map((p) => this.mapPaymentRow(p, matchLabelMap, tripLabelMap));
+    const totalApproved = data
+      .filter((r) => r.status === PaymentStatusEnum.APPROVED)
+      .reduce((s, r) => s + r.amount, 0);
+
+    return { data, total, page, limit, totalApproved };
+  }
+
   // ── Analytics ─────────────────────────────────────────────────────────────
 
   async getStats(sport?: string): Promise<{
@@ -968,14 +1116,19 @@ export class PaymentsService {
       if (entityIds && entityIds.length > 1) {
         const matches = await this.matchModel
           .find({ _id: { $in: entityIds } })
-          .select('date opponent name category')
+          .select('date opponent name category tournament')
+          .populate('tournament', 'name')
           .sort({ category: 1 })
           .lean();
         if (!matches.length) return 'Encuentro';
-        const date = this.formatDate(matches[0].date);
+        const first = matches[0] as any;
+        const date = this.formatDate(first.date);
         const categories = matches.map((m) => m.category).join(', ');
-        const opponent = matches[0].opponent ?? 'Rival';
-        return `${categories} vs ${opponent} (${date})`;
+        const opponent = first.opponent ? ` vs ${first.opponent}` : '';
+        const tournamentName: string = first.name || first.tournament?.name || '';
+        return tournamentName
+          ? `${tournamentName}${opponent} (${date})`
+          : `${categories}${opponent} (${date})`;
       }
       const match = await this.matchModel
         .findById(entityId)
